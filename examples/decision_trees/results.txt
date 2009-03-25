@@ -1,0 +1,31 @@
+Discovered rules are:
+if size=='[28 m2 - 39 m2]' and zone=='Moron Sur (GBA)' then price='[29K-35K]'
+elsif size=='[28 m2 - 39 m2]' and zone=='Recoleta (CABA)' then price='[46K-55K]'
+elsif size=='[28 m2 - 39 m2]' and zone=='Tigre (GBA)' then price='[56K-75K]'
+elsif size=='[40 m2 - 50 m2]' and zone=='Moron Sur (GBA)' then price='[29K-35K]'
+elsif size=='[40 m2 - 50 m2]' and zone=='Recoleta (CABA)' then price='[56K-75K]'
+elsif size=='[40 m2 - 50 m2]' and zone=='Tigre (GBA)' then price='[56K-75K]'
+elsif size=='[51 m2 - 59 m2]' and zone=='Moron Sur (GBA)' then price='[36K-45K]'
+elsif size=='[51 m2 - 59 m2]' and zone=='Recoleta (CABA)' then price='[76K-100K]'
+elsif size=='[51 m2 - 59 m2]' and zone=='Tigre (GBA)' then price='[101K-125K]'
+elsif size=='[60 m2 - 70 m2]' and zone=='Moron Sur (GBA)' then price='[56K-75K]'
+elsif size=='[60 m2 - 70 m2]' and zone=='Recoleta (CABA)' then price='[76K-100K]'
+elsif size=='[71 m2 - 85 m2]' and zone=='Moron Sur (GBA)' then price='[46K-55K]'
+elsif size=='[71 m2 - 85 m2]' and zone=='Recoleta (CABA)' then price='[126K-150K]'
+elsif size=='[71 m2 - 85 m2]' and zone=='Tigre (GBA)' then price='[126K-150K]'
+elsif size=='[86 m2 - 100 m2]' and zone=='Moron Sur (GBA)' then price='[46K-55K]'
+elsif size=='[86 m2 - 100 m2]' and zone=='Recoleta (CABA)' then price='[126K-150K]'
+elsif size=='[86 m2 - 100 m2]' and zone=='Tigre (GBA)' then price='[152K-169K]'
+elsif size=='[101 m2 - 125 m2]' and zone=='Moron Sur (GBA)' then price='[76K-100K]'
+elsif size=='[101 m2 - 125 m2]' and zone=='Recoleta (CABA)' then price='[200K-275K]'
+elsif size=='[101 m2 - 125 m2]' and zone=='Tigre (GBA)' then price='[170K-200K]'
+elsif size=='[126 m2 - 160 m2]' and zone=='Moron Sur (GBA)' then price='[56K-75K]'
+elsif size=='[126 m2 - 160 m2]' and zone=='Recoleta (CABA)' then price='[200K-275K]'
+elsif size=='[126 m2 - 160 m2]' and zone=='Tigre (GBA)' then price='>275K'
+else raise 'There was not enough information during training to do a proper induction for this data element' end
+
+Prediction samples:
+['Moron Sur (GBA)','4','[86 m2 - 100 m2]'] => [46K-55K]
+['Moron Sur (GBA)','3','[101 m2 - 125 m2]'] => [76K-100K]
+['Recoleta (CABA)','3','[86 m2 - 100 m2]'] => [126K-150K]
+['Tigre (GBA)','3','[71 m2 - 85 m2]'] => [126K-150K]

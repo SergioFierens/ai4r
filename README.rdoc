@@ -1,0 +1,30 @@
+= Introduction
+
+This project aims to produce ruby implementations of 
+algorithms covering several Artificial intelligence fields.
+
+= Where can I find the lastest code and info on this project?
+
+http://ai4r.rubyforge.org
+
+= How to install
+
+1. Install the gem:
+
+    gem install ai4r
+
+2. Include require statements in your code:
+
+  require "rubygems"
+  require "ai4r"
+  
+= More Info
+
+ * AI4R wiki: http://wiki.jadeferret.com/Category:AI4R  
+ * AI4R Project site: http://ai4r.rubyforge.org
+
+= Warranty
+
+This software is provided "as is" and without any express or implied warranties, 
+including, without limitation, the implied warranties of merchantibility and 
+fitness for a particular purpose. 

@@ -1,0 +1,114 @@
+# Author::    Sergio Fierens (implementation)
+# License::   MPL 1.1
+# Project::   ai4r
+# Url::       http://ai4r.rubyforge.org/
+#
+# You can redistribute it and/or modify it under the terms of 
+# the Mozilla Public License version 1.1  as published by the 
+# Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
+
+require File.dirname(__FILE__) + '/../data/data_set'
+require File.dirname(__FILE__) + '/../clusterers/k_means'
+
+module Ai4r
+  module Clusterers
+     
+    # The Bisecting k-means algorithm is a variation of the "k-means" algorithm,
+    # somewhat less sensible to the initial election of centroids than the
+    # original. 
+    # 
+    # More about K Means algorithm:
+    # http://en.wikipedia.org/wiki/K-means_algorithm   
+    class BisectingKMeans < KMeans
+      
+      attr_reader :data_set, :number_of_clusters, :clusters, :centroids
+      attr_accessor :max_iterations, :distance_function, :refine
+      
+      def intialize
+        @refine = true
+      end
+      
+      # Build a new clusterer, using data examples found in data_set.
+      # Items will be clustered in "number_of_clusters" different
+      # clusters.
+      def build(data_set, number_of_clusters)
+        @data_set = data_set
+        @number_of_clusters = number_of_clusters
+        
+        @clusters = [@data_set]
+        @centroids = [@data_set.get_mean_or_mode]
+        while @clusters.length < @number_of_clusters
+          biggest_cluster_index = find_biggest_cluster_index(@clusters)
+          clusterer = KMeans.new.
+            set_parameters(get_parameters).
+            build(@clusters[biggest_cluster_index], 2)
+          @clusters.delete_at(biggest_cluster_index)
+          @centroids.delete_at(biggest_cluster_index)
+          @clusters.concat(clusterer.clusters)
+          @centroids.concat(clusterer.centroids)
+        end
+        
+        super if @refine
+        
+        return self
+      end      
+      
+      # Get info on what can be parameterized on this clusterer algorithm.
+      # It returns a hash with the following format:
+      # { :param_name => "Info on the parameter" }
+      def get_parameters_info
+        { :max_iterations => "Maximum number of iterations used to bisect a " +
+          "cluster. By default it is uncapped.",
+          :distance_function => "Custom implementation of distance function. " + 
+            "It must be a closure receiving two data items and return the " +
+            "distance bewteen them. By default, this algorithm uses " + 
+            "ecuclidean distance of numeric attributes to the power of 2.",
+          :refine => "Boolean value. True by default. It will run the " +
+            "classic K Means algorithm, using as initial centroids the " +
+            "result of the bisecting approach."
+          }
+      end
+      
+      # Set parameters on this clusterer instance.
+      # You must provide a hash with the folowing format:
+      # { :param_name => parameter_value }
+      # 
+      # Use get_parameters_info to know what parameters are accepted.
+      def set_parameters(parameters)
+        super
+        if parameters.has_key?(:refine)
+          @refine = parameters[:refine] 
+        end
+        return self
+      end
+      
+      # Get parameter values on this clusterer instance.
+      # Returns a hash with the folowing format:
+      # { :param_name => parameter_value }
+      def get_parameters
+        params = super
+        params[:refine] = @refine
+        return params
+      end
+      
+      protected      
+      def calc_initial_centroids
+        @centroids # Use existing centroids
+      end
+      
+      def find_biggest_cluster_index(clusters)
+        max_index = 0
+        max_length = 0
+        clusters.each_index do |cluster_index|
+          cluster = clusters[cluster_index]
+          if max_length < cluster.data_items.length
+            max_length = cluster.data_items.length
+            max_index = cluster_index
+          end
+        end
+        return max_index
+      end
+      
+    end
+  end
+end

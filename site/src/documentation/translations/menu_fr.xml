@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<catalogue xml:lang="de">
+  <message key="About">A propos</message>
+  <message key="Index">Index</message>
+  <message key="Changes">Modifications</message>
+  <message key="Todo">A faire</message>
+  <message key="Samples">Exemples </message>
+  <message key="Apache document">Document Apache</message>
+  <message key="Static content">Contenu statique</message>
+  <message key="Linking">Gestion des liens</message>
+  <message key="Wiki page">Page wiki</message>
+  <message key="ihtml page">Page ihtml</message>
+  <message key="ehtml page">Page ehtml</message>
+  <message key="FAQ">FAQ</message>
+  <message key="Simplifed Docbook">Docbook simplifié</message>
+  <message key="XSP page">Page XSP</message>
+</catalogue>
