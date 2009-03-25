@@ -23,7 +23,24 @@ http://ai4r.rubyforge.org
  * AI4R wiki: http://wiki.jadeferret.com/Category:AI4R  
  * AI4R Project site: http://ai4r.rubyforge.org
 
-= Warranty
+= Contact
+
+If you have questions or constructive comments about this project, 
+please post them in the forum (http://forum.jadeferret.com/viewforum.php?f=3).
+I get an email notification when you post, and I do my best to answer as soon as possible.
+
+If you do not want to make it public, send it to me: Sergio Fierens, email address: (sergio (at) jadeferret (dot) com). But please, try to post them in the forum. I get tons of emails and it would be great to make them public to help everyone.
+
+ 
+= Disclaimer
+
+In plain english:
+
+This project was created by Sergio Fierens, but the AI algorithms were created by other 
+people who are actually much more clever than Sergio. He does his best implementing
+them, but he cannot warranty that these implementations are accurate.
+
+In legalese:
 
 This software is provided "as is" and without any express or implied warranties, 
 including, without limitation, the implied warranties of merchantibility and 
