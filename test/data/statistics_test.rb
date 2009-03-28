@@ -14,7 +14,7 @@ module Ai4r
   module Data
     class StatisticsTest < Test::Unit::TestCase
       
-      DELTA = 0.0000001
+      DELTA = 0.00001
       
       def setup
         @data_set = DataSet.new.
@@ -26,11 +26,16 @@ module Ai4r
           assert_equal 2.502, Statistics.mean(@data_set, 0)
       end
       
-      def test_standard_deviation
-          assert_equal 0, Statistics.standard_deviation(@data_set, 1)
-          assert_in_delta 4.47302, Statistics.standard_deviation(@data_set, 0), DELTA
+      def test_variance
+          assert_equal 0, Statistics.variance(@data_set, 1)
+          assert_in_delta 4.47302, Statistics.variance(@data_set, 0), DELTA
       end
-      
+ 
+     def test_standard_deviation
+          assert_equal 0, Statistics.standard_deviation(@data_set, 1)
+          assert_in_delta 2.11495, Statistics.standard_deviation(@data_set, 0), DELTA
+      end
+ 
       def test_mode
         items = [ [ "New York", 25, "Y"],
                   [ "New York", 55, "Y"],

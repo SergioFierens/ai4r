@@ -19,19 +19,26 @@ module Ai4r
       # Get the sample mean
       def self.mean(data_set, attribute)
         index = data_set.get_index(attribute)
-        mean = 0.0
-        data_set.data_items.each { |item| mean += item[index] }
-        return mean / data_set.data_items.length
+        sum = 0.0
+        data_set.data_items.each { |item| sum += item[index] }
+        return sum / data_set.data_items.length
       end
   
-      # Get the standard deviation.
+      # Get the variance.
       # You can provide the mean if you have it already, to speed up things.
-      def self.standard_deviation(data_set, attribute, m = nil)
+      def self.variance(data_set, attribute, mean = nil)
         index = data_set.get_index(attribute)
-        m ||= mean(data_set, attribute)
-        accum = 0.0
-        data_set.data_items.each { |item| accum += (item[index]-m)**2 }
-        return accum / (data_set.data_items.length-1)
+        mean = mean(data_set, attribute)
+        sum = 0.0
+        data_set.data_items.each { |item| sum += (item[index]-mean)**2 }
+        return sum / (data_set.data_items.length-1)
+      end
+      
+      # Get the standard deviation.
+      # You can provide the variance if you have it already, to speed up things.      
+      def self.standard_deviation(data_set, attribute, variance = nil)
+        variance ||= variance(data_set, attribute)
+        Math.sqrt(variance)
       end
       
       # Get the sample mode. 
@@ -54,23 +61,15 @@ module Ai4r
       # Get the maximum value of an attribute in the data set
       def self.max(data_set, attribute)
         index = data_set.get_index(attribute)
-        max = -1.0/0
-        data_set.data_items.each do |data_item| 
-          attr_value = data_item[index]
-          max = attr_value if attr_value > max
-        end
-        return max
+        item = data_set.data_items.max {|x,y| x[index] <=> y[index]}
+        return (item) ? item[index] : (-1.0/0)
       end
       
       # Get the minimum value of an attribute in the data set
       def self.min(data_set, attribute)
         index = data_set.get_index(attribute)
-        min = 1.0/0
-        data_set.data_items.each do |data_item| 
-          attr_value = data_item[index]
-          min = attr_value if attr_value < min
-        end
-        return min
+        item = data_set.data_items.min {|x,y| x[index] <=> y[index]}
+        return (item) ? item[index] : (1.0/0)
       end
       
     end
