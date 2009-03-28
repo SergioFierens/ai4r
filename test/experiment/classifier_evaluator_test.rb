@@ -64,7 +64,7 @@ module Ai4r
           [[0],[0],[0],[1],[2],[3]]
         output = evaluator.test input
         assert_equal 5, output.data_items.length # 5 classifiers, 5 result rows
-        output.data_items.each { |result| assert result[1]>0 && result[1]<1} # eval time
+        output.data_items.each { |result| assert result[1]>=0 && result[1]<1} # eval time
         assert_equal 3, output.data_items.first[2] # 3 errors for the 1st classifier
         assert_equal 0.5, output.data_items.first[3] # succes rate
         assert_equal 6, output.data_items.last[2] # 6 errors for the last classifier

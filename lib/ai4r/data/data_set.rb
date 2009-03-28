@@ -12,7 +12,14 @@ require 'set'
 
 module Ai4r
   module Data
+  
+    # A data set is a collection of N data items. Each data item is 
+    # described by a set of attributes, represented as an array.
+    # Optionally, you can assign a label to the attributes, using 
+    # the data_labels property.
     class DataSet
+      
+      NUMBER_REGEX = /(((\b[0-9]+)?\.)?\b[0-9]+([eE][-+]?[0-9]+)?\b)/
       
       attr_reader :data_labels, :data_items 
       
@@ -24,7 +31,7 @@ module Ai4r
       # If you provide data items, but no data labels, the data set will
       # use the default data label values (see set_data_labels)
       def initialize(options = {})
-        @data_labels = options[:data_labels] || []
+        @data_labels = []
         @data_items = options[:data_items] || []
         set_data_labels(options[:data_labels]) if options[:data_labels]
         set_data_items(options[:data_items]) if options[:data_items]
@@ -51,6 +58,15 @@ module Ai4r
         load_csv(filepath)
         @data_labels = @data_items.shift
         return self
+      end
+      
+      # Same as load_csv, but it will try to convert cell contents as numbers.
+      def parse_csv(filepath)
+        items = []
+        CSV::Reader.parse(File.open(filepath, 'r')) do |row|
+          items << row.collect{|x| (x.match(NUMBER_REGEX)) ? x.to_f : x.data }
+        end
+        set_data_items(items)
       end
       
       # Set data labels.
@@ -144,7 +160,7 @@ module Ai4r
       #   get_index("gender") 
       #   => 2
       def get_index(attr)
-        return (attr.is_a?(String)) ? @data_labels.index(attr) : attr
+        return (attr.is_a?(Fixnum) || attr.is_a?(Range)) ? attr : @data_labels.index(attr)
       end
       
       # Raise an exception if there is no data item.
