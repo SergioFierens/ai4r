@@ -9,6 +9,7 @@
 
 require 'csv'
 require 'set'
+require File.dirname(__FILE__) + '/statistics'
 
 module Ai4r
   module Data
@@ -184,53 +185,19 @@ module Ai4r
           @data_items << data_item
         end
       end
-      
-      # Get the mean value of a numeric attribute.
-      # The parameter can be an index number or label
-      def get_attribute_mean(attribute)
-        index = get_index(attribute)
-        mean = 0.0
-        @data_items.each { |data_item| mean += data_item[index] }
-        mean /= @data_items.length
-        return mean
-      end
-      
-      # Get the most frequent value of an attribute.
-      # The parameter can be an index number or label
-      def get_attribute_mode(attribute)
-        index = get_index(attribute)
-        domain = build_domain(attribute)
-        count = {}
-        domain.each {|value| count[value]=0}
-        @data_items.each { |data_item| count[data_item[index]] += 1 }
-        max_count = 0
-        mode = nil
-        count.each_pair do |value, value_count|
-          if value_count > max_count
-            mode = value
-            max_count = value_count
-          end
-        end
-        return mode
-      end
-      
-      # The parameter can be an index number or label
-      # If the attribute is numeric, it will return the mean value. Otherwise, 
-      # it will return the most frequent value
-      def get_attribute_mean_or_mode(attribute)
-        index = get_index(attribute)
-        if @data_items.first[index].is_a?(Numeric)
-          return get_attribute_mean(attribute)
-        else
-          return get_attribute_mode(attribute)
-        end
-      end
-
-      # Returns an arran with the mean value of numeric attributes, and 
+     
+      # Returns an array with the mean value of numeric attributes, and 
       # the most frequent value of non numeric attributes
       def get_mean_or_mode
         mean = []
-        num_attributes.times {|i| mean[i] = get_attribute_mean_or_mode(i) }
+        num_attributes.times do |i| 
+          mean[i] = 
+            if @data_items.first[i].is_a?(Numeric)
+              Statistics.mean(self, i)
+            else
+              Statistics.mode(self, i)
+            end
+        end
         return mean
       end
       
