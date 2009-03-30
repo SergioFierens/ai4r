@@ -20,8 +20,8 @@ http://ai4r.rubyforge.org
   
 = More Info
 
- * AI4R wiki: http://wiki.jadeferret.com/Category:AI4R  
- * AI4R Project site: http://ai4r.rubyforge.org
+* AI4R wiki: http://wiki.jadeferret.com/Category:AI4R  
+* AI4R Project site: http://ai4r.rubyforge.org
 
 = Contact
 
