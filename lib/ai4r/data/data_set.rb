@@ -19,7 +19,7 @@ module Ai4r
     # the data_labels property.
     class DataSet
       
-      NUMBER_REGEX = /(((\b[0-9]+)?\.)?\b[0-9]+([eE][-+]?[0-9]+)?\b)/
+      @@number_regex = /(((\b[0-9]+)?\.)?\b[0-9]+([eE][-+]?[0-9]+)?\b)/
       
       attr_reader :data_labels, :data_items 
       
@@ -64,7 +64,7 @@ module Ai4r
       def parse_csv(filepath)
         items = []
         CSV::Reader.parse(File.open(filepath, 'r')) do |row|
-          items << row.collect{|x| (x.match(NUMBER_REGEX)) ? x.to_f : x.data }
+          items << row.collect{|x| (x.match(@@number_regex)) ? x.to_f : x.data }
         end
         set_data_items(items)
       end
