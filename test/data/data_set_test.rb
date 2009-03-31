@@ -63,19 +63,7 @@ module Ai4r
         assert_raise(ArgumentError) { set.set_data_items(nil) }
         assert_raise(ArgumentError) { set.set_data_items([1]) }
       end
-      
-      def test_get_attribute_mean_or_mode
-        items = [  [ "New York", 25, "Y"],
-                  [ "New York", 55, "Y"],
-                  [ "Chicago", 23, "Y"],
-                  [ "Boston", 23, "N"],
-                  [ "Chicago", 12, "N"],
-                  [ "Chicago", 87, "Y"] ]
-        set = DataSet.new.set_data_items(items)
-        assert_equal "Chicago", set.get_attribute_mean_or_mode(0)
-        assert_equal 37.5, set.get_attribute_mean_or_mode(1)
-      end
-      
+     
       def test_get_mean_or_mode
                 items = [  [ "New York", 25, "Y"],
                   [ "New York", 55, "Y"],

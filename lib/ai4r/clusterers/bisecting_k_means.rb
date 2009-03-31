@@ -24,6 +24,23 @@ module Ai4r
       attr_reader :data_set, :number_of_clusters, :clusters, :centroids
       attr_accessor :max_iterations, :distance_function, :refine
       
+      parameters_info :max_iterations => "Maximum number of iterations to " + 
+        "build the clusterer. By default it is uncapped.",
+        :distance_function => "Custom implementation of distance function. " +
+          "It must be a closure receiving two data items and return the " +
+          "distance bewteen them. By default, this algorithm uses " + 
+          "ecuclidean distance of numeric attributes to the power of 2.",
+        :centroid_function => "Custom implementation to calculate the " +
+          "centroid of a cluster. It must be a closure receiving an array of " +
+          "data sets, and return an array of data items, representing the " + 
+          "centroids of for each data set. " +
+          "By default, this algorithm returns a data items using the mode "+
+          "or mean of each attribute on each data set.",
+        :refine => "Boolean value. True by default. It will run the " +
+            "classic K Means algorithm, using as initial centroids the " +
+            "result of the bisecting approach."
+      
+      
       def intialize
         @refine = true
       end
@@ -52,44 +69,6 @@ module Ai4r
         
         return self
       end      
-      
-      # Get info on what can be parameterized on this clusterer algorithm.
-      # It returns a hash with the following format:
-      # { :param_name => "Info on the parameter" }
-      def get_parameters_info
-        { :max_iterations => "Maximum number of iterations used to bisect a " +
-          "cluster. By default it is uncapped.",
-          :distance_function => "Custom implementation of distance function. " + 
-            "It must be a closure receiving two data items and return the " +
-            "distance bewteen them. By default, this algorithm uses " + 
-            "ecuclidean distance of numeric attributes to the power of 2.",
-          :refine => "Boolean value. True by default. It will run the " +
-            "classic K Means algorithm, using as initial centroids the " +
-            "result of the bisecting approach."
-          }
-      end
-      
-      # Set parameters on this clusterer instance.
-      # You must provide a hash with the folowing format:
-      # { :param_name => parameter_value }
-      # 
-      # Use get_parameters_info to know what parameters are accepted.
-      def set_parameters(parameters)
-        super
-        if parameters.has_key?(:refine)
-          @refine = parameters[:refine] 
-        end
-        return self
-      end
-      
-      # Get parameter values on this clusterer instance.
-      # Returns a hash with the folowing format:
-      # { :param_name => parameter_value }
-      def get_parameters
-        params = super
-        params[:refine] = @refine
-        return params
-      end
       
       protected      
       def calc_initial_centroids
