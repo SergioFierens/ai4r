@@ -132,29 +132,43 @@ module Ai4r
       end
       
       # Calculate distance between clusters, browsing the dendrogram 
-      # recursively.
+      # recursively. 
+      # In each level of the dendrogram we have arrays with  1 item 
+      # (i.e. index of the same cluster in the previous level) or 
+      # with 2 items (indexes of the 2 merged clusters in the previous level).
+      # The distance between 2 clusters with 1 item is calculated with 
+      # the distance matrix, and the distance between a cluster with
+      # one item and a cluster with the merge of two previous clusters is 
+      # calculated with the linkage function.
       def calc_clusters_distance(cluster_a, cluster_b, level_a=nil, level_b=nil)
-        if cluster_a.length == 1 && cluster_b.length == 1
-          return read_distance_matrix(cluster_a.first, cluster_b.first)
-        end
-        
         level_a ||= @dendrogram.length-1
         level_b ||= @dendrogram.length-1
+      
+        if level_a==0 && level_b==0
+          return read_distance_matrix(cluster_a.first, cluster_b.first)
+        end
 
         if cluster_a.length > 1
           return linkage(
-                  calc_clusters_distance(@dendrogram[level_a-1][cluster_a.first], 
-                  cluster_b, level_a-1, level_b),
-                  calc_clusters_distance(@dendrogram[level_a-1][cluster_a.last], 
-                  cluster_b, level_a-1, level_b))
+              calc_clusters_distance(@dendrogram[level_a-1][cluster_a.first], 
+                cluster_b, level_a-1, level_b),
+              calc_clusters_distance(@dendrogram[level_a-1][cluster_a.last], 
+                cluster_b, level_a-1, level_b))
         elsif cluster_b.length > 1
-          return linkage( cluster_a, 
-                  calc_clusters_distance(@dendrogram[level_b-1][cluster_b.first], 
-                  level_a, level_b-1),
-                  calc_clusters_distance(@dendrogram[level_b-1][cluster_b.last], 
-                  level_a, level_b-1))
+          return linkage(  
+              calc_clusters_distance(cluster_a, 
+                @dendrogram[level_b-1][cluster_b.first], level_a, level_b-1),
+              calc_clusters_distance(cluster_a, 
+                @dendrogram[level_b-1][cluster_b.last], 
+                level_a, level_b-1))
+        elsif level_a > 0
+          return calc_clusters_distance(@dendrogram[level_a-1][cluster_a.first], 
+            cluster_b, level_a-1, level_b)
+        elsif level_b > 0
+          return calc_clusters_distance(cluster_a, 
+              @dendrogram[level_b-1][cluster_b.first],
+                level_a, level_b-1)
         end
-
       end
       
       # Use the single linkage method (Nearest-neighbor)
@@ -174,28 +188,6 @@ module Ai4r
         @dendrogram << new_level
       end
 
-      # it returns an array of data sets, representing each clusters 
-      def build_clusters_from_dendrogram
-        @dendrogram.each {|l| puts l.inspect}
-        levels = dendrogram_levels_for_k_clusters(@number_of_clusters)
-        cluster_items = [] #TODO
-        cluster_items.each {|l| puts l.inspect}
-        return cluster_items.collect do |data_items|
-          Ai4r::Data::DataSet.new(:data_labels => @data_set.data_labels,
-            :data_items => data_items)
-        end
-      end
-      
-      # Return the number of levels the dendrograms to reach the specified 
-      # number of clusters. If k > data items quantity, it returns 0
-      def dendrogram_levels_for_k_clusters(k)
-        levels = 0 
-        @dendrogram.each_with_index do |l, i| 
-          levels = i+1 if l.length == k
-        end
-        return levels
-      end
-      
       def distance_between_item_and_cluster(data_item, cluster)
         min_dist = 1.0/0
         cluster.data_items.each do |another_item|
@@ -205,17 +197,40 @@ module Ai4r
         return min_dist
       end
       
+      # it returns an array of data sets, representing each clusters 
+      def build_clusters_from_dendrogram
+        @dendrogram.each {|l| puts l.inspect}
+        k_level = dendrogram_level_with_k_clusters(@number_of_clusters)
+        puts "LEVEL: #{k_level}"
+        cluster_items = @dendrogram[k_level].collect do |cluster_data|
+          items = []
+          collect_items(items, cluster_data, k_level)
+          items
+        end
+        cluster_items.each {|l| puts l.inspect}
+        return cluster_items.collect do |data_items|
+          Ai4r::Data::DataSet.new(:data_labels => @data_set.data_labels,
+            :data_items => data_items)
+        end
+      end
+      
+      # Return the dendrogram level that contains k clusters
+      def dendrogram_level_with_k_clusters(k)
+        @data_set.data_items.length-k
+      end
+      
       # return an array of data items, using the specified dendrogram level
       # [ item 0, item 1, ... item n]
-      def get_cluster_items(indexes, level)
-        return [@data_set.data_items[indexes.first]] if(level==0)        
-        items = []
-        return indexes.each do |i| 
-          items += get_cluster_items(@dendrogram[level-1][i], level-1)
+      def collect_items(collection, indexes, level)
+        if level == 0
+          collection << @data_set.data_items[indexes.first] 
+        else
+          indexes.each do |i| 
+            collect_items(collection, @dendrogram[level-1][i], level-1)
+          end  
         end
-        return items
       end
-
+      
     end
   end
 end
