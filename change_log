@@ -5,6 +5,7 @@
   * New clusterer: Hierarchical Complete Linkage
   * New clusterer: Hierarchical Average Linkage
   * Simple Statistics module added
+  * Simple Proximity functions module added
 1.4 
   * Backpropagation neural networks rebuilt from zero: Faster, leaner code, more parameterizable. 
   * All algorithms include the Parameterizable module.

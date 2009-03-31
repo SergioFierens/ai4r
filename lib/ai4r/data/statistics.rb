@@ -12,7 +12,7 @@ require File.dirname(__FILE__) + '/data_set'
 module Ai4r
   module Data
   
-    # This module provides some statistics functions to operate on
+    # This module provides some basic statistics functions to operate on
     # data set attributes.
     module Statistics
       

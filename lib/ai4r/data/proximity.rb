@@ -74,7 +74,6 @@ module Ai4r
         return count
       end
       
-      
     end
     
   end
