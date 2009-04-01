@@ -15,7 +15,7 @@ end
 
 spec = Gem::Specification.new do |s| 
   s.name = "ai4r"
-  s.version = "1.4"
+  s.version = "1.5"
   s.author = "Sergio Fierens"
   s.homepage = "http://ai4r.rubyforge.org"
   s.rubyforge_project = "ai4r"

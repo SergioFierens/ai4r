@@ -31,7 +31,11 @@ I get an email notification when you post, and I do my best to answer as soon as
 
 If you do not want to make it public, send it to me: Sergio Fierens, email address: (sergio (at) jadeferret (dot) com). But please, try to post them in the forum. I get tons of emails and it would be great to make them public to help everyone.
 
- 
+= Roadmap
+
+AI4R is an active project. If you are interested about what we are working on, 
+checkout the development roadmap: http://wiki.jadeferret.com/AI4R_RoadMap 
+
 = Disclaimer
 
 In plain english:
