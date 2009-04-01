@@ -47,7 +47,7 @@ See http://forrest.apache.org/docs/linking.html for more info
 	</practicalExamples>		
     <download label="Downloads" href="downloads.html" description="ai4r - Download Files"/> 
     <forum label="Forum" href="http://forum.jadeferret.com/viewforum.php?f=3" description="Ai4r Forum"/> 
-    <svn label="Source Code repository" href="svn.html" description="ai4r Subversion repository"/>
+    <svn label="Source Code repository" href="sourceCode.html" description="ai4r source code repository"/>
     <wiki label="AI4R Wiki" href="http://wiki.jadeferret.com/Category:AI4R" description="ai4r wiki with How-to guides and more documentation"/>
     <rdoc label="API doc (Rdoc)" href="http://ai4r.rubyforge.org/rdoc/index.html" description="Ai4 RDoc docs"/>    
   </about>
