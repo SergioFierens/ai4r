@@ -19,7 +19,16 @@ module Ai4r
     # is reached.
     # With complete linkage, the distance between two clusters is computed as 
     # the maximum distance between elements of each cluster.
+    #
+    #   D(cx, (ci U cj) = max(D(cx, ci), D(cx, cj))
     class CompleteLinkage < SingleLinkage
+      
+      parameters_info :distance_function => 
+          "Custom implementation of distance function. " +
+          "It must be a closure receiving two data items and return the " +
+          "distance bewteen them. By default, this algorithm uses " + 
+          "ecuclidean distance of numeric attributes to the power of 2."
+      
       
       # Build a new clusterer, using data examples found in data_set.
       # Items will be clustered in "number_of_clusters" different
@@ -36,22 +45,17 @@ module Ai4r
       
       protected
       
-      # Calculate cluster distance using the complete linkage method
-      def calc_index_clusters_distance(cluster_a, cluster_b)
-        max_dist = 0
-        cluster_a.each do |index_a|
-          cluster_b.each do |index_b|
-            dist = read_distance_matrix(index_a, index_b)
-            max_dist = dist if dist > max_dist
-          end
-        end
-        return max_dist
+      # return distance between cluster cx and new cluster (ci U cj),
+      # using complete linkage
+      def linkage_distance(cx, ci, cj)
+        [read_distance_matrix(cx, ci),
+          read_distance_matrix(cx, cj)].max
       end
       
       def distance_between_item_and_cluster(data_item, cluster)
         max_dist = 0
         cluster.data_items.each do |another_item|
-          dist = distance(data_item, another_item)
+          dist = @distance_function.call(data_item, another_item)
           max_dist = dist if dist > max_dist
         end
         return max_dist

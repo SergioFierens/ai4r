@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../../lib/ai4r/clusterers/complete_linkage'
 
 class Ai4r::Clusterers::CompleteLinkage
   attr_accessor :data_set, :number_of_clusters, :clusters, :distance_matrix
-  public :calc_index_clusters_distance
+  public :linkage_distance
   public :distance_between_item_and_cluster
 end
 
@@ -28,11 +28,11 @@ class CompleteLinkageTest < Test::Unit::TestCase
         [49.0, 49.0, 26.0, 5.0, 25.0, 49.0, 4.0, 29.0, 37.0, 5.0], 
         [2.0, 72.0, 65.0, 50.0, 52.0, 2.0, 65.0, 10.0, 74.0, 50.0, 37.0]]
   
-  def test_calc_index_clusters_distance
-    clusterer = CompleteLinkage.new
+   def test_linkage_distance
+    clusterer = Ai4r::Clusterers::CompleteLinkage.new
     clusterer.distance_matrix = @@expected_distance_matrix
-    assert_equal 98.0, clusterer.calc_index_clusters_distance([0], [1])
-    assert_equal 74.0, clusterer.calc_index_clusters_distance([0, 1], [3, 4])
+    assert_equal 98, clusterer.linkage_distance(0,1,2)
+    assert_equal 74, clusterer.linkage_distance(4,2,5)
   end
 
   def test_distance_between_item_and_cluster

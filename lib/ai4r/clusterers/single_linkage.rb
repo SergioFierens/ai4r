@@ -8,6 +8,7 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require File.dirname(__FILE__) + '/../data/data_set'
+require File.dirname(__FILE__) + '/../data/proximity'
 require File.dirname(__FILE__) + '/../clusterers/clusterer'
 
 module Ai4r
@@ -19,6 +20,8 @@ module Ai4r
     # is reached.
     # With single linkage, the distance between two clusters is computed as the 
     # distance between the two closest elements in the two clusters.
+    #
+    #   D(cx, (ci U cj) = min(D(cx, ci), D(cx, cj))
     class SingleLinkage < Clusterer
       
       attr_reader :data_set, :number_of_clusters, :clusters
@@ -30,7 +33,11 @@ module Ai4r
           "ecuclidean distance of numeric attributes to the power of 2."
       
       def initialize
-        @distance_function = nil
+        @distance_function = lambda do |a,b| 
+            Ai4r::Data::Proximity.squared_euclidean_distance(
+              a.select {|att_a| att_a.is_a? Numeric} , 
+              b.select {|att_b| att_b.is_a? Numeric})
+          end
       end
       
       # Build a new clusterer, using data examples found in data_set.
@@ -43,8 +50,9 @@ module Ai4r
         index_clusters = create_initial_index_clusters
         create_distance_matrix(data_set)
         while index_clusters.length > @number_of_clusters
-          clusters_to_merge = get_closest_clusters(index_clusters)
-          index_clusters = merge_clusters(clusters_to_merge, index_clusters)
+          ci, cj = get_closest_clusters(index_clusters)
+          update_distance_matrix(ci, cj)
+          merge_clusters(ci, cj, index_clusters)
         end
         @clusters = build_clusters_from_index_clusters index_clusters
         
@@ -56,19 +64,6 @@ module Ai4r
       def eval(data_item)
         get_min_index(@clusters.collect {|cluster| 
             distance_between_item_and_cluster(data_item, cluster)})
-      end
-      
-      # This function calculates the distance between 2 different
-      # instances. By default, it returns the euclidean distance to the 
-      # power of 2.
-      # You can provide a more convinient distance implementation:
-      # 
-      # 1- Overwriting this method
-      # 
-      # 2- Providing a closure to the :distance_function parameter
-      def distance(a, b)
-        return @distance_function.call(a, b) if @distance_function
-        return euclidean_distance(a, b)
       end
       
       protected
@@ -95,7 +90,7 @@ module Ai4r
         data_set.data_items.each_with_index do |a, i|
           i.times do |j|
             b = data_set.data_items[j]
-            @distance_matrix[i-1][j] = distance(a, b)
+            @distance_matrix[i-1][j] = @distance_function.call(a, b)
           end
         end
       end
@@ -108,14 +103,46 @@ module Ai4r
         return @distance_matrix[index_a-1][index_b]
       end
 
-      # clusters_to_merge = [index_cluster_a, index_cluster_b].
+      # ci and cj are the indexes of the clusters that are going to
+      # be merged. We need to remove distances from/to ci and ci, 
+      # and add distances from/to new cluster (ci U cj)
+      def update_distance_matrix(ci, cj)
+        ci, cj = cj, ci if cj > ci
+        distances_to_new_cluster = Array.new
+        (@distance_matrix.length+1).times do |cx|
+          if cx!= ci && cx!=cj
+            distances_to_new_cluster << linkage_distance(cx, ci, cj) 
+          end
+        end
+        if cj==0 && ci==1
+          @distance_matrix.delete_at(1) 
+          @distance_matrix.delete_at(0)         
+        elsif cj==0
+          @distance_matrix.delete_at(ci-1) 
+          @distance_matrix.delete_at(0) 
+        else
+          @distance_matrix.delete_at(ci-1) 
+          @distance_matrix.delete_at(cj-1)
+        end
+        @distance_matrix.each do |d| 
+          d.delete_at(ci)
+          d.delete_at(cj)
+        end
+        @distance_matrix << distances_to_new_cluster
+      end
+      
+      # return distance between cluster cx and new cluster (ci U cj),
+      # using single linkage
+      def linkage_distance(cx, ci, cj)
+        [read_distance_matrix(cx, ci),
+          read_distance_matrix(cx, cj)].min
+      end
+      
       # cluster_a and cluster_b are removed from index_cluster, 
       # and a new cluster with all members of cluster_a and cluster_b
       # is added. 
-      # It returns the new clusters array.
-      def merge_clusters(clusters_to_merge, index_clusters)
-        index_a = clusters_to_merge.first
-        index_b = clusters_to_merge.last
+      # It modifies index clusters array.
+      def merge_clusters(index_a, index_b, index_clusters)
         index_a, index_b = index_b, index_a if index_b > index_a
         new_index_cluster = index_clusters[index_a] +
           index_clusters[index_b]
@@ -140,10 +167,9 @@ module Ai4r
       def get_closest_clusters(index_clusters)
         min_distance = 1.0/0
         closest_clusters = [1, 0]
-        index_clusters.each_with_index do |cluster_a, index_a|
+        index_clusters.each_index do |index_a|
           index_a.times do |index_b|
-            cluster_b = index_clusters[index_b]
-            cluster_distance = calc_index_clusters_distance(cluster_a, cluster_b)
+            cluster_distance = read_distance_matrix(index_a, index_b)
             if cluster_distance < min_distance
               closest_clusters = [index_a, index_b]
               min_distance = cluster_distance
@@ -153,22 +179,10 @@ module Ai4r
         return closest_clusters
       end
       
-      # Calculate cluster distance using the single linkage method
-      def calc_index_clusters_distance(cluster_a, cluster_b)
-        min_dist = 1.0/0
-        cluster_a.each do |index_a|
-          cluster_b.each do |index_b|
-            dist = read_distance_matrix(index_a, index_b)
-            min_dist = dist if dist < min_dist
-          end
-        end
-        return min_dist
-      end
-      
       def distance_between_item_and_cluster(data_item, cluster)
         min_dist = 1.0/0
         cluster.data_items.each do |another_item|
-          dist = distance(data_item, another_item)
+          dist = @distance_function.call(data_item, another_item)
           min_dist = dist if dist < min_dist
         end
         return min_dist
