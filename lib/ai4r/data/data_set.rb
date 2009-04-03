@@ -173,7 +173,7 @@ module Ai4r
 
       # Add a data item to the data set
       def << data_item
-        if data_item.nil? || !data_item.is_a?(Array) || data_item.empty?
+        if data_item.nil? || !data_item.is_a?(Enumerable) || data_item.empty?
           raise ArgumentError,"Data must not be an non empty array."
         elsif @data_items.empty?
           set_data_items([data_item])
@@ -205,7 +205,7 @@ module Ai4r
       def check_data_items(data_items)
         if !data_items || data_items.empty?
           raise ArgumentError,"Examples data set must not be empty." 
-        elsif !data_items.first.is_a?(Array)
+        elsif !data_items.first.is_a?(Enumerable)
           raise ArgumentError,"Unkown format for example data." 
         end
         attributes_num = data_items.first.length
