@@ -50,8 +50,6 @@ module Ai4r
       # return distance between cluster cx and cluster (ci U cj),
       # using median linkage
       def linkage_distance(cx, ci, cj)
-        ni = @index_clusters[ci].length
-        nj = @index_clusters[cj].length
         ( 0.5  * read_distance_matrix(cx, ci) +
           0.5  * read_distance_matrix(cx, cj) -
           0.25 * read_distance_matrix(ci, cj))
