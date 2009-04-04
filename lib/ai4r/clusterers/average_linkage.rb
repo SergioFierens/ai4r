@@ -13,12 +13,15 @@ require File.dirname(__FILE__) + '/../clusterers/single_linkage'
 module Ai4r
   module Clusterers
      
-    # Implementation of a Hierarchical clusterer with complete linkage.
+    # Implementation of a Hierarchical clusterer with group average
+    # linkage, AKA unweighted pair group method average or UPGMA (Everitt 
+    # et al., 2001 ; Jain and Dubes, 1988 ; Sokal and Michener, 1958).
     # Hierarchical clusteres create one cluster per element, and then 
     # progressively merge clusters, until the required number of clusters
     # is reached.
-    # With average linkage, the distance between two clusters is computed as 
-    # the average distance between elements of each cluster.
+    # With average linkage, the distance between a clusters cx and 
+    # cluster (ci U cj) the the average distance between cx and ci, and
+    # cx and cj.
     #
     #   D(cx, (ci U cj) = (D(cx, ci) + D(cx, cj)) / 2
     class AverageLinkage < SingleLinkage
@@ -36,27 +39,19 @@ module Ai4r
         super
       end
       
-      # Classifies the given data item, returning the cluster index it belongs 
-      # to (0-based).
+      # This algorithms does not allow classification of new data items 
+      # once it has been built. Rebuild the cluster including you data element.
       def eval(data_item)
-        super
+        Raise "Eval of new data is not supported by this algorithm."
       end
       
       protected
       
-      # return distance between cluster cx and new cluster (ci U cj),
+      # return distance between cluster cx and cluster (ci U cj),
       # using average linkage
       def linkage_distance(cx, ci, cj)
         (read_distance_matrix(cx, ci)+
           read_distance_matrix(cx, cj))/2
-      end
-      
-      def distance_between_item_and_cluster(data_item, cluster)
-        dist_sum = 0.0
-        cluster.data_items.each do |another_item|
-          dist_sum += @distance_function.call(data_item, another_item)
-        end
-        return dist_sum/cluster.data_items.length
       end
       
     end

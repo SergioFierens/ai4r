@@ -14,7 +14,8 @@ require File.dirname(__FILE__) + '/../clusterers/clusterer'
 module Ai4r
   module Clusterers
      
-    # Implementation of a Hierarchical clusterer with single linkage.
+    # Implementation of a Hierarchical clusterer with single linkage (Everitt et 
+    # al., 2001 ; Johnson, 1967 ; Jain and Dubes, 1988 ; Sneath, 1957 )
     # Hierarchical clusteres create one cluster per element, and then 
     # progressively merge clusters, until the required number of clusters
     # is reached.
@@ -47,14 +48,14 @@ module Ai4r
         @data_set = data_set
         @number_of_clusters = number_of_clusters
         
-        index_clusters = create_initial_index_clusters
+        @index_clusters = create_initial_index_clusters
         create_distance_matrix(data_set)
-        while index_clusters.length > @number_of_clusters
-          ci, cj = get_closest_clusters(index_clusters)
+        while @index_clusters.length > @number_of_clusters
+          ci, cj = get_closest_clusters(@index_clusters)
           update_distance_matrix(ci, cj)
-          merge_clusters(ci, cj, index_clusters)
+          merge_clusters(ci, cj, @index_clusters)
         end
-        @clusters = build_clusters_from_index_clusters index_clusters
+        @clusters = build_clusters_from_index_clusters @index_clusters
         
         return self
       end

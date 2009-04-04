@@ -13,23 +13,23 @@ require File.dirname(__FILE__) + '/../clusterers/single_linkage'
 module Ai4r
   module Clusterers
      
-    # Implementation of a Hierarchical clusterer with complete linkage (Everitt 
-    # et al., 2001 ; Jain and Dubes, 1988 ; Sorensen, 1948 ).
+    # Implementation of an Agglomerative Hierarchical clusterer with 
+    # weighted average linkage algorithm, aka weighted pair group method 
+    # average or WPGMA (Jain and Dubes, 1988 ; McQuitty, 1966 )
     # Hierarchical clusteres create one cluster per element, and then 
     # progressively merge clusters, until the required number of clusters
     # is reached.
-    # With complete linkage, the distance between two clusters is computed as 
-    # the maximum distance between elements of each cluster.
-    #
-    #   D(cx, (ci U cj) = max(D(cx, ci), D(cx, cj))
-    class CompleteLinkage < SingleLinkage
+    # Similar to AverageLinkage, but the distances between clusters are 
+    # weighted based on the number of data items in each of them.
+    #   
+    #   D(cx, (ci U cj)) =  ( ni * D(cx, ci) + nj * D(cx, cj)) / (ni + nj)
+    class WeightedAverageLinkage < SingleLinkage
       
-      parameters_info :distance_function => 
+    parameters_info :distance_function => 
           "Custom implementation of distance function. " +
           "It must be a closure receiving two data items and return the " +
           "distance bewteen them. By default, this algorithm uses " + 
           "ecuclidean distance of numeric attributes to the power of 2."
-      
       
       # Build a new clusterer, using data examples found in data_set.
       # Items will be clustered in "number_of_clusters" different
@@ -38,30 +38,24 @@ module Ai4r
         super
       end
       
-      # Classifies the given data item, returning the cluster index it belongs 
-      # to (0-based).
+      # This algorithms does not allow classification of new data items 
+      # once it has been built. Rebuild the cluster including you data element.
       def eval(data_item)
-        super
+        Raise "Eval of new data is not supported by this algorithm."
       end
       
       protected
       
-      # return distance between cluster cx and new cluster (ci U cj),
-      # using complete linkage
+      # return distance between cluster cx and cluster (ci U cj),
+      # using weighted average linkage
       def linkage_distance(cx, ci, cj)
-        [read_distance_matrix(cx, ci),
-          read_distance_matrix(cx, cj)].max
-      end
-      
-      def distance_between_item_and_cluster(data_item, cluster)
-        max_dist = 0
-        cluster.data_items.each do |another_item|
-          dist = @distance_function.call(data_item, another_item)
-          max_dist = dist if dist > max_dist
-        end
-        return max_dist
+        ni = @index_clusters[ci].length
+        nj = @index_clusters[cj].length
+        (1.0 * ni * read_distance_matrix(cx, ci)+
+          nj * read_distance_matrix(cx, cj))/(ni+nj)
       end
       
     end
   end
 end
+

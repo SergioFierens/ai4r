@@ -1,13 +1,13 @@
 require 'test/unit'
-require File.dirname(__FILE__) + '/../../lib/ai4r/clusterers/average_linkage'
+require File.dirname(__FILE__) + '/../../lib/ai4r/clusterers/weighted_average_linkage'
 
-class Ai4r::Clusterers::AverageLinkage < Ai4r::Clusterers::SingleLinkage
-  attr_accessor :data_set, :number_of_clusters, :clusters, :distance_matrix
+class Ai4r::Clusterers::WeightedAverageLinkage
+  attr_accessor :data_set, :number_of_clusters, :clusters, :distance_matrix, :index_clusters
   public :linkage_distance
-  public :distance_between_item_and_cluster
+  public :create_initial_index_clusters
 end
 
-class AverageLinkageTest < Test::Unit::TestCase
+class Ai4r::Clusterers::WeightedAverageLinkageTest < Test::Unit::TestCase
   
   include Ai4r::Clusterers
   include Ai4r::Data
@@ -29,7 +29,9 @@ class AverageLinkageTest < Test::Unit::TestCase
         [2.0, 72.0, 65.0, 50.0, 52.0, 2.0, 65.0, 10.0, 74.0, 50.0, 37.0]]
   
    def test_linkage_distance
-    clusterer = Ai4r::Clusterers::AverageLinkage.new
+    clusterer = Ai4r::Clusterers::WeightedAverageLinkage.new
+    clusterer.data_set = DataSet.new :data_items => @@data
+    clusterer.index_clusters = clusterer.create_initial_index_clusters
     clusterer.distance_matrix = @@expected_distance_matrix
     assert_equal 93.5, clusterer.linkage_distance(0,1,2)
     assert_equal 37.5, clusterer.linkage_distance(4,2,5)
