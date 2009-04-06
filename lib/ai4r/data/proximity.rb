@@ -74,15 +74,17 @@ module Ai4r
         return count
       end
       
-      # The "Simple matching" distance between two attribute vectors is given 
+      # The "Simple matching" distance between two attribute sets is given 
       # by the number of values present on both vectors.
-      # If vectors a and b have lengths da and db then:
+      # If sets a and b have lengths da and db then:
       # 
-      #  S = 2/(da + db) * Number of values present on both vectors
+      #  S = 2/(da + db) * Number of values present on both sets
       #  D = 1.0/S - 1
       # 
-      # This distance function is useful for vectors with discrete attributes,
-      # in which all attribute values have the same weight. 
+      # Some considerations: 
+      # * a and b must not include repeated items
+      # * all attributes are treated equally
+      # * all attributes are treated equally
       def self.simple_matching_distance(a,b)
         similarity = 0.0
         a.each {|item| similarity += 2 if b.include?(item)}
