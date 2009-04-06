@@ -41,7 +41,9 @@ module Ai4r
       # Retrieve a new DataSet, with the item(s) selected by the provided 
       # index. You can specify an index range, too.
       def [](index)
-        return DataSet.new(:data_items=>@data_items[index], 
+        selected_items = (index.is_a?(Fixnum)) ? 
+          [@data_items[index]] : @data_items[index]
+        return DataSet.new(:data_items => selected_items, 
           :data_labels =>@data_labels)
       end
       

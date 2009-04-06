@@ -74,6 +74,19 @@ module Ai4r
         set = DataSet.new.set_data_items(items)
         assert_equal ["Chicago", 37.5, "Y"], set.get_mean_or_mode
       end
+      
+      def test_index
+        items = [  [ "New York", 25, "Y"],
+                  [ "New York", 55, "Y"],
+                  [ "Chicago", 23, "Y"],
+                  [ "Boston", 23, "N"],
+                  [ "Chicago", 12, "N"],
+                  [ "Chicago", 87, "Y"] ]
+        set = DataSet.new.set_data_items(items)
+        assert_equal set.data_labels, set[0].data_labels
+        assert_equal [[ "New York", 25, "Y"]], set[0].data_items
+        assert_equal [[ "Chicago", 23, "Y"],[ "Boston", 23, "N"]], set[2..3].data_items
+      end
      
     end
   end
