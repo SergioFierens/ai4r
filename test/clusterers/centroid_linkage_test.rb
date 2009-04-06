@@ -8,15 +8,15 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'test/unit'
-require File.dirname(__FILE__) + '/../../lib/ai4r/clusterers/complete_linkage'
+require File.dirname(__FILE__) + '/../../lib/ai4r/clusterers/centroid_linkage'
 
-class Ai4r::Clusterers::CompleteLinkage
-  attr_accessor :data_set, :number_of_clusters, :clusters, :distance_matrix
+class Ai4r::Clusterers::CentroidLinkage
+  attr_accessor :data_set, :number_of_clusters, :clusters, :distance_matrix, :index_clusters
   public :linkage_distance
-  public :distance_between_item_and_cluster
+  public :create_initial_index_clusters
 end
 
-class CompleteLinkageTest < Test::Unit::TestCase
+class Ai4r::Clusterers::CentroidLinkageTest < Test::Unit::TestCase
   
   include Ai4r::Clusterers
   include Ai4r::Data
@@ -38,17 +38,13 @@ class CompleteLinkageTest < Test::Unit::TestCase
         [2.0, 72.0, 65.0, 50.0, 52.0, 2.0, 65.0, 10.0, 74.0, 50.0, 37.0]]
   
    def test_linkage_distance
-    clusterer = Ai4r::Clusterers::CompleteLinkage.new
+    clusterer = Ai4r::Clusterers::CentroidLinkage.new
+    clusterer.data_set = DataSet.new :data_items => @@data
+    clusterer.index_clusters = clusterer.create_initial_index_clusters
     clusterer.distance_matrix = @@expected_distance_matrix
-    assert_equal 98, clusterer.linkage_distance(0,1,2)
-    assert_equal 74, clusterer.linkage_distance(4,2,5)
+    assert_equal 92.25, clusterer.linkage_distance(0,1,2)
+    assert_equal 15.25, clusterer.linkage_distance(4,2,5)
   end
 
-  def test_distance_between_item_and_cluster
-    clusterer = CompleteLinkage.new
-    assert_equal 32.0, clusterer.distance_between_item_and_cluster([1,2], 
-      DataSet.new(:data_items => [[3,4],[5,6]]))
-  end
-  
 end
 

@@ -1,3 +1,12 @@
+# Author::    Sergio Fierens (implementation)
+# License::   MPL 1.1
+# Project::   ai4r
+# Url::       http://ai4r.rubyforge.org/
+#
+# You can redistribute it and/or modify it under the terms of 
+# the Mozilla Public License version 1.1  as published by the 
+# Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
+
 require 'test/unit'
 require File.dirname(__FILE__) + '/../../lib/ai4r/clusterers/single_linkage'
  
@@ -62,11 +71,11 @@ class Ai4r::Clusterers::SingleLinkageTest < Test::Unit::TestCase
     assert_equal 0, clusterer.read_distance_matrix(5, 5)
   end
   
-  def test_calc_index_clusters_distance
+  def test_linkage_distance
     clusterer = Ai4r::Clusterers::SingleLinkage.new
     clusterer.distance_matrix = @@expected_distance_matrix
-    assert_equal 98.0, clusterer.calc_index_clusters_distance([0], [1])
-    assert_equal 4.0, clusterer.calc_index_clusters_distance([0, 1], [3, 4])
+    assert_equal 89, clusterer.linkage_distance(0,1,2)
+    assert_equal 1, clusterer.linkage_distance(4,2,5)
   end
   
   def test_get_closest_clusters
@@ -87,9 +96,9 @@ class Ai4r::Clusterers::SingleLinkageTest < Test::Unit::TestCase
   
   def test_merge_clusters
     clusterer = Ai4r::Clusterers::SingleLinkage.new
-    clusters = clusterer.merge_clusters([1,2], [[1,2],[3,4],[5,6]])
+    clusters = clusterer.merge_clusters(1,2, [[1,2],[3,4],[5,6]])
     assert_equal [[1,2], [3,4,5,6]], clusters.collect {|x| x.sort}
-    clusters = clusterer.merge_clusters([2,1], [[1,2],[3,4],[5,6]])
+    clusters = clusterer.merge_clusters(2,1, [[1,2],[3,4],[5,6]])
     assert_equal [[1,2], [3,4,5,6]], clusters.collect {|x| x.sort}
   end
   

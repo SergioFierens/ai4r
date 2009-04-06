@@ -1,9 +1,18 @@
+# Author::    Sergio Fierens (implementation)
+# License::   MPL 1.1
+# Project::   ai4r
+# Url::       http://ai4r.rubyforge.org/
+#
+# You can redistribute it and/or modify it under the terms of 
+# the Mozilla Public License version 1.1  as published by the 
+# Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
+
 require 'test/unit'
 require File.dirname(__FILE__) + '/../../lib/ai4r/clusterers/average_linkage'
 
 class Ai4r::Clusterers::AverageLinkage < Ai4r::Clusterers::SingleLinkage
   attr_accessor :data_set, :number_of_clusters, :clusters, :distance_matrix
-  public :calc_index_clusters_distance
+  public :linkage_distance
   public :distance_between_item_and_cluster
 end
 
@@ -28,18 +37,12 @@ class AverageLinkageTest < Test::Unit::TestCase
         [49.0, 49.0, 26.0, 5.0, 25.0, 49.0, 4.0, 29.0, 37.0, 5.0], 
         [2.0, 72.0, 65.0, 50.0, 52.0, 2.0, 65.0, 10.0, 74.0, 50.0, 37.0]]
   
-  def test_calc_index_clusters_distance
-    clusterer = AverageLinkage.new
+   def test_linkage_distance
+    clusterer = Ai4r::Clusterers::AverageLinkage.new
     clusterer.distance_matrix = @@expected_distance_matrix
-    assert_equal 98.0, clusterer.calc_index_clusters_distance([0], [1])
-    assert_equal 43.0, clusterer.calc_index_clusters_distance([0, 1], [3, 4])
+    assert_equal 93.5, clusterer.linkage_distance(0,1,2)
+    assert_equal 37.5, clusterer.linkage_distance(4,2,5)
   end
 
-  def test_distance_between_item_and_cluster
-    clusterer = AverageLinkage.new
-    assert_equal 20.0, clusterer.distance_between_item_and_cluster([1,2], 
-      DataSet.new(:data_items => [[3,4],[5,6]]))
-  end
-  
 end
 
