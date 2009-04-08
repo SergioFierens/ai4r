@@ -14,7 +14,7 @@ class Ai4r::Clusterers::SingleLinkage
   attr_accessor :data_set, :number_of_clusters, :clusters, :distance_matrix
 end
  
-class Ai4r::Clusterers::SingleLinkageTest < Test::Unit::TestCase
+class SingleLinkageTest < Test::Unit::TestCase
   
   include Ai4r::Clusterers
   include Ai4r::Data
