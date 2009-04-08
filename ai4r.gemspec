@@ -2,7 +2,7 @@ require 'rubygems'
 
 SPEC = Gem::Specification.new do |s|
   s.name = "ai4r"
-  s.version = "1.5"
+  s.version = "1.6"
   s.author = "Sergio Fierens"
   s.email = "sergio@jadeferret.com"
   s.homepage = "http://ai4r.rubyforge.org"

@@ -1,9 +1,11 @@
 1.6 (In progress)
+  * New classifier: Hyperpipes
   * New clusterer: Hierarchical Weighted Average Linkage
   * New clusterer: Hierarchical Centroid Linkage
   * New clusterer: Hierarchical Median Linkage
   * New clusterer: Hierarchical Ward's method Linkage 
-  * Example added: Simple website clusterer
+  * New clusterer: Diana (Divisive Analysis)
+  * Example code added: Simple website clusterer
   * New simple matching distance function added for discrete attribute vectors
 1.5
   * ClassifierEvaluator class added: Ideal for experimentation with classifiers

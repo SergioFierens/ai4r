@@ -28,24 +28,30 @@
 	intelligence fields, and simple practical examples using them. It implements:
       </p>
 	<ul>
-		<li><a href="http://en.wikipedia.org/wiki/Genetic_algorithms">Genetic algorithms</a></li>
-		<li><a href="http://en.wikipedia.org/wiki/Neural_network">Neural networks (Backpropagation networks)</a></li>
+		<li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/GeneticAlgorithm.html">Genetic algorithms</a></li>
+		<li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/NeuralNetwork/Backpropagation.html">Neural networks (Backpropagation networks)</a></li>
 		<li><a href="machineLearning.html">Automatic classifiers (Machine Learning)</a>
 			<ul>
-				<li><a href="http://en.wikipedia.org/wiki/ID3_algorithm">ID3 (Decision Trees)</a></li>
-				<li>PRISM (J. Cendrowska, 1987)</li>
-        <li><a href="http://en.wikipedia.org/wiki/Multilayer_perceptron">Multilayer Perceptron</a></li>
-				<li><a href="http://en.wikipedia.org/wiki/Association_rule_learning#One-attribute-rule">OneR (AKA One Attribute Rule, 1R)</a></li>
-				<li><a href="http://en.wikipedia.org/wiki/Association_rule_learning#Zero-attribute-rule">ZeroR</a></li>
+				<li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Classifiers/ID3.html">ID3 (Decision Trees)</a></li>
+				<li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Classifiers/Prism.html">PRISM (J. Cendrowska, 1987)</a></li>
+        <li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Classifiers/MultilayerPerceptron.html">Multilayer Perceptron</a></li>
+				<li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Classifiers/OneR.html">OneR (AKA One Attribute Rule, 1R)</a></li>
+				<li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Classifiers/ZeroR.html">ZeroR</a></li>
+				<li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Classifiers/Hyperpipes.html">Hyperpipes</a></li>        
 			</ul>
 		</li>
 		<li><a href="http://en.wikipedia.org/wiki/Data_clustering">Data clustering</a>
 			<ul>
 				<li><a href="http://en.wikipedia.org/wiki/k_means">K-means algorithm</a></li>
         <li><a href="http://en.wikipedia.org/wiki/k_means">Bisecting k-means</a></li>
-				<li><a href="http://en.wikipedia.org/wiki/Single_linkage_clustering">Single linkage</a></li>
-        <li><a href="http://en.wikipedia.org/wiki/Cluster_analysis#Agglomerative_hierarchical_clustering">Complete linkage</a></li>        
-        <li><a href="http://en.wikipedia.org/wiki/Cluster_analysis#Agglomerative_hierarchical_clustering">Average linkage</a></li>        
+				<li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Clusterers/SingleLinkage.html">Single linkage</a></li>
+        <li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Clusterers/CompleteLinkage.html">Complete linkage</a></li>        
+        <li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Clusterers/AverageLinkage.html">Average linkage</a></li>        
+        <li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Clusterers/WeightedAverageLinkage.html">Weighted Average linkage</a></li> 
+        <li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Clusterers/CentroidLinkage.html">Centroid linkage</a></li>
+        <li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Clusterers/MedianLinkage.html">Median linkage</a></li>        
+        <li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Clusterers/WardLinkage.html">Ward's method linkage</a></li>        
+        <li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Clusterers/Diana.html">Diana (Divisive Analysis)</a></li>                
 			</ul>
 		</li>    
 	</ul>
