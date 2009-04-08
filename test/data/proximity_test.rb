@@ -66,6 +66,16 @@ module Ai4r
           assert_equal 1, Proximity.hamming_distance([3], [0])
       end 
       
+      def test_simple_matching_distance
+          assert_equal 0, Proximity.simple_matching_distance(@@data1, @@data1)
+          assert_equal  Proximity.simple_matching_distance(@@data1, @@data2), 
+                        Proximity.simple_matching_distance(@@data2, @@data1)
+          assert 0 <= Proximity.simple_matching_distance(@@data1, @@data1)                        
+          assert_equal 1, Proximity.simple_matching_distance([1,2], [0,1])
+          assert_equal 1.0/0, Proximity.simple_matching_distance([1,10], [2,2])
+          assert_equal 1.0/0, Proximity.simple_matching_distance([3], [0])
+      end       
+      
     end
   end
 end

@@ -1,3 +1,10 @@
+1.6 (In progress)
+  * New clusterer: Hierarchical Weighted Average Linkage
+  * New clusterer: Hierarchical Centroid Linkage
+  * New clusterer: Hierarchical Median Linkage
+  * New clusterer: Hierarchical Ward's method Linkage 
+  * Example added: Simple website clusterer
+  * New simple matching distance function added for discrete attribute vectors
 1.5
   * ClassifierEvaluator class added: Ideal for experimentation with classifiers
   * New classifier: Multilayer Perceptron using Backpropagation neural network
