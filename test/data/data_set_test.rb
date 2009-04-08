@@ -86,6 +86,7 @@ module Ai4r
         assert_equal set.data_labels, set[0].data_labels
         assert_equal [[ "New York", 25, "Y"]], set[0].data_items
         assert_equal [[ "Chicago", 23, "Y"],[ "Boston", 23, "N"]], set[2..3].data_items
+        assert_equal items[1..-1], set[1..-1].data_items
       end
      
     end
