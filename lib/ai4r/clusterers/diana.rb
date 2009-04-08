@@ -40,34 +40,35 @@ module Ai4r
       def build(data_set, number_of_clusters)
         @data_set = data_set
         @number_of_clusters = number_of_clusters
-        @clusters = [@data_set]
+        @clusters = [@data_set[0..-1]]
         
         while(@clusters.length < @number_of_clusters)
           cluster_index_to_split = max_diameter_cluster(@clusters)
           cluster_to_split = @clusters[cluster_index_to_split]
-          splinter_group = init_splinter_group(cluster_to_split)
+          splinter_cluster = init_splinter_cluster(cluster_to_split)
           while true
-            index, max_distance_diff = max_distance_difference(cluster_to_split, splinter_group)
-            break if max_distance_diff < 0
-            splinter_group << cluster_to_split.data_item[index]
-            cluster_to_split.data_item.delete_at(index)
+            dist_diff, index = max_distance_difference(cluster_to_split, splinter_cluster)
+            break if dist_diff < 0
+            splinter_cluster << cluster_to_split.data_items[index]
+            cluster_to_split.data_items.delete_at(index)
           end
-          @clusters << splinter_group
+          @clusters << splinter_cluster
         end
-        
-        #TODO
-        
+       
         return self
       end
       
       # Classifies the given data item, returning the cluster index it belongs 
       # to (0-based).
       def eval(data_item)
-        #TODO
+        get_min_index(@clusters.collect do |cluster|
+          distance_sum(data_item, cluster) / cluster.data_items.length
+          end)
       end
       
       protected
       
+      # return the cluster with max diameter
       def max_diameter_cluster(clusters)
         max_index = 0
         max_diameter = 0
@@ -81,6 +82,7 @@ module Ai4r
         return max_index
       end
       
+      # Max distance between 2 items in a cluster
       def cluster_diameter(cluster)
         diameter = 0
         cluster.data_items.each_with_index do |item_a, item_a_pos|
@@ -92,32 +94,43 @@ module Ai4r
         return diameter
       end
       
-      def init_splinter_group(cluster_to_split)
+      # Create a cluster with the item with mx distance
+      # to the rest of the cluster's items.
+      # That item is removed from the initial cluster.
+      def init_splinter_cluster(cluster_to_split)
         max = 0.0
         max_index = 0
-        cluster_to_split.data_items.each_with_index do |item_a, index_a|
-          sum = 0.0
-          cluster_to_split.data_items.each_with_index do |item_b, index_b|
-            sum += @distance_function.call(item_a, item_b) if index_a != index_b
-          end  
-          if sum > max
-            max = sum 
-            max_index = index_a 
-          end
+        cluster_to_split.data_items.each_with_index do |item, index|
+          sum = distance_sum(item, cluster_to_split)
+          max, max_index = sum, index if sum > max
         end
-        splinter_group = cluster_to_split[max_index]
+        splinter_cluster = cluster_to_split[max_index]
         cluster_to_split.data_items.delete_at(max_index)
-        return splinter_group
+        return splinter_cluster
       end
       
-      def max_distance_difference(cluster_to_split, splinter_group)
-        distance_diffs = []
-        cluster_to_split.each_with_index do |item, index|
-          own_cluster_dist = cluster_to_split.inject(0) do |sum, item_b|
-            sum+@distance_function.call(item_a, item_b) 
-          end
-          own_cluster_dist /= (cluster_to_split.length-1)
-          #TODO
+      # Return the max average distance between any item of 
+      # cluster_to_split and the rest of items in that cluster,
+      # minus the average distance with the items of splinter_cluster,
+      # and the index of the item.
+      # A positive value means that the items is closer to the
+      # splinter group than to its current cluster.
+      def max_distance_difference(cluster_to_split, splinter_cluster)
+        max_diff = -1.0/0
+        max_diff_index = 0
+        cluster_to_split.data_items.each_with_index do |item, index|
+          dist_a = distance_sum(item, cluster_to_split) / (cluster_to_split.data_items.length-1)
+          dist_b = distance_sum(item, splinter_cluster) / (splinter_cluster.data_items.length)
+          dist_diff = dist_a - dist_b
+          max_diff, max_diff_index = dist_diff, index if dist_diff > max_diff
+        end
+        return max_diff, max_diff_index
+      end
+      
+      # Sum up the distance between an item and all the items in a cluster
+      def distance_sum(item_a, cluster)
+        cluster.data_items.inject(0.0) do |sum, item_b|
+          sum + @distance_function.call(item_a, item_b)
         end
       end
       
