@@ -23,19 +23,21 @@ module Ai4r
       def test_build_domains
         domains =  [  Set.new(["New York", "Chicago"]), 
                       Set.new(["M", "F"]), 
+                      [5, 85],
                       Set.new(["Y", "N"]) ]
-        data = [  [ "New York", "M", "Y"],
-                  [ "Chicago", "M", "Y"],
-                  [ "New York", "F", "Y"],
-                  [ "New York", "M", "N"],
-                  [ "Chicago", "M", "N"],
-                  [ "Chicago", "F", "Y"] ]
-        labels = ["city", "gender", "result"]
+        data = [  [ "New York", "M", 23, "Y"],
+                  [ "Chicago", "M", 85, "Y"],
+                  [ "New York", "F", 32, "Y"],
+                  [ "New York", "M", 5, "N"],
+                  [ "Chicago", "M", 15, "N"],
+                  [ "Chicago", "F", 45, "Y"] ]
+        labels = ["city", "gender", "age", "result"]
         set = DataSet.new({:data_items => data, :data_labels => labels})
         assert_equal domains, set.build_domains
         assert_equal domains[0], set.build_domain("city")
         assert_equal domains[1], set.build_domain(1)
-        assert_equal domains[2], set.build_domain("result")
+        assert_equal domains[2], set.build_domain("age")
+        assert_equal domains[3], set.build_domain("result")
       end
       
       def test_set_data_labels

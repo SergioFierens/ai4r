@@ -121,36 +121,40 @@ module Ai4r
         return self
       end
 
-      # Returns an array with the domain of each attribute (Set instance 
-      # containing all possible values)
+      # Returns an array with the domain of each attribute:
+      # * Set instance containing all possible values for nominal attributes
+      # * Array with min and max values for numeric attributes (i.e. [min, max])
+      # 
       # Return example:
       # => [#<Set: {"New York", "Chicago"}>, 
       #     #<Set: {"<30", "[30-50)", "[50-80]", ">80"}>, 
-      #     #<Set: {"M", "F"}>, 
+      #     #<Set: {"M", "F"}>,
+      #     [5, 85], 
       #     #<Set: {"Y", "N"}>]
       def build_domains
-        domains = Array.new(num_attributes) { Set.new }
-        @data_items.each do |data|
-          data.each_index {|attr_index| domains[attr_index] << data[attr_index]}
-        end
-        return domains
+        @data_labels.collect {|attr_label| build_domain(attr_label) }
       end
       
       # Returns a Set instance containing all possible values for an attribute
       # The parameter can be an attribute label or index (0 based).
+      # * Set instance containing all possible values for nominal attributes
+      # * Array with min and max values for numeric attributes (i.e. [min, max])
       # 
       #   build_domain("city")
       #   => #<Set: {"New York", "Chicago"}>
+      #   
+      #   build_domain("age")
+      #   => [5, 85]
       # 
       #   build_domain(2) # In this example, the third attribute is gender
       #   => #<Set: {"M", "F"}>
       def build_domain(attr)
         index = get_index(attr)
-        domain = Set.new
-        @data_items.each do |data|
-          domain << data[index]
+        if @data_items.first[index].is_a?(Numeric)
+          return [Statistics.min(self, index), Statistics.max(self, index)]
+        else
+          return @data_items.inject(Set.new){|domain, x| domain << x[index]}
         end
-        return domain
       end
       
       # Returns attributes number, including class attribute

@@ -1,4 +1,7 @@
-1.6 (In progress)
+1.6.1
+  * Hyperpipes bug fixed
+  * Data set domains builder returns range for numeric attributes
+1.6 
   * New classifier: Hyperpipes
   * New clusterer: Hierarchical Weighted Average Linkage
   * New clusterer: Hierarchical Centroid Linkage

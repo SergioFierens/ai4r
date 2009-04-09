@@ -8,7 +8,6 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'set'
-require File.dirname(__FILE__) + '/../data/constants'
 require File.dirname(__FILE__) + '/../data/data_set'
 require File.dirname(__FILE__) + '/../classifiers/classifier'
 
@@ -29,12 +28,13 @@ module Ai4r
       # as parameter. The last attribute of each item is considered as 
       # the item class.
       def build(data_set)
+        data_set.check_not_empty
         @data_set = data_set
         @domains = data_set.build_domains
         
         @pipes = {}
-        @domains.last.each {|cat| @pipes[cat] = build_pipe(@domains)}
-        @data_set.data_item.each {|item| update_pipe(@pipes[item.last], item) }
+        @domains.last.each {|cat| @pipes[cat] = build_pipe(@data_set)}
+        @data_set.data_items.each {|item| update_pipe(@pipes[item.last], item) }
         
         return self
       end
@@ -47,7 +47,7 @@ module Ai4r
         @pipes.each do |category, pipe|
           pipe.each_with_index do |bounds, i|
             if data[i].is_a? Numeric
-              votes[category]+=1 if data[i]>bounds[:min] && data[i]<bounds[:max]
+              votes[category]+=1 if data[i]>=bounds[:min] && data[i]<=bounds[:max]
             else
               votes[category]+=1 if bounds[data[i]]
             end
@@ -79,15 +79,15 @@ module Ai4r
           pipe.each_with_index do |bounds, i|
             rule = "votes['#{category}'] += 1 "
             if data[i].is_a? Numeric
-              rule += "if #{labels[i]} > #{bounds[:min]} && #{labels[i]} < #{bounds[:max]}"
+              rule += "if #{labels[i]} >= #{bounds[:min]} && #{labels[i]} <= #{bounds[:max]}"
             else
-              rule += "if #{bounds.inspect}['#{labels[i]}']"
+              rule += "if #{bounds.inspect}[#{labels[i]}]"
             end
             rules << rule
           end
         end
-        rules << "votes.to_a.max {|x, y| x.last <=> y.last}.first"
-        return rules.join('\n')
+        rules << "#{labels.last} = votes.to_a.max {|x, y| x.last <=> y.last}.first"
+        return rules.join("\n")
       end
       
       protected
@@ -95,7 +95,7 @@ module Ai4r
       def build_pipe(data_set)
         data_set.data_items.first[0...-1].collect do |att|
           if att.is_a? Numeric
-            {:min=>POSITIVE_INFINITY, :max=>NEGATIVE_INFINITY}
+            {:min=>1.0/0, :max=>-1.0/0}
           else
             Hash.new(false)
           end
@@ -104,7 +104,7 @@ module Ai4r
       
       def update_pipe(pipe, data_item)
         data_item[0...-1].each_with_index do |att, i|
-          if att.first.is_a? Numeric
+          if att.is_a? Numeric
             pipe[i][:min] = att if att < pipe[i][:min]
             pipe[i][:max] = att if att > pipe[i][:max]
           else
