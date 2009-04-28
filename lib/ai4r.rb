@@ -24,5 +24,6 @@ require "ai4r/classifiers/zero_r"
 require "ai4r/classifiers/hyperpipes"
 # Neural networks
 require "ai4r/neural_network/backpropagation"
+require "ai4r/neural_network/hopfield"
 # Genetic Algorithms
 require "ai4r/genetic_algorithm/genetic_algorithm"
