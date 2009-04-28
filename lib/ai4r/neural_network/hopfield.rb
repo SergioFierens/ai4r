@@ -37,6 +37,7 @@ require File.dirname(__FILE__) + '/../data/parameterizable'
         @data_set = data_set
         initialize_nodes(@data_set)
         initialize_weights(@data_set)
+        return self
       end
       
       def run(input)
@@ -66,27 +67,47 @@ require File.dirname(__FILE__) + '/../data/parameterizable'
         @nodes.each_with_index {|node, j| sum += read_weight(i,j)*node }
         @nodes[i] = (sum > @threshold) ? @active_node_value : @inactive_node_value
       end
-            
+      
+      # Initialize all nodes with "inactive" state.
       def initialize_nodes(data_set)
         @nodes = Array.new(data_set.data_items.first.length, 
           @inactive_node_value)
       end
       
+      # Create a partial weigth matrix:
+      #   [ 
+      #     [w(1,0)], 
+      #     [w(2,0)], [w(2,1)],
+      #     [w(3,0)], [w(3,1)], [w(3,2)],
+      #     ... 
+      #     [w(n-1,0)], [w(n-1,1)], [w(n-1,2)], ... , [w(n-1,n-2)]
+      #   ]
+      # where n is the number of data items in the data set.
+      # 
+      # We are saving memory here, as:
+      # 
+      # * w[i][i] = 0 (no node connects with itself)
+      # * w[i][j] = w[j][i] (weigths are symmetric)
+      # 
+      # Use read_weight(i,j) to find out weight between node i and j
       def initialize_weights(data_set)
         @weights = Array.new(data_set.data_items.length-1) {|l| Array.new(l+1)}
         data_set.data_items.each_with_index do |a, i|
           i.times do |j|
             b = data_set.data_items[j]
             w = 0
-            @nodes.times {|n| w += a[n]*b[n]}
+            @nodes.length.times {|n| w += a[n]*b[n]}
             @weights[i-1][j] = w
           end
         end
       end
       
+      # read_weight(i,j) reads the weigth matrix and returns weight between 
+      # node i and j
       def read_weight(index_a, index_b)
         return 0 if index_a == index_b
         index_a, index_b = index_b, index_a if index_b > index_a
+        puts @weights.inspect
         return @weights[index_a-1][index_b]
       end
       

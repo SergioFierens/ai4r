@@ -21,6 +21,15 @@ module Ai4r
 
     class HopfieldTest < Test::Unit::TestCase
       
+      def setup
+        @data_set = Ai4r::Data::DataSet.new :data_items => [
+          [1,1,0,0,1,1,0,0,1,1,0,0,1,1,0,0],
+          [0,0,1,1,0,0,1,1,0,0,1,1,0,0,1,1],
+          [0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1],
+          [1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0],
+          ]
+      end
+      
       def test_initialize_nodes
         net = Hopfield.new
         data_set = Ai4r::Data::DataSet.new :data_items => [[1,1,0,0,1,1,0,0]]
@@ -30,7 +39,19 @@ module Ai4r
       end
       
       def test_initialize_weights
-        #TODO
+        net = Hopfield.new
+        net.initialize_nodes @data_set
+        net.initialize_weights(@data_set)
+        assert_equal [[0], [4, 4], [4, 4, 0]], net.weights
+      end
+      
+      def test_run
+        
+        net = Hopfield.new
+        net.train @data_set
+        100.times do
+          puts net.run [1,1,0,1,1,0,1,1,0,0,0,1,0,0,0,1]
+        end
       end
 
     end
