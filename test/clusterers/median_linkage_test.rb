@@ -12,8 +12,6 @@ require File.dirname(__FILE__) + '/../../lib/ai4r/clusterers/median_linkage'
 
 class Ai4r::Clusterers::MedianLinkage
   attr_accessor :data_set, :number_of_clusters, :clusters, :distance_matrix, :index_clusters
-  public :linkage_distance
-  public :create_initial_index_clusters
 end
 
 class Ai4r::Clusterers::MedianLinkageTest < Test::Unit::TestCase
@@ -36,6 +34,11 @@ class Ai4r::Clusterers::MedianLinkageTest < Test::Unit::TestCase
         [68.0, 26.0, 9.0, 0.0, 10.0, 68.0, 5.0, 52.0, 16.0], 
         [49.0, 49.0, 26.0, 5.0, 25.0, 49.0, 4.0, 29.0, 37.0, 5.0], 
         [2.0, 72.0, 65.0, 50.0, 52.0, 2.0, 65.0, 10.0, 74.0, 50.0, 37.0]]
+      
+   def setup
+     Ai4r::Clusterers::MedianLinkage.send(:public, 
+       *Ai4r::Clusterers::MedianLinkage.protected_instance_methods)  
+   end
   
    def test_linkage_distance
     clusterer = Ai4r::Clusterers::MedianLinkage.new
