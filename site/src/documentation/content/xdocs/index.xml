@@ -24,12 +24,19 @@
     <section id="Introduction">
       <title>Introduction</title>
       <p>
-        AI4R is a collection of ruby algorithms implementations, covering several Artificial 
-	intelligence fields, and simple practical examples using them. It implements:
+        AI4R is a collection of ruby algorithms implementations, 
+        covering several Artificial intelligence fields, and simple practical 
+        examples using them. A Ruby playground for AI researchers.
+        It implements:
       </p>
 	<ul>
 		<li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/GeneticAlgorithm.html">Genetic algorithms</a></li>
-		<li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/NeuralNetwork/Backpropagation.html">Neural networks (Backpropagation networks)</a></li>
+		<li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/NeuralNetwork.html">Neural Networks</a>
+      <ul>
+        <li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/NeuralNetwork/Backpropagation.html">Multilayer perceptron with Backpropagation learning</a></li>
+        <li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/NeuralNetwork/Hopfield.html">Hopfield net</a></li>
+      </ul>
+    </li>
 		<li><a href="machineLearning.html">Automatic classifiers (Machine Learning)</a>
 			<ul>
 				<li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Classifiers/ID3.html">ID3 (Decision Trees)</a></li>
@@ -125,6 +132,12 @@ require "ai4r"
 
     <section id="warranty">
       <title>Disclaimer Note</title>
+      <p>In plain English:</p>
+      <p>This project was created by Sergio Fierens, but the AI algorithms were 
+      created by other people who are actually much more clever than Sergio. 
+      He does his best implementing them, but he cannot warranty that these 
+      implementations are accurate.</p>
+      <p>In Legalese:</p>
       <p>
         This software is provided "as is" and without any express or implied 
         warranties, including, without limitation, the implied warranties of 
