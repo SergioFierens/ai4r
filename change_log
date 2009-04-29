@@ -1,3 +1,5 @@
+1.7
+  * New neural network: Hopfield nets added
 1.6.1
   * Hyperpipes bug fixed
   * Data set domains builder returns range for numeric attributes
