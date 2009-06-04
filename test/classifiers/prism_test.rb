@@ -1,14 +1,12 @@
 require 'test/unit'
 require File.dirname(__FILE__) + '/../../lib/ai4r/classifiers/prism'
 
-Ai4r::Classifiers::Prism.send(:public, *Ai4r::Classifiers::Prism.protected_instance_methods)  
-Ai4r::Classifiers::Prism.send(:public, *Ai4r::Classifiers::Prism.private_instance_methods)
 
 class PrismTest < Test::Unit::TestCase
   
   include Ai4r::Classifiers
   include Ai4r::Data
-  
+
   @@data_examples = [   ['New York',  '<30',      'M', 'Y'],
                 ['Chicago',     '<30',      'M', 'Y'],
                 ['Chicago',     '<30',      'F', 'Y'],
@@ -42,6 +40,9 @@ class PrismTest < Test::Unit::TestCase
     assert_equal("city", classifier.data_set.data_labels.first)
     assert_equal("marketing_target", classifier.data_set.data_labels.last)
     assert !classifier.rules.empty?
+
+    Prism.send(:public, *Prism.protected_instance_methods)
+    Prism.send(:public, *Prism.private_instance_methods)
   end
   
   def test_eval
@@ -77,8 +78,8 @@ class PrismTest < Test::Unit::TestCase
     classifier = Prism.new.build(DataSet.new(:data_labels => @@data_labels,
       :data_items => @@data_examples))
 
-    assert classifier.send(:matches_conditions,['New York', '<30', 'M', 'Y'], {"age_range" => "<30"})
-    assert !classifier.send(:matches_conditions,['New York', '<30', 'M', 'Y'], {"age_range" => "[50-80]"})
+    assert classifier.matches_conditions(['New York', '<30', 'M', 'Y'], {"age_range" => "<30"})
+    assert !classifier.matches_conditions(['New York', '<30', 'M', 'Y'], {"age_range" => "[50-80]"})
   end
 end
 
