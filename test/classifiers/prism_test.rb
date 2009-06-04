@@ -76,8 +76,9 @@ class PrismTest < Test::Unit::TestCase
   def test_matches_conditions
     classifier = Prism.new.build(DataSet.new(:data_labels => @@data_labels,
       :data_items => @@data_examples))
-    assert classifier.matches_conditions(['New York', '<30', 'M', 'Y'], {"age_range" => "<30"})
-    assert !classifier.matches_conditions(['New York', '<30', 'M', 'Y'], {"age_range" => "[50-80]"})
+
+    assert classifier.send(:matches_conditions,['New York', '<30', 'M', 'Y'], {"age_range" => "<30"})
+    assert !classifier.send(:matches_conditions,['New York', '<30', 'M', 'Y'], {"age_range" => "[50-80]"})
   end
 end
 
