@@ -24,9 +24,29 @@ module Ai4r
 
       def instantiate_weight(dimensions)
         @weights = Array.new dimensions
+        @instantiated_weight = Array.new dimensions
         @weights.each_with_index do |weight, index|
           @weights[index] = rand
+          @instantiated_weight[index] = @weights[index]
         end
+      end
+
+      def distance_to_input(input)
+        dist = 0
+        input.each_with_index do |i, index|
+            dist += i - @weights[index]**2
+         end
+        dist
+      end
+
+      def distance_to_node(node)
+        max((self.x - node.x).abs, (self.y - node.y).abs)
+      end
+
+      private
+
+      def max(a, b)
+        a > b ? a : b
       end
 
     end
