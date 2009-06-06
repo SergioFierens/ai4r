@@ -9,7 +9,7 @@ module Ai4r
     class SomTest < Test::Unit::TestCase
 
       def setup
-        @som = Som.new 2, 5, Layer.new
+        @som = Som.new 2, 5, Layer.new(3)
         @som.initiate_map
       end
 
@@ -55,7 +55,7 @@ module Ai4r
       end
 
       def test_adjust_nodes
-        @som.adjust_nodes [1,2], @som.find_bmu([0.5,0.5]), 2
+        @som.adjust_nodes [1,2], @som.find_bmu([0.5,0.5]), 2, 0.1
       end
 
 

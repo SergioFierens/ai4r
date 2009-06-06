@@ -1,5 +1,6 @@
 require File.dirname(__FILE__) + '/../data/parameterizable'
 require File.dirname(__FILE__) + '/layer'
+require File.dirname(__FILE__) + '/two_phase_layer'
 require File.dirname(__FILE__) + '/node'
 
 module Ai4r
@@ -41,7 +42,7 @@ module Ai4r
         bmu
       end
 
-      def adjust_nodes(input, bmu, radius)
+      def adjust_nodes(input, bmu, radius, learning_rate)
         hood = neighboorhood_for bmu, radius
         hood.each do |node| 
           influence = @layer.influence_decay node.distance_to_node(bmu), radius
@@ -49,10 +50,6 @@ module Ai4r
               weight += influence * learning_rate * (input[index] - weight)
           end
         end
-      end
-
-      def learning_rate
-        1
       end
 
       def train(data)
@@ -67,7 +64,7 @@ module Ai4r
         learning_rate = @layer.learning_rate_decay @epoch
 
         data.each do |entry|
-            adjust_nodes entry, find_bmu(entry), radius
+            adjust_nodes entry, find_bmu(entry), radius, learning_rate
         end
 
         @epoch += 1
