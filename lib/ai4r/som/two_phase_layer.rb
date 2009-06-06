@@ -6,7 +6,7 @@ module Ai4r
     class TwoPhaseLayer < Layer
 
       def initialize(nodes, learning_rate = 0.5, phase_one = 150, phase_two = 100, phase_one_learning_rate = 0.1, phase_two_learning_rate = 0)
-        super nodes, phase_one + phase_two, learning_rate
+        super nodes, nodes, phase_one + phase_two, learning_rate
         @phase_one = phase_one
         @phase_two = phase_two
         @lr = @initial_learning_rate
@@ -28,6 +28,7 @@ module Ai4r
           end
           @radius
         end
+
       end
 
       def learning_rate_decay(epoch)

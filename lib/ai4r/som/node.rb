@@ -8,14 +8,16 @@ module Ai4r
     class Node
 
       include Ai4r::Data::Parameterizable
-      
+
       parameters_info :weights => "holds the current weight",
                       :instantiated_weight => "holds the very first weight",
                       :x => "holds the row ID of the unit in the map",
-                      :y => "holds the column ID of the unit in the map"
+                      :y => "holds the column ID of the unit in the map",
+                      :id => "id of the node"
 
-      def self.create(id,total, dimensions)
+      def self.create(id, total, dimensions)
         n = Node.new
+        n.id = id
         n.instantiate_weight dimensions
         n.x = id % total
         n.y = (id / total).to_i
@@ -34,9 +36,9 @@ module Ai4r
       def distance_to_input(input)
         dist = 0
         input.each_with_index do |i, index|
-            dist += i - @weights[index]**2
-         end
-        dist
+          dist += (i - @weights[index]) ** 2
+        end
+        Math.sqrt(dist)
       end
 
       def distance_to_node(node)

@@ -1,3 +1,12 @@
+# Author::    Thomas Kern
+# License::   MPL 1.1
+# Project::   ai4r
+# Url::       http://ai4r.rubyforge.org/
+#
+# You can redistribute it and/or modify it under the terms of
+# the Mozilla Public License version 1.1  as published by the
+# Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
+
 require File.dirname(__FILE__) + '/../data/parameterizable'
 
 module Ai4r
@@ -9,28 +18,31 @@ module Ai4r
       include Ai4r::Data::Parameterizable
 
       parameters_info :nodes => "number of nodes, has to be equal to the som",
-                      :epochs => "number of epochs the algorithm has to run"
+                      :epochs => "number of epochs the algorithm has to run",
+                      :radius => "sets the initial neighborhoud radius"
 
-      def initialize(nodes, epochs = 10, learning_rate = 0.5)
+      def initialize(nodes, radius, epochs = 100, learning_rate = 0.7)
         @nodes = nodes
         @epochs = epochs
+        @radius = radius
         @time_to_epochs = @epochs / Math.log(@nodes / 2)
         @initial_learning_rate = learning_rate
       end
 
       def influence_decay(distance, radius)
-        Math.exp(- (distance.to_f / 2.0 / radius.to_f))
+        Math.exp(- (distance.to_f**2 / 2.0 / radius.to_f**2))
       end
 
       def radius_decay(epoch)
-        @nodes / 2 * Math.exp(- (epoch.to_f / @time_to_epochs))
+        (@radius * ( 1 - epoch/ @time_to_epochs)).round
       end
 
       def learning_rate_decay(epoch)
-        @initial_learning_rate * Math.exp(- (epoch.to_f / @epochs - epoch))
+        @initial_learning_rate * ( 1 - epoch / @time_to_epochs)
       end
 
     end
 
   end
+
 end

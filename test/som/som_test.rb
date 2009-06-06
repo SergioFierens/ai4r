@@ -5,7 +5,6 @@ module Ai4r
 
   module Som
 
-
     class SomTest < Test::Unit::TestCase
 
       def setup
@@ -31,10 +30,11 @@ module Ai4r
       def test_neighbourhood_for_corner_bmu
         node = @som.get_node(0, 0)
         hood = @som.neighboorhood_for(node, 1)
-        assert_equal 3, hood.length
+        assert_equal 4, hood.length
 
         hood.each do |h|
-          assert_equal 1, h.distance_to_node(node)
+          dist = h.distance_to_node(node)
+          assert dist == 0 || dist == 1
         end
       end
 
@@ -55,7 +55,7 @@ module Ai4r
       end
 
       def test_adjust_nodes
-        @som.adjust_nodes [1,2], @som.find_bmu([0.5,0.5]), 2, 0.1
+        @som.adjust_nodes [1, 2], @som.find_bmu([0.5, 0.5]), 2, 0.1
       end
 
 
@@ -92,7 +92,7 @@ module Ai4r
       private
 
       def distancer(x1, y1, x2, y2)
-        @som.node_distance(@som.get_node(x1, y1), @som.get_node(x2, y2))
+        @som.get_node(x1, y1).distance_to_node(@som.get_node(x2, y2))
       end
 
     end
