@@ -58,7 +58,6 @@ module Ai4r
         @som.adjust_nodes [1, 2], @som.find_bmu([0.5, 0.5]), 2, 0.1
       end
 
-
       def test_access_to_nodes
         assert_raise RuntimeError do
           @som.get_node(5, 5)
