@@ -8,7 +8,7 @@ module Ai4r
     class SomTest < Test::Unit::TestCase
 
       def setup
-        @som = Som.new 2, 5, Layer.new(3)
+        @som = Som.new 2, 5, Layer.new(3, 3)
         @som.initiate_map
       end
 
@@ -41,10 +41,10 @@ module Ai4r
       def test_neighbourhood_for_center_bmu
         node = @som.get_node(2, 2)
         hood = @som.neighboorhood_for(node, 1)
-        assert_equal 8, hood.length
+        assert_equal 9, hood.length
 
         hood.each do |h|
-          assert_equal 1, h.distance_to_node(node)
+          assert h.distance_to_node(node) == 0 || h.distance_to_node(node) == 1
         end
       end
 
