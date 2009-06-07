@@ -63,6 +63,7 @@ module Ai4r
         @number_of_nodes = number_of_nodes
         @nodes = Array.new(number_of_nodes * number_of_nodes)
         @epoch = 0
+        @cache = {}
       end
 
       def neighboorhood_for(bmu, radius)
@@ -74,8 +75,7 @@ module Ai4r
       def find_bmu(input)
         bmu = @nodes.first
         dist = bmu.distance_to_input input
-        @nodes.each do |node|
-
+        @nodes[1..-1].each do |node|
           tmp_dist = node.distance_to_input(input)
           if tmp_dist <= dist
             dist = tmp_dist
@@ -86,10 +86,13 @@ module Ai4r
       end
 
       def adjust_nodes(input, bmu, radius, learning_rate)
-        neighboorhood_for(bmu, radius).each_with_index do |node, index|
-          influence = @layer.influence_decay node.distance_to_node(bmu), radius
+        @nodes.each do |node|
+          dist = node.distance_to_node(bmu)
+          next unless dist <= radius
+
+          influence = @layer.influence_decay dist, radius
           node.weights.each_with_index do |weight, index|
-            node.weights[index] += influence * learning_rate * (input[index] - weight)
+            node.weights[index] +=  influence * learning_rate * (input[index] - weight)
           end
         end
       end
@@ -100,14 +103,8 @@ module Ai4r
       end
 
       def global_error(data)
-        sum = 0
-        data.each do |entry|
-          bmu = find_bmu(entry)
-          sum += bmu.distance_to_input(entry)**2
-
-        end
-        sum
-      end
+        data.inject(0) {|sum,entry| sum + find_bmu(entry).distance_to_input(entry)**2 }
+       end
 
       def train_step(data)
         return true if @epoch >= @layer.epochs
@@ -128,14 +125,16 @@ module Ai4r
         @nodes[y + x * @number_of_nodes]
       end
 
-      def check_param_for_som(x, y)
-        y > @number_of_nodes - 1 || x > @number_of_nodes - 1
-      end
-
       def initiate_map
         @nodes.each_with_index do |node, i|
           @nodes[i] = Node.create i, @number_of_nodes, @dimension
         end
+      end
+
+      private
+
+      def check_param_for_som(x, y)
+        y > @number_of_nodes - 1 || x > @number_of_nodes - 1
       end
 
     end

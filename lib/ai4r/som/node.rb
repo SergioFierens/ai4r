@@ -42,7 +42,6 @@ module Ai4r
         Math.sqrt(dist)
       end
 
-
       def distance_to_node(node)
         max((self.x - node.x).abs, (self.y - node.y).abs)
       end

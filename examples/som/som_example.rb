@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../../lib/ai4r/som/som'
 require File.dirname(__FILE__) + '/som_data'
 require 'benchmark'
 
-som = Ai4r::Som::Som.new 4, 8, Ai4r::Som::Layer.new(8, 4,100)
+som = Ai4r::Som::Som.new 4, 8, Ai4r::Som::TwoPhaseLayer.new(8, 0.9, 40,20)
 som.initiate_map
 
 som.nodes.each do |node|
