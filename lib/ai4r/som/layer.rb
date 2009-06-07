@@ -25,7 +25,9 @@ module Ai4r
         @nodes = nodes
         @epochs = epochs
         @radius = radius
-        @time_to_epochs = @epochs / Math.log(@nodes / 2)
+        @time_to_epochs = @epochs / Math.log(nodes / 4)
+        @time_to_epochs = @epochs + 1 if @time_to_epochs < @epochs
+
         @initial_learning_rate = learning_rate
       end
 

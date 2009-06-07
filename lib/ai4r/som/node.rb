@@ -13,7 +13,7 @@ module Ai4r
                       :instantiated_weight => "holds the very first weight",
                       :x => "holds the row ID of the unit in the map",
                       :y => "holds the column ID of the unit in the map",
-                      :id => "id of the node"
+                      :id => "id of the node"      
 
       def self.create(id, total, dimensions)
         n = Node.new
@@ -38,8 +38,10 @@ module Ai4r
         input.each_with_index do |i, index|
           dist += (i - @weights[index]) ** 2
         end
+
         Math.sqrt(dist)
       end
+
 
       def distance_to_node(node)
         max((self.x - node.x).abs, (self.y - node.y).abs)

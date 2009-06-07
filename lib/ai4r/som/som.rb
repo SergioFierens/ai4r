@@ -95,8 +95,18 @@ module Ai4r
       end
 
       def train(data)
-        while !train_step(data);
-        end;
+        while !train_step(data)
+        end
+      end
+
+      def global_error(data)
+        sum = 0
+        data.each do |entry|
+          bmu = find_bmu(entry)
+          sum += bmu.distance_to_input(entry)**2
+
+        end
+        sum
       end
 
       def train_step(data)
@@ -114,8 +124,12 @@ module Ai4r
       end
 
       def get_node(x, y)
-        raise if y > @number_of_nodes - 1 || x > @number_of_nodes - 1
+        raise if check_param_for_som(x,y)
         @nodes[y + x * @number_of_nodes]
+      end
+
+      def check_param_for_som(x, y)
+        y > @number_of_nodes - 1 || x > @number_of_nodes - 1
       end
 
       def initiate_map
