@@ -6,7 +6,7 @@ som = Ai4r::Som::Som.new 4, 8, Ai4r::Som::TwoPhaseLayer.new(8, 0.9, 40,20)
 som.initiate_map
 
 som.nodes.each do |node|
-  #p node.weights
+  p node.weights
 end
 
 puts "global error distance: #{som.global_error(SOM_DATA)}"
@@ -17,7 +17,7 @@ times = Benchmark.measure do
 end
 
 som.nodes.each do |node|
-  #p node.weights
+  p node.weights
 end
 
 puts "Elapsed time for training: #{times}"

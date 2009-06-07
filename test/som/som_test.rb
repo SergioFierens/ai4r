@@ -1,3 +1,15 @@
+# This is a unit test file for the SOM algorithm implemented
+# in ai4r
+#
+# Author::    Thomas Kern
+# License::   MPL 1.1
+# Project::   ai4r
+# Url::       http://ai4r.rubyforge.org/
+#
+# You can redistribute it and/or modify it under the terms of
+# the Mozilla Public License version 1.1  as published by the
+# Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
+
 require File.dirname(__FILE__) + '/../../lib/ai4r/som/som'
 require 'test/unit'
 
@@ -38,9 +50,14 @@ module Ai4r
       end
 
       def test_access_to_nodes
-        assert_raise RuntimeError do
+        assert_raise Exception do
           @som.get_node(5, 5)
         end
+
+        assert_raise Exception do
+          @som.get_node(5, -3)
+        end
+
         assert_equal Node, @som.get_node(0, 0).class
       end
 

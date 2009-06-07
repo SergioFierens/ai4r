@@ -13,6 +13,16 @@ module Ai4r
 
   module Som
 
+    # responsible for the implementation of the algorithm's decays
+    # currently has methods for the decay of the radius, influence and learning rate.
+    # Has only one phase, which ends after the number of epochs is passed by the Som-class.
+    #
+    # = Parameters
+    # * nodes => number of nodes in the SOM (nodes x nodes). Has to be the same number
+    # you pass to the SOM. Has to be an integer
+    # * radius => the initial radius for the neighborhood
+    # * epochs => number of epochs the algorithm runs, has to be an integer. By default it is set to 100
+    # * learning_rate => sets the initial learning rate
     class Layer
 
       include Ai4r::Data::Parameterizable
@@ -25,22 +35,28 @@ module Ai4r
         @nodes = nodes
         @epochs = epochs
         @radius = radius
-        @time_to_epochs = @epochs / Math.log(nodes / 4)
-        @time_to_epochs = @epochs + 1 if @time_to_epochs < @epochs
+        @time_for_epoch = @epochs / Math.log(nodes / 4)
+        @time_for_epoch = @epochs + 1 if @time_for_epoch < @epochs
 
         @initial_learning_rate = learning_rate
       end
 
+      # calculates the influnce decay for a certain distance and the current radius
+      # of the epoch
       def influence_decay(distance, radius)
         Math.exp(- (distance.to_f**2 / 2.0 / radius.to_f**2))
       end
 
+      # calculates the radius decay for the current epoch. Uses @time_for_epoch
+      # which has to be higher than the number  of epochs, otherwise the decay will be - Infinity
       def radius_decay(epoch)
-        (@radius * ( 1 - epoch/ @time_to_epochs)).round
+        (@radius * ( 1 - epoch/ @time_for_epoch)).round
       end
 
+      # calculates the learning rate decay. uses @time_for_epoch again and same rule applies:
+      # @time_for_epoch has to be higher than the number  of epochs, otherwise the decay will be - Infinity
       def learning_rate_decay(epoch)
-        @initial_learning_rate * ( 1 - epoch / @time_to_epochs)
+        @initial_learning_rate * ( 1 - epoch / @time_for_epoch)
       end
 
     end
