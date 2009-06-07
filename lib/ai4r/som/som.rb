@@ -66,12 +66,6 @@ module Ai4r
         @cache = {}
       end
 
-      def neighboorhood_for(bmu, radius)
-        @nodes.select do |node|
-          node.distance_to_node(bmu) <= radius
-        end
-      end
-
       def find_bmu(input)
         bmu = @nodes.first
         dist = bmu.distance_to_input input
