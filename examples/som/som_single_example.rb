@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../../lib/ai4r/som/som'
 require File.dirname(__FILE__) + '/som_data'
 require 'benchmark'
 
-som = Ai4r::Som::Som.new 4, 8, Ai4r::Som::TwoPhaseLayer.new(7, 0.95, 200,150)
+som = Ai4r::Som::Som.new 4, 8, Ai4r::Som::TwoPhaseLayer.new(10)
 som.initiate_map
 
 som.nodes.each do |node|
@@ -21,4 +21,4 @@ som.nodes.each do |node|
 end
 
 puts "Elapsed time for training: #{times}"
-puts "global error distance: #{som.global_error(SOM_DATA)}"
+puts "global error distance: #{som.global_error(SOM_DATA)}\n\n"
