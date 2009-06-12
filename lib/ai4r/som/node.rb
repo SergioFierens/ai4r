@@ -44,7 +44,7 @@ module Ai4r
         n.id = id
         n.instantiate_weight dimensions
         n.x = id % total
-        n.y = (id / total).to_i
+        n.y = (id / total.to_f).to_i
         n
       end
 

@@ -43,9 +43,9 @@ module Ai4r
         @phase_one_learning_rate = phase_one_learning_rate
         @phase_two_learning_rate = phase_two_learning_rate
 
-        @radius_reduction = @phase_one / (nodes/2 - 1) + 1
+        @radius_reduction = @phase_one / (nodes/2.0 - 1) + 1
         @delta_lr = (@lr - @phase_one_learning_rate)/ @phase_one
-        @radius = (nodes / 2).to_i
+        @radius = (nodes / 2.0).to_i
       end
 
       # two different values will be returned, depending on the phase

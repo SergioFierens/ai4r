@@ -32,11 +32,13 @@ module Ai4r
                       :radius => "sets the initial neighborhoud radius"
 
       def initialize(nodes, radius, epochs = 100, learning_rate = 0.7)
+        raise("Too few nodes") if nodes < 3
+        
         @nodes = nodes
         @epochs = epochs
         @radius = radius
-        @time_for_epoch = @epochs / Math.log(nodes / 4)
-        @time_for_epoch = @epochs + 1 if @time_for_epoch < @epochs
+        @time_for_epoch = @epochs / Math.log(nodes / 4.0)
+        @time_for_epoch = @epochs + 1.0 if @time_for_epoch < @epochs
 
         @initial_learning_rate = learning_rate
       end
