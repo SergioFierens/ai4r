@@ -36,15 +36,14 @@ module Ai4r
 
         prob_sum = prob.inject(0){|b,i| b+i}
 
+        # normalize probabilities to sum to 1
         if prob_sum > 0
           prob.each_with_index do |prob_entry, index|
             prob[index] /= prob_sum
           end
         end
 
-        
-
-
+        [index_to_klass(prob.index(prob.max)),prob.max]
       end
 
       def build(data)
@@ -54,6 +53,13 @@ module Ai4r
       end
 
       private
+
+      def index_to_klass(index)
+        result = @klass_index.detect do |k,v|
+          v == index          
+        end
+        result ? result.first : nil
+      end
 
       def initialize_klass_index
         @data.klasses.each_with_index do |dl, index|
