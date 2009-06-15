@@ -22,7 +22,6 @@ module Ai4r
 
       attr_accessor :klasses
 
-
       def load_csv_with_labels(filepath)
         super filepath
 
