@@ -36,6 +36,11 @@ If you do not want to make it public, send it to me: Sergio Fierens, email addre
 AI4R is an active project. If you are interested about what we are working on, 
 checkout the development roadmap: http://wiki.jadeferret.com/AI4R_RoadMap 
 
+= Contributors
+
+* Thomas Kern (SOM implementation and examples)
+* Sergio Fierens
+
 = Disclaimer
 
 In plain english:

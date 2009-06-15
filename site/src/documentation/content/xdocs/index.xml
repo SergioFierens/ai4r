@@ -31,6 +31,7 @@
       </p>
 	<ul>
 		<li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/GeneticAlgorithm.html">Genetic algorithms</a></li>
+    <li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Som.html">Self-organized maps (SOM)</a></li>
 		<li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/NeuralNetwork.html">Neural Networks</a>
       <ul>
         <li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/NeuralNetwork/Backpropagation.html">Multilayer perceptron with Backpropagation learning</a></li>
@@ -107,8 +108,13 @@ require "ai4r"
           development roadmap 
         </a>
       </p>
+      <p>Current active contributors are:</p> 
+      <ul>
+        <li>Thomas Kern (SOM implementation and examples)</li>
+        <li>Sergio Fierens</li>
+      </ul>
     </section>
-
+    
     <section id="ContactMe">
       <title>Contact</title>
       <p>

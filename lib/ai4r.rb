@@ -27,3 +27,5 @@ require File.dirname(__FILE__) +  "/ai4r/neural_network/backpropagation"
 require File.dirname(__FILE__) +  "/ai4r/neural_network/hopfield"
 # Genetic Algorithms
 require File.dirname(__FILE__) +  "/ai4r/genetic_algorithm/genetic_algorithm"
+# SOM
+require File.dirname(__FILE__) +  "/ai4r/som/som"
