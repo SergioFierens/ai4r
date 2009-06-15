@@ -94,7 +94,6 @@ module Ai4r
         @data.data_labels.each_with_index do |dl, index|
           @pcc << build_array(dl, index)
           @pcp << build_array(dl, index)
-
         end
       end
 

@@ -10,5 +10,5 @@ data.load_csv_with_labels "bayes_data.csv"
 
 p data
 
-b = Bayes.new data
-p b.eval(["Blue", "Sports", "Imported"])
+b = Bayes.new data, 3
+p b.eval(["Red", "SUV", "Domestic"])
