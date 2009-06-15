@@ -20,7 +20,10 @@ module Ai4r
         @klass = item[klass_index]
         item.delete_at klass_index
         @entries = item
+      end
 
+      def [](index)
+        @entries[index]
       end
     end
   end

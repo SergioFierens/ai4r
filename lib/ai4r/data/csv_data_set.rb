@@ -22,9 +22,14 @@ module Ai4r
         super filepath
 
         @data_items = @data_items.map { |item| DataEntry.new(item, klass_index) }
+        clean_labels
         @klasses = @data_items.map{|di| di.klass }.uniq
 
         self
+      end
+
+      def clean_labels
+        @data_labels.delete_at klass_index
       end
 
       def klass_index
