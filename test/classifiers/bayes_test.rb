@@ -5,9 +5,6 @@ require 'test/unit'
 include Ai4r::Classifiers
 include Ai4r::Data
 
-
-
-
 class BayesTest < Test::Unit::TestCase
 
   def test_known_attributes
