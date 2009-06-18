@@ -13,17 +13,17 @@ require File.dirname(__FILE__) + '/statistics'
 
 module Ai4r
   module Data
-  
+
     # A data set is a collection of N data items. Each data item is 
     # described by a set of attributes, represented as an array.
     # Optionally, you can assign a label to the attributes, using 
     # the data_labels property.
     class DataSet
-      
+
       @@number_regex = /(((\b[0-9]+)?\.)?\b[0-9]+([eE][-+]?[0-9]+)?\b)/
-      
-      attr_reader :data_labels, :data_items 
-      
+
+      attr_reader :data_labels, :data_items
+
       # Create a new DataSet. By default, empty.
       # Optionaly, you can provide the initial data items and data labels.
       # 
@@ -41,37 +41,52 @@ module Ai4r
       # Retrieve a new DataSet, with the item(s) selected by the provided 
       # index. You can specify an index range, too.
       def [](index)
-        selected_items = (index.is_a?(Fixnum)) ? 
-          [@data_items[index]] : @data_items[index]
-        return DataSet.new(:data_items => selected_items, 
-          :data_labels =>@data_labels)
+        selected_items = (index.is_a?(Fixnum)) ?
+                [@data_items[index]] : @data_items[index]
+        return DataSet.new(:data_items => selected_items,
+                           :data_labels =>@data_labels)
       end
-      
+
       # Load data items from csv file
       def load_csv(filepath)
         items = []
-        CSV::Reader.parse(File.open(filepath, 'r')) do |row|
-          items << row
+        open_csv_file(filepath) do |entry|
+          items << entry
         end
         set_data_items(items)
       end
-      
+
+      # opens a csv-file and reads it line by line
+      # for each line, a block is called and the row is passed to the block
+      # ruby1.8 and 1.9 safe
+      def open_csv_file(filepath, &block)
+        if CSV.const_defined? :Reader
+          CSV::Reader.parse(File.open(filepath, 'r')) do |row|
+            block.call row
+          end
+        else
+          CSV.parse(File.open(filepath, 'r')) do |row|
+            block.call row
+          end
+        end
+      end
+
       # Load data items from csv file. The first row is used as data labels.
       def load_csv_with_labels(filepath)
         load_csv(filepath)
         @data_labels = @data_items.shift
         return self
       end
-      
+
       # Same as load_csv, but it will try to convert cell contents as numbers.
       def parse_csv(filepath)
         items = []
-        CSV::Reader.parse(File.open(filepath, 'r')) do |row|
+        open_csv_file(filepath) do |row|
           items << row.collect{|x| (x.match(@@number_regex)) ? x.to_f : x.data }
         end
         set_data_items(items)
       end
-      
+
       # Set data labels.
       # Data labels must have the following format:
       #     [ 'city', 'age_range', 'gender', 'marketing_target'  ]
@@ -134,7 +149,7 @@ module Ai4r
       def build_domains
         @data_labels.collect {|attr_label| build_domain(attr_label) }
       end
-      
+
       # Returns a Set instance containing all possible values for an attribute
       # The parameter can be an attribute label or index (0 based).
       # * Set instance containing all possible values for nominal attributes
@@ -156,12 +171,12 @@ module Ai4r
           return @data_items.inject(Set.new){|domain, x| domain << x[index]}
         end
       end
-      
+
       # Returns attributes number, including class attribute
       def num_attributes
         return (@data_items.empty?) ? 0 : @data_items.first.size
       end
-      
+
       # Returns the index of a given attribute (0-based).
       # For example, if "gender" is the third attribute, then:
       #   get_index("gender") 
@@ -169,82 +184,83 @@ module Ai4r
       def get_index(attr)
         return (attr.is_a?(Fixnum) || attr.is_a?(Range)) ? attr : @data_labels.index(attr)
       end
-      
+
       # Raise an exception if there is no data item.
       def check_not_empty
         if @data_items.empty?
-          raise ArgumentError,"Examples data set must not be empty."
+          raise ArgumentError, "Examples data set must not be empty."
         end
       end
 
       # Add a data item to the data set
       def << data_item
         if data_item.nil? || !data_item.is_a?(Enumerable) || data_item.empty?
-          raise ArgumentError,"Data must not be an non empty array."
+          raise ArgumentError, "Data must not be an non empty array."
         elsif @data_items.empty?
           set_data_items([data_item])
         elsif data_item.length != num_attributes
-          raise ArgumentError,"Number of attributes do not match. " + 
-            "#{data_item.length} attributes provided, " + 
-            "#{num_attributes} attributes expected."
-        else 
+          raise ArgumentError, "Number of attributes do not match. " +
+                  "#{data_item.length} attributes provided, " +
+                  "#{num_attributes} attributes expected."
+        else
           @data_items << data_item
         end
       end
-     
+
       # Returns an array with the mean value of numeric attributes, and 
       # the most frequent value of non numeric attributes
       def get_mean_or_mode
         mean = []
-        num_attributes.times do |i| 
-          mean[i] = 
-            if @data_items.first[i].is_a?(Numeric)
-              Statistics.mean(self, i)
-            else
-              Statistics.mode(self, i)
-            end
+        num_attributes.times do |i|
+          mean[i] =
+                  if @data_items.first[i].is_a?(Numeric)
+                    Statistics.mean(self, i)
+                  else
+                    Statistics.mode(self, i)
+                  end
         end
         return mean
       end
-      
+
       protected
+
       def check_data_items(data_items)
         if !data_items || data_items.empty?
-          raise ArgumentError,"Examples data set must not be empty." 
+          raise ArgumentError, "Examples data set must not be empty."
         elsif !data_items.first.is_a?(Enumerable)
-          raise ArgumentError,"Unkown format for example data." 
+          raise ArgumentError, "Unkown format for example data."
         end
         attributes_num = data_items.first.length
         data_items.each_index do |index|
           if data_items[index].length != attributes_num
             raise ArgumentError,
-                "Quantity of attributes is inconsistent. " + 
-                "The first item has #{attributes_num} attributes "+ 
-                "and row #{index} has #{data_items[index].length} attributes"  
+                  "Quantity of attributes is inconsistent. " +
+                          "The first item has #{attributes_num} attributes "+
+                          "and row #{index} has #{data_items[index].length} attributes"
           end
         end
       end
-      
+
       def check_data_labels(labels)
         if !@data_items.empty?
           if labels.length != @data_items.first.length
             raise ArgumentError,
-              "Number of labels and attributes do not match. " + 
-              "#{labels.length} labels and " + 
-              "#{@data_items.first.length} attributes found."  
+                  "Number of labels and attributes do not match. " +
+                          "#{labels.length} labels and " +
+                          "#{@data_items.first.length} attributes found."
           end
         end
       end
-      
+
       def default_data_labels(data_items)
         data_labels = []
         data_items[0][0..-2].each_index do |i|
-          data_labels[i] = "attribute_#{i+1}" 
+          data_labels[i] = "attribute_#{i+1}"
         end
         data_labels[data_labels.length]="class_value"
         return data_labels
       end
-      
+
     end
   end
 end
