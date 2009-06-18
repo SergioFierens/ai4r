@@ -178,7 +178,7 @@ module Ai4r
         last_token = @data[0]
         cost = 0
         @data[1..-1].each do |token|
-          cost += @@costs.data_items[last_token][token]
+          cost += @@costs[last_token][token]
           last_token = token
         end
         @fitness = -1 * cost
@@ -220,7 +220,7 @@ module Ai4r
       # In this case, we have implemented edge recombination, wich is the 
       # most used reproduction algorithm for the Travelling salesman problem.
       def self.reproduce(a, b)
-        data_size = @@costs.data_items[0].length
+        data_size = @@costs[0].length
         available = []
         0.upto(data_size-1) { |n| available << n }
         token = a.data[0]
@@ -249,7 +249,7 @@ module Ai4r
       # use some problem domain knowledge, to generate a 
       # (probably) better initial solution.
       def self.seed
-        data_size = @@costs.data_items[0].length
+        data_size = @@costs[0].length
         available = []
         0.upto(data_size-1) { |n| available << n }
         seed = []

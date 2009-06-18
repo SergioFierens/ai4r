@@ -16,7 +16,7 @@ data_filename = "#{File.dirname(__FILE__)}/travel_cost.csv"
 data_set = Ai4r::Data::DataSet.new.load_csv_with_labels data_filename
 data_set.data_items.collect! {|column| column.collect {|element| element.to_f}}
 
-Ai4r::GeneticAlgorithm::Chromosome.set_cost_matrix(data_set)
+Ai4r::GeneticAlgorithm::Chromosome.set_cost_matrix(data_set.data_items)
 
 puts "Some random selected tours costs: "
 3.times do
