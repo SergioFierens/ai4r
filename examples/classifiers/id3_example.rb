@@ -10,7 +10,7 @@
 require File.dirname(__FILE__) + '/../../lib/ai4r/classifiers/id3'
 
 # Load data from data_set.csv
-data_filename = "#{File.dirname(__FILE__)}/data_set.csv"
+data_filename = "#{File.dirname(__FILE__)}/id3_data.csv"
 data_set = Ai4r::Data::DataSet.new.load_csv_with_labels data_filename
 
 # Build ID3 tree
