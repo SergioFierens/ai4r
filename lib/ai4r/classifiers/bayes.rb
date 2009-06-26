@@ -48,18 +48,12 @@ module Ai4r
     #
     # = How to use it
     #
-    #   data = CsvDataSet.new
-    #   data.load_csv_with_labels "bayes_data.csv"
-    #
+    #   data = DataSet.new.load_csv_with_labels "bayes_data.csv"
     #   b = Bayes.new.
     #     set_parameters({:m=>3}).
     #     build data
     #   b.eval(["Red", "SUV", "Domestic"])
     #
-    # Optionally - if you don't want to use csv you can still use CsvDataSet (it only extends DataSet
-    # by ovrriding load_csv_with_labels) and set the attribute 'klasses' manually by overriding
-    # @data_items of DataSet by an array of DataEntry instances
-
     class Bayes < Classifier
 
       parameters_info :m => "Default value is set to 0. It may be set to a value greater than " +
