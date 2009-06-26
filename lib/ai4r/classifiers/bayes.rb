@@ -7,8 +7,8 @@
 # the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../data/csv_data_set'
-require File.dirname(__FILE__) + '/../classifiers/classifier'
+require File.dirname(__FILE__) + '/../data/data_set'
+require File.dirname(__FILE__) + '/classifier'
 
 module Ai4r
   module Classifiers
@@ -43,45 +43,38 @@ module Ai4r
     #
     # = Parameters
     #
-    # * :data => Mandatory. Has to be an instance of CsvDataSet
-    # * :m => Optional. Default value is set to 0. Is set to a value greater than 0 when
+    # * :m => Optional. Default value is set to 0. It may be set to a value greater than 0 when
     # the size of the dataset is relatively small
-    # * :automatic_build => Optional. Default value is true. If it is true, the probability calculations
-    # are done automatically
-    #
     #
     # = How to use it
     #
-    # data = CsvDataSet.new
-    # data.load_csv_with_labels "bayes_data.csv"
+    #   data = CsvDataSet.new
+    #   data.load_csv_with_labels "bayes_data.csv"
     #
-    # b = Bayes.new data, 3
-    # p b.eval(["Red", "SUV", "Domestic"])
+    #   b = Bayes.new.
+    #     set_parameters({:m=>3}).
+    #     build data
+    #   b.eval(["Red", "SUV", "Domestic"])
     #
     # Optionally - if you don't want to use csv you can still use CsvDataSet (it only extends DataSet
     # by ovrriding load_csv_with_labels) and set the attribute 'klasses' manually by overriding
-    # @data_items of DataSet by an array of DataEntryr instances
+    # @data_items of DataSet by an array of DataEntry instances
 
     class Bayes < Classifier
 
-      def initialize(data, m=0, automatic_build=true)
-        raise "Error instance must be passed" unless data.is_a?(DataSet)
-        raise "Data should not be empty" if data.data_items.length == 0
-
-        @data = data
-        @domains = @data.build_domains
-        @m = m
-
+      parameters_info :m => "Default value is set to 0. It may be set to a value greater than " +
+        "0 when the size of the dataset is relatively small"
+          
+      def initialize
+        @m = 0
         @class_counts = []
         @class_prob = [] # stores the probability of the classes
         @pcc = [] # stores the number of instances divided into attribute/value/class
         @pcp = [] # stores the conditional probabilities of the values of an attribute
         @klass_index = {} # hashmap for quick lookup of all the used klasses and their indice
         @values = {} # hashmap for quick lookup of all the values
-
-        build data if automatic_build
       end
-
+      
       # overrides the method in Classifier
       # calculates the probabilities for the data entry Data.
       # data has to be an array of the same dimension as the training data minus the
@@ -97,13 +90,28 @@ module Ai4r
 
       # counts values of the attribute instances and calculates the probability of the classes
       # and the conditional probabilities
+      # Parameter data has to be an instance of CsvDataSet
       def build(data)
+        raise "Error instance must be passed" unless data.is_a?(DataSet)
+        raise "Data should not be empty" if data.data_items.length == 0
+
+        initialize_domain_data(data)
         initialize_klass_index
         initialize_pc
         calculate_probabilities
+
+        return self
       end
 
       private
+
+      def initialize_domain_data(data)
+        @domains = data.build_domains
+        @data_items = data.data_items.map { |item| DataEntry.new(item, -1) }
+        @data_labels = data.data_labels[0...-1]
+        @klasses = @domains.last.to_a
+      end
+
 
       # calculates the klass probability of a data entry
       # as usual, the probability of the value is multiplied with every conditional
@@ -137,11 +145,11 @@ module Ai4r
 
       # initializes @values and @klass_index; maps a certain value to a uniq index
       def initialize_klass_index
-        @data.klasses.each_with_index do |dl, index|
+        @klasses.each_with_index do |dl, index|
           @klass_index[dl] = index
         end
 
-        @data.data_labels.each_with_index do |dl, index|
+        @data_labels.each_with_index do |dl, index|
           @values[index] = {}
           @domains[index].each_with_index do |d, d_index|
             @values[index][d] = d_index
@@ -164,14 +172,14 @@ module Ai4r
       def build_array(dl, index)
         domains = Array.new(@domains[index].length)
         domains.map do |p1|
-          pl = Array.new @data.klasses.length, 0
+          pl = Array.new @klasses.length, 0
         end
       end
 
       # initializes the two array for storing the count and conditional probabilities of
       # the attributes
       def initialize_pc
-        @data.data_labels.each_with_index do |dl, index|
+        @data_labels.each_with_index do |dl, index|
           @pcc << build_array(dl, index)
           @pcp << build_array(dl, index)
         end
@@ -181,7 +189,7 @@ module Ai4r
       # certain attribute and the assigned class.
       # In addition to that, it also calculates the conditional probabilities and values
       def calculate_probabilities
-        @data.klasses.each {|dl| @class_counts[klass_index(dl)] = 0}
+        @klasses.each {|dl| @class_counts[klass_index(dl)] = 0}
 
         calculate_class_probabilities
         count_instances
@@ -189,19 +197,19 @@ module Ai4r
       end
 
       def calculate_class_probabilities
-        @data.data_items.each do |entry|
+        @data_items.each do |entry|
           @class_counts[klass_index(entry.klass)] += 1
         end
 
         @class_counts.each_with_index do |k, index|
-          @class_prob[index] = k.to_f / @data.data_items.length
+          @class_prob[index] = k.to_f / @data_items.length
         end
       end
 
       # counts the instances of a certain value of a certain attribute and the assigned class
       def count_instances
-        @data.data_items.each do |item|
-          @data.data_labels.each_with_index do |dl, dl_index|
+        @data_items.each do |item|
+          @data_labels.each_with_index do |dl, dl_index|
             @pcc[dl_index][value_index(item[dl_index], dl_index)][klass_index(item.klass)] += 1
           end
         end
@@ -215,6 +223,25 @@ module Ai4r
               @pcp[a_index][v_index][k_index] = (klass.to_f + @m * @class_prob[k_index]) / (@class_counts[k_index] + @m).to_f
             end
           end
+        end
+      end
+
+      #DataEntry stores the instance of the data entry
+      #the data is accessible via entries
+      #stores the class-column in the attribute klass and
+      #removes the column for the class-entry
+      class DataEntry
+        attr_accessor :klass, :entries
+
+        def initialize(item, klass_index)
+          @klass = item[klass_index]
+          item.delete_at klass_index unless klass_index.nil?
+          @entries = item
+        end
+
+        # wrapper method for the access to @entries
+        def [](index)
+          @entries[index]
         end
       end
 
