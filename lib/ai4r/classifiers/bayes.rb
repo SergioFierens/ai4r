@@ -69,17 +69,32 @@ module Ai4r
         @values = {} # hashmap for quick lookup of all the values
       end
       
-      # overrides the method in Classifier
-      # calculates the probabilities for the data entry Data.
-      # data has to be an array of the same dimension as the training data minus the
-      # class column. In addition to that, it also has to be in the same order attribute-wise.
-      # Returns an array of size 2: [Class, probability]. Probability is smaller than 1 and of type Float
+      # You can evaluate new data, predicting its category.
+      # e.g.
+      #   b.eval(["Red", "SUV", "Domestic"])
+      #     => 'No'
       def eval(data)
         prob = @class_prob.map {|cp| cp}
+        prob = calculate_class_probabilities_for_entry(data, prob)
+        index_to_klass(prob.index(prob.max))
+      end
 
+      # Calculates the probabilities for the data entry Data.
+      # data has to be an array of the same dimension as the training data minus the
+      # class column. 
+      # Returns a map containint all classes as keys:
+      # {Class_1 => probability, Class_2 => probability2 ... }
+      # Probability is <= 1 and of type Float.
+      # e.g.
+      #   b.get_probability_map(["Red", "SUV", "Domestic"])
+      #     => {"Yes"=>0.4166666666666667, "No"=>0.5833333333333334}
+      def get_probability_map(data)
+        prob = @class_prob.map {|cp| cp}
         prob = calculate_class_probabilities_for_entry(data, prob)
         prob = normalize_class_probability prob
-        [index_to_klass(prob.index(prob.max)), prob.max]
+        probability_map = {}
+        prob.each_with_index { |p, i| probability_map[index_to_klass(i)] = p }
+        return probability_map
       end
 
       # counts values of the attribute instances and calculates the probability of the classes
@@ -101,7 +116,7 @@ module Ai4r
 
       def initialize_domain_data(data)
         @domains = data.build_domains
-        @data_items = data.data_items.map { |item| DataEntry.new(item, -1) }
+        @data_items = data.data_items.map { |item| DataEntry.new(item[0...-1], item.last) }
         @data_labels = data.data_labels[0...-1]
         @klasses = @domains.last.to_a
       end
@@ -122,9 +137,10 @@ module Ai4r
 
       # normalises the array of probabilities so the sum of the array equals 1
       def normalize_class_probability(prob)
-        sum(prob) > 0 ?
-                prob.map {|prob_entry| prob_entry / sum(prob) } :
-                prob
+        prob_sum = sum(prob)
+        prob_sum > 0 ?
+          prob.map {|prob_entry| prob_entry / prob_sum } :
+          prob
       end
 
       # sums an array up; returns a number of type Float
@@ -227,10 +243,9 @@ module Ai4r
       class DataEntry
         attr_accessor :klass, :entries
 
-        def initialize(item, klass_index)
-          @klass = item[klass_index]
-          item.delete_at klass_index unless klass_index.nil?
-          @entries = item
+        def initialize(attributes, klass)
+          @klass = klass
+          @entries = attributes
         end
 
         # wrapper method for the access to @entries
