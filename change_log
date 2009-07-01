@@ -1,3 +1,5 @@
+1.9
+  * New classifier: Naive Bayes
 1.8
   * Self-Organized maps (SOM) implementation added.
   * Bug fixed on genetic algorithms data load
