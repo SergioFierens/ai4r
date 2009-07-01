@@ -49,12 +49,12 @@ module Ai4r
     # = How to use it
     #
     #   data = DataSet.new.load_csv_with_labels "bayes_data.csv"
-    #   b = Bayes.new.
+    #   b = NaiveBayes.new.
     #     set_parameters({:m=>3}).
     #     build data
     #   b.eval(["Red", "SUV", "Domestic"])
     #
-    class Bayes < Classifier
+    class NaiveBayes < Classifier
 
       parameters_info :m => "Default value is set to 0. It may be set to a value greater than " +
         "0 when the size of the dataset is relatively small"
