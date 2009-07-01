@@ -46,11 +46,12 @@
 				<li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Classifiers/OneR.html">OneR (AKA One Attribute Rule, 1R)</a></li>
 				<li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Classifiers/ZeroR.html">ZeroR</a></li>
 				<li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Classifiers/Hyperpipes.html">Hyperpipes</a></li>        
+        <li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Classifiers/NaiveBayes.html">Naive Bayes</a></li>  
 			</ul>
 		</li>
 		<li><a href="http://en.wikipedia.org/wiki/Data_clustering">Data clustering</a>
 			<ul>
-				<li><a href="http://en.wikipedia.org/wiki/k_means">K-means algorithm</a></li>
+				<li><a href="http://en.wikipedia.org/wiki/k_means">K-means</a></li>
         <li><a href="http://en.wikipedia.org/wiki/k_means">Bisecting k-means</a></li>
 				<li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Clusterers/SingleLinkage.html">Single linkage</a></li>
         <li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Clusterers/CompleteLinkage.html">Complete linkage</a></li>        
@@ -110,7 +111,7 @@ require "ai4r"
       </p>
       <p>Current active contributors are:</p> 
       <ul>
-        <li>Thomas Kern (SOM implementation and examples)</li>
+        <li>Thomas Kern</li>
         <li>Sergio Fierens</li>
       </ul>
     </section>
