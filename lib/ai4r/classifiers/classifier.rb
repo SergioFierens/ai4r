@@ -50,6 +50,9 @@ module Ai4r
       #     eval classifier.get_rules   
       #     puts marketing_target
       #       # =>  'Y'
+      #
+      # Note, however, that not all classifiers are able to produce rules.
+      # This method is not implemented in such classifiers.
       def get_rules
         raise NotImplementedError
       end
