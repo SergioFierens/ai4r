@@ -42,11 +42,12 @@
 			<ul>
 				<li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Classifiers/ID3.html">ID3 (Decision Trees)</a></li>
 				<li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Classifiers/Prism.html">PRISM (J. Cendrowska, 1987)</a></li>
-        <li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Classifiers/MultilayerPerceptron.html">Multilayer Perceptron</a></li>
+                <li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Classifiers/MultilayerPerceptron.html">Multilayer Perceptron</a></li>
 				<li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Classifiers/OneR.html">OneR (AKA One Attribute Rule, 1R)</a></li>
 				<li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Classifiers/ZeroR.html">ZeroR</a></li>
 				<li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Classifiers/Hyperpipes.html">Hyperpipes</a></li>        
-        <li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Classifiers/NaiveBayes.html">Naive Bayes</a></li>  
+                <li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Classifiers/NaiveBayes.html">Naive Bayes</a></li>
+                <li><a href="http://ai4r.rubyforge.org/rdoc/classes/Ai4r/Classifiers/IB1.html">IB1 (D. Aha, D. Kibler - 1991)</a></li>
 			</ul>
 		</li>
 		<li><a href="http://en.wikipedia.org/wiki/Data_clustering">Data clustering</a>

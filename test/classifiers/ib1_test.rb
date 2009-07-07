@@ -56,7 +56,15 @@ class IB1Test < Test::Unit::TestCase
     assert_equal(0,@classifier.norm('F', 0))
   end
 
-  def notest_eval
+  def test_distance
+    item = ['Chicago',   55, 'M', 'N']
+    assert_equal(0, @classifier.distance(['Chicago',  55, 'M'], item))
+    assert_equal(1, @classifier.distance([nil,  55, 'M'], item))
+    assert_equal(1, @classifier.distance(['New York',  55, 'M'], item))
+    assert_in_delta(0.2728, @classifier.distance(['Chicago',  20, 'M'], item), 0.0001)
+  end
+
+  def test_eval
     classifier = IB1.new.build(@data_set)
     assert classifier
     assert_equal('N', classifier.eval(['Chicago',  55, 'M']))

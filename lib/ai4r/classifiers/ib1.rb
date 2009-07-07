@@ -19,6 +19,9 @@ module Ai4r
     # IB1 algorithm implementation.
     # IB1 is the simplest instance-based learning (IBL) algorithm.
     #
+    # D. Aha, D. Kibler (1991). Instance-based learning algorithms.
+    # Machine Learning. 6:37-66.
+    #
     # IBI is identical to the nearest neighbor algorithm except that
     # it normalizes its attributes' ranges, processes instances
     # incrementally, and has a simple policy for tolerating missing values
