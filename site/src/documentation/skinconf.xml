@@ -83,7 +83,7 @@ which will be used to configure the chosen Forrest skin.
 <!-- @inception enable automatic generation of a date-range to current date -->
   <year inception="true">2007</year>
   <vendor>Sergio Fierens, Jade Ferret</vendor>
-  <copyright-link>http://www.jadeferret.com/</copyright-link>
+  <copyright-link>http://ai4r.rubyforge.com</copyright-link>
 <!-- Some skins use this to form a 'breadcrumb trail' of links.
     Use location="alt" to move the trail to an alternate location
     (if the skin supports it).
