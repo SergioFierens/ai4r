@@ -1,5 +1,6 @@
 1.10
   * New classifier: IB1
+  * Bug fixed on Backpropagation. It failed trying to serialize the net.
 
 1.9
   * New classifier: Naive Bayes

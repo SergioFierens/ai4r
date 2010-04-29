@@ -68,7 +68,7 @@ which will be used to configure the chosen Forrest skin.
        default skin: renders it at the top-left corner -->
   <group-name>Jade Ferret</group-name>
   <group-description>Jade Ferret</group-description>
-  <group-url>http://www.jadeferret.com</group-url>
+  <group-url>http://ai4r.rubyforge.org</group-url>
   <group-logo>images/jadeferret.png</group-logo>
 <!-- Alternative static image: 
   <group-logo>images/jadeferret.gif</group-logo> -->

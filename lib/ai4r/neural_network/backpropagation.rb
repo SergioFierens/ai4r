@@ -161,6 +161,13 @@ module Ai4r
 
       protected
 
+      # Custom serialization. It used to fail trying to serialize because
+      # it uses lambda functions internally, and they cannot be serialized.
+      # Now it does not fail, but if you customize the values of
+      # * initial_weight_function
+      # * propagation_function
+      # * derivative_propagation_function
+      # you must restore their values manually after loading the instance.
       def marshal_dump
         [
           @structure,

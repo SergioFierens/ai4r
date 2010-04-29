@@ -101,41 +101,21 @@ require "ai4r"
       </source>
     </section>
 
-    <section id="roadmap">
-      <title>Development Roadmap</title>
-      <p>
-        AI4R is an active project. If you are interested about what we are 
-        working on, checkout the 
-        <a href="http://wiki.jadeferret.com/AI4R_RoadMap" title="Ai4r Roadmap">
-          development roadmap 
-        </a>
-      </p>
-      <p>Current active contributors are:</p> 
-      <ul>
-        <li>Thomas Kern</li>
-        <li>Sergio Fierens</li>
-      </ul>
-    </section>
+
+
     
     <section id="ContactMe">
       <title>Contact</title>
       <p>
-        If you have questions or constructive comments about this project, 
-        please post them in the 
-        <a href="http://forum.jadeferret.com/viewforum.php?f=3" title="Ai4r Forum">forum</a>. 
-        I get an email notification when you post, and I do my best to answer as soon as possible.
+        If you have questions or constructive comments about this project,
+        send it to me: Sergio Fierens, email address:	<img src="images/my_email.png" alt="(sergio (dot) fierens (at) gmail (dot) com)"
+	title="Sergio Fierens contact email" />. 
         </p>
-        <p>
-        If you do not want to make it public, send it to me: 
-        Sergio Fierens, email address:	<img src="images/my_email.png" alt="(sergio (dot) fierens (at) gmail (dot) com)" 
-	title="Sergio Fierens contact email" />. But please, try to post them in the 
-        forum. I get tons of emails and it would be great to make them
-        public to help everyone.
-        </p>
-        <p>
-          Also, there is an irc channel on Freenode (#AI4R), where developers
-          discuss the current progress.
-        </p>
+      <p>Current active contributors are:</p>
+      <ul>
+        <li>Thomas Kern</li>
+        <li>Sergio Fierens</li>
+      </ul>
     </section>
 
     <section id="warranty">
