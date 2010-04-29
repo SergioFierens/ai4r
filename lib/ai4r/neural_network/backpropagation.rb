@@ -100,7 +100,7 @@ module Ai4r
         :momentum => "By default 0.1. Set this parameter to 0 to disable "+
             "momentum."
           
-      attr_accessor :structure, :weights, :activation_nodes
+      attr_accessor :structure, :weights, :activation_nodes, :last_changes
       
       # Creates a new network specifying the its architecture.
       # E.g.
@@ -158,8 +158,34 @@ module Ai4r
         init_last_changes
         return self
       end
-      
+
       protected
+
+      def marshal_dump
+        [
+          @structure,
+          @disable_bias,
+          @learning_rate,
+          @momentum,
+          @weights,
+          @last_changes,
+          @activation_nodes
+        ]
+     end
+
+     def marshal_load(ary)
+       @structure,
+          @disable_bias,
+          @learning_rate,
+          @momentum,
+          @weights,
+          @last_changes,
+          @activation_nodes = ary
+       @initial_weight_function = lambda { |n, i, j| ((rand 2000)/1000.0) - 1}
+       @propagation_function = lambda { |x| 1/(1+Math.exp(-1*(x))) } #lambda { |x| Math.tanh(x) }
+       @derivative_propagation_function = lambda { |y| y*(1-y) } #lambda { |y| 1.0 - y**2 }
+     end
+
 
       # Propagate error backwards
       def backpropagate(expected_output_values)

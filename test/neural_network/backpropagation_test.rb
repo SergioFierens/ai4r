@@ -62,6 +62,19 @@ module Ai4r
         assert y.length == 7
       end
 
+      def test_dump
+        net = Backpropagation.new([3, 2]).init_network
+        s = Marshal.dump(net)
+        x = Marshal.load(s)
+        assert_equal net.structure, x.structure
+        assert_equal net.disable_bias, x.disable_bias
+        assert_equal net.learning_rate, x.learning_rate
+        assert_equal net.momentum, x.momentum
+        assert_equal net.weights, x.weights
+        assert_equal net.last_changes, x.last_changes
+        assert_equal net.activation_nodes, x.activation_nodes
+      end
+
     end
 
   end
