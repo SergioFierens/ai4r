@@ -150,7 +150,7 @@ module Ai4r
 
       # returns the name of the class when the index is found
       def index_to_klass(index)
-        @klass_index.has_value?(index) ? @klass_index.index(index) : nil
+        @klass_index.has_value?(index) ? @klass_index.key(index) : nil
       end
 
       # initializes @values and @klass_index; maps a certain value to a uniq index
