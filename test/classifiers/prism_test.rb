@@ -1,5 +1,5 @@
 require 'test/unit'
-require File.dirname(__FILE__) + '/../../lib/ai4r/classifiers/prism'
+require 'ai4r/classifiers/prism'
 
 
 class PrismTest < Test::Unit::TestCase

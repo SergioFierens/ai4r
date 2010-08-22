@@ -12,7 +12,7 @@
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../../lib/ai4r/classifiers/id3'
+require 'ai4r/classifiers/id3'
 require 'test/unit'
 
 DATA_LABELS = [ 'city', 'age_range', 'gender', 'marketing_target'  ]

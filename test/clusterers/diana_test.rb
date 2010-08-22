@@ -8,7 +8,7 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'test/unit'
-require File.dirname(__FILE__) + '/../../lib/ai4r/clusterers/diana'
+require 'ai4r/clusterers/diana'
 
 class Ai4r::Clusterers::Diana
   attr_accessor :data_set, :number_of_clusters, :clusters

@@ -8,7 +8,7 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'test/unit'
-require File.dirname(__FILE__) + '/../../lib/ai4r/clusterers/centroid_linkage'
+require 'ai4r/clusterers/centroid_linkage'
 
 class Ai4r::Clusterers::CentroidLinkage
   attr_accessor :data_set, :number_of_clusters, :clusters, :distance_matrix, :index_clusters

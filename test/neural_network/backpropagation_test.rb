@@ -15,7 +15,7 @@
 # 
  
 
-require File.dirname(__FILE__) + '/../../lib/ai4r/neural_network/backpropagation'
+require 'ai4r/neural_network/backpropagation'
 require 'test/unit'
 
 Ai4r::NeuralNetwork::Backpropagation.send(:public, *Ai4r::NeuralNetwork::Backpropagation.protected_instance_methods)  

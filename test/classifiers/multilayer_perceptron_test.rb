@@ -1,6 +1,6 @@
 require 'test/unit'
-require File.dirname(__FILE__) + '/../../lib/ai4r/classifiers/multilayer_perceptron'
-require File.dirname(__FILE__) + '/../../lib/ai4r/data/data_set'
+require 'ai4r/classifiers/multilayer_perceptron'
+require 'ai4r/data/data_set'
 
 # Make all accessors and methods public
 class Ai4r::Classifiers::MultilayerPerceptron

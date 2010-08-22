@@ -8,7 +8,7 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'test/unit'
-require File.dirname(__FILE__) + '/../../lib/ai4r/clusterers/complete_linkage'
+require 'ai4r/clusterers/complete_linkage'
 
 class Ai4r::Clusterers::CompleteLinkage
   attr_accessor :data_set, :number_of_clusters, :clusters, :distance_matrix

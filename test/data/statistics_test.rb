@@ -8,7 +8,7 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'test/unit'
-require File.dirname(__FILE__) + '/../../lib/ai4r/data/statistics'
+require 'ai4r/data/statistics'
 
 module Ai4r
   module Data

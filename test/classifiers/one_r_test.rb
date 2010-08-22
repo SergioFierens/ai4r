@@ -1,5 +1,5 @@
 require 'test/unit'
-require File.dirname(__FILE__) + '/../../lib/ai4r/classifiers/one_r'
+require 'ai4r/classifiers/one_r'
 
 class OneRTest < Test::Unit::TestCase
   

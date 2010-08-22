@@ -1,5 +1,5 @@
-require File.dirname(__FILE__) + '/../../lib/ai4r/classifiers/naive_bayes'
-require File.dirname(__FILE__) + '/../../lib/ai4r/data/data_set'
+require 'ai4r/classifiers/naive_bayes'
+require 'ai4r/data/data_set'
 require 'test/unit'
 
 include Ai4r::Classifiers

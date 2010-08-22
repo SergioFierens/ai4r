@@ -1,6 +1,6 @@
 require 'test/unit'
-require File.dirname(__FILE__) + '/../../lib/ai4r/classifiers/zero_r'
-require File.dirname(__FILE__) + '/../../lib/ai4r/data/data_set'
+require 'ai4r/classifiers/zero_r'
+require 'ai4r/data/data_set'
 
 class ZeroRTest < Test::Unit::TestCase
   

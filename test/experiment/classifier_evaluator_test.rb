@@ -8,8 +8,8 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'test/unit'
-require File.dirname(__FILE__) + '/../../lib/ai4r/experiment/classifier_evaluator'
-require File.dirname(__FILE__) + '/../../lib/ai4r/classifiers/classifier'
+require 'ai4r/experiment/classifier_evaluator'
+require 'ai4r/classifiers/classifier'
 
 class MockClassifier < Ai4r::Classifiers::Classifier
   
