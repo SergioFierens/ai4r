@@ -52,8 +52,28 @@ class Ai4r::Clusterers::WardLinkageHierarchicalTest < Test::Unit::TestCase
   def test_cluster_tree
     clusterer = Ai4r::Clusterers::WardLinkageHierarchical.new
     clusterer.build(DataSet.new(:data_items => @@data), 1)
-
-    assert_equal clusterer.cluster_tree.length, @@data.length - 1
+    assert_equal @@data.length, clusterer.cluster_tree.length
+  end
+    
+  def test_cluster_tree_limit
+    depth = 5
+    clusterer = Ai4r::Clusterers::WardLinkageHierarchical.new(5)
+    clusterer.build(DataSet.new(:data_items => @@data), 1)
+    assert_equal 5, clusterer.cluster_tree.length
+  end
+    
+  def test_cluster_tree_first_length
+    depth = 5
+    clusterer = Ai4r::Clusterers::WardLinkageHierarchical.new(5)
+    clusterer.build(DataSet.new(:data_items => @@data), 1)
+    assert_equal 1, clusterer.cluster_tree.first.length
+  end
+    
+  def test_cluster_tree_last_length
+    depth = 5
+    clusterer = Ai4r::Clusterers::WardLinkageHierarchical.new(5)
+    clusterer.build(DataSet.new(:data_items => @@data), 1)
+    assert_equal 5, clusterer.cluster_tree.last.length
   end
     
 
