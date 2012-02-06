@@ -54,6 +54,7 @@ module Ai4r
     #     build data
     #   b.eval(["Red", "SUV", "Domestic"])
     #
+    
     class NaiveBayes < Classifier
 
       parameters_info :m => "Default value is set to 0. It may be set to a value greater than " +
@@ -256,4 +257,9 @@ module Ai4r
 
     end
   end
+end
+
+# Monkeypatch to support both ruby 1.8 and 1.9 (key vs index method)
+class Hash
+  alias_method(:key, :index) unless method_defined?(:key)
 end
