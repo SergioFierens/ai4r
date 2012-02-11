@@ -34,6 +34,7 @@ There are other (great and absolutely cool) people who have donated time and cod
 
 * {Thomas Kern}[https://github.com/thomaskern] 
 * {Luis Parravicini}[https://github.com/luisparravicini]
+* {Kevin Menard}[https://github.com/nirvdrum]
 
 = Disclaimer
 
