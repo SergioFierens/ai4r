@@ -6,15 +6,16 @@ class ZeroRTest < Test::Unit::TestCase
   
   include Ai4r::Classifiers
   include Ai4r::Data
-  
-  @@data_examples = [   ['New York',  '<30',      'M', 'Y'],
-                ['Chicago',     '<30',      'M', 'Y'],
-                ['New York',  '<30',      'M', 'Y'],
-                ['New York',  '[30-50)',  'F', 'N'],
-                ['Chicago',     '[30-50)',  'F', 'Y'],
-                ['New York',  '[30-50)',  'F', 'N'],
-                ['Chicago',     '[50-80]', 'M', 'N'],
-              ]
+
+  @@data_examples = [
+          ['New York',  '[30-50)',  'F', 'N'],
+          ['New York',  '<30',      'M', 'Y'],
+          ['Chicago',     '<30',      'M', 'Y'],
+          ['New York',  '<30',      'M', 'Y'],
+          ['Chicago',     '[30-50)',  'F', 'Y'],
+          ['New York',  '[30-50)',  'F', 'N'],
+          ['Chicago',     '[50-80]', 'M', 'N'],
+  ]
 
   @@data_labels = [ 'city', 'age_range', 'gender', 'marketing_target'  ]
   
