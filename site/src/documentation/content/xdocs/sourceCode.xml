@@ -9,14 +9,14 @@
       <title>AI4R at GitHub</title>
       <p>AI4R Source Code is stored in a git repository at GitHub:</p>
       <p>
-        <a href="http://github.com/JadeFerret/ai4r" title="AI4R source code at GitHub">
-          http://github.com/JadeFerret/ai4r
+        <a href="http://github.com/SergioFierens/ai4r" title="AI4R source code at GitHub">
+          http://github.com/SergioFierens/ai4r
         </a>
       </p>
       <p>The public clone url is:</p>
       <p>
-        <a href="git://github.com/JadeFerret/ai4r.git" title="AI4R git repository">
-          git://github.com/JadeFerret/ai4r.git
+        <a href="git://github.com/SergioFierens/ai4r.git" title="AI4R git repository">
+          git://github.com/SergioFierens/ai4r.git
         </a>
       </p>
       
@@ -26,7 +26,7 @@
       <title>Download the source code</title>
       <p>If you want to download ai4r code without using git, 
       visit 
-      <a href="http://github.com/JadeFerret/ai4r/downloads" title="AI4R source code download">
+      <a href="http://github.com/SergioFierens/ai4r/downloads" title="AI4R source code download">
         AI4R source code download site</a>, and click on the "download" button.
       </p>
     </section>
@@ -40,3 +40,4 @@
     
   </body>
 </document>
+

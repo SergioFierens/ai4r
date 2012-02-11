@@ -45,10 +45,8 @@ See http://forrest.apache.org/docs/linking.html for more info
 		<machineLearning label="Machine Learning" href="machineLearning.html" description="ID3 Decision Trees in ruby"/>
 		<neuralNetworks label="Neural Networks" href="neuralNetworks.html" description="Backpropagation Neural Network in ruby" />
 	</practicalExamples>		
-    <download label="Downloads" href="http://github.com/JadeFerret/ai4r/downloads" description="ai4r - Download Files"/> 
-    <forum label="Forum" href="http://forum.jadeferret.com/viewforum.php?f=3" description="Ai4r Forum"/> 
+    <download label="Downloads" href="http://github.com/SergioFierens/ai4r/downloads" description="ai4r - Download Files"/> 
     <svn label="Source Code repository" href="sourceCode.html" description="ai4r source code repository"/>
-    <wiki label="AI4R Wiki" href="http://wiki.jadeferret.com/Category:AI4R" description="ai4r wiki with How-to guides and more documentation"/>
     <rdoc label="API doc (Rdoc)" href="http://ai4r.rubyforge.org/rdoc/index.html" description="Ai4 RDoc docs"/>    
   </about>
 </site>
