@@ -14,7 +14,7 @@ module Ai4r
   module Clusterers
      
     # The Bisecting k-means algorithm is a variation of the "k-means" algorithm,
-    # somewhat less sensible to the initial election of centroids than the
+    # somewhat less sensitive to the initial election of centroids than the
     # original. 
     # 
     # More about K Means algorithm:
