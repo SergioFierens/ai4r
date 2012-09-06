@@ -1,7 +1,7 @@
 # Author::    Sergio Fierens (implementation)
 # License::   MPL 1.1
 # Project::   ai4r
-# Url::       http://ai4r.rubyforge.org/
+# Url::       http://ai4r.org/
 #
 # You can redistribute it and/or modify it under the terms of 
 # the Mozilla Public License version 1.1  as published by the 

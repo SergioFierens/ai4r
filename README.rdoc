@@ -5,7 +5,7 @@ algorithms covering several Artificial intelligence fields.
 
 = Where can I find the lastest code and info on this project?
 
-http://ai4r.rubyforge.org
+http://www.ai4r.org
 
 = How to install
 
@@ -20,7 +20,8 @@ http://ai4r.rubyforge.org
   
 = More Info
 
-* AI4R Project site: http://ai4r.rubyforge.org
+* AI4R Project site: http://www.ai4r.org
+* RDoc site: http://www.ai4r.org
 
 = Contact
 
