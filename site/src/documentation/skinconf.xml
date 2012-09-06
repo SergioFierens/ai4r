@@ -60,30 +60,16 @@ which will be used to configure the chosen Forrest skin.
        default skin: renders it at the top -->
   <project-name>ai4r</project-name>
   <project-description>AI4R - Artificial Intelligence for Ruby</project-description>
-  <project-url>http://ai4r.rubyforge.org/</project-url>
+  <project-url>http://www.ai4r.org/</project-url>
   <project-logo>images/ai4r-logo.png</project-logo>
-<!-- Alternative static image:
-  <project-logo>images/project-logo.gif</project-logo> -->
-<!-- optional group logo
-       default skin: renders it at the top-left corner -->
-  <group-name>Jade Ferret</group-name>
-  <group-description>Jade Ferret</group-description>
-  <group-url>http://ai4r.rubyforge.org</group-url>
-  <group-logo>images/jadeferret.png</group-logo>
-<!-- Alternative static image: 
-  <group-logo>images/jadeferret.gif</group-logo> -->
-<!-- optional host logo (e.g. sourceforge logo)
-       default skin: renders it at the bottom-left corner -->
-  <host-url>http://rubyforge.org/projects/ai4r/</host-url>
-  <host-logo>images/rubyforge.png</host-logo>
 <!-- relative url of a favicon file, normally favicon.ico -->
   <favicon-url></favicon-url>
 <!-- The following are used to construct a copyright statement -->
   <disable-copyright-footer>false</disable-copyright-footer>
 <!-- @inception enable automatic generation of a date-range to current date -->
   <year inception="true">2007</year>
-  <vendor>Sergio Fierens, Jade Ferret</vendor>
-  <copyright-link>http://ai4r.rubyforge.com</copyright-link>
+  <vendor>Sergio Fierens</vendor>
+  <copyright-link>http://www.ai4r.org</copyright-link>
 <!-- Some skins use this to form a 'breadcrumb trail' of links.
     Use location="alt" to move the trail to an alternate location
     (if the skin supports it).
@@ -96,8 +82,8 @@ which will be used to configure the chosen Forrest skin.
     directory.
   -->
   <trail  location="none">
-    <link1 name="ai4r" href="http://ai4r.rubyforge.org/"/>
-    <link2 name="ai4r" href="http://ai4r.rubyforge.org/"/>
+    <link1 name="ai4r" href="http://www.ai4r.org/"/>
+    <link2 name="ai4r" href="http://www.ai4r.org/"/>
     <link3 name="" href=""/>
   </trail>
 
