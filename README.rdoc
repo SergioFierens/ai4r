@@ -21,7 +21,7 @@ http://www.ai4r.org
 = More Info
 
 * AI4R Project site: http://www.ai4r.org
-* RDoc site: http://www.ai4r.org
+* RDoc site: http://www.ai4r.org/rdoc/index.html
 
 = Contact
 
