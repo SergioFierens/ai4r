@@ -16,7 +16,7 @@ module Ai4r
     # Implementation of a Hierarchical clusterer with group average
     # linkage, AKA unweighted pair group method average or UPGMA (Everitt 
     # et al., 2001 ; Jain and Dubes, 1988 ; Sokal and Michener, 1958).
-    # Hierarchical clusteres create one cluster per element, and then 
+    # Hierarchical clusterer create one cluster per element, and then 
     # progressively merge clusters, until the required number of clusters
     # is reached.
     # With average linkage, the distance between a clusters cx and 
@@ -29,8 +29,8 @@ module Ai4r
       parameters_info :distance_function => 
           "Custom implementation of distance function. " +
           "It must be a closure receiving two data items and return the " +
-          "distance bewteen them. By default, this algorithm uses " + 
-          "ecuclidean distance of numeric attributes to the power of 2."
+          "distance between them. By default, this algorithm uses " + 
+          "euclidean distance of numeric attributes to the power of 2."
       
       # Build a new clusterer, using data examples found in data_set.
       # Items will be clustered in "number_of_clusters" different

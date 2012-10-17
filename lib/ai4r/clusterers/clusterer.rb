@@ -32,7 +32,7 @@ module Ai4r
       end
       
       protected    
-      # Usefull as a defult distance function for clustering algorithms
+      # Useful as a default distance function for clustering algorithms
       def euclidean_distance(a, b)        
         dist = 0.0
         a.each_index do |index|

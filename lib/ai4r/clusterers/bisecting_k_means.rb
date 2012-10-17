@@ -28,8 +28,8 @@ module Ai4r
         "build the clusterer. By default it is uncapped.",
         :distance_function => "Custom implementation of distance function. " +
           "It must be a closure receiving two data items and return the " +
-          "distance bewteen them. By default, this algorithm uses " + 
-          "ecuclidean distance of numeric attributes to the power of 2.",
+          "distance between them. By default, this algorithm uses " + 
+          "euclidean distance of numeric attributes to the power of 2.",
         :centroid_function => "Custom implementation to calculate the " +
           "centroid of a cluster. It must be a closure receiving an array of " +
           "data sets, and return an array of data items, representing the " + 

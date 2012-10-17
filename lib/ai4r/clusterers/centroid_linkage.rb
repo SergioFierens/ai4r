@@ -17,7 +17,7 @@ module Ai4r
     # centroid linkage algorithm, aka unweighted pair group method 
     # centroid (UPGMC) (Everitt et al., 2001 ; Jain and Dubes, 1988 ;
     # Sokal and Michener, 1958 )
-    # Hierarchical clusteres create one cluster per element, and then 
+    # Hierarchical clusterer create one cluster per element, and then 
     # progressively merge clusters, until the required number of clusters
     # is reached.
     # The distance between clusters is the squared euclidean distance 
@@ -32,8 +32,8 @@ module Ai4r
     parameters_info :distance_function => 
           "Custom implementation of distance function. " +
           "It must be a closure receiving two data items and return the " +
-          "distance bewteen them. By default, this algorithm uses " + 
-          "ecuclidean distance of numeric attributes to the power of 2."
+          "distance between them. By default, this algorithm uses " + 
+          "euclidean distance of numeric attributes to the power of 2."
       
       # Build a new clusterer, using data examples found in data_set.
       # Items will be clustered in "number_of_clusters" different
