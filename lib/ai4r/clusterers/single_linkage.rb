@@ -16,7 +16,7 @@ module Ai4r
      
     # Implementation of a Hierarchical clusterer with single linkage (Everitt et 
     # al., 2001 ; Johnson, 1967 ; Jain and Dubes, 1988 ; Sneath, 1957 )
-    # Hierarchical clusteres create one cluster per element, and then 
+    # Hierarchical clusterer create one cluster per element, and then 
     # progressively merge clusters, until the required number of clusters
     # is reached.
     # With single linkage, the distance between two clusters is computed as the 
@@ -30,8 +30,8 @@ module Ai4r
       parameters_info :distance_function => 
           "Custom implementation of distance function. " +
           "It must be a closure receiving two data items and return the " +
-          "distance bewteen them. By default, this algorithm uses " + 
-          "ecuclidean distance of numeric attributes to the power of 2."
+          "distance between them. By default, this algorithm uses " + 
+          "euclidean distance of numeric attributes to the power of 2."
       
       def initialize
         @distance_function = lambda do |a,b| 
@@ -105,7 +105,7 @@ module Ai4r
       end
 
       # ci and cj are the indexes of the clusters that are going to
-      # be merged. We need to remove distances from/to ci and ci, 
+      # be merged. We need to remove distances from/to ci and cj, 
       # and add distances from/to new cluster (ci U cj)
       def update_distance_matrix(ci, cj)
         ci, cj = cj, ci if cj > ci
