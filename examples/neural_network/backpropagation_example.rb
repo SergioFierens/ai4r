@@ -16,7 +16,8 @@ require 'benchmark'
 times = Benchmark.measure do
   
     srand 1
-  
+
+    # creating network with 256 input-neurons, 3-neurons and 0 hidden layers
     net = Ai4r::NeuralNetwork::Backpropagation.new([256, 3])
   
     tr_input = TRIANGLE.flatten.collect { |input| input.to_f / 5.0}
