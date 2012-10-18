@@ -136,6 +136,17 @@ module Ai4r
         return @activation_nodes.last.clone
       end
       
+      # Evaluates the input and returns most active node
+      # E.g.
+      #     net = Backpropagation.new([4, 3, 2])
+      #     net.eval_result([25, 32.3, 12.8, 1.5])
+      #         # eval gives [0.83, 0.03]
+      #         # =>  0
+      def eval_result(input_values)
+        result = eval(input_values)
+        result[result.max]
+      end
+      
       # This method trains the network using the backpropagation algorithm.
       # 
       # input: Networks input
