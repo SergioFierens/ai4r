@@ -144,7 +144,7 @@ module Ai4r
       #         # =>  0
       def eval_result(input_values)
         result = eval(input_values)
-        result[result.max]
+        result.index(result.max)
       end
       
       # This method trains the network using the backpropagation algorithm.
