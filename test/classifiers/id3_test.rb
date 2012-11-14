@@ -203,6 +203,18 @@ class ID3Test < Test::Unit::TestCase
     eval id3.get_rules
     assert_equal 'N', marketing_target
   end
+
+  def test_model_failure
+    bad_data_items = [  ['a', 'Y'],
+                        ['b', 'N'],
+            ]
+    bad_data_labels = ['bogus', 'target']
+    id3 = ID3.new.build(DataSet.new(:data_items =>bad_data_items, :data_labels => bad_data_labels))
+    assert_raise ModelFailureError do
+      id3.eval(['c'])
+    end
+    assert_equal true, true
+  end
 end
 
   
