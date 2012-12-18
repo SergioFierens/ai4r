@@ -193,9 +193,10 @@ module Ai4r
       private
       def split_data_examples(data_examples, domain, att_index)
         att_value_examples = split_data_examples_by_value(data_examples, att_index)
+        attribute_domain = domain[att_index]
         data_examples_array = []
-        att_value_examples.each_pair do |att_value, example_set|
-           att_value_index = domain[att_index].index(att_value)
+        att_value_examples.each do |att_value, example_set|
+           att_value_index = attribute_domain.index(att_value)
            data_examples_array[att_value_index] = example_set
         end
         return data_examples_array
