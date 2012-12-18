@@ -147,11 +147,10 @@ module Ai4r
         domain = domain(data_examples)   
         return CategoryNode.new(@data_set.category_label, domain.last[0]) if domain.last.length == 1
         min_entropy_index = min_entropy_index(data_examples, domain, flag_att)
-        flag_att << min_entropy_index
         split_data_examples = split_data_examples(data_examples, domain, min_entropy_index)
         return CategoryNode.new(@data_set.category_label, most_freq(data_examples, domain)) if split_data_examples.length == 1
         nodes = split_data_examples.collect do |partial_data_examples|  
-          build_node(partial_data_examples, flag_att)
+          build_node(partial_data_examples, [*flag_att, min_entropy_index])
         end
         return EvaluationNode.new(@data_set.data_labels, min_entropy_index, domain[min_entropy_index], nodes)
       end
@@ -182,12 +181,18 @@ module Ai4r
       end
 
       private
-      def split_data_examples(data_examples, domain, att_index)
+      def split_data_examples_by_value(data_examples, att_index)
         att_value_examples = Hash.new {|hsh,key| hsh[key] = [] }
         data_examples.each do |example|
           att_value = example[att_index]
           att_value_examples[att_value] << example
         end
+        att_value_examples
+      end
+
+      private
+      def split_data_examples(data_examples, domain, att_index)
+        att_value_examples = split_data_examples_by_value(data_examples, att_index)
         data_examples_array = []
         att_value_examples.each_pair do |att_value, example_set|
            att_value_index = domain[att_index].index(att_value)
