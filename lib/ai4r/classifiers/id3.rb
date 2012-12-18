@@ -183,14 +183,12 @@ module Ai4r
 
       private
       def split_data_examples(data_examples, domain, att_index)
-        data_examples_array = []
-        att_value_examples = {}
+        att_value_examples = Hash.new {|hsh,key| hsh[key] = [] }
         data_examples.each do |example|
-          example_set = att_value_examples[example[att_index]]
-          example_set = [] if !example_set
-          example_set << example
-          att_value_examples.store(example[att_index], example_set)
+          att_value = example[att_index]
+          att_value_examples[att_value] << example
         end
+        data_examples_array = []
         att_value_examples.each_pair do |att_value, example_set|
            att_value_index = domain[att_index].index(att_value)
            data_examples_array[att_value_index] = example_set
@@ -216,8 +214,7 @@ module Ai4r
       private
       def domain(data_examples)
         #return build_domains(data_examples)
-        domain = []
-        @data_set.data_labels.length.times { domain << [] }
+        domain = Array.new( @data_set.data_labels.length ) { [] }
         data_examples.each do |data|
           data.each_index do |i|
             domain[i] << data[i] if i<domain.length && !domain[i].include?(data[i])
@@ -250,7 +247,7 @@ module Ai4r
         freq_grid.each do |att_freq|
           att_total_freq = ID3.sum(att_freq)
           partial_entropy = 0
-          if att_total_freq != 0
+          unless att_total_freq == 0
             att_freq.each do |freq|
               prop = freq.to_f/att_total_freq
               partial_entropy += (-1*prop*ID3.log2(prop))
@@ -278,7 +275,7 @@ module Ai4r
       
       def value(data)
         value = data[@index]
-        return rule_not_found if !@values.include?(value)
+        return rule_not_found  unless @values.include?(value)
         return nodes[@values.index(value)].value(data)
       end
       
