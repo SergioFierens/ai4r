@@ -218,8 +218,8 @@ module Ai4r
         #return build_domains(data_examples)
         domain = Array.new( @data_set.data_labels.length ) { [] }
         data_examples.each do |data|
-          data.each_index do |i|
-            domain[i] << data[i] if i<domain.length && !domain[i].include?(data[i])
+          data.each_with_index do |att_value, i|
+            domain[i] << att_value if i<domain.length && !domain[i].include?(att_value)
           end
         end
         return domain
