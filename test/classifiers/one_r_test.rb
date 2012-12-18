@@ -23,13 +23,13 @@ class OneRTest < Test::Unit::TestCase
     assert_not_nil(classifier.data_set.data_labels)
     assert_not_nil(classifier.rule)
     assert_equal("attribute_1", classifier.data_set.data_labels.first)
-    assert_equal("class_value", classifier.data_set.data_labels.last)
+    assert_equal("class_value", classifier.data_set.category_label)
     classifier = OneR.new.build(DataSet.new(:data_items => @@data_examples,
       :data_labels => @@data_labels))
     assert_not_nil(classifier.data_set.data_labels)
     assert_not_nil(classifier.rule)
     assert_equal("city", classifier.data_set.data_labels.first)
-    assert_equal("marketing_target", classifier.data_set.data_labels.last)
+    assert_equal("marketing_target", classifier.data_set.category_label)
     assert_equal(1, classifier.rule[:attr_index])
   end
   

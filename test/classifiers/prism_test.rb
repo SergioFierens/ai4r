@@ -32,13 +32,13 @@ class PrismTest < Test::Unit::TestCase
     assert_not_nil(classifier.data_set.data_labels)
     assert_not_nil(classifier.rules)
     assert_equal("attribute_1", classifier.data_set.data_labels.first)
-    assert_equal("class_value", classifier.data_set.data_labels.last)
+    assert_equal("class_value", classifier.data_set.category_label)
     classifier = Prism.new.build(DataSet.new(:data_items => @@data_examples, 
         :data_labels => @@data_labels))
     assert_not_nil(classifier.data_set.data_labels)
     assert_not_nil(classifier.rules)
     assert_equal("city", classifier.data_set.data_labels.first)
-    assert_equal("marketing_target", classifier.data_set.data_labels.last)
+    assert_equal("marketing_target", classifier.data_set.category_label)
     assert !classifier.rules.empty?
 
     Prism.send(:public, *Prism.protected_instance_methods)

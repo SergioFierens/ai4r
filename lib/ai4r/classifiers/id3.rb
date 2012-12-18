@@ -131,7 +131,7 @@ module Ai4r
         #return "Empty ID3 tree" if !@tree
         rules = @tree.get_rules
         rules = rules.collect do |rule|
-            "#{rule[0..-2].join(' and ')} then #{rule.last}"
+          "#{rule[0..-2].join(' and ')} then #{rule.last}"
         end
         return "if #{rules.join("\nelsif ")}\nelse raise 'There was not enough information during training to do a proper induction for this data element' end"
       end
@@ -145,13 +145,12 @@ module Ai4r
       def build_node(data_examples, flag_att = [])
         return ErrorNode.new if data_examples.length == 0
         domain = domain(data_examples)   
-        return CategoryNode.new(@data_set.data_labels.last, domain.last[0]) if domain.last.length == 1
+        return CategoryNode.new(@data_set.category_label, domain.last[0]) if domain.last.length == 1
         min_entropy_index = min_entropy_index(data_examples, domain, flag_att)
-        flag_att << min_entropy_index
         split_data_examples = split_data_examples(data_examples, domain, min_entropy_index)
-        return CategoryNode.new(@data_set.data_labels.last, most_freq(data_examples, domain)) if split_data_examples.length == 1
+        return CategoryNode.new(@data_set.category_label, most_freq(data_examples, domain)) if split_data_examples.length == 1
         nodes = split_data_examples.collect do |partial_data_examples|  
-          build_node(partial_data_examples, flag_att)
+          build_node(partial_data_examples, [*flag_att, min_entropy_index])
         end
         return EvaluationNode.new(@data_set.data_labels, min_entropy_index, domain[min_entropy_index], nodes)
       end
@@ -169,30 +168,35 @@ module Ai4r
 
       private       
       def most_freq(examples, domain)
-        freqs = []
-        domain.last.length.times { freqs << 0}
+        category_domain = domain.last
+        freqs = Array.new(category_domain.length, 0)
         examples.each do |example|
-          cat_index = domain.last.index(example.last)
-          freq = freqs[cat_index] + 1
-          freqs[cat_index] = freq
+          example_category = example.last
+          cat_index = category_domain.index(example_category)
+          freqs[cat_index] += 1
         end
         max_freq = freqs.max
         max_freq_index = freqs.index(max_freq)
-        domain.last[max_freq_index]
+        category_domain[max_freq_index]
+      end
+
+      private
+      def split_data_examples_by_value(data_examples, att_index)
+        att_value_examples = Hash.new {|hsh,key| hsh[key] = [] }
+        data_examples.each do |example|
+          att_value = example[att_index]
+          att_value_examples[att_value] << example
+        end
+        att_value_examples
       end
 
       private
       def split_data_examples(data_examples, domain, att_index)
+        att_value_examples = split_data_examples_by_value(data_examples, att_index)
+        attribute_domain = domain[att_index]
         data_examples_array = []
-        att_value_examples = {}
-        data_examples.each do |example|
-          example_set = att_value_examples[example[att_index]]
-          example_set = [] if !example_set
-          example_set << example
-          att_value_examples.store(example[att_index], example_set)
-        end
-        att_value_examples.each_pair do |att_value, example_set|
-           att_value_index = domain[att_index].index(att_value)
+        att_value_examples.each do |att_value, example_set|
+           att_value_index = attribute_domain.index(att_value)
            data_examples_array[att_value_index] = example_set
         end
         return data_examples_array
@@ -203,11 +207,13 @@ module Ai4r
         min_entropy = nil
         min_index = 0
         domain[0..-2].each_index do |index|
-          freq_grid = freq_grid(index, data_examples, domain)
-          entropy = entropy(freq_grid, data_examples.length)
-          if (!min_entropy || entropy < min_entropy) && !flag_att.include?(index)
-            min_entropy = entropy 
-            min_index = index 
+          unless flag_att.include?(index)
+            freq_grid = freq_grid(index, data_examples, domain)
+            entropy = entropy(freq_grid, data_examples.length)
+            if (!min_entropy || entropy < min_entropy)
+              min_entropy = entropy
+              min_index = index
+            end
           end
         end
         return min_index
@@ -216,11 +222,10 @@ module Ai4r
       private
       def domain(data_examples)
         #return build_domains(data_examples)
-        domain = []
-        @data_set.data_labels.length.times { domain << [] }
+        domain = Array.new( @data_set.data_labels.length ) { [] }
         data_examples.each do |data|
-          data.each_index do |i|
-            domain[i] << data[i] if i<domain.length && !domain[i].include?(data[i])
+          data.each_with_index do |att_value, i|
+            domain[i] << att_value if i<domain.length && !domain[i].include?(att_value)
           end
         end
         return domain
@@ -229,18 +234,16 @@ module Ai4r
       private 
       def freq_grid(att_index, data_examples, domain)
         #Initialize empty grid
-        grid_element = []
-        domain.last.length.times { grid_element << 0} 
-        grid = [] 
-        domain[att_index].length.times { grid << grid_element.clone }
+        feature_domain = domain[att_index]
+        category_domain = domain.last
+        grid = Array.new(feature_domain.length) { Array.new(category_domain.length, 0) }
         #Fill frecuency with grid
         data_examples.each do |example|
           att_val = example[att_index]
-          att_val_index = domain[att_index].index(att_val)
+          att_val_index = feature_domain.index(att_val)
           category = example.last
-          category_index = domain.last.index(category)
-          freq = grid[att_val_index][category_index] + 1
-          grid[att_val_index][category_index] = freq
+          category_index = category_domain.index(category)
+          grid[att_val_index][category_index] += 1
         end
         return grid
       end
@@ -252,7 +255,7 @@ module Ai4r
         freq_grid.each do |att_freq|
           att_total_freq = ID3.sum(att_freq)
           partial_entropy = 0
-          if att_total_freq != 0
+          unless att_total_freq == 0
             att_freq.each do |freq|
               prop = freq.to_f/att_total_freq
               partial_entropy += (-1*prop*ID3.log2(prop))
@@ -280,15 +283,14 @@ module Ai4r
       
       def value(data)
         value = data[@index]
-        return rule_not_found if !@values.include?(value)
+        return rule_not_found  unless @values.include?(value)
         return nodes[@values.index(value)].value(data)
       end
       
       def get_rules
         rule_set = []
-        @nodes.each_index do |child_node_index|
+        @nodes.each_with_index do |child_node, child_node_index|
           my_rule = "#{@data_labels[@index]}=='#{@values[child_node_index]}'"
-          child_node = @nodes[child_node_index]
           child_node_rules = child_node.get_rules
           child_node_rules.each do |child_rule|
             child_rule.unshift(my_rule)
