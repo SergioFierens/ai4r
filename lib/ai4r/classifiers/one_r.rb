@@ -72,7 +72,7 @@ module Ai4r
         return @zero_r.get_rules if @zero_r
         sentences = []
         attr_label = @data_set.data_labels[@rule[:attr_index]]
-        class_label = @data_set.data_labels.last
+        class_label = @data_set.category_label
         @rule[:rule].each_pair do |attr_value, class_value|
           sentences << "#{attr_label} == '#{attr_value}' then #{class_label} = '#{class_value}'"
         end

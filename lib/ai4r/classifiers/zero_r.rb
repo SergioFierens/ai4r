@@ -64,7 +64,7 @@ module Ai4r
       #     puts marketing_target
       #       # =>  'Y'
       def get_rules
-        return "#{@data_set.data_labels.last} = '#{@class_value}'"
+        return "#{@data_set.category_label} = '#{@class_value}'"
       end
 
     end

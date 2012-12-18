@@ -131,7 +131,7 @@ module Ai4r
         #return "Empty ID3 tree" if !@tree
         rules = @tree.get_rules
         rules = rules.collect do |rule|
-            "#{rule[0..-2].join(' and ')} then #{rule.last}"
+          "#{rule[0..-2].join(' and ')} then #{rule.last}"
         end
         return "if #{rules.join("\nelsif ")}\nelse raise 'There was not enough information during training to do a proper induction for this data element' end"
       end
@@ -145,11 +145,11 @@ module Ai4r
       def build_node(data_examples, flag_att = [])
         return ErrorNode.new if data_examples.length == 0
         domain = domain(data_examples)   
-        return CategoryNode.new(@data_set.data_labels.last, domain.last[0]) if domain.last.length == 1
+        return CategoryNode.new(@data_set.category_label, domain.last[0]) if domain.last.length == 1
         min_entropy_index = min_entropy_index(data_examples, domain, flag_att)
         flag_att << min_entropy_index
         split_data_examples = split_data_examples(data_examples, domain, min_entropy_index)
-        return CategoryNode.new(@data_set.data_labels.last, most_freq(data_examples, domain)) if split_data_examples.length == 1
+        return CategoryNode.new(@data_set.category_label, most_freq(data_examples, domain)) if split_data_examples.length == 1
         nodes = split_data_examples.collect do |partial_data_examples|  
           build_node(partial_data_examples, flag_att)
         end
