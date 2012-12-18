@@ -229,18 +229,16 @@ module Ai4r
       private 
       def freq_grid(att_index, data_examples, domain)
         #Initialize empty grid
-        grid_element = []
-        domain.last.length.times { grid_element << 0} 
-        grid = [] 
-        domain[att_index].length.times { grid << grid_element.clone }
+        feature_domain = domain[att_index]
+        category_domain = domain.last
+        grid = Array.new(feature_domain.length) { Array.new(category_domain.length, 0) }
         #Fill frecuency with grid
         data_examples.each do |example|
           att_val = example[att_index]
-          att_val_index = domain[att_index].index(att_val)
+          att_val_index = feature_domain.index(att_val)
           category = example.last
-          category_index = domain.last.index(category)
-          freq = grid[att_val_index][category_index] + 1
-          grid[att_val_index][category_index] = freq
+          category_index = category_domain.index(category)
+          grid[att_val_index][category_index] += 1
         end
         return grid
       end
