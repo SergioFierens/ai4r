@@ -169,16 +169,16 @@ module Ai4r
 
       private       
       def most_freq(examples, domain)
-        freqs = []
-        domain.last.length.times { freqs << 0}
+        category_domain = domain.last
+        freqs = Array.new(category_domain.length, 0)
         examples.each do |example|
-          cat_index = domain.last.index(example.last)
-          freq = freqs[cat_index] + 1
-          freqs[cat_index] = freq
+          example_category = example.last
+          cat_index = category_domain.index(example_category)
+          freqs[cat_index] += 1
         end
         max_freq = freqs.max
         max_freq_index = freqs.index(max_freq)
-        domain.last[max_freq_index]
+        category_domain[max_freq_index]
       end
 
       private
