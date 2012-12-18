@@ -201,11 +201,13 @@ module Ai4r
         min_entropy = nil
         min_index = 0
         domain[0..-2].each_index do |index|
-          freq_grid = freq_grid(index, data_examples, domain)
-          entropy = entropy(freq_grid, data_examples.length)
-          if (!min_entropy || entropy < min_entropy) && !flag_att.include?(index)
-            min_entropy = entropy 
-            min_index = index 
+          unless flag_att.include?(index)
+            freq_grid = freq_grid(index, data_examples, domain)
+            entropy = entropy(freq_grid, data_examples.length)
+            if (!min_entropy || entropy < min_entropy)
+              min_entropy = entropy
+              min_index = index
+            end
           end
         end
         return min_index
@@ -281,9 +283,8 @@ module Ai4r
       
       def get_rules
         rule_set = []
-        @nodes.each_index do |child_node_index|
+        @nodes.each_with_index do |child_node, child_node_index|
           my_rule = "#{@data_labels[@index]}=='#{@values[child_node_index]}'"
-          child_node = @nodes[child_node_index]
           child_node_rules = child_node.get_rules
           child_node_rules.each do |child_rule|
             child_rule.unshift(my_rule)
