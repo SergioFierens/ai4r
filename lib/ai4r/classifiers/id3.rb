@@ -280,7 +280,7 @@ module Ai4r
       
       def value(data)
         value = data[@index]
-        return rule_not_found if !@values.include?(value)
+        return ErrorNode.new.value(data) if !@values.include?(value)
         return nodes[@values.index(value)].value(data)
       end
       
@@ -313,9 +313,13 @@ module Ai4r
       end
     end
 
+    class ModelFailureError < StandardError
+      default_message = "There was not enough information during training to do a proper induction for this data element."
+    end
+
     class ErrorNode #:nodoc: all
       def value(data)
-        raise "There was not enough information during training to do a proper induction for this data element."
+        raise ModelFailureError, "There was not enough information during training to do a proper induction for the data element #{data}."
       end
       def get_rules
         return []
