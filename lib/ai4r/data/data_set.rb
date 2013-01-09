@@ -20,8 +20,6 @@ module Ai4r
     # the data_labels property.
     class DataSet
 
-      @@number_regex = /(((\b[0-9]+)?\.)?\b[0-9]+([eE][-+]?[0-9]+)?\b)/
-
       attr_reader :data_labels, :data_items
 
       # Create a new DataSet. By default, empty.
