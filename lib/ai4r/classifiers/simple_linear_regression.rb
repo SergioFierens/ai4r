@@ -62,8 +62,8 @@ module Ai4r
         min_msq = Float::MAX
         attribute = nil
         chosen = -1
-        chosen_slope = Float::NAN
-        chosen_intercept = Float::NAN
+        chosen_slope = 0.0 / 0.0 # Float::NAN 
+        chosen_intercept = 0.0 / 0.0 # Float::NAN 
 
         data.data_labels.each do |attr_name|
           attr_index = data.get_index attr_name
