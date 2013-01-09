@@ -82,9 +82,16 @@ module Ai4r
       def parse_csv(filepath)
         items = []
         open_csv_file(filepath) do |row|
-          items << row.collect{|x| (x.match(@@number_regex)) ? x.to_f : x.data }
+          items << row.collect{|x| (x.match(@@number_regex)) ? x.to_f : x }
         end
         set_data_items(items)
+      end
+
+      # Same as load_csv_with_labels, but it will try to convert cell contents as numbers.
+      def parse_csv_with_labels(filepath)
+        parse_csv(filepath)
+        @data_labels = @data_items.shift
+        return self
       end
 
       # Set data labels.
