@@ -102,7 +102,7 @@ module Ai4r
       # and the conditional probabilities
       # Parameter data has to be an instance of CsvDataSet
       def build(data)
-        raise "Error instance must be passed" unless data.is_a?(DataSet)
+        raise "Error instance must be passed" unless data.is_a?(Ai4r::Data::DataSet)
         raise "Data should not be empty" if data.data_items.length == 0
 
         initialize_domain_data(data)
