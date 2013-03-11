@@ -28,6 +28,16 @@ module Ai4r
         assert_equal ["Moron Sur (GBA)",2.0,"[28 m2 - 39 m2]","[29K-35K]"], set.data_items.first
       end
       
+      #Failing test case, which I will get fixed after getting a bug in Rarff fixed- Malav Bhavsar
+      def test_parse_arff_with_labels
+        set = DataSet.new.parse_arff_with_labels("#{File.dirname(__FILE__)}/data_set.arff")
+        assert_equal 159, set.data_items.length
+        assert_equal ["symboling", "normalized-losses numeric", "wheel-base numeric", "ength numeric", 
+          "width", "height", "curb-weight", "engine-size", "bore", "stroke", "compression-ratio", 
+          "horsepower", "peak-rpm", "city-mpg", "highway-mpg", "price"], set.data_labels
+        assert_equal [2,164,99.8,176.6,66.2,54.3,2337,109,3.19,3.4,10.0,102,5500,24,30,13950], set.data_items.first
+      end
+      
       def test_build_domains
         domains =  [  Set.new(["New York", "Chicago"]), 
                       Set.new(["M", "F"]), 

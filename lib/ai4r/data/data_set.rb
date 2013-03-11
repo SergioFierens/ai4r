@@ -9,6 +9,8 @@
 
 require 'csv'
 require 'set'
+require 'rarff'
+require 'debugger'
 require File.dirname(__FILE__) + '/statistics'
 
 module Ai4r
@@ -89,6 +91,18 @@ module Ai4r
       def parse_csv_with_labels(filepath)
         parse_csv(filepath)
         @data_labels = @data_items.shift
+        return self
+      end
+      
+      def parse_arff_with_labels(filepath)
+        contents = File.open(filepath, "rb"){|file| file.read}
+        relation = Rarff::Relation.new
+        relation.parse(contents)
+        #Known issue: attribute names are not conserved.
+        # It is fixed at Rarff's master, but another bug has creeped in.
+        #TODO: Fix at Rarff repo and get it bumped
+        @data_labels << relation.attributes.collect {|attr| attr.name }
+        @data_items = relation.instances
         return self
       end
 
