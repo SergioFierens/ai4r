@@ -28,21 +28,21 @@ questions = [	"The material covered was appropriate for someone with my level of
 # The answers array has an element per survey complemented. 
 # Each survey completed is in turn an array with the answer of each question.
 answers = [	[ 1, 2, 3, 2, 2],	# Answers of person 1
-			[ 5, 5, 3, 2, 2],	# Answers of person 2
-			[ 1, 2, 3, 2, 2],	# Answers of person 3
-			[ 1, 2, 2, 2, 2],	# ...
-			[ 1, 2, 5, 5, 2],
-			[ 3, 3, 3, 3, 3],
-			[ 1, 2, 3, 2, 2],
-			[ 3, 2, 3, 5, 5],
-			[ 3, 3, 3, 5, 2],
-			[ 4, 4, 3, 1, 1],
-			[ 5, 5, 5, 5, 5],
-			[ 4, 2, 4, 2, 1],
-			[ 4, 4, 5, 5, 5],
-			[ 4, 4, 3, 2, 2],
-			[ 2, 2, 3, 2, 3],
-			[ 3, 3, 3, 1, 1]]	# Answers of person 16
+		[ 5, 5, 3, 2, 2],	# Answers of person 2
+		[ 1, 2, 3, 2, 2],	# Answers of person 3
+		[ 1, 2, 2, 2, 2],	# ...
+		[ 1, 2, 5, 5, 2],
+		[ 3, 3, 3, 3, 3],
+		[ 1, 2, 3, 2, 2],
+		[ 3, 2, 3, 5, 5],
+		[ 3, 3, 3, 5, 2],
+		[ 4, 4, 3, 1, 1],
+		[ 5, 5, 5, 5, 5],
+		[ 4, 2, 4, 2, 1],
+		[ 4, 4, 5, 5, 5],
+		[ 4, 4, 3, 2, 2],
+		[ 2, 2, 3, 2, 3],
+		[ 3, 3, 3, 1, 1]]	# Answers of person 16
 
 data_set = DataSet.new(:data_items => answers, :data_labels => questions)
 
