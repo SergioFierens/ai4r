@@ -155,9 +155,7 @@ module Ai4r
         old_clusters, old_centroids = @clusters, @centroids
         @clusters, @centroids = [],[] 
         @number_of_clusters.times do |i|
-          if old_clusters[i].data_items.empty?
-            puts "Removing empty cluster"
-          else  
+          if !old_clusters[i].data_items.empty?
             @clusters << old_clusters[i]
             @centroids << old_centroids[i]
           end
