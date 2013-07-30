@@ -8,6 +8,7 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require File.dirname(__FILE__) + '/../data/data_set'
+require File.dirname(__FILE__) + '/../data/proximity'
 require File.dirname(__FILE__) + '/../clusterers/clusterer'
 
 module Ai4r
@@ -34,7 +35,10 @@ module Ai4r
           "data sets, and return an array of data items, representing the " + 
           "centroids of for each data set. " +
           "By default, this algorithm returns a data items using the mode "+
-          "or mean of each attribute on each data set."
+          "or mean of each attribute on each data set.",
+          :centroid_indices => "Indices of data items (indexed from 0) to be " +
+          "the initial centroids.  Otherwise, the initial centroids will be " +
+          "assigned randomly from the data set."
       
       def initialize
         @distance_function = nil
@@ -43,6 +47,7 @@ module Ai4r
         @centroid_function = lambda do |data_sets| 
           data_sets.collect{ |data_set| data_set.get_mean_or_mode}
         end
+        @centroid_indices = nil
       end
       
       
@@ -52,6 +57,7 @@ module Ai4r
       def build(data_set, number_of_clusters)
         @data_set = data_set
         @number_of_clusters = number_of_clusters
+        raise ArgumentError, 'Length of centroid indices array differs from the specified number of clusters' unless @centroid_indices.nil? || @centroid_indices.length == @number_of_clusters
         @iterations = 0
         
         calc_initial_centroids
@@ -73,14 +79,16 @@ module Ai4r
       # This function calculates the distance between 2 different
       # instances. By default, it returns the euclidean distance to the 
       # power of 2.
-      # You can provide a more convinient distance implementation:
+      # You can provide a more convenient distance implementation:
       # 
       # 1- Overwriting this method
       # 
       # 2- Providing a closure to the :distance_function parameter
       def distance(a, b)
         return @distance_function.call(a, b) if @distance_function
-        return euclidean_distance(a, b)
+        return Ai4r::Data::Proximity.squared_euclidean_distance(
+                 a.select {|att_a| att_a.is_a? Numeric} , 
+                 b.select {|att_b| att_b.is_a? Numeric})
       end
       
       protected      
@@ -88,13 +96,26 @@ module Ai4r
       def calc_initial_centroids
         @centroids = []
         tried_indexes = []
-        while @centroids.length < @number_of_clusters && 
-            tried_indexes.length < @data_set.data_items.length
-          random_index = rand(@data_set.data_items.length)
-          if !tried_indexes.include?(random_index)
-            tried_indexes << random_index
-            if !@centroids.include? @data_set.data_items[random_index] 
-              @centroids << @data_set.data_items[random_index] 
+        
+        if @centroid_indices.nil?
+          while @centroids.length < @number_of_clusters && 
+              tried_indexes.length < @data_set.data_items.length
+            random_index = rand(@data_set.data_items.length)
+            if !tried_indexes.include?(random_index)
+              tried_indexes << random_index
+              if !@centroids.include? @data_set.data_items[random_index] 
+                @centroids << @data_set.data_items[random_index] 
+              end
+            end
+          end
+        else         
+          centroid_indices.each do |index|
+            raise ArgumentError, "Invalid centroid index #{index}" unless (index.is_a? Integer) && index >=0 && index < @data_set.data_items.length
+            if !tried_indexes.include?(index)
+              tried_indexes << index
+              if !@centroids.include? @data_set.data_items[index] 
+                @centroids << @data_set.data_items[index] 
+              end
             end
           end
         end
@@ -113,14 +134,36 @@ module Ai4r
         @data_set.data_items.each do |data_item|
           @clusters[eval(data_item)] << data_item
         end
+        consolidate_clusters if has_empty_cluster?
       end
       
       def recompute_centroids
         @old_centroids = @centroids
         @iterations += 1
-        @centroids = @centroid_function.call(@clusters) 
+        @centroids = @centroid_function.call(@clusters)
       end
-  
+
+      def has_empty_cluster?
+        found_empty = false
+        @number_of_clusters.times do |i|
+          found_empty = true if @clusters[i].data_items.empty?
+        end
+        found_empty
+      end
+      
+      def consolidate_clusters
+        old_clusters, old_centroids = @clusters, @centroids
+        @clusters, @centroids = [],[] 
+        @number_of_clusters.times do |i|
+          if old_clusters[i].data_items.empty?
+            puts "Removing empty cluster"
+          else  
+            @clusters << old_clusters[i]
+            @centroids << old_centroids[i]
+          end
+        end
+        @number_of_clusters = @centroids.length
+      end
     end
   end
 end
