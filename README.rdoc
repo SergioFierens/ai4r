@@ -1,6 +1,6 @@
 = Introduction
 
-This project aims to produce ruby implementations of 
+This project aims to produce ruby implementations of
 algorithms covering several Artificial intelligence fields.
 
 = Where can I find the lastest code and info on this project?
@@ -11,13 +11,13 @@ http://www.ai4r.org
 
 1. Install the gem:
 
-    gem install ai4r
+  gem install ai4r
 
 2. Include require statements in your code:
 
   require "rubygems"
   require "ai4r"
-  
+
 = More Info
 
 * AI4R Project site: http://www.ai4r.org
@@ -31,14 +31,14 @@ If you have questions or constructive comments about this project send it to me:
 = Contributors
 
 This project was created and is maintained by {Sergio Fierens}[https://github.com/SergioFierens].
-There are other (great and absolutely cool) people who have donated time and code to make this project better, including: 
+There are other (great and absolutely cool) people who have donated time and code to make this project better, including:
 
-* {Thomas Kern}[https://github.com/thomaskern] 
+* {Thomas Kern}[https://github.com/thomaskern]
 * {Luis Parravicini}[https://github.com/luisparravicini]
 * {Kevin Menard}[https://github.com/nirvdrum]
 
 = Disclaimer
 
-This software is provided "as is" and without any express or implied warranties, 
-including, without limitation, the implied warranties of merchantibility and 
-fitness for a particular purpose. 
+This software is provided "as is" and without any express or implied warranties,
+including, without limitation, the implied warranties of merchantibility and
+fitness for a particular purpose.
