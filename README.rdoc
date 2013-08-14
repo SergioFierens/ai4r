@@ -30,7 +30,7 @@ If you have questions or constructive comments about this project send it to me:
 = Contributors
 
 This project was created and is maintained by {Sergio Fierens}[https://github.com/SergioFierens].
-There are other (great and absolutely cool) people who have donated time and code to make this project better. You can check out the complete [AI4R contributors list|https://github.com/SergioFierens/ai4r/graphs/contributors].
+There are other (great and absolutely cool) people who have donated time and code to make this project better. You can check out the complete "AI4R contributors list":https://github.com/SergioFierens/ai4r/graphs/contributors.
 
 = Disclaimer
 
