@@ -32,17 +32,6 @@ module Ai4r
       end
       
       protected    
-      # Useful as a default distance function for clustering algorithms
-      def euclidean_distance(a, b)        
-        dist = 0.0
-        a.each_index do |index|
-          if a[index].is_a?(Numeric) && b[index].is_a?(Numeric)
-            dist = dist + ((a[index]-b[index])*(a[index]-b[index]))
-          end
-        end
-        return dist
-      end
-      
       def get_min_index(array)
         min = array.first
         index = 0
