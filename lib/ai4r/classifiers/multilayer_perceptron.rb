@@ -47,7 +47,7 @@ module Ai4r
         :hidden_layers => "Hidden layer structure. E.g. [8, 6] will generate " +
           "2 hidden layers with 8 and 6 neurons each. By default []",
         :training_iterations => "How many times the training should be " +
-          "repeated. By default: 1000",
+          "repeated. By default: 500",
         :active_node_value => "Default: 1",
         :inactive_node_value => "Default: 0"
     

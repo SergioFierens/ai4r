@@ -23,7 +23,7 @@ class MultilayerPerceptronTest < Test::Unit::TestCase
                 ['Chicago',     '[50-80]', 'M', 'N'],
               ])
 
-   def test_initialize
+  def test_initialize
     classifier = MultilayerPerceptron.new
     assert_equal 1, classifier.active_node_value
     assert_equal 0, classifier.inactive_node_value
