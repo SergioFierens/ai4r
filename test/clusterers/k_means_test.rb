@@ -17,6 +17,11 @@ class KMeansTest < Test::Unit::TestCase
 
   @@data = [  [10, 3], [3, 10], [2, 8], [2, 5], [3, 8], [10, 3],
               [1, 3], [8, 1], [2, 9], [2, 5], [3, 3], [9, 4]]
+              
+  # k-means will generate an empty cluster with this data and initial centroid assignment            
+  @@empty_cluster_data = [[-0.1, 0], [0, 0], [0.1, 0], [-0.1, 10], [0.1, 10], [0.2, 10]]
+  @@empty_centroid_indices = [0,1,2]
+              
   def test_build
     data_set = DataSet.new(:data_items => @@data, :data_labels => ["X", "Y"])
     clusterer = KMeans.new.build(data_set, 4)
@@ -24,7 +29,7 @@ class KMeansTest < Test::Unit::TestCase
     # Verify that all 4 clusters are created
     assert_equal 4, clusterer.clusters.length
     assert_equal 4, clusterer.centroids.length
-    # The addition of all instances of every cluster must be equal than
+    # The addition of all instances of every cluster must be equal to
     # the number of data points
     total_length = 0
     clusterer.clusters.each do |cluster| 
@@ -39,27 +44,26 @@ class KMeansTest < Test::Unit::TestCase
     end
   end
 
-  def test_build_and_consolidate_clusters
-    data = [[-0.1, 0], [0, 0], [0.1, 0], [-0.1, 10], [0.1, 10], [0.2, 10]]
-    data_set = DataSet.new(:data_items => data, :data_labels => ["X", "Y"])
-    centroid_indices = [0,1,2]
-    clusterer = KMeans.new.set_parameters({:centroid_indices=>centroid_indices}).build(data_set, centroid_indices.size)
+  def test_build_and_eliminate_empty_clusters
+    data_set = DataSet.new(:data_items => @@empty_cluster_data, :data_labels => ["X", "Y"])
+    # :eliminate is the :on_empty default, so we don't need to pass it as a parameter for it
+    clusterer = KMeans.new.set_parameters({:centroid_indices=>@@empty_centroid_indices}).build(data_set, @@empty_centroid_indices.size)
     
-    # Verify that one cluster was consolidated
-    assert_equal centroid_indices.size - 1, clusterer.clusters.length
-    assert_equal centroid_indices.size - 1, clusterer.centroids.length
+    # Verify that one cluster was eliminated
+    assert_equal @@empty_centroid_indices.size - 1, clusterer.clusters.length
+    assert_equal @@empty_centroid_indices.size - 1, clusterer.centroids.length
     
-    # The addition of all instances of every cluster must be equal than
+    # The addition of all instances of every cluster must be equal to
     # the number of data points
     total_length = 0
     clusterer.clusters.each do |cluster| 
       total_length += cluster.data_items.length
     end
-    assert_equal data.length, total_length
+    assert_equal @@empty_cluster_data.length, total_length
     # Data inside clusters must be the same as original data
     clusterer.clusters.each do |cluster| 
      cluster.data_items.each do |data_item|
-       assert data.include?(data_item)
+       assert @@empty_cluster_data.include?(data_item)
      end
     end
   end
@@ -126,6 +130,27 @@ class KMeansTest < Test::Unit::TestCase
     # raises exception for bad centroid index:
     exception = assert_raise(ArgumentError) {KMeans.new.set_parameters({:centroid_indices=>[0,1,2,@@data.size+10]}).build(data_set, 4)}
     assert_equal("Invalid centroid index #{@@data.size+10}", exception.message)
+  end
+
+  def test_on_empty
+    data_set = DataSet.new(:data_items => @@empty_cluster_data, :data_labels => ["X", "Y"])
+    clusterer = KMeans.new.set_parameters({:centroid_indices=>@@empty_centroid_indices}).build(data_set, @@empty_centroid_indices.size)
+    # Verify that one cluster was eliminated
+    assert_equal @@empty_centroid_indices.size - 1, clusterer.clusters.length
+    # Verify that eliminate is the on_empty default
+    assert_equal 'eliminate', clusterer.on_empty
+    # Verify that invalid on_empty option throws an argument error 
+    exception = assert_raise(ArgumentError) {KMeans.new.set_parameters({:centroid_indices=>@@empty_centroid_indices, :on_empty=>'ldkfje'}).build(data_set, @@empty_centroid_indices.size)}
+    assert_equal("Invalid value for on_empty", exception.message)
+    # Verify that on_empty option 'terminate' raises an error when an empty cluster arises
+    exception = assert_raise(TypeError) {KMeans.new.set_parameters({:centroid_indices=>@@empty_centroid_indices, :on_empty=>'terminate'}).build(data_set, @@empty_centroid_indices.size)}
+    assert_equal("nil can't be coerced into Float", exception.message)
+    clusterer = KMeans.new.set_parameters({:centroid_indices=>@@empty_centroid_indices, :on_empty=>'random'}).build(data_set, @@empty_centroid_indices.size)
+    # Verify that cluster was not eliminated
+    assert_equal @@empty_centroid_indices.size, clusterer.clusters.length
+    clusterer = KMeans.new.set_parameters({:centroid_indices=>@@empty_centroid_indices, :on_empty=>'outlier'}).build(data_set, @@empty_centroid_indices.size)
+    # Verify that cluster was not eliminated
+    assert_equal @@empty_centroid_indices.size, clusterer.clusters.length
   end
 
   private
