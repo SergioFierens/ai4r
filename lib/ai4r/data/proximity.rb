@@ -100,17 +100,19 @@ module Ai4r
       #
       # D = sum(a[i] * b[i]) / sqrt(sum(a[i]**2)) * sqrt(sum(b[i]**2))
       def self.cosine_distance(a,b)
-        dot    = 0.0
+        dot_product = 0.0
         norm_a = 0.0
         norm_b = 0.0
+        magnitude = 0.0
         
         a.each_index do |i|
-          dot    += a[i] * b[i]
+          dot_product += a[i] * b[i]
           norm_a += a[i] ** 2
           norm_b += b[i] ** 2
         end
         
-        dot / (Math.sqrt(norm_a) * Math.sqrt(norm_b))
+        magnitude = Math.sqrt(norm_a) * Math.sqrt(norm_b)
+        dot_product / magnitude
       end
     end
     
