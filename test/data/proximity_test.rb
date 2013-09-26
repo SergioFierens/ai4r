@@ -81,7 +81,7 @@ module Ai4r
           assert_equal  Proximity.cosine_distance(@@data1, @@data2), 
                         Proximity.cosine_distance(@@data2, @@data1)
           assert 1 == Proximity.cosine_distance(@@data1, @@data1)
-          assert_equal 1, Proximity.euclidean_distance([3,0], [4,0])
+          assert_equal 1, Proximity.cosine_distance([3,0], [4,0])
       end
     end
   end
