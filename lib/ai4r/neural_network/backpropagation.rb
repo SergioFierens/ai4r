@@ -44,7 +44,7 @@ module Ai4r
     # Use class method get_parameters_info to obtain details on the algorithm
     # parameters. Use set_parameters to set values for this parameters.
     # 
-    # * :disable_bias => If true, the alforithm will not use bias nodes. 
+    # * :disable_bias => If true, the algorithm will not use bias nodes.
     #   False by default.
     # * :initial_weight_function => f(n, i, j) must return the initial 
     #   weight for the conection between the node i in layer n, and node j in 
@@ -86,7 +86,7 @@ module Ai4r
       
       include Ai4r::Data::Parameterizable
       
-      parameters_info :disable_bias => "If true, the alforithm will not use "+
+      parameters_info :disable_bias => "If true, the algorithm will not use "+
             "bias nodes. False by default.",
         :initial_weight_function => "f(n, i, j) must return the initial "+
             "weight for the conection between the node i in layer n, and "+
@@ -189,20 +189,20 @@ module Ai4r
           @last_changes,
           @activation_nodes
         ]
-     end
+      end
 
-     def marshal_load(ary)
-       @structure,
-          @disable_bias,
-          @learning_rate,
-          @momentum,
-          @weights,
-          @last_changes,
-          @activation_nodes = ary
-       @initial_weight_function = lambda { |n, i, j| ((rand 2000)/1000.0) - 1}
-       @propagation_function = lambda { |x| 1/(1+Math.exp(-1*(x))) } #lambda { |x| Math.tanh(x) }
-       @derivative_propagation_function = lambda { |y| y*(1-y) } #lambda { |y| 1.0 - y**2 }
-     end
+      def marshal_load(ary)
+        @structure,
+           @disable_bias,
+           @learning_rate,
+           @momentum,
+           @weights,
+           @last_changes,
+           @activation_nodes = ary
+        @initial_weight_function = lambda { |n, i, j| ((rand 2000)/1000.0) - 1}
+        @propagation_function = lambda { |x| 1/(1+Math.exp(-1*(x))) } #lambda { |x| Math.tanh(x) }
+        @derivative_propagation_function = lambda { |y| y*(1-y) } #lambda { |y| 1.0 - y**2 }
+      end
 
 
       # Propagate error backwards
