@@ -112,7 +112,7 @@ module Ai4r
         end
         
         magnitude = Math.sqrt(norm_a) * Math.sqrt(norm_b)
-        dot_product / magnitude
+        return 1 - (dot_product / magnitude)
       end
     end
     

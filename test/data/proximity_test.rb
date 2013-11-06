@@ -14,7 +14,7 @@ module Ai4r
   module Data
     class ProximityTest < Test::Unit::TestCase
           
-      @@delta = 0.0001    
+      @@delta = 0.0000001    
       @@data1 = [rand*10, rand*10, rand*-10]
       @@data2 = [rand*10, rand*-10, rand*10]
       
@@ -77,11 +77,10 @@ module Ai4r
       end       
       
       def test_cosine_distance
-          assert_equal 0, Proximity.cosine_distance(@@data1, @@data1)
+          assert_in_delta 0.0, Proximity.cosine_distance(@@data1, @@data1), @@delta
           assert_equal  Proximity.cosine_distance(@@data1, @@data2), 
                         Proximity.cosine_distance(@@data2, @@data1)
-          assert 1 == Proximity.cosine_distance(@@data1, @@data1)
-          assert_equal 1, Proximity.cosine_distance([3,0], [4,0])
+          assert_in_delta 0.0, Proximity.cosine_distance(@@data1, @@data1), @@delta
       end
     end
   end
