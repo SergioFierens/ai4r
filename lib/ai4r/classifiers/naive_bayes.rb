@@ -57,8 +57,8 @@ module Ai4r
     
     class NaiveBayes < Classifier
 
-      parameters_info :m => "Default value is set to 0. It may be set to a value greater than " +
-        "0 when the size of the dataset is relatively small"
+      parameters_info :m => 'Default value is set to 0. It may be set to a value greater than ' +
+        '0 when the size of the dataset is relatively small'
           
       def initialize
         @m = 0
@@ -75,7 +75,7 @@ module Ai4r
       #   b.eval(["Red", "SUV", "Domestic"])
       #     => 'No'
       def eval(data)
-        prob = @class_prob.map {|cp| cp}
+        prob = @class_prob.dup
         prob = calculate_class_probabilities_for_entry(data, prob)
         index_to_klass(prob.index(prob.max))
       end
@@ -90,27 +90,28 @@ module Ai4r
       #   b.get_probability_map(["Red", "SUV", "Domestic"])
       #     => {"Yes"=>0.4166666666666667, "No"=>0.5833333333333334}
       def get_probability_map(data)
-        prob = @class_prob.map {|cp| cp}
+        prob = @class_prob.dup
         prob = calculate_class_probabilities_for_entry(data, prob)
         prob = normalize_class_probability prob
         probability_map = {}
         prob.each_with_index { |p, i| probability_map[index_to_klass(i)] = p }
-        return probability_map
+
+        probability_map
       end
 
       # counts values of the attribute instances and calculates the probability of the classes
       # and the conditional probabilities
       # Parameter data has to be an instance of CsvDataSet
       def build(data)
-        raise "Error instance must be passed" unless data.is_a?(Ai4r::Data::DataSet)
-        raise "Data should not be empty" if data.data_items.length == 0
+        raise 'Error instance must be passed' unless data.is_a?(Ai4r::Data::DataSet)
+        raise 'Data should not be empty' if data.data_items.length == 0
 
         initialize_domain_data(data)
         initialize_klass_index
         initialize_pc
         calculate_probabilities
 
-        return self
+        self
       end
 
       private
@@ -128,7 +129,7 @@ module Ai4r
       # probability of every attribute in condition to a specific class
       # this is repeated for every class
       def calculate_class_probabilities_for_entry(data, prob)
-        prob.each_with_index do |prob_entry, prob_index|
+        0.upto(prob.length - 1) do |prob_index|
           data.each_with_index do |att, index|
             next if value_index(att, index).nil?
             prob[prob_index] *= @pcp[index][value_index(att, index)][prob_index]
@@ -140,13 +141,13 @@ module Ai4r
       def normalize_class_probability(prob)
         prob_sum = sum(prob)
         prob_sum > 0 ?
-          prob.map {|prob_entry| prob_entry / prob_sum } :
+          prob.map { |prob_entry| prob_entry / prob_sum } :
           prob
       end
 
       # sums an array up; returns a number of type Float
       def sum(array)
-        array.inject(0.0){|b, i| b+i}
+        array.inject(0.0) { |b, i| b + i }
       end
 
       # returns the name of the class when the index is found
@@ -160,7 +161,7 @@ module Ai4r
           @klass_index[dl] = index
         end
 
-        @data_labels.each_with_index do |dl, index|
+        0.upto(@data_labels.length - 1) do |index|
           @values[index] = {}
           @domains[index].each_with_index do |d, d_index|
             @values[index][d] = d_index
@@ -180,19 +181,19 @@ module Ai4r
 
       # builds an array of the form:
       # array[attributes][values][classes]
-      def build_array(dl, index)
+      def build_array(index)
         domains = Array.new(@domains[index].length)
-        domains.map do |p1|
-          pl = Array.new @klasses.length, 0
+        domains.map do
+          Array.new @klasses.length, 0
         end
       end
 
       # initializes the two array for storing the count and conditional probabilities of
       # the attributes
       def initialize_pc
-        @data_labels.each_with_index do |dl, index|
-          @pcc << build_array(dl, index)
-          @pcp << build_array(dl, index)
+        0.upto(@data_labels.length - 1) do |index|
+          @pcc << build_array(index)
+          @pcp << build_array(index)
         end
       end
 
@@ -200,7 +201,7 @@ module Ai4r
       # certain attribute and the assigned class.
       # In addition to that, it also calculates the conditional probabilities and values
       def calculate_probabilities
-        @klasses.each {|dl| @class_counts[klass_index(dl)] = 0}
+        @klasses.each { |dl| @class_counts[klass_index(dl)] = 0 }
 
         calculate_class_probabilities
         count_instances
@@ -220,7 +221,7 @@ module Ai4r
       # counts the instances of a certain value of a certain attribute and the assigned class
       def count_instances
         @data_items.each do |item|
-          @data_labels.each_with_index do |dl, dl_index|
+          0.upto(@data_labels.length - 1) do |dl_index|
             @pcc[dl_index][value_index(item[dl_index], dl_index)][klass_index(item.klass)] += 1
           end
         end
@@ -231,7 +232,7 @@ module Ai4r
         @pcc.each_with_index do |attributes, a_index|
           attributes.each_with_index do |values, v_index|
             values.each_with_index do |klass, k_index|
-              @pcp[a_index][v_index][k_index] = (klass.to_f + @m * @class_prob[k_index]) / (@class_counts[k_index] + @m).to_f
+              @pcp[a_index][v_index][k_index] = (klass.to_f + @m * @class_prob[k_index]) / (@class_counts[k_index] + @m)
             end
           end
         end
