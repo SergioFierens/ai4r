@@ -135,6 +135,8 @@ module Ai4r
             prob[prob_index] *= @pcp[index][value_index(att, index)][prob_index]
           end
         end
+        
+        prob
       end
 
       # normalises the array of probabilities so the sum of the array equals 1
