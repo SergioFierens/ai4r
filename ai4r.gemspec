@@ -3,7 +3,7 @@ require 'rake'
 
 SPEC = Gem::Specification.new do |s|
   s.name = "ai4r"
-  s.version = "1.12"
+  s.version = "1.13"
   s.author = "Sergio Fierens"
   s.homepage = "http://www.ai4r.org"
   s.platform = Gem::Platform::RUBY
