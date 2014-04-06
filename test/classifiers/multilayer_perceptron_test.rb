@@ -14,13 +14,14 @@ class MultilayerPerceptronTest < Test::Unit::TestCase
   include Ai4r::Classifiers
   include Ai4r::Data
   
-  @@data_set = DataSet.new(:data_items =>[   ['New York',  '<30',      'M', 'Y'],
-                ['Chicago',     '<30',      'M', 'Y'],
-                ['New York',  '<30',      'M', 'Y'],
-                ['New York',  '[30-50)',  'F', 'N'],
-                ['Chicago',     '[30-50)',  'F', 'Y'],
-                ['New York',  '[30-50)',  'F', 'N'],
-                ['Chicago',     '[50-80]', 'M', 'N'],
+  @@data_set = DataSet.new(:data_items =>[   
+                ['New York',  '<30',     'M', 'Y'],
+                ['Chicago',   '<30',     'M', 'Y'],
+                ['New York',  '<30',     'M', 'Y'],
+                ['New York',  '[30-50)', 'F', 'N'],
+                ['Chicago',   '[30-50)', 'F', 'Y'],
+                ['New York',  '[30-50)', 'F', 'N'],
+                ['Chicago',   '[50-80]', 'M', 'N'],
               ])
 
   def test_initialize

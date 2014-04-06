@@ -33,12 +33,14 @@ module Ai4r
     # * :hidden_layers => Hidden layer structure. E.g. [8, 6] will generate 
     #   2 hidden layers with 8 and 6 neurons each. By default []
     # * :training_iterations => How many times the training should be repeated. 
-    #   By default: 1000. 
+    #   By default: 500. 
     # :active_node_value => Default: 1        
     # :inactive_node_value => Default: 1
     class MultilayerPerceptron < Classifier
 
       attr_reader :data_set, :class_value, :network, :domains
+
+      TRAINING_ITERATIONS = 500
       
       parameters_info :network_class => "Neural network implementation class."+
           "By default: Ai4r::NeuralNetwork::Backpropagation.",
@@ -47,14 +49,14 @@ module Ai4r
         :hidden_layers => "Hidden layer structure. E.g. [8, 6] will generate " +
           "2 hidden layers with 8 and 6 neurons each. By default []",
         :training_iterations => "How many times the training should be " +
-          "repeated. By default: 500",
+          "repeated. By default: #{TRAINING_ITERATIONS}",
         :active_node_value => "Default: 1",
         :inactive_node_value => "Default: 0"
     
       def initialize
         @network_class = Ai4r::NeuralNetwork::Backpropagation
         @hidden_layers = []
-        @training_iterations = 500
+        @training_iterations = TRAINING_ITERATIONS
         @network_parameters = {}
         @active_node_value = 1
         @inactive_node_value = 0
@@ -106,7 +108,7 @@ module Ai4r
           att_value = data_item[att_index]
           domain_index = @domains[att_index].index(att_value)
           input_values[domain_index + accum_index] = @active_node_value
-          accum_index = @domains[att_index].length
+          accum_index += @domains[att_index].length
         end
         return input_values
       end

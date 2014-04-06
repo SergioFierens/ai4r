@@ -10,6 +10,7 @@
 require 'set'
 require File.dirname(__FILE__) + '/../data/data_set'
 require File.dirname(__FILE__) + '/../classifiers/classifier'
+require File.dirname(__FILE__) + '/../classifiers/votes'
 
 module Ai4r
   module Classifiers
@@ -42,20 +43,21 @@ module Ai4r
       # You can evaluate new data, predicting its class.
       # e.g.
       #   classifier.eval(['New York',  '<30', 'F'])  # => 'Y'      
+      # In case of a tie, the last category should win: http://www.csee.wvu.edu/~timm/tmp/r7.pdf
       def eval(data)
-        votes = Hash.new {0}
+        votes = Votes.new
         @pipes.each do |category, pipe|
           pipe.each_with_index do |bounds, i|
             if data[i].is_a? Numeric
-              votes[category]+=1 if data[i]>=bounds[:min] && data[i]<=bounds[:max]
+              votes.increment_category(category) if data[i]>=bounds[:min] && data[i]<=bounds[:max]
             else
-              votes[category]+=1 if bounds[data[i]]
+              votes.increment_category(category) if bounds[data[i]]
             end
           end
         end
-        return votes.to_a.max {|x, y| x.last <=> y.last}.first
+        return votes.get_winner
       end
-      
+
       # This method returns the generated rules in ruby code.
       # e.g.
       #   
@@ -72,12 +74,12 @@ module Ai4r
       #       # =>  'Y'
       def get_rules
         rules = []
-        rules << "votes = Hash.new {0}"
+        rules << "votes = Votes.new"
         data = @data_set.data_items.first
         labels = @data_set.data_labels.collect {|l| l.to_s}
         @pipes.each do |category, pipe|
           pipe.each_with_index do |bounds, i|
-            rule = "votes['#{category}'] += 1 "
+            rule = "votes.increment_category('#{category}') "
             if data[i].is_a? Numeric
               rule += "if #{labels[i]} >= #{bounds[:min]} && #{labels[i]} <= #{bounds[:max]}"
             else
@@ -86,7 +88,7 @@ module Ai4r
             rules << rule
           end
         end
-        rules << "#{labels.last} = votes.to_a.max {|x, y| x.last <=> y.last}.first"
+        rules << "#{labels.last} = votes.get_winner"
         return rules.join("\n")
       end
       
