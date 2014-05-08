@@ -1,4 +1,5 @@
 {<img src="https://codeclimate.com/github/SergioFierens/ai4r.png" />}[https://codeclimate.com/github/SergioFierens/ai4r]
+{https://travis-ci.org/olavolav/ai4r.png}[https://travis-ci.org/olavolav/ai4r.png]
 
 = Introduction
 
