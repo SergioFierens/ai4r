@@ -1,5 +1,5 @@
 {<img src="https://codeclimate.com/github/SergioFierens/ai4r.png" />}[https://codeclimate.com/github/SergioFierens/ai4r]
-{https://travis-ci.org/olavolav/ai4r.png}[https://travis-ci.org/olavolav/ai4r.png]
+{<img src="https://travis-ci.org/olavolav/ai4r.svg?branch=travis-ci-testing" alt="Build Status" />}[https://travis-ci.org/olavolav/ai4r]
 
 = Introduction
 
