@@ -47,10 +47,6 @@ class HyperpipesTest < Test::Unit::TestCase
     assert_equal [{}, {:max=>-1.0/0, :min=>1.0/0}, {}], classifier.build_pipe(@data_set)
   end
   
-  def test_get_rules
-    
-  end
-  
   def test_build
     assert_raise(ArgumentError) { Hyperpipes.new.build(DataSet.new) }
     classifier = Hyperpipes.new.build(@data_set)
