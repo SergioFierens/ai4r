@@ -5,4 +5,4 @@ rvm:
   - 2.1.1
   - ruby-head
   - rbx-2.2.6
-script: './rake test'
+script: 'script: "bundle exec rake test'
