@@ -18,14 +18,18 @@ require 'test/unit'
 
 
 def assert_approximate_equality(expected, real, delta=0.01)
-  assert (expected - real).abs < delta, "#{expected} and #{real} are not equal enough"
+  if expected.respond_to?(:abs) && real.respond_to?(:abs)
+    assert (expected - real).abs < delta, "<#{expected}> and <#{real}> are not equal enough"
+  else
+    assert_equal expected, real
+  end
 end
 
 def assert_approximate_equality_of_nested_list(expected, real, delta=0.01)
   if expected.respond_to?(:each) && real.respond_to?(:each) && expected.length == real.length
     [expected, real].transpose.each{ |ex, re| assert_approximate_equality_of_nested_list(ex, re, delta) }
   else
-    assert_equal expected, real
+    assert_approximate_equality expected, real
   end
 end
 
