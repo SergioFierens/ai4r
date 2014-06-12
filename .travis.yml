@@ -1,13 +1,16 @@
 language: ruby
 cache: bundler
 
+script: 'bundle exec rake test'
+
 rvm:
-  - 1.8.7
   - 1.9.3
   - 2.1.1
-  - ruby-head
-  - rbx-2.2
-  - jruby-19mode
-  - jruby-head
 
-script: 'bundle exec rake test'
+matrix:
+  allow_failures:
+    - rvm: 1.8.7
+    - rvm: ruby-head
+    - rmv: rbx-2.2
+    - rmv: jruby-19mode
+    - rmv: jruby-head
