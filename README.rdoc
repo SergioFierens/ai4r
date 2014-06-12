@@ -1,3 +1,5 @@
+{<img src="https://codeclimate.com/github/SergioFierens/ai4r.png" />}[https://codeclimate.com/github/SergioFierens/ai4r]
+
 = Introduction
 
 This project aims to produce ruby implementations of algorithms covering several Artificial intelligence fields.
