@@ -3,25 +3,25 @@
 # Project::   ai4r
 # Url::       http://www.ai4r.org/
 #
-# You can redistribute it and/or modify it under the terms of 
-# the Mozilla Public License version 1.1  as published by the 
+# You can redistribute it and/or modify it under the terms of
+# the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'test/unit'
 require 'ai4r/clusterers/k_means'
 
 class KMeansTest < Test::Unit::TestCase
-  
+
   include Ai4r::Clusterers
   include Ai4r::Data
 
   @@data = [  [10, 3], [3, 10], [2, 8], [2, 5], [3, 8], [10, 3],
               [1, 3], [8, 1], [2, 9], [2, 5], [3, 3], [9, 4]]
-              
-  # k-means will generate an empty cluster with this data and initial centroid assignment            
+
+  # k-means will generate an empty cluster with this data and initial centroid assignment
   @@empty_cluster_data = [[-0.1, 0], [0, 0], [0.1, 0], [-0.1, 10], [0.1, 10], [0.2, 10]]
   @@empty_centroid_indices = [0,1,2]
-              
+
   def test_build
     data_set = DataSet.new(:data_items => @@data, :data_labels => ["X", "Y"])
     clusterer = KMeans.new.build(data_set, 4)
@@ -32,12 +32,12 @@ class KMeansTest < Test::Unit::TestCase
     # The addition of all instances of every cluster must be equal to
     # the number of data points
     total_length = 0
-    clusterer.clusters.each do |cluster| 
+    clusterer.clusters.each do |cluster|
       total_length += cluster.data_items.length
     end
     assert_equal @@data.length, total_length
     # Data inside clusters must be the same as original data
-    clusterer.clusters.each do |cluster| 
+    clusterer.clusters.each do |cluster|
      cluster.data_items.each do |data_item|
        assert @@data.include?(data_item)
      end
@@ -48,20 +48,20 @@ class KMeansTest < Test::Unit::TestCase
     data_set = DataSet.new(:data_items => @@empty_cluster_data, :data_labels => ["X", "Y"])
     # :eliminate is the :on_empty default, so we don't need to pass it as a parameter for it
     clusterer = KMeans.new.set_parameters({:centroid_indices=>@@empty_centroid_indices}).build(data_set, @@empty_centroid_indices.size)
-    
+
     # Verify that one cluster was eliminated
     assert_equal @@empty_centroid_indices.size - 1, clusterer.clusters.length
     assert_equal @@empty_centroid_indices.size - 1, clusterer.centroids.length
-    
+
     # The addition of all instances of every cluster must be equal to
     # the number of data points
     total_length = 0
-    clusterer.clusters.each do |cluster| 
+    clusterer.clusters.each do |cluster|
       total_length += cluster.data_items.length
     end
     assert_equal @@empty_cluster_data.length, total_length
     # Data inside clusters must be the same as original data
-    clusterer.clusters.each do |cluster| 
+    clusterer.clusters.each do |cluster|
      cluster.data_items.each do |data_item|
        assert @@empty_cluster_data.include?(data_item)
      end
@@ -87,15 +87,14 @@ class KMeansTest < Test::Unit::TestCase
     clusterer = KMeans.new
     # By default, distance returns the euclidean distance to the power of 2
     assert_equal 2385, clusterer.distance(
-      [1, 10, "Chicago", 2], 
+      [1, 10, "Chicago", 2],
       [10, 10, "London", 50])
-    
+
     # Ensure default distance raises error for nil argument
     exception = assert_raise(TypeError) {clusterer.distance([1, 10], [nil, nil])}
-    assert_equal("nil can't be coerced into Fixnum", exception.message)
-    
+
     # Test new distance definition
-    manhattan_distance = lambda do |a, b| 
+    manhattan_distance = lambda do |a, b|
         dist = 0.0
         a.each_index do |index|
           if a[index].is_a?(Numeric) && b[index].is_a?(Numeric)
@@ -106,7 +105,7 @@ class KMeansTest < Test::Unit::TestCase
     end
     clusterer.set_parameters({:distance_function => manhattan_distance})
     assert_equal 57, clusterer.distance(
-      [1, 10, "Chicago", 2], 
+      [1, 10, "Chicago", 2],
       [10, 10, "London", 50])
   end
 
@@ -139,12 +138,11 @@ class KMeansTest < Test::Unit::TestCase
     assert_equal @@empty_centroid_indices.size - 1, clusterer.clusters.length
     # Verify that eliminate is the on_empty default
     assert_equal 'eliminate', clusterer.on_empty
-    # Verify that invalid on_empty option throws an argument error 
+    # Verify that invalid on_empty option throws an argument error
     exception = assert_raise(ArgumentError) {KMeans.new.set_parameters({:centroid_indices=>@@empty_centroid_indices, :on_empty=>'ldkfje'}).build(data_set, @@empty_centroid_indices.size)}
     assert_equal("Invalid value for on_empty", exception.message)
     # Verify that on_empty option 'terminate' raises an error when an empty cluster arises
     exception = assert_raise(TypeError) {KMeans.new.set_parameters({:centroid_indices=>@@empty_centroid_indices, :on_empty=>'terminate'}).build(data_set, @@empty_centroid_indices.size)}
-    assert_equal("nil can't be coerced into Float", exception.message)
     clusterer = KMeans.new.set_parameters({:centroid_indices=>@@empty_centroid_indices, :on_empty=>'random'}).build(data_set, @@empty_centroid_indices.size)
     # Verify that cluster was not eliminated
     assert_equal @@empty_centroid_indices.size, clusterer.clusters.length
