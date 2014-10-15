@@ -30,38 +30,38 @@
         It implements:
       </p>
 	<ul>
-		<li><a href="http://ai4r.org/rdoc/classes/Ai4r/GeneticAlgorithm.html">Genetic algorithms</a></li>
-    <li><a href="http://ai4r.org/rdoc/classes/Ai4r/Som.html">Self-organized maps (SOM)</a></li>
-		<li><a href="http://ai4r.org/rdoc/classes/Ai4r/NeuralNetwork.html">Neural Networks</a>
+		<li><a href="http://ai4r.org/rdoc/Ai4r/GeneticAlgorithm.html">Genetic algorithms</a></li>
+    <li><a href="http://ai4r.org/rdoc/Ai4r/Som.html">Self-organized maps (SOM)</a></li>
+		<li><a href="http://ai4r.org/rdoc/Ai4r/NeuralNetwork.html">Neural Networks</a>
       <ul>
-        <li><a href="http://ai4r.org/rdoc/classes/Ai4r/NeuralNetwork/Backpropagation.html">Multilayer perceptron with Backpropagation learning</a></li>
-        <li><a href="http://ai4r.org/rdoc/classes/Ai4r/NeuralNetwork/Hopfield.html">Hopfield net</a></li>
+        <li><a href="http://ai4r.org/rdoc/Ai4r/NeuralNetwork/Backpropagation.html">Multilayer perceptron with Backpropagation learning</a></li>
+        <li><a href="http://ai4r.org/rdoc/Ai4r/NeuralNetwork/Hopfield.html">Hopfield net</a></li>
       </ul>
     </li>
 		<li><a href="machineLearning.html">Automatic classifiers (Machine Learning)</a>
 			<ul>
-				<li><a href="http://ai4r.org/rdoc/classes/Ai4r/Classifiers/ID3.html">ID3 (Decision Trees)</a></li>
-				<li><a href="http://ai4r.org/rdoc/classes/Ai4r/Classifiers/Prism.html">PRISM (J. Cendrowska, 1987)</a></li>
-                		<li><a href="http://ai4r.org/rdoc/classes/Ai4r/Classifiers/MultilayerPerceptron.html">Multilayer Perceptron</a></li>
-				<li><a href="http://ai4r.org/rdoc/classes/Ai4r/Classifiers/OneR.html">OneR (AKA One Attribute Rule, 1R)</a></li>
-				<li><a href="http://ai4r.org/rdoc/classes/Ai4r/Classifiers/ZeroR.html">ZeroR</a></li>
-				<li><a href="http://ai4r.org/rdoc/classes/Ai4r/Classifiers/Hyperpipes.html">Hyperpipes</a></li>        
-                <li><a href="http://ai4r.org/rdoc/classes/Ai4r/Classifiers/NaiveBayes.html">Naive Bayes</a></li>
-                <li><a href="http://ai4r.org/rdoc/classes/Ai4r/Classifiers/IB1.html">IB1 (D. Aha, D. Kibler - 1991)</a></li>
+				<li><a href="http://ai4r.org/rdoc/Ai4r/Classifiers/ID3.html">ID3 (Decision Trees)</a></li>
+				<li><a href="http://ai4r.org/rdoc/Ai4r/Classifiers/Prism.html">PRISM (J. Cendrowska, 1987)</a></li>
+                		<li><a href="http://ai4r.org/rdoc/Ai4r/Classifiers/MultilayerPerceptron.html">Multilayer Perceptron</a></li>
+				<li><a href="http://ai4r.org/rdoc/Ai4r/Classifiers/OneR.html">OneR (AKA One Attribute Rule, 1R)</a></li>
+				<li><a href="http://ai4r.org/rdoc/Ai4r/Classifiers/ZeroR.html">ZeroR</a></li>
+				<li><a href="http://ai4r.org/rdoc/Ai4r/Classifiers/Hyperpipes.html">Hyperpipes</a></li>        
+                <li><a href="http://ai4r.org/rdoc/Ai4r/Classifiers/NaiveBayes.html">Naive Bayes</a></li>
+                <li><a href="http://ai4r.org/rdoc/Ai4r/Classifiers/IB1.html">IB1 (D. Aha, D. Kibler - 1991)</a></li>
 			</ul>
 		</li>
 		<li><a href="http://en.wikipedia.org/wiki/Data_clustering">Data clustering</a>
 			<ul>
 				<li><a href="http://en.wikipedia.org/wiki/k_means">K-means</a></li>
  			        <li><a href="http://en.wikipedia.org/wiki/k_means">Bisecting k-means</a></li>
-				<li><a href="http://ai4r.org/rdoc/classes/Ai4r/Clusterers/SingleLinkage.html">Single linkage</a></li>
-			        <li><a href="http://ai4r.org/rdoc/classes/Ai4r/Clusterers/CompleteLinkage.html">Complete linkage</a></li>        
-			        <li><a href="http://ai4r.org/rdoc/classes/Ai4r/Clusterers/AverageLinkage.html">Average linkage</a></li>        
-			        <li><a href="http://ai4r.org/rdoc/classes/Ai4r/Clusterers/WeightedAverageLinkage.html">Weighted Average linkage</a></li> 
-			        <li><a href="http://ai4r.org/rdoc/classes/Ai4r/Clusterers/CentroidLinkage.html">Centroid linkage</a></li>
-			        <li><a href="http://ai4r.org/rdoc/classes/Ai4r/Clusterers/MedianLinkage.html">Median linkage</a></li>        
-			        <li><a href="http://ai4r.org/rdoc/classes/Ai4r/Clusterers/WardLinkage.html">Ward's method linkage</a></li>        
-			        <li><a href="http://ai4r.org/rdoc/classes/Ai4r/Clusterers/Diana.html">Diana (Divisive Analysis)</a></li>                
+				<li><a href="http://ai4r.org/rdoc/Ai4r/Clusterers/SingleLinkage.html">Single linkage</a></li>
+			        <li><a href="http://ai4r.org/rdoc/Ai4r/Clusterers/CompleteLinkage.html">Complete linkage</a></li>        
+			        <li><a href="http://ai4r.org/rdoc/Ai4r/Clusterers/AverageLinkage.html">Average linkage</a></li>        
+			        <li><a href="http://ai4r.org/rdoc/Ai4r/Clusterers/WeightedAverageLinkage.html">Weighted Average linkage</a></li> 
+			        <li><a href="http://ai4r.org/rdoc/Ai4r/Clusterers/CentroidLinkage.html">Centroid linkage</a></li>
+			        <li><a href="http://ai4r.org/rdoc/Ai4r/Clusterers/MedianLinkage.html">Median linkage</a></li>        
+			        <li><a href="http://ai4r.org/rdoc/Ai4r/Clusterers/WardLinkage.html">Ward's method linkage</a></li>        
+			        <li><a href="http://ai4r.org/rdoc/Ai4r/Clusterers/Diana.html">Diana (Divisive Analysis)</a></li>                
 			</ul>
 		</li>    
 	</ul>
