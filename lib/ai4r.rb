@@ -19,6 +19,7 @@ require File.dirname(__FILE__) +  "/ai4r/clusterers/diana"
 # Classifiers
 require File.dirname(__FILE__) +  "/ai4r/classifiers/classifier"
 require File.dirname(__FILE__) +  "/ai4r/classifiers/id3"
+require File.dirname(__FILE__) +  "/ai4r/classifiers/multilayer_perceptron"
 require File.dirname(__FILE__) +  "/ai4r/classifiers/prism"
 require File.dirname(__FILE__) +  "/ai4r/classifiers/one_r"
 require File.dirname(__FILE__) +  "/ai4r/classifiers/zero_r"
