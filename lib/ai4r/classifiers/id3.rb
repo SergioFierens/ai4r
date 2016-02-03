@@ -46,7 +46,7 @@ module Ai4r
     #          ['Chicago',     '>80',      'F', 'Y']
     #        ]
     #   
-    #   data_set = DataSet.new(:data_items=>DATA_SET, :data_labels=>DATA_LABELS)
+    #   data_set = Ai4r::Data::DataSet.new(:data_items=>DATA_ITEMS, :data_labels=>DATA_LABELS)
     #   id3 = Ai4r::Classifiers::ID3.new.build(data_set)
     #   
     #   id3.get_rules
