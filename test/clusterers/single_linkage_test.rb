@@ -42,8 +42,15 @@ class SingleLinkageTest < Test::Unit::TestCase
   def test_build
     clusterer = Ai4r::Clusterers::SingleLinkage.new
     clusterer.build(DataSet.new(:data_items => @@data), 4)
-    #draw_map(clusterer)
+    # draw_map(clusterer)
     assert_equal 4, clusterer.clusters.length
+  end
+
+  def test_build_with_distance
+    clusterer = Ai4r::Clusterers::SingleLinkage.new
+    clusterer.build(DataSet.new(:data_items => @@data), distance: 8.0)
+    # draw_map(clusterer)
+    assert_equal 3, clusterer.clusters.length
   end
 
   def test_eval

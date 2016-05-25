@@ -40,6 +40,13 @@ class CompleteLinkageTest < Test::Unit::TestCase
      *Ai4r::Clusterers::CompleteLinkage.protected_instance_methods)
   end
 
+  def test_build_with_distance
+    clusterer = Ai4r::Clusterers::CompleteLinkage.new
+    clusterer.build(DataSet.new(:data_items => @@data), distance: 4.0)
+    # draw_map(clusterer)
+    assert_equal 6, clusterer.clusters.length
+  end
+
   def test_linkage_distance
     clusterer = Ai4r::Clusterers::CompleteLinkage.new
     clusterer.distance_matrix = @@expected_distance_matrix
@@ -53,4 +60,14 @@ class CompleteLinkageTest < Test::Unit::TestCase
       DataSet.new(:data_items => [[3,4],[5,6]]))
   end
 
+  private
+  def draw_map(clusterer)
+    map = Array.new(11) {Array.new(11, 0)}
+    clusterer.clusters.each_index do |i|
+      clusterer.clusters[i].data_items.each do |point|
+        map[point.first][point.last]=(i+1)
+      end
+    end
+    map.each { |row| puts row.inspect}
+  end
 end
