@@ -5,7 +5,7 @@ SPEC = Gem::Specification.new do |s|
   s.name = "ai4r"
   s.version = "1.13"
   s.author = "Sergio Fierens"
-  s.homepage = "http://www.ai4r.org"
+  s.homepage = "https://github.com/SergioFierens/ai4r"
   s.platform = Gem::Platform::RUBY
   s.summary = <<-DESC.strip.gsub(/\n\s+/, " ")
     Ruby algorithm implementations covering several

@@ -47,6 +47,6 @@ See http://forrest.apache.org/docs/linking.html for more info
 	</practicalExamples>		
     <download label="Downloads" href="http://github.com/SergioFierens/ai4r/downloads" description="ai4r - Download Files"/> 
     <svn label="Source Code repository" href="sourceCode.html" description="ai4r source code repository"/>
-    <rdoc label="API doc (Rdoc)" href="http://ai4r.org/rdoc/index.html" description="Ai4 RDoc docs"/>    
+    <rdoc label="API doc (Rdoc)" href="./rdoc/index.html" description="Ai4 RDoc docs"/>    
   </about>
 </site>

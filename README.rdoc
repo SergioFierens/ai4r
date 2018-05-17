@@ -5,10 +5,6 @@
 
 This project aims to produce ruby implementations of algorithms covering several Artificial intelligence fields.
 
-= Where can I find the lastest code and info on this project?
-
-http://www.ai4r.org
-
 = How to install
 
 1. Install the gem:
@@ -19,11 +15,6 @@ http://www.ai4r.org
 
   require "rubygems"
   require "ai4r"
-
-= More Info
-
-* AI4R Project site: http://www.ai4r.org
-* RDoc site: http://www.ai4r.org/rdoc/index.html
 
 = Contact
 
