@@ -188,7 +188,7 @@ module Ai4r
       end
       
       def then_clause(rule)
-        "#{@data_set.data_labels.last} = '#{rule[:class_value]}'"
+        "#{@data_set.category_label} = '#{rule[:class_value]}'"
       end
           
     end

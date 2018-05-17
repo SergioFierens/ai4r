@@ -34,45 +34,58 @@ DATA_ITEMS = [  ['New York',  '<30',      'M', 'Y'],
               ['Chicago',     '>80',      'F', 'Y']
             ]
 
-SPLIT_DATA_ITEMS_BY_CITY = [  [
-                              ["New York", "<30", "M", "Y"], 
-                              ["New York", "<30", "M", "Y"], 
-                              ["New York", "<30", "M", "Y"], 
-                              ["New York", "[30-50)", "F", "N"], 
-                              ["New York", "[30-50)", "F", "N"], 
-                              ["New York", "[50-80]", "F", "N"], 
-                              ["New York", "[50-80]", "M", "N"], 
-                              ["New York", "[50-80]", "F", "N"]], 
-                            [
-                              ["Chicago", "<30", "M", "Y"], 
-                              ["Chicago", "<30", "F", "Y"], 
-                              ["Chicago", "[30-50)", "M", "Y"], 
-                              ["Chicago", "[30-50)", "F", "Y"], 
-                              ["Chicago", "[50-80]", "M", "N"], 
-                              ["Chicago", "[50-80]", "M", "N"], 
-                              ["Chicago", ">80", "F", "Y"]]
-                          ]
-                          
-SPLIT_DATA_ITEMS_BY_AGE = [   [
-                              ["New York", "<30", "M", "Y"], 
-                              ["Chicago", "<30", "M", "Y"], 
-                              ["Chicago", "<30", "F", "Y"], 
-                              ["New York", "<30", "M", "Y"], 
-                              ["New York", "<30", "M", "Y"]], 
-                            [
-                              ["Chicago", "[30-50)", "M", "Y"], 
-                              ["New York", "[30-50)", "F", "N"], 
-                              ["Chicago", "[30-50)", "F", "Y"], 
-                              ["New York", "[30-50)", "F", "N"]], 
-                            [
-                              ["Chicago", "[50-80]", "M", "N"], 
-                              ["New York", "[50-80]", "F", "N"], 
-                              ["New York", "[50-80]", "M", "N"], 
-                              ["Chicago", "[50-80]", "M", "N"], 
-                              ["New York", "[50-80]", "F", "N"]], 
-                            [
-                              ["Chicago", ">80", "F", "Y"]]
-                         ]
+NEW_YORK_DATA_ITEMS = [
+                      ["New York", "<30", "M", "Y"],
+                      ["New York", "<30", "M", "Y"],
+                      ["New York", "<30", "M", "Y"],
+                      ["New York", "[30-50)", "F", "N"],
+                      ["New York", "[30-50)", "F", "N"],
+                      ["New York", "[50-80]", "F", "N"],
+                      ["New York", "[50-80]", "M", "N"],
+                      ["New York", "[50-80]", "F", "N"]]
+
+CHICAGO_DATA_ITEMS =  [
+                      ["Chicago", "<30", "M", "Y"],
+                      ["Chicago", "<30", "F", "Y"],
+                      ["Chicago", "[30-50)", "M", "Y"],
+                      ["Chicago", "[30-50)", "F", "Y"],
+                      ["Chicago", "[50-80]", "M", "N"],
+                      ["Chicago", "[50-80]", "M", "N"],
+                      ["Chicago", ">80", "F", "Y"]]
+
+YOUNG_DATA_ITEMS =  [
+                    ["New York", "<30", "M", "Y"],
+                    ["Chicago", "<30", "M", "Y"],
+                    ["Chicago", "<30", "F", "Y"],
+                    ["New York", "<30", "M", "Y"],
+                    ["New York", "<30", "M", "Y"]]
+
+MIDDLE_AGE_DATA_ITEMS = [
+                        ["Chicago", "[30-50)", "M", "Y"],
+                        ["New York", "[30-50)", "F", "N"],
+                        ["Chicago", "[30-50)", "F", "Y"],
+                        ["New York", "[30-50)", "F", "N"]]
+
+OLD_DATA_ITEMS =  [
+                  ["Chicago", "[50-80]", "M", "N"],
+                  ["New York", "[50-80]", "F", "N"],
+                  ["New York", "[50-80]", "M", "N"],
+                  ["Chicago", "[50-80]", "M", "N"],
+                  ["New York", "[50-80]", "F", "N"]]
+
+ELDER_DATA_ITEMS =  [
+                    ["Chicago", ">80", "F", "Y"]]
+
+SPLIT_DATA_ITEMS_BY_CITY = [ NEW_YORK_DATA_ITEMS, CHICAGO_DATA_ITEMS ]
+SPLIT_DATA_ITEMS_BY_AGE = [ YOUNG_DATA_ITEMS, MIDDLE_AGE_DATA_ITEMS, OLD_DATA_ITEMS, ELDER_DATA_ITEMS ]
+SPLIT_DATA_ITEMS_BY_CITY_HASH = {
+                                'New York' => NEW_YORK_DATA_ITEMS,
+                                'Chicago' => CHICAGO_DATA_ITEMS }
+SPLIT_DATA_ITEMS_BY_AGE_HASH = {
+                              '<30' => YOUNG_DATA_ITEMS,
+                              '[30-50)' => MIDDLE_AGE_DATA_ITEMS,
+                              '[50-80]' => OLD_DATA_ITEMS,
+                              '>80' => ELDER_DATA_ITEMS }
 
   EXPECTED_RULES_STRING =  
     "if age_range=='<30' then marketing_target='Y'\n"+
@@ -146,6 +159,14 @@ class ID3Test < Test::Unit::TestCase
     assert_equal 1, id3.min_entropy_index(DATA_ITEMS, domain)
     assert_equal 0, id3.min_entropy_index(DATA_ITEMS, domain, [1])
     assert_equal 2, id3.min_entropy_index(DATA_ITEMS, domain, [1, 0])
+  end
+
+  def test_split_data_examples_by_value
+    id3 = ID3.new.build(DataSet.new(:data_items =>DATA_ITEMS, :data_labels => DATA_LABELS))
+    res = id3.split_data_examples_by_value(DATA_ITEMS, 0)
+    assert_equal(SPLIT_DATA_ITEMS_BY_CITY_HASH, res)
+    res = id3.split_data_examples_by_value(DATA_ITEMS, 1)
+    assert_equal(SPLIT_DATA_ITEMS_BY_AGE_HASH, res)
   end
 
   def test_split_data_examples

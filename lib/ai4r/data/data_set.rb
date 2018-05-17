@@ -227,6 +227,11 @@ module Ai4r
         return mean
       end
 
+      # Returns label of category
+      def category_label
+        data_labels.last
+      end
+
       protected
 
       def is_number?(x)

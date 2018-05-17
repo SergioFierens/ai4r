@@ -98,6 +98,12 @@ module Ai4r
         assert_equal [[ "Chicago", 23, "Y"],[ "Boston", 23, "N"]], set[2..3].data_items
         assert_equal items[1..-1], set[1..-1].data_items
       end
+
+      def test_category_label
+        labels = ["Feature_1", "Feature_2", "Category Label"]
+        set = DataSet.new(:data_labels => labels)
+        assert_equal "Category Label", set.category_label
+      end
      
     end
   end
