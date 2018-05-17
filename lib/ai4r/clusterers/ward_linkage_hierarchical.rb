@@ -12,7 +12,7 @@ module Ai4r
     class WardLinkageHierarchical < WardLinkage
 
       attr_reader :cluster_tree
-     
+
       def initialize(depth = nil)
         @cluster_tree = []
         @depth = depth
@@ -20,7 +20,7 @@ module Ai4r
         super()
       end
 
-      def build(data_set, number_of_clusters)
+      def build(data_set, number_of_clusters = 1, **options)
         data_len = data_set.data_items.length
         @total_merges = data_len - number_of_clusters
         super
@@ -45,4 +45,3 @@ module Ai4r
     end
   end
 end
-
