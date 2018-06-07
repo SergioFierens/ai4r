@@ -61,12 +61,17 @@ class DBSCANTest < Test::Unit::TestCase
   end
 
   def test_on_empty
-    data_set = DataSet.new(:data_items => @@empty_cluster_data, :data_labels => ["X", "Y"])
+    data_set = DataSet.new(:data_items => @@data, :data_labels => ["X", "Y"])
     clusterer = DBSCAN.new.set_parameters(:epsilon => 0).build(data_set)
     # Verify that every item is defined as noise
     assert clusterer.labels.all?{ |label| label == :noise}
     # Verify that none cluster has been created
     assert_equal 0, clusterer.clusters.length
+  end
+
+  def test_undefined_epsilon
+    data_set = DataSet.new(:data_items => @@data, :data_labels => ["X", "Y"])
+    exception = assert_raise(ArgumentError) {DBSCAN.new.build(data_set)}
   end
 
   private

@@ -36,6 +36,8 @@ module Ai4r
       def build(data_set)
         @data_set = data_set
         @labels = Array.new(data_set.data_items.size)
+
+        raise ArgumentError, 'epsilon must be defined' unless !@epsilon.nil?
         number_of_clusters = 0
 
         # Detect if the neighborhood of the current item
