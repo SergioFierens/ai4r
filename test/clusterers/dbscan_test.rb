@@ -16,7 +16,7 @@ class DBSCANTest < Test::Unit::TestCase
 
   def test_build
     data_set = DataSet.new(:data_items => @@data, :data_labels => ["X", "Y"])
-    clusterer = DBSCAN.new.set_parameters({:epsilon => 5, :min_points => 3}).build(data_set)
+    clusterer = DBSCAN.new.set_parameters({:epsilon => 8, :min_points => 3}).build(data_set)
 
     # draw_map(clusterer)
     # Verify that 3 clusters are created

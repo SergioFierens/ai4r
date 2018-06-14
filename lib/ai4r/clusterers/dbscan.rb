@@ -44,14 +44,15 @@ module Ai4r
         # is dense enough
         data_set.data_items.each_with_index{ |data_item, data_index|
           if @labels[data_index].nil?
-            neighbors = range_query(data_item)
+            neighbors = range_query(data_item) - [data_index]
             if neighbors.size < @min_points
               @labels[data_index] = :noise
             else
-              number_of_clusters+=1
+              number_of_clusters += 1
+              @labels[data_index] = number_of_clusters
               @clusters.push([data_item])
               @cluster_indices.push([data_index])
-              extend_cluster(data_index, neighbors, number_of_clusters)
+              extend_cluster(neighbors, number_of_clusters)
             end
           end
         }
@@ -89,21 +90,21 @@ module Ai4r
       # existing cluster.
       # If one point one of the neighbor is classified as
       # noise it is set as part of the current cluster.
-      def extend_cluster(evaluated_data_index, neighbors, current_cluster)
-        @labels[evaluated_data_index] = current_cluster
-        seeds = neighbors - [evaluated_data_index]
-        seeds.each{ |data_index|
+      def extend_cluster(neighbors, current_cluster)
+        neighbors.each{ |data_index|
           if @labels[data_index] == :noise
             @labels[data_index] = data_index
             @clusters.last << @data_set.data_items[data_index]
             @cluster_indices.last << data_index
           elsif @labels[data_index].nil?
-            new_neighbors = range_query(@data_set.data_items[data_index])
             @labels[data_index] = current_cluster
             @clusters.last << @data_set.data_items[data_index]
             @cluster_indices.last << data_index
+            new_neighbors = range_query(@data_set.data_items[data_index]) - [data_index]
             if new_neighbors.size >= @min_points
-              seeds += new_neighbors
+              neighbors += new_neighbors
+              neighbors.delete(data_index)
+              neighbors.uniq!
             end
           end
         }
