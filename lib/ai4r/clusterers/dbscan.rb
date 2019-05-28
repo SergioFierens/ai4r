@@ -93,7 +93,7 @@ module Ai4r
       def extend_cluster(neighbors, current_cluster)
         neighbors.each{ |data_index|
           if @labels[data_index] == :noise
-            @labels[data_index] = data_index
+            @labels[data_index] = current_cluster
             @clusters.last << @data_set.data_items[data_index]
             @cluster_indices.last << data_index
           elsif @labels[data_index].nil?
