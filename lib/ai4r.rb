@@ -16,6 +16,7 @@ require File.dirname(__FILE__) +  "/ai4r/clusterers/median_linkage"
 require File.dirname(__FILE__) +  "/ai4r/clusterers/ward_linkage"
 require File.dirname(__FILE__) +  "/ai4r/clusterers/ward_linkage_hierarchical"
 require File.dirname(__FILE__) +  "/ai4r/clusterers/diana"
+require File.dirname(__FILE__) +  "/ai4r/clusterers/dbscan"
 # Classifiers
 require File.dirname(__FILE__) +  "/ai4r/classifiers/classifier"
 require File.dirname(__FILE__) +  "/ai4r/classifiers/id3"
