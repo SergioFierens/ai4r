@@ -2,7 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     rake (10.1.0)
-    rdoc (4.1.0)
+    rdoc (6.3.1)
 
 PLATFORMS
   ruby
