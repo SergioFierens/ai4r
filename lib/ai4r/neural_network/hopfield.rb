@@ -65,6 +65,7 @@ require_relative '../data/parameterizable'
       # of the "memorized" patterns is not guaranteed.
       def train(data_set)
         @data_set = data_set
+        validate_training_data
         initialize_nodes(@data_set)
         initialize_weights(@data_set)
         return self
@@ -160,16 +161,28 @@ require_relative '../data/parameterizable'
         end
         @nodes = new_nodes
       end
-      
+
       # Initialize all nodes with "inactive" state.
       def initialize_nodes(data_set)
-        @nodes = Array.new(data_set.data_items.first.length, 
+        @nodes = Array.new(data_set.data_items.first.length,
           @inactive_node_value)
       end
-      
+
+      # Ensure training data only contains active or inactive values.
+      def validate_training_data
+        allowed = [@active_node_value, @inactive_node_value]
+        @data_set.data_items.each_with_index do |item, row|
+          item.each_with_index do |v, col|
+            unless allowed.include?(v)
+              raise ArgumentError, "Invalid value #{v} in item #{row}, position #{col}"
+            end
+          end
+        end
+      end
+
       # Create a partial weigth matrix:
-      #   [ 
-      #     [w(1,0)], 
+      #   [
+      #     [w(1,0)],
       #     [w(2,0)], [w(2,1)],
       #     [w(3,0)], [w(3,1)], [w(3,2)],
       #     ... 

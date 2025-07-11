@@ -4,7 +4,7 @@ A Hopfield network is a recurrent neural network that stores patterns as stable 
 
 ## Input Format
 
-Training requires an `Ai4r::Data::DataSet` where each `data_item` is an array of values. Values should match the `active_node_value` and `inactive_node_value` parameters (by default `1` and `-1`). All patterns must have the same length.
+Training requires an `Ai4r::Data::DataSet` where each `data_item` is an array of values. Values must match the `active_node_value` and `inactive_node_value` parameters (by default `1` and `-1`). Any other value will cause `train` to raise `ArgumentError`. All patterns must have the same length.
 
 ```ruby
 require 'ai4r/neural_network/hopfield'
