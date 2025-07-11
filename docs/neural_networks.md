@@ -22,7 +22,8 @@ After training, the network can evaluate noisy patterns with good accuracy.
 
 ## Customizing Parameters
 
-You can tweak the learning rate, momentum and propagation function:
+You can tweak the learning rate, momentum and propagation function. You can also
+pick one of the built-in activation functions with the `activation` parameter:
 
 ```ruby
 net.set_parameters(
@@ -31,6 +32,13 @@ net.set_parameters(
   propagation_function: ->(x) { Math.tanh(x) },
   derivative_propagation_function: ->(y) { 1.0 - y**2 }
 )
+```
+
+Alternatively you can simply specify the activation name:
+
+```ruby
+net = Ai4r::NeuralNetwork::Backpropagation.new([256, 3], :tanh)
+net.set_parameters(activation: :relu)
 ```
 
 See the [Artificial Neural Network](http://en.wikipedia.org/wiki/Artificial_neural_network) and [Backpropagation](http://en.wikipedia.org/wiki/Backpropagation) articles for more information.
