@@ -55,20 +55,10 @@ module Ai4r
         set_data_items(items)
       end
 
-      # opens a csv-file and reads it line by line
-      # for each line, a block is called and the row is passed to the block
-      # ruby1.8 and 1.9 safe
+      # Open a CSV file and yield each row to the provided block.
       def open_csv_file(filepath, &block)
-        if CSV.const_defined? :Reader
-          File.open(filepath, 'r') do |f|
-            CSV::Reader.parse(f) do |row|
-              block.call row
-            end
-          end
-        else
-          CSV.foreach(filepath) do |row|
-            block.call row
-          end
+        CSV.foreach(filepath) do |row|
+          block.call row
         end
       end
 
