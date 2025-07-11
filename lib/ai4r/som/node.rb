@@ -39,10 +39,10 @@ module Ai4r
       # creates an instance of Node and instantiates the weights
       # the parameters is a uniq and sequential ID as well as the number of total nodes
       # dimensions signals the dimension of the input vector
-      def self.create(id, total, dimensions)
+      def self.create(id, total, dimensions, options = {})
         n = Node.new
         n.id = id
-        n.instantiate_weight dimensions
+        n.instantiate_weight dimensions, options
         n.x = id % total
         n.y = (id / total.to_f).to_i
         n
@@ -50,11 +50,17 @@ module Ai4r
 
       # instantiates the weights to the dimension (of the input vector)
       # for backup reasons, the instantiated weight is stored into @instantiated_weight  as well
-      def instantiate_weight(dimensions)
+      def instantiate_weight(dimensions, options = {})
+        opts = { range: 0..1, seed: nil }.merge(options)
+        srand(opts[:seed]) unless opts[:seed].nil?
+        range = opts[:range] || (0..1)
+        min = range.first.to_f
+        max = range.last.to_f
+        span = max - min
         @weights = Array.new dimensions
         @instantiated_weight = Array.new dimensions
         @weights.each_with_index do |weight, index|
-          @weights[index] = rand
+          @weights[index] = min + rand * span
           @instantiated_weight[index] = @weights[index]
         end
       end

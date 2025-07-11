@@ -56,15 +56,17 @@ module Ai4r
       parameters_info :nodes  => "sets the architecture of the map (nodes x nodes)",
                       :dimension => "sets the dimension of the input",
                       :layer => "instance of a layer, defines how the training algorithm works",
-                      :epoch => "number of finished epochs"
+                      :epoch => "number of finished epochs",
+                      :init_weight_options => "Hash with :range and :seed to initialize node weights"
 
-      def initialize(dim, number_of_nodes, layer)
+      def initialize(dim, number_of_nodes, layer, init_weight_options = { range: 0..1, seed: nil })
         @layer = layer
         @dimension = dim
         @number_of_nodes = number_of_nodes
         @nodes = Array.new(number_of_nodes * number_of_nodes)
         @epoch = 0
         @cache = {}
+        @init_weight_options = init_weight_options
       end
 
       # finds the best matching unit (bmu) of a certain input in all the @nodes
@@ -135,8 +137,9 @@ module Ai4r
 
       # intitiates the map by creating (@number_of_nodes * @number_of_nodes) nodes
       def initiate_map
+        srand(@init_weight_options[:seed]) unless @init_weight_options[:seed].nil?
         @nodes.each_with_index do |node, i|
-          @nodes[i] = Node.create i, @number_of_nodes, @dimension
+          @nodes[i] = Node.create i, @number_of_nodes, @dimension, @init_weight_options
         end
       end
 
