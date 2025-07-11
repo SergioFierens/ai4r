@@ -107,6 +107,19 @@ module Ai4r
         assert_equal [1, 1], [som.get_node(1, 1).x, som.get_node(1, 1).y]
       end
 
+      def test_u_matrix_and_sample_mapping
+        som = Som.new 1, 1, 2, Layer.new(3, 1)
+        som.initiate_map
+        som.get_node(0, 0).weights = [0.0]
+        som.get_node(0, 1).weights = [1.0]
+
+        assert_equal [[1.0, 1.0]], som.u_matrix
+
+        mapping = som.map_samples([[0.2], [0.8]])
+        assert_equal [[0.2], [0, 0]], mapping[0]
+        assert_equal [[0.8], [0, 1]], mapping[1]
+      end
+
       private
 
       def distancer(x1, y1, x2, y2)

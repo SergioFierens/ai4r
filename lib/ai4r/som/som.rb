@@ -134,6 +134,46 @@ module Ai4r
         false
       end
 
+      # Returns an array of arrays containing the average Euclidean distance
+      # between a node and its neighbours. Each position of the returned
+      # matrix corresponds to the node coordinates in the map.
+      def u_matrix
+        matrix = Array.new(@rows) { Array.new(@columns) }
+        (0...@rows).each do |x|
+          (0...@columns).each do |y|
+            node = get_node(x, y)
+            neighbours = []
+            (-1..1).each do |dx|
+              (-1..1).each do |dy|
+                next if dx.zero? && dy.zero?
+                nx = x + dx
+                ny = y + dy
+                next if nx < 0 || ny < 0 || nx >= @rows || ny >= @columns
+                neighbours << get_node(nx, ny)
+              end
+            end
+            if neighbours.empty?
+              matrix[x][y] = 0.0
+            else
+              avg = neighbours.inject(0.0) do |sum, n|
+                sum + n.distance_to_input(node.weights)
+              end
+              matrix[x][y] = avg / neighbours.length
+            end
+          end
+        end
+        matrix
+      end
+
+      # Maps each sample from +data+ to the coordinates of its best matching
+      # unit. Returns an array of `[sample, [x, y]]` pairs.
+      def map_samples(data)
+        data.map do |sample|
+          bmu, _dist = find_bmu(sample)
+          [sample, [bmu.y, bmu.x]]
+        end
+      end
+
       # returns the node at position (x,y) in the map
       def get_node(x, y)
         if check_param_for_som(x, y)

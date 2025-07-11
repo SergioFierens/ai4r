@@ -474,17 +474,21 @@ module Ai4r
       attr_reader :index, :values, :nodes, :numeric, :threshold, :majority
 
 
-      # The last parameter can either be a boolean flag indicating a numeric
-      # split, or the majority class value for this node.
-      def initialize(data_labels, index, values_or_threshold, nodes, param=nil)
+      # The last parameters may either specify if this is a numeric split and
+      # the majority class. Older versions only received a single +param+ which
+      # could be a boolean flag or the majority value. To keep backwards
+      # compatibility this constructor accepts both forms.
+      def initialize(data_labels, index, values_or_threshold, nodes, *params)
         @index = index
-        if param == true || param == false
-          @numeric = param
-          @majority = nil
-        else
-          @numeric = false
-          @majority = param
+        numeric, majority = nil, nil
+        if params.length == 1
+          numeric = params.first if params.first == true || params.first == false
+          majority = params.first unless numeric
+        elsif params.length >= 2
+          numeric, majority = params[0], params[1]
         end
+        @numeric = numeric || false
+        @majority = majority
 
         if @numeric
           @threshold = values_or_threshold
@@ -510,19 +514,22 @@ module Ai4r
 
       def value(data, classifier)
         value = data[@index]
-        unless @values.include?(value)
-          case classifier.on_unknown
-          when :nil
-            return nil
-          when :most_frequent
-            return @majority
-          else
-            return ErrorNode.new.value(data, classifier)
+        if @numeric
+          node = value <= @threshold ? @nodes[0] : @nodes[1]
+          return node.value(data, classifier)
+        else
+          unless @values.include?(value)
+            case classifier.on_unknown
+            when :nil
+              return nil
+            when :most_frequent
+              return @majority
+            else
+              return ErrorNode.new.value(data, classifier)
+            end
           end
-          return @nodes[@values.index(value)].value(data, classifier)
+          @nodes[@values.index(value)].value(data, classifier)
         end
-
-        @nodes[@values.index(value)].value(data, classifier)
 
       end
 
