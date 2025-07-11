@@ -101,7 +101,42 @@ module Ai4r
         rules << "#{labels.last} = votes.get_winner(:#{@tie_strategy})"
         return rules.join("\n")
       end
-      
+
+      # Return a summary representation of all pipes.
+      #
+      # The returned hash maps each category to another hash where the keys are
+      # attribute labels and the values are either numeric ranges
+      # `[min, max]` (including the optional margin) or a Set of nominal values.
+      #
+      #   classifier.pipes_summary
+      #     # => { "Y" => { "city" => #{Set['New York', 'Chicago']},
+      #                    "age" => [18, 85],
+      #                    "gender" => #{Set['M', 'F']} },
+      #          "N" => { ... } }
+      #
+      # The optional +margin+ parameter expands numeric bounds by the given
+      # fraction.  A value of 0.1 would enlarge each range by 10%.
+      def pipes_summary(margin: 0)
+        raise 'Model not built yet' unless @data_set && @pipes
+        labels = @data_set.data_labels[0...-1]
+        summary = {}
+        @pipes.each do |category, pipe|
+          attr_summary = {}
+          pipe.each_with_index do |bounds, i|
+            if bounds.is_a?(Hash) && bounds.key?(:min) && bounds.key?(:max)
+              min = bounds[:min]
+              max = bounds[:max]
+              range_margin = (max - min) * margin
+              attr_summary[labels[i]] = [min - range_margin, max + range_margin]
+            else
+              attr_summary[labels[i]] = bounds.select { |_k, v| v }.keys.to_set
+            end
+          end
+          summary[category] = attr_summary
+        end
+        summary
+      end
+
       protected
 
       def build_pipe(data_set)

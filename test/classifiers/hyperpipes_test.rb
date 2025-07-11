@@ -9,6 +9,7 @@
 
 require 'ai4r/classifiers/hyperpipes'
 require 'test/unit'
+require 'set'
 
 class Ai4r::Classifiers::Hyperpipes
   attr_accessor :data_set, :pipes
@@ -76,6 +77,24 @@ class HyperpipesTest < Test::Unit::TestCase
     assert_equal 'N', marketing_target
   end
 
+  def test_pipes_summary
+    classifier = Hyperpipes.new.build(@data_set)
+    summary = classifier.pipes_summary
+    expected = {
+      'Y' => {
+        'city' => Set['New York', 'Chicago'],
+        'age' => [18, 85],
+        'gender' => Set['M', 'F']
+      },
+      'N' => {
+        'city' => Set['New York', 'Chicago'],
+        'age' => [31, 71],
+        'gender' => Set['F', 'M']
+      }
+    }
+    assert_equal(expected, summary)
+  end
+  
   def test_tie_strategy
     classifier = Hyperpipes.new.set_parameters(:tie_strategy => :last).build(@data_set)
     assert_equal 'N', classifier.eval(['Chicago', 40, 'F'])
@@ -90,6 +109,7 @@ class HyperpipesTest < Test::Unit::TestCase
     classifier = Hyperpipes.new.set_parameters(:margin => 5).build(@data_set)
     assert_equal 'N', classifier.eval(['Chicago', 30, 'F'])
   end
+  
 end
 
   
