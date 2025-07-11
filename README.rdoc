@@ -15,6 +15,10 @@ This project aims to produce ruby implementations of algorithms covering several
 
   require "ai4r"
 
+OneR now supports numeric attributes by discretizing them into a fixed
+number of bins. The amount of bins can be controlled with the
+`bin_count` parameter.
+
 = Examples
 
 == Using OneR and ZeroR

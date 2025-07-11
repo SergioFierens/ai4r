@@ -185,9 +185,14 @@ module Ai4r
 
       private
       def build_node(data_examples, flag_att = [], depth = 0)
-        return ErrorNode.new if data_examples.length == 0
+        return ErrorNode.new if data_examples.empty?
         domain = domain(data_examples)
         return CategoryNode.new(@data_set.category_label, domain.last[0]) if domain.last.length == 1
+        return CategoryNode.new(@data_set.category_label, most_freq(data_examples, domain)) if flag_att.length >= domain.length - 1
+
+        if @max_depth && depth >= @max_depth
+          return CategoryNode.new(@data_set.category_label, most_freq(data_examples, domain))
+        end
 
         best_index = nil
         best_entropy = nil
@@ -218,34 +223,20 @@ module Ai4r
           end
         end
 
+        gain = information_gain(data_examples, domain, best_index)
+        return CategoryNode.new(@data_set.category_label, most_freq(data_examples, domain)) if gain < @min_gain
         return CategoryNode.new(@data_set.category_label, most_freq(data_examples, domain)) if best_split.length == 1
 
         nodes = best_split.collect do |partial_data_examples|
-          build_node(partial_data_examples, numeric ? flag_att : [*flag_att, best_index])
-        end
-
-        if numeric
-          EvaluationNode.new(@data_set.data_labels, best_index, best_threshold, nodes, true)
-        else
-          EvaluationNode.new(@data_set.data_labels, best_index, domain[best_index], nodes)
-        end
-        
-	if @max_depth && depth >= @max_depth
-          return CategoryNode.new(@data_set.category_label, most_freq(data_examples, domain))
-        end
-
-        min_entropy_index = min_entropy_index(data_examples, domain, flag_att)
-        gain = information_gain(data_examples, domain, min_entropy_index)
-        return CategoryNode.new(@data_set.category_label, most_freq(data_examples, domain)) if gain < @min_gain
-
-        split_data_examples = split_data_examples(data_examples, domain, min_entropy_index)
-        return CategoryNode.new(@data_set.category_label, most_freq(data_examples, domain)) if split_data_examples.length == 1
-
-        nodes = split_data_examples.collect do |partial_data_examples|
-          build_node(partial_data_examples, [*flag_att, min_entropy_index], depth + 1)
+          build_node(partial_data_examples, numeric ? flag_att : [*flag_att, best_index], depth + 1)
         end
         majority = most_freq(data_examples, domain)
-        return EvaluationNode.new(@data_set.data_labels, min_entropy_index, domain[min_entropy_index], nodes, majority)
+
+        if numeric
+          EvaluationNode.new(@data_set.data_labels, best_index, best_threshold, nodes, true, majority)
+        else
+          EvaluationNode.new(@data_set.data_labels, best_index, domain[best_index], nodes, false, majority)
+        end
       end
 
       private
@@ -436,10 +427,18 @@ module Ai4r
       def prune_node(node, examples)
         return node if node.is_a?(CategoryNode) || node.is_a?(ErrorNode)
 
-        subsets = Array.new(node.values.length) { [] }
-        examples.each do |ex|
-          idx = node.values.index(ex[node.index])
-          subsets[idx] << ex if idx
+        if node.numeric
+          subsets = Array.new(2) { [] }
+          examples.each do |ex|
+            idx = ex[node.index] <= node.threshold ? 0 : 1
+            subsets[idx] << ex
+          end
+        else
+          subsets = Array.new(node.values.length) { [] }
+          examples.each do |ex|
+            idx = node.values.index(ex[node.index])
+            subsets[idx] << ex if idx
+          end
         end
 
         node.nodes.each_with_index do |child, i|
@@ -472,7 +471,7 @@ module Ai4r
 
     class EvaluationNode #:nodoc: all
 
-      attr_reader :index, :values, :nodes, :numeric, :threshold
+      attr_reader :index, :values, :nodes, :numeric, :threshold, :majority
 
       def initialize(data_labels, index, values_or_threshold, nodes, numeric=false, majority=nil)
         @index = index
@@ -488,11 +487,11 @@ module Ai4r
         @data_labels = data_labels
       end
 
-      def value(data)
+      def value(data, classifier = nil)
         value = data[@index]
         if @numeric
           node = value <= @threshold ? @nodes[0] : @nodes[1]
-          node.value(data)
+          return node.value(data, classifier)
         else
           return ErrorNode.new.value(data) unless @values.include?(value)
           @nodes[@values.index(value)].value(data)
@@ -510,8 +509,8 @@ module Ai4r
           else
             return ErrorNode.new.value(data, classifier)
           end
+          return @nodes[@values.index(value)].value(data, classifier)
         end
-        return nodes[@values.index(value)].value(data, classifier)
       end
 
       def get_rules
