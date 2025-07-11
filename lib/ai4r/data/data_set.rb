@@ -39,7 +39,7 @@ module Ai4r
       # Retrieve a new DataSet, with the item(s) selected by the provided 
       # index. You can specify an index range, too.
       def [](index)
-        selected_items = (index.is_a?(Fixnum)) ?
+        selected_items = (index.is_a?(Integer)) ?
                 [@data_items[index]] : @data_items[index]
         return DataSet.new(:data_items => selected_items,
                            :data_labels =>@data_labels)
@@ -187,7 +187,7 @@ module Ai4r
       #   get_index("gender") 
       #   => 2
       def get_index(attr)
-        return (attr.is_a?(Fixnum) || attr.is_a?(Range)) ? attr : @data_labels.index(attr)
+        return (attr.is_a?(Integer) || attr.is_a?(Range)) ? attr : @data_labels.index(attr)
       end
 
       # Raise an exception if there is no data item.

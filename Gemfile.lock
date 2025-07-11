@@ -1,12 +1,23 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    rake (10.1.0)
+    csv (3.3.5)
+    json (1.8.6)
+    power_assert (2.0.5)
+    rake (13.3.0)
     rdoc (4.1.0)
+      json (~> 1.4)
+    test-unit (3.7.0)
+      power_assert
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  csv
   rake
   rdoc
+  test-unit
+
+BUNDLED WITH
+   2.6.7

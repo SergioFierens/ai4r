@@ -57,6 +57,27 @@ class OneRTest < Test::Unit::TestCase
     eval(classifier.get_rules) 
     assert_equal("N", marketing_target)    
   end
+
+  def test_selected_attribute
+    classifier = OneR.new.set_parameters({:selected_attribute => 0}).build(
+      DataSet.new(:data_items => @@data_examples, :data_labels => @@data_labels))
+    assert_equal(0, classifier.rule[:attr_index])
+  end
+
+  def test_tie_break
+    tie_examples = [
+      ['A', 'X', 'foo', 'Y'],
+      ['B', 'X', 'foo', 'Y'],
+      ['A', 'Y', 'foo', 'Y'],
+      ['B', 'Y', 'foo', 'N']
+    ]
+    labels = ['att0', 'att1', 'att2', 'class']
+    ds = DataSet.new(:data_items => tie_examples, :data_labels => labels)
+    c_first = OneR.new.build(ds)
+    assert_equal(0, c_first.rule[:attr_index])
+    c_last = OneR.new.set_parameters({:tie_break => :last}).build(ds)
+    assert_equal(1, c_last.rule[:attr_index])
+  end
   
 end
 
