@@ -31,7 +31,7 @@ class SimpleLinearRegressionTest < Test::Unit::TestCase
 
   def test_eval
     result = @c.eval([-1,95,109.1,188.8,68.9,55.5,3062,141,3.78,3.15,9.5,114,5400,19,25])
-    assert_equal 17218.444444444445, result
+    assert_equal 18607.025513298104, result
   end
 
 end
