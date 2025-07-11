@@ -41,6 +41,49 @@ end
 search = Ai4r::GeneticAlgorithm::GeneticSearch.new(50, 100, MyChromosome)
 ```
 
+## Tutorial: Bit String Maximization
+
+As a quick example, suppose we want to maximise the number of ones in a binary
+string.  The chromosome encodes a list of bits and the fitness is simply the
+count of ones.  Below is a minimal implementation (see
+`examples/genetic_algorithm/bitstring_example.rb` for a runnable version):
+
+```ruby
+class BitStringChromosome < Ai4r::GeneticAlgorithm::ChromosomeBase
+  LENGTH = 16
+
+  def fitness
+    @data.count(1)
+  end
+
+  def self.seed
+    new(Array.new(LENGTH) { rand(2) })
+  end
+
+  def self.reproduce(a, b, crossover_rate = 0.4)
+    point = rand(LENGTH)
+    data = a.data[0...point] + b.data[point..-1]
+    data = b.data[0...point] + a.data[point..-1] if rand < crossover_rate
+    new(data)
+  end
+
+  def self.mutate(chromosome, mutation_rate = 0.3)
+    chromosome.data.map!.with_index do |bit, _|
+      if rand < ((1 - chromosome.normalized_fitness.to_f) * mutation_rate)
+        1 - bit
+      else
+        bit
+      end
+    end
+    chromosome.instance_variable_set(:@fitness, nil)
+  end
+end
+
+search = Ai4r::GeneticAlgorithm::GeneticSearch.new(30, 50, BitStringChromosome)
+best = search.run
+puts best.data.join
+```
+
 ## Genetic Search
 
 `GeneticSearch` performs the evolution. Initialize it with the population size and number of generations:
@@ -50,11 +93,34 @@ search = Ai4r::GeneticAlgorithm::GeneticSearch.new(10, 20)
 result = search.run
 ```
 
-### Parameters
+### Configuration Parameters
 
-`GeneticSearch` accepts optional `mutation_rate` and `crossover_rate` arguments which
-control how chromosomes change over generations. Defaults maintain the behaviour
-used by `TspChromosome`:
+`GeneticSearch.new` requires the initial population size and how many generations
+to evolve. Additional parameters tune the search and termination behaviour:
+
+```ruby
+search = Ai4r::GeneticAlgorithm::GeneticSearch.new(
+  population_size, generations,
+  chromosome_class = Ai4r::GeneticAlgorithm::TspChromosome,
+  mutation_rate = 0.3,
+  crossover_rate = 0.4,
+  fitness_threshold = nil,
+  max_stagnation = nil,
+  on_generation = nil
+)
+```
+
+* `population_size` – number of chromosomes in each generation.
+* `generations` – maximum number of iterations to run.
+* `mutation_rate` – factor multiplied by `(1 - normalized_fitness)` when deciding
+  whether to mutate a chromosome.
+* `crossover_rate` – probability that parents swap roles during reproduction.
+* `fitness_threshold` – stop early once best fitness reaches this value.
+* `max_stagnation` – stop if no improvement occurs for this many generations.
+* `on_generation` – callback invoked every generation with
+  `(generation, best_fitness)`.
+
+Defaults maintain the behaviour used by `TspChromosome`:
 
 ```ruby
 search = Ai4r::GeneticAlgorithm::GeneticSearch.new(
@@ -63,16 +129,6 @@ search = Ai4r::GeneticAlgorithm::GeneticSearch.new(
   0.4  # crossover_rate
 )
 ```
-
-* `mutation_rate` – factor multiplied by `(1 - normalized_fitness)` when deciding
-  whether to mutate a chromosome (default `0.3`).
-* `crossover_rate` – probability that parents swap roles during reproduction (default `0.4`).
-
-Additional optional arguments control termination and progress monitoring:
-
-* `fitness_threshold` – stop the search early once the best fitness reaches this value.
-* `max_stagnation` – stop if no improvement occurs for this many generations.
-* `on_generation` – callback invoked every generation with `(generation, best_fitness)`.
 
 Running the search with a larger population and more generations usually finds cheaper tours.
 
