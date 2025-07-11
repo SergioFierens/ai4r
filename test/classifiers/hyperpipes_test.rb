@@ -75,6 +75,21 @@ class HyperpipesTest < Test::Unit::TestCase
     eval classifier.get_rules
     assert_equal 'N', marketing_target
   end
+
+  def test_tie_strategy
+    classifier = Hyperpipes.new.set_parameters(:tie_strategy => :last).build(@data_set)
+    assert_equal 'N', classifier.eval(['Chicago', 40, 'F'])
+    srand(2)
+    classifier = Hyperpipes.new.set_parameters(:tie_strategy => :random).build(@data_set)
+    assert_equal 'Y', classifier.eval(['Chicago', 40, 'F'])
+  end
+
+  def test_margin
+    classifier = Hyperpipes.new.build(@data_set)
+    assert_equal 'Y', classifier.eval(['Chicago', 30, 'F'])
+    classifier = Hyperpipes.new.set_parameters(:margin => 5).build(@data_set)
+    assert_equal 'N', classifier.eval(['Chicago', 30, 'F'])
+  end
 end
 
   
