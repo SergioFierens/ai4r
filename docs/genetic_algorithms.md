@@ -34,8 +34,8 @@ class MyChromosome < Ai4r::GeneticAlgorithm::ChromosomeBase
   def fitness; ... end
 
   def self.seed; ... end
-  def self.reproduce(a, b); ... end
-  def self.mutate(chromosome); ... end
+  def self.reproduce(a, b, crossover_rate = 0.4); ... end
+  def self.mutate(chromosome, mutation_rate = 0.3); ... end
 end
 
 search = Ai4r::GeneticAlgorithm::GeneticSearch.new(50, 100, MyChromosome)
@@ -49,6 +49,24 @@ search = Ai4r::GeneticAlgorithm::GeneticSearch.new(50, 100, MyChromosome)
 search = Ai4r::GeneticAlgorithm::GeneticSearch.new(10, 20)
 result = search.run
 ```
+
+### Parameters
+
+`GeneticSearch` accepts optional `mutation_rate` and `crossover_rate` arguments which
+control how chromosomes change over generations. Defaults maintain the behaviour
+used by `TspChromosome`:
+
+```ruby
+search = Ai4r::GeneticAlgorithm::GeneticSearch.new(
+  10, 20, Ai4r::GeneticAlgorithm::TspChromosome,
+  0.3, # mutation_rate
+  0.4  # crossover_rate
+)
+```
+
+* `mutation_rate` – factor multiplied by `(1 - normalized_fitness)` when deciding
+  whether to mutate a chromosome (default `0.3`).
+* `crossover_rate` – probability that parents swap roles during reproduction (default `0.4`).
 
 Running the search with a larger population and more generations usually finds cheaper tours.
 

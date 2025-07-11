@@ -16,8 +16,8 @@ module Ai4r
         @fitness
       end
 
-      def self.mutate(chromosome)
-        if chromosome.normalized_fitness && rand < ((1 - chromosome.normalized_fitness) * 0.3)
+      def self.mutate(chromosome, mutation_rate = 0.3)
+        if chromosome.normalized_fitness && rand < ((1 - chromosome.normalized_fitness) * mutation_rate)
           data = chromosome.data
           index = (0...data.length - 1).to_a.sample
           data[index], data[index + 1] = data[index + 1], data[index]
@@ -26,7 +26,7 @@ module Ai4r
         end
       end
 
-      def self.reproduce(a, b)
+      def self.reproduce(a, b, crossover_rate = 0.4)
         data_size = @@costs[0].length
         available = []
         0.upto(data_size - 1) { |n| available << n }
@@ -44,7 +44,7 @@ module Ai4r
           token = next_token
           available.delete(token)
           spawn << next_token
-          a, b = b, a if rand < 0.4
+          a, b = b, a if rand < crossover_rate
         end
         new(spawn)
       end

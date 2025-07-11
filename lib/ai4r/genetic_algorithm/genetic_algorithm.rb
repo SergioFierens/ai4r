@@ -36,13 +36,17 @@ module Ai4r
 
       attr_accessor :population
       attr_reader :chromosome_class
+      attr_accessor :mutation_rate, :crossover_rate
 
 
-      def initialize(initial_population_size, generations, chromosome_class = TspChromosome)
+      def initialize(initial_population_size, generations, chromosome_class = TspChromosome,
+                     mutation_rate = 0.3, crossover_rate = 0.4)
         @population_size = initial_population_size
         @max_generation = generations
         @generation = 0
         @chromosome_class = chromosome_class
+        @mutation_rate = mutation_rate
+        @crossover_rate = crossover_rate
       end
 
       #     1. Choose initial population
@@ -119,10 +123,14 @@ module Ai4r
       def reproduction(selected_to_breed)
         offsprings = []
         0.upto(selected_to_breed.length/2 - 1) do |i|
-          offsprings << @chromosome_class.reproduce(selected_to_breed[2 * i], selected_to_breed[2 * i + 1])
+          offsprings << @chromosome_class.reproduce(
+            selected_to_breed[2 * i],
+            selected_to_breed[2 * i + 1],
+            @crossover_rate
+          )
         end
         @population.each do |individual|
-          @chromosome_class.mutate(individual)
+          @chromosome_class.mutate(individual, @mutation_rate)
         end
         offsprings
       end
