@@ -1,11 +1,11 @@
-require 'ai4r/classifiers/simple_linear_regression'
+require 'ai4r/classifiers/linear_regression'
 require 'ai4r/data/data_set'
 require 'test/unit'
 
 include Ai4r::Classifiers
 include Ai4r::Data
 
-class SimpleLinearRegressionTest < Test::Unit::TestCase
+class LinearRegressionTest < Test::Unit::TestCase
 
   @@data_labels = ["symboling", "normalized-losses", "wheel-base", "length", "width", "height", "curb-weight",
                    "engine-size", "bore" , "stroke", "compression-ratio", "horsepower", "peak-rpm", "city-mpg",
@@ -26,12 +26,12 @@ class SimpleLinearRegressionTest < Test::Unit::TestCase
   def setup
     @data_set = DataSet.new
     @data_set = DataSet.new(:data_items => @@data_items, :data_labels => @@data_labels)
-    @c = SimpleLinearRegression.new.build @data_set
+    @c = LinearRegression.new.build @data_set
   end
 
   def test_eval
     result = @c.eval([-1,95,109.1,188.8,68.9,55.5,3062,141,3.78,3.15,9.5,114,5400,19,25])
-    assert_equal 17218.444444444445, result
+    assert_in_delta 18607.0255, result, 0.0001
   end
 
 end

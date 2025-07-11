@@ -16,28 +16,31 @@ module Ai4r
 
     # = Introduction
     #
-    # This is an implementation of a Simple Linear Regression Classifier.
-    #
-    # For further details regarding Bayes and Naive Bayes Classifier have a look at this link:
-    # http://en.wikipedia.org/wiki/Naive_Bayesian_classification
-    # http://en.wikipedia.org/wiki/Bayes%27_theorem
+    # This is an implementation of a simple one variable linear regression
+    # classifier.  Given a set of instances, it searches the attribute that
+    # produces the minimal mean square error and fits a regression line to
+    # predict the target value.  You can optionally specify the attribute index
+    # to be used for the regression.
     #
     #
     # = How to use it
     #
     #   data = DataSet.new.parse_csv_with_labels "autoPrice.csv"
-    #   c = SimpleLinearRegression.new.
+    #   c = LinearRegression.new.
     #     build data
     #   c.eval([1,158,105.8,192.7,71.4,55.7,2844,136,3.19,3.4,8.5,110,5500,19,25])
     #
     
-    class SimpleLinearRegression < Classifier
+    class LinearRegression < Classifier
 
       attr_reader :attribute, :attribute_index, :slope, :intercept
 
+      parameters_info :attribute_index =>
+        'Force using a specific attribute instead of searching.'
+
       def initialize
         @attribute = nil
-        @attribute_index = 0
+        @attribute_index = nil
         @slope = 0
         @intercept = 0
       end
@@ -60,14 +63,18 @@ module Ai4r
 
         # Choose best attribute
         min_msq = Float::MAX
-        attribute = nil
         chosen = -1
-        chosen_slope = 0.0 / 0.0 # Float::NAN 
-        chosen_intercept = 0.0 / 0.0 # Float::NAN 
+        chosen_slope = 0.0 / 0.0 # Float::NAN
+        chosen_intercept = 0.0 / 0.0 # Float::NAN
 
-        data.data_labels.each do |attr_name|
-          attr_index = data.get_index attr_name
-          if attr_index != data.num_attributes-1
+        attr_indexes = if !@attribute_index.nil?
+                          [@attribute_index]
+                        else
+                          (0...(data.num_attributes - 1)).to_a
+                        end
+
+        attr_indexes.each do |attr_index|
+          next if attr_index == data.num_attributes - 1
             # Compute slope and intercept
             x_mean = data.get_mean_or_mode[attr_index]
             sum_x_diff_squared = 0
@@ -75,7 +82,7 @@ module Ai4r
             slope = 0
             data.data_items.map do |instance|
               x_diff = instance[attr_index] - x_mean
-              y_diff = instance[attr_index] - y_mean
+              y_diff = instance[-1] - y_mean
               slope += x_diff * y_diff
               sum_x_diff_squared += x_diff * x_diff
               sum_y_diff_squared += y_diff * y_diff
@@ -95,7 +102,6 @@ module Ai4r
               chosen = attr_index
               chosen_slope = slope
               chosen_intercept = intercept
-            end
           end
         end
 
