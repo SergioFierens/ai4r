@@ -54,6 +54,28 @@ module Ai4r
         end
         assert_equal [1,1,-1,-1,1,1,-1,-1,1,1,-1,-1,1,1,-1,-1], pattern
       end
+
+      def test_run_async_sequential
+        net = Hopfield.new
+        net.update_strategy = :async_sequential
+        net.train @data_set
+        pattern = [1,1,-1,1,1,1,-1,-1,1,1,-1,-1,1,1,1,-1]
+        100.times do
+          pattern = net.run(pattern)
+        end
+        assert_equal [1,1,-1,-1,1,1,-1,-1,1,1,-1,-1,1,1,-1,-1], pattern
+      end
+
+      def test_run_synchronous
+        net = Hopfield.new
+        net.update_strategy = :synchronous
+        net.train @data_set
+        pattern = [1,1,-1,1,1,1,-1,-1,1,1,-1,-1,1,1,1,-1]
+        100.times do
+          pattern = net.run(pattern)
+        end
+        assert_equal [1,1,-1,-1,1,1,-1,-1,1,1,-1,-1,1,1,-1,-1], pattern
+      end
       
       def test_eval
         net = Hopfield.new
