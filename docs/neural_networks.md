@@ -34,6 +34,17 @@ net.set_parameters(
 )
 ```
 
+Weight initialization can be selected with the `weight_init` parameter. Options
+are `:uniform`, `:xavier` and `:he`:
+
+```ruby
+net = Ai4r::NeuralNetwork::Backpropagation.new([256, 3], :tanh, :xavier)
+net.set_parameters(weight_init: :he)
+```
+`uniform` replicates the classic random weights in `[-1, 1)`. `xavier` works
+well with sigmoid or tanh activations while `he` is better suited for ReLU
+networks.
+
 Alternatively you can simply specify the activation name:
 
 ```ruby

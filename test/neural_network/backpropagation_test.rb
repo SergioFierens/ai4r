@@ -84,6 +84,17 @@ module Ai4r
         assert_equal 0.0, net.instance_variable_get(:@derivative_propagation_function).call(-1.0)
       end
 
+      def test_weight_init_parameter
+        net = Backpropagation.new([2, 2, 1], :sigmoid, :xavier).init_network
+        limit = Math.sqrt(6.0 / (2 + 2))
+        net.weights.first.flatten.each { |w| assert w.abs <= limit }
+
+        net.set_parameters(weight_init: :he)
+        net.init_network
+        limit = Math.sqrt(6.0 / 2)
+        net.weights.first.flatten.each { |w| assert w.abs <= limit }
+      end
+
 
     end
 

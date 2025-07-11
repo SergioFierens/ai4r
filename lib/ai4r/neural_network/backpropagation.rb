@@ -10,6 +10,7 @@
 
 require_relative '../data/parameterizable'
 require_relative 'activation_functions'
+require_relative 'weight_initializations'
 
 module Ai4r
   
@@ -96,8 +97,9 @@ module Ai4r
         :initial_weight_function => "f(n, i, j) must return the initial "+
             "weight for the conection between the node i in layer n, and "+
             "node j in layer n+1. By default a random number in [-1, 1) range.",
-        :propagation_function => "By default: " + 
-            "lambda { |x| 1/(1+Math.exp(-1*(x))) }",         
+        :weight_init => "Built-in weight initialization strategy (:uniform, :xavier or :he). Default: :uniform",
+        :propagation_function => "By default: " +
+            "lambda { |x| 1/(1+Math.exp(-1*(x))) }",
         :derivative_propagation_function => "Derivative of the propagation "+
             "function, based on propagation function output. By default: " +
             "lambda { |y| y*(1-y) }, where y=propagation_function(x)",
@@ -113,6 +115,18 @@ module Ai4r
         @propagation_function = Ai4r::NeuralNetwork::ActivationFunctions::FUNCTIONS[@activation] || Ai4r::NeuralNetwork::ActivationFunctions::FUNCTIONS[:sigmoid]
         @derivative_propagation_function = Ai4r::NeuralNetwork::ActivationFunctions::DERIVATIVES[@activation] || Ai4r::NeuralNetwork::ActivationFunctions::DERIVATIVES[:sigmoid]
       end
+
+      def weight_init=(symbol)
+        @weight_init = symbol
+        @initial_weight_function = case symbol
+          when :xavier
+            Ai4r::NeuralNetwork::WeightInitializations.xavier(@structure)
+          when :he
+            Ai4r::NeuralNetwork::WeightInitializations.he(@structure)
+          else
+            Ai4r::NeuralNetwork::WeightInitializations.uniform
+          end
+      end
       
       # Creates a new network specifying the its architecture.
       # E.g.
@@ -126,9 +140,9 @@ module Ai4r
       #   net = Backpropagation.new([2, 1])   # 2 inputs
       #                                       # No hidden layer
       #                                       # 1 output      
-      def initialize(network_structure, activation = :sigmoid)
+      def initialize(network_structure, activation = :sigmoid, weight_init = :uniform)
         @structure = network_structure
-        @initial_weight_function = lambda { |n, i, j| ((rand 2000)/1000.0) - 1 }
+        self.weight_init = weight_init
         self.activation = activation
         @disable_bias = false
         @learning_rate = 0.25
@@ -208,7 +222,7 @@ module Ai4r
            @last_changes,
            @activation_nodes,
            @activation = ary
-        @initial_weight_function = lambda { |n, i, j| ((rand 2000)/1000.0) - 1 }
+        self.weight_init = :uniform
         self.activation = @activation || :sigmoid
       end
 
