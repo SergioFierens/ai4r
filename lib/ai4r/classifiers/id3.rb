@@ -189,7 +189,6 @@ module Ai4r
         domain = domain(data_examples)
         return CategoryNode.new(@data_set.category_label, domain.last[0]) if domain.last.length == 1
 
-<<<<<<< HEAD
         best_index = nil
         best_entropy = nil
         best_split = nil
@@ -475,7 +474,7 @@ module Ai4r
 
       attr_reader :index, :values, :nodes, :numeric, :threshold
 
-      def initialize(data_labels, index, values_or_threshold, nodes, numeric=false)
+      def initialize(data_labels, index, values_or_threshold, nodes, numeric=false, majority=nil)
         @index = index
         @numeric = numeric
         if numeric
@@ -498,6 +497,7 @@ module Ai4r
           return ErrorNode.new.value(data) unless @values.include?(value)
           @nodes[@values.index(value)].value(data)
         end
+      end
 
       def value(data, classifier)
         value = data[@index]
