@@ -35,7 +35,7 @@ require_relative '../data/parameterizable'
       include Ai4r::Data::Parameterizable
       
       attr_reader :weights, :nodes
-      
+
       parameters_info :eval_iterations => "The network will run for a maximum "+
         "of 'eval_iterations' iterations while evaluating an input. 500 by " +
         "default.",
@@ -43,7 +43,9 @@ require_relative '../data/parameterizable'
         :inactive_node_value => "Default: -1",
         :threshold => "Default: 0",
         :weight_scaling => "Scale factor applied when computing weights. " +
-          "Default 1.0 / patterns_count"
+          "Default 1.0 / patterns_count",
+        :stop_when_stable => "Stop evaluation when consecutive energy " +
+          "values do not change. False by default"
             
       def initialize
         @eval_iterations = 500
@@ -51,6 +53,7 @@ require_relative '../data/parameterizable'
         @inactive_node_value = -1
         @threshold = 0
         @weight_scaling = nil
+        @stop_when_stable = false
       end
 
       # Prepares the network to memorize the given data set.
@@ -84,14 +87,30 @@ require_relative '../data/parameterizable'
       # patterns, or a maximum of "eval_iterations" times.
       def eval(input)
         set_input(input)
+        prev_energy = energy
         @eval_iterations.times do
-          propagate  
-          break if @data_set.data_items.include?(@nodes)
+          propagate
+          return @nodes if @data_set.data_items.include?(@nodes)
+          new_energy = energy
+          break if @stop_when_stable && new_energy == prev_energy
+          prev_energy = new_energy
         end
         return @nodes
       end
-      
-      protected 
+
+      # Calculate network energy using current node states and weights.
+      # Energy = -0.5 * Σ w_ij * s_i * s_j
+      def energy
+        sum = 0.0
+        @nodes.each_with_index do |s_i, i|
+          i.times do |j|
+            sum += read_weight(i, j) * s_i * @nodes[j]
+          end
+        end
+        -sum
+      end
+
+      protected
       # Set all nodes state to the given input.
       # inputs parameter must have the same dimension as nodes
       def set_input(inputs)
