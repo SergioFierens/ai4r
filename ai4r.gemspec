@@ -1,4 +1,3 @@
-require 'rubygems'
 require 'rake'
 
 SPEC = Gem::Specification.new do |s|

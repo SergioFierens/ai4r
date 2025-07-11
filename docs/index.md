@@ -13,7 +13,6 @@ gem install ai4r
 Include the library in your code:
 
 ```ruby
-require 'rubygems'
 require 'ai4r'
 ```
 
