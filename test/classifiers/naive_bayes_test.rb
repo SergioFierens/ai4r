@@ -40,4 +40,24 @@ class NaiveBayesTest < Test::Unit::TestCase
     assert_in_delta 0.58, map['No'], 0.1
   end
 
+  def test_unknown_value_ignore
+    result = @b.eval(%w(Blue SUV Domestic))
+    assert_equal 'No', result
+  end
+
+  def test_unknown_value_uniform
+    labels = ['Color', 'Class']
+    items = [['Red','A'], ['Red','A'], ['Blue','B'], ['Green','B']]
+    ds = DataSet.new(:data_items => items, :data_labels => labels)
+    classifier = NaiveBayes.new.set_parameters(:unknown_value_strategy => :uniform).build(ds)
+    result = classifier.eval(['Yellow'])
+    assert_equal 'A', result
+  end
+
+  def test_unknown_value_error
+    assert_raise RuntimeError do
+      NaiveBayes.new.set_parameters(:unknown_value_strategy => :error).build(@data_set).eval(%w(Blue SUV Domestic))
+    end
+  end
+
 end
