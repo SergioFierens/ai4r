@@ -51,6 +51,18 @@ module Ai4r
         assert_equal([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], c3.data.sort)
       end
 
+      def test_mutate_recalculates_fitness
+        TspChromosome.set_cost_matrix(COST)
+        chromosome = TspChromosome.new([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+        original_fitness = chromosome.fitness
+        chromosome.normalized_fitness = 0.0
+        TspChromosome.mutate(chromosome, 1.0)
+        mutated_data = chromosome.data.dup
+        expected_fitness = TspChromosome.new(mutated_data).fitness
+        assert_equal expected_fitness, chromosome.fitness
+        assert_not_equal original_fitness, chromosome.fitness
+      end
+
     end
 
   end

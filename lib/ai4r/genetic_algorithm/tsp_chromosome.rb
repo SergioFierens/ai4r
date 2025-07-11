@@ -22,7 +22,7 @@ module Ai4r
           index = (0...data.length - 1).to_a.sample
           data[index], data[index + 1] = data[index + 1], data[index]
           chromosome.data = data
-          @fitness = nil
+          chromosome.instance_variable_set(:@fitness, nil)
         end
       end
 
