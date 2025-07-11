@@ -101,6 +101,7 @@ module Ai4r
       def test_eval_trace
         net = Hopfield.new
         net.eval_iterations = 10
+        net.update_strategy = :async_sequential
         net.train @data_set
         pattern = [1,1,-1,1,1,1,-1,-1,1,1,-1,-1,1,1,1,-1]
         trace = net.eval(pattern, trace: true)
