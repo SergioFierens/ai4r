@@ -24,6 +24,7 @@ module Ai4r
       
       attr_reader :data_set, :number_of_clusters
       attr_reader :clusters, :centroids, :iterations
+      attr_reader :history
       
       parameters_info :max_iterations => "Maximum number of iterations to " +
         "build the clusterer. By default it is uncapped.",
@@ -46,7 +47,9 @@ module Ai4r
           "empty cluster to a random point), 'outlier' (relocate the " +
           "empty cluster to the point furthest from its centroid).",
         :random_seed => "Seed value used to initialize Ruby's random number " +
-          "generator when selecting random centroids."
+          "generator when selecting random centroids.",
+        :track_history => "Keep centroids and assignments for each iteration " +
+          "when building the clusterer."
       
       def initialize
         @distance_function = nil
@@ -57,6 +60,7 @@ module Ai4r
         @centroid_indices = []
         @on_empty = 'eliminate' # default if none specified
         @random_seed = nil
+        @track_history = false
       end
       
       
@@ -69,10 +73,17 @@ module Ai4r
         raise ArgumentError, 'Length of centroid indices array differs from the specified number of clusters' unless @centroid_indices.empty? || @centroid_indices.length == @number_of_clusters
         raise ArgumentError, 'Invalid value for on_empty' unless @on_empty == 'eliminate' || @on_empty == 'terminate' || @on_empty == 'random' || @on_empty == 'outlier'
         @iterations = 0
+        @history = [] if @track_history
         
         calc_initial_centroids
         while(not stop_criteria_met)
           calculate_membership_clusters
+          if @track_history
+            @history << {
+              :centroids => @centroids.collect { |c| c.dup },
+              :assignments => @assignments.dup
+            }
+          end
           recompute_centroids
         end
         
@@ -131,15 +142,17 @@ module Ai4r
       end
       
       def calculate_membership_clusters
-        @clusters = Array.new(@number_of_clusters) do 
+        @clusters = Array.new(@number_of_clusters) do
           Ai4r::Data::DataSet.new :data_labels => @data_set.data_labels
         end
         @cluster_indices = Array.new(@number_of_clusters) {[]}
-        
+        @assignments = Array.new(@data_set.data_items.length)
+
         @data_set.data_items.each_with_index do |data_item, data_index|
           c = eval(data_item)
           @clusters[c] << data_item
           @cluster_indices[c] << data_index if @on_empty == 'outlier'
+          @assignments[data_index] = c
         end
         manage_empty_clusters if has_empty_cluster?
       end
@@ -230,15 +243,21 @@ module Ai4r
       
       def eliminate_empty_clusters
         old_clusters, old_centroids, old_cluster_indices = @clusters, @centroids, @cluster_indices
-        @clusters, @centroids, @cluster_indices = [], [], [] 
+        old_assignments = @assignments
+        @clusters, @centroids, @cluster_indices = [], [], []
+        remap = {}
+        new_index = 0
         @number_of_clusters.times do |i|
           if !old_clusters[i].data_items.empty?
+            remap[i] = new_index
             @clusters << old_clusters[i]
             @cluster_indices << old_cluster_indices[i]
             @centroids << old_centroids[i]
+            new_index += 1
           end
         end
         @number_of_clusters = @centroids.length
+        @assignments = old_assignments.map { |c| remap[c] }
       end
 
     end
