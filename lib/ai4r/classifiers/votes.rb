@@ -24,10 +24,17 @@ module Ai4r
         tally_sheet[category]
       end
 
-      def get_winner
+      def get_winner(tie_strategy = :last)
         n = 0 # used to create a stable sort of the tallys
         sorted_sheet = tally_sheet.sort_by { |_, score| n += 1; [score, n] }
-        sorted_sheet.last.first
+        return nil if sorted_sheet.empty?
+        if tie_strategy == :random
+          max_score = sorted_sheet.last[1]
+          tied = sorted_sheet.select { |_, score| score == max_score }.map(&:first)
+          tied.sample
+        else
+          sorted_sheet.last.first
+        end
       end
 
       private

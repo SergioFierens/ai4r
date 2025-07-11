@@ -473,27 +473,17 @@ module Ai4r
 
       attr_reader :index, :values, :nodes, :numeric, :threshold, :majority
 
-
-      # The last parameter can either be a boolean flag indicating a numeric
-      # split, or the majority class value for this node.
-      def initialize(data_labels, index, values_or_threshold, nodes, param=nil)
+      def initialize(data_labels, index, values_or_threshold, nodes, numeric = false, majority = nil)
         @index = index
-        if param == true || param == false
-          @numeric = param
-          @majority = nil
-        else
-          @numeric = false
-          @majority = param
-        end
-
-        if @numeric
+        @numeric = numeric
+        if numeric
           @threshold = values_or_threshold
           @values = nil
         else
           @values = values_or_threshold
         end
-
         @nodes = nodes
+        @majority = majority
         @data_labels = data_labels
       end
 
@@ -503,27 +493,13 @@ module Ai4r
           node = value <= @threshold ? @nodes[0] : @nodes[1]
           return node.value(data, classifier)
         else
-          return ErrorNode.new.value(data) unless @values.include?(value)
-          @nodes[@values.index(value)].value(data)
-        end
-      end
-
-      def value(data, classifier)
-        value = data[@index]
-        unless @values.include?(value)
-          case classifier.on_unknown
-          when :nil
-            return nil
-          when :most_frequent
-            return @majority
-          else
+          unless @values.include?(value)
+            return nil if classifier&.on_unknown == :nil
+            return @majority if classifier&.on_unknown == :most_frequent
             return ErrorNode.new.value(data, classifier)
           end
           return @nodes[@values.index(value)].value(data, classifier)
         end
-
-        @nodes[@values.index(value)].value(data, classifier)
-
       end
 
       def get_rules

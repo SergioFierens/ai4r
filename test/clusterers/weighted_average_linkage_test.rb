@@ -53,4 +53,8 @@ class Ai4r::Clusterers::WeightedAverageLinkageTest < Test::Unit::TestCase
     clusterer = Ai4r::Clusterers::WeightedAverageLinkage.new
     assert_raise(NotImplementedError) { clusterer.eval([0, 0]) }
   end
+
+  def test_supports_eval
+    assert_equal false, Ai4r::Clusterers::WeightedAverageLinkage.new.supports_eval?
+  end
 end
