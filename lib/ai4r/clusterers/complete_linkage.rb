@@ -10,6 +10,7 @@
 
 require_relative '../data/data_set'
 require_relative '../clusterers/single_linkage'
+require_relative '../clusterers/cluster_tree'
 
 module Ai4r
   module Clusterers
@@ -24,6 +25,8 @@ module Ai4r
     #
     #   D(cx, (ci U cj) = max(D(cx, ci), D(cx, cj))
     class CompleteLinkage < SingleLinkage
+
+      include ClusterTree
 
       parameters_info :distance_function =>
           "Custom implementation of distance function. " +

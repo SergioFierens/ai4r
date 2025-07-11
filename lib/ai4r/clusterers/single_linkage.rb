@@ -11,6 +11,7 @@
 require_relative '../data/data_set'
 require_relative '../data/proximity'
 require_relative '../clusterers/clusterer'
+require_relative '../clusterers/cluster_tree'
 
 module Ai4r
   module Clusterers
@@ -25,6 +26,8 @@ module Ai4r
     #
     #   D(cx, (ci U cj) = min(D(cx, ci), D(cx, cj))
     class SingleLinkage < Clusterer
+
+      include ClusterTree
 
       attr_reader :data_set, :number_of_clusters, :clusters
 

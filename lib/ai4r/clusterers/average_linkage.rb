@@ -10,6 +10,7 @@
 
 require_relative '../data/data_set'
 require_relative '../clusterers/single_linkage'
+require_relative '../clusterers/cluster_tree'
 
 module Ai4r
   module Clusterers
@@ -26,6 +27,8 @@ module Ai4r
     #
     #   D(cx, (ci U cj) = (D(cx, ci) + D(cx, cj)) / 2
     class AverageLinkage < SingleLinkage
+
+      include ClusterTree
 
       parameters_info :distance_function =>
           "Custom implementation of distance function. " +
@@ -44,6 +47,12 @@ module Ai4r
       # once it has been built. Rebuild the cluster including you data element.
       def eval(_data_item)
         raise NotImplementedError, 'Eval of new data is not supported by this algorithm.'
+      end
+
+      # Average linkage builds a dendrogram and cannot classify new data
+      # once built.
+      def supports_eval?
+        false
       end
 
       protected

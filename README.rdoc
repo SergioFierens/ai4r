@@ -68,11 +68,14 @@ z-score normalization, but you can also use `:minmax` to scale values to the
 == KMeans random seed
 
 The ``random_seed'' parameter makes KMeans deterministic by seeding Ruby's
-RNG before choosing initial centroids.
+RNG before choosing initial centroids. It's often a good idea to normalize
+numeric attributes before clustering.
 
   data = Ai4r::Data::DataSet.new(:data_items => [[1, 2], [3, 4], [5, 6]])
+  data.normalize!
   kmeans = Ai4r::Clusterers::KMeans.new
   kmeans.set_parameters(:random_seed => 1).build(data, 2)
+
 
 == Clusterer examples
 
@@ -82,6 +85,14 @@ Scripts under `examples/clusterers` showcase additional features:
   fixed seed.  It prints the final SSE and how many iterations were needed.
 * `hierarchical_dendrogram_example.rb` builds a hierarchical clusterer and
   outputs a simple dendrogram using the recorded tree.
+
+== Checking eval availability
+
+Some hierarchical algorithms cannot classify new items once built.  Use
+`supports_eval?` to verify before calling `eval`:
+
+  clusterer = Ai4r::Clusterers::AverageLinkage.new.build(data, 2)
+  clusterer.supports_eval? # => false
 
 = Documentation
 
