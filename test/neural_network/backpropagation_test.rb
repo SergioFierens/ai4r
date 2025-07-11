@@ -110,6 +110,18 @@ module Ai4r
         assert_in_delta net.calculate_loss([1], net.activation_nodes.last), loss, 0.0000001
       end
 
+      def test_train_epochs_with_early_stopping
+        net = Backpropagation.new([1, 1])
+        # Mock train_batch to return predefined losses
+        losses = [0.5, 0.4, 0.41, 0.42]
+        net.define_singleton_method(:train_batch) do |_, _|
+          losses.shift
+        end
+        history = net.train_epochs([[0]], [[0]], epochs: 10, early_stopping_patience: 1)
+        assert_equal 3, history.length
+        assert history[0] > history[1]
+      end
+
 
     end
 
