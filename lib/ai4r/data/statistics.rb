@@ -43,7 +43,7 @@ module Ai4r
       # Get the sample mode.
       def self.mode(data_set, attribute)
         index = data_set.get_index(attribute)
-        count = Hash.new {0}
+        count = Hash.new(0)
         max_count = 0
         mode = nil
         data_set.data_items.each do |data_item|
