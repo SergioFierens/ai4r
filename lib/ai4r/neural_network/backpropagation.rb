@@ -104,9 +104,11 @@ module Ai4r
             "function, based on propagation function output. By default: " +
             "lambda { |y| y*(1-y) }, where y=propagation_function(x)",
         :activation => "Built-in activation function (:sigmoid, :tanh or :relu). Default: :sigmoid",
-        :learning_rate => "By default 0.25",        
+        :learning_rate => "By default 0.25",
         :momentum => "By default 0.1. Set this parameter to 0 to disable "+
-            "momentum."
+            "momentum.",
+        :loss_function => "Loss function used when training (:mse or " +
+            ":cross_entropy). Default: :mse"
           
       attr_accessor :structure, :weights, :activation_nodes, :last_changes
       # When the activation symbol changes, update internal lambdas
@@ -147,6 +149,7 @@ module Ai4r
         @disable_bias = false
         @learning_rate = 0.25
         @momentum = 0.1
+        @loss_function = :mse
       end
       #     net.eval([25, 32.3, 12.8, 1.5])
       #         # =>  [0.83, 0.03]
@@ -174,12 +177,11 @@ module Ai4r
       # 
       # output: Expected output for the given input.
       #
-      # This method returns the network error:
-      # => 0.5 * sum( (expected_value[i] - output_value[i])**2 )
+      # This method returns the training loss according to +loss_function+.
       def train(inputs, outputs)
         eval(inputs)
         backpropagate(outputs)
-        calculate_error(outputs)
+        calculate_loss(outputs, @activation_nodes.last)
       end
 
       # Train a list of input/output pairs and return average loss.
@@ -360,16 +362,38 @@ module Ai4r
         end
       end
       
-      # Calculate quadratic error for a expected output value 
+      # Calculate quadratic error for an expected output value
       # Error = 0.5 * sum( (expected_value[i] - output_value[i])**2 )
       def calculate_error(expected_output)
         output_values = @activation_nodes.last
         error = 0.0
         expected_output.each_index do |output_index|
-          error += 
+          error +=
             0.5*(output_values[output_index]-expected_output[output_index])**2
         end
         return error
+      end
+
+      # Calculate loss for expected/actual vectors according to selected
+      # loss_function (:mse or :cross_entropy).
+      def calculate_loss(expected, actual)
+        case @loss_function
+        when :cross_entropy
+          epsilon = 1e-12
+          loss = 0.0
+          expected.each_index do |i|
+            p = [[actual[i], epsilon].max, 1 - epsilon].min
+            loss -= expected[i] * Math.log(p) + (1 - expected[i]) * Math.log(1 - p)
+          end
+          loss
+        else
+          # Mean squared error
+          error = 0.0
+          expected.each_index do |i|
+            error += 0.5 * (expected[i] - actual[i])**2
+          end
+          error
+        end
       end
       
       def check_input_dimension(inputs)
