@@ -18,6 +18,8 @@ class KMeansTest < Test::Unit::TestCase
   @@data = [  [10, 3], [3, 10], [2, 8], [2, 5], [3, 8], [10, 3],
               [1, 3], [8, 1], [2, 9], [2, 5], [3, 3], [9, 4]]
 
+  @@sse_data = [[1,1],[1,2],[2,1],[2,2],[8,8],[8,9],[9,8],[9,9]]
+
   # k-means will generate an empty cluster with this data and initial centroid assignment
   @@empty_cluster_data = [[-0.1, 0], [0, 0], [0.1, 0], [-0.1, 10], [0.1, 10], [0.2, 10]]
   @@empty_centroid_indices = [0,1,2]
@@ -156,6 +158,12 @@ class KMeansTest < Test::Unit::TestCase
     clusterer = KMeans.new.set_parameters({:centroid_indices=>@@empty_centroid_indices, :on_empty=>'outlier'}).build(data_set, @@empty_centroid_indices.size)
     # Verify that cluster was not eliminated
     assert_equal @@empty_centroid_indices.size, clusterer.clusters.length
+  end
+
+  def test_sse
+    data_set = DataSet.new(:data_items => @@sse_data)
+    clusterer = KMeans.new.set_parameters(:centroid_indices => [0,4]).build(data_set, 2)
+    assert_in_delta 4.0, clusterer.sse, 0.0001
   end
 
   private

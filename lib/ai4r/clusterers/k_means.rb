@@ -82,8 +82,21 @@ module Ai4r
       # Classifies the given data item, returning the cluster index it belongs 
       # to (0-based).
       def eval(data_item)
-        get_min_index(@centroids.collect {|centroid| 
+        get_min_index(@centroids.collect {|centroid|
             distance(data_item, centroid)})
+      end
+
+      # Sum of squared distances of all points to their respective centroids.
+      # It can be used as a measure of cluster compactness (SSE).
+      def sse
+        sum = 0.0
+        @clusters.each_with_index do |cluster, i|
+          centroid = @centroids[i]
+          cluster.data_items.each do |item|
+            sum += distance(item, centroid)
+          end
+        end
+        sum
       end
       
       # This function calculates the distance between 2 different

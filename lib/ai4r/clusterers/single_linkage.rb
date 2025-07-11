@@ -86,6 +86,49 @@ module Ai4r
 
       protected
 
+      def distance_between_indexes(i, j)
+        @distance_function.call(@data_set.data_items[i], @data_set.data_items[j])
+      end
+
+      public
+
+      # Compute mean silhouette coefficient of the clustering result.
+      # Returns a float between -1 and 1. Only valid after build.
+      def silhouette
+        return nil unless @index_clusters && @data_set
+        total = 0.0
+        count = @data_set.data_items.length
+
+        @index_clusters.each_with_index do |cluster, ci|
+          cluster.each do |index|
+            a = 0.0
+            if cluster.length > 1
+              cluster.each do |j|
+                next if j == index
+                a += distance_between_indexes(index, j)
+              end
+              a /= (cluster.length - 1)
+            end
+
+            b = nil
+            @index_clusters.each_with_index do |other_cluster, cj|
+              next if ci == cj
+              dist = 0.0
+              other_cluster.each do |j|
+                dist += distance_between_indexes(index, j)
+              end
+              dist /= other_cluster.length
+              b = dist if b.nil? || dist < b
+            end
+            s = b && b > 0 ? (b - a) / [a, b].max : 0.0
+            total += s
+          end
+        end
+
+        total / count
+      end
+      protected
+
       # returns [ [0], [1], [2], ... , [n-1] ]
       # where n is the number of data items in the data set
       def create_initial_index_clusters
