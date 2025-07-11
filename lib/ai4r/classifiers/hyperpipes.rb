@@ -23,8 +23,17 @@ module Ai4r
     # A fast classifier algorithm, created by Lucio de Souza Coelho 
     # and Len Trigg.
     class Hyperpipes < Classifier
-      
+
       attr_reader :data_set, :pipes
+
+      parameters_info :tie_strategy => 'Strategy used when more than one class has the same maximal vote. ' +
+        'Valid values are :last (default) and :random.',
+        :margin => 'Numeric margin added to the bounds of numeric attributes.'
+
+      def initialize
+        @tie_strategy = :last
+        @margin = 0
+      end
 
       # Build a new Hyperpipes classifier. You must provide a DataSet instance
       # as parameter. The last attribute of each item is considered as 
@@ -44,7 +53,7 @@ module Ai4r
       # You can evaluate new data, predicting its class.
       # e.g.
       #   classifier.eval(['New York',  '<30', 'F'])  # => 'Y'      
-      # In case of a tie, the last category should win: http://www.csee.wvu.edu/~timm/tmp/r7.pdf
+      # Tie resolution is controlled by +tie_strategy+ parameter.
       def eval(data)
         votes = Votes.new
         @pipes.each do |category, pipe|
@@ -56,7 +65,7 @@ module Ai4r
             end
           end
         end
-        return votes.get_winner
+        return votes.get_winner(@tie_strategy)
       end
 
       # This method returns the generated rules in ruby code.
@@ -89,7 +98,7 @@ module Ai4r
             rules << rule
           end
         end
-        rules << "#{labels.last} = votes.get_winner"
+        rules << "#{labels.last} = votes.get_winner(:#{@tie_strategy})"
         return rules.join("\n")
       end
       
@@ -98,7 +107,7 @@ module Ai4r
       def build_pipe(data_set)
         data_set.data_items.first[0...-1].collect do |att|
           if att.is_a? Numeric
-            {:min=>1.0/0, :max=>-1.0/0}
+            {:min => Float::INFINITY, :max => -Float::INFINITY}
           else
             Hash.new(false)
           end
@@ -108,11 +117,13 @@ module Ai4r
       def update_pipe(pipe, data_item)
         data_item[0...-1].each_with_index do |att, i|
           if att.is_a? Numeric
-            pipe[i][:min] = att if att < pipe[i][:min]
-            pipe[i][:max] = att if att > pipe[i][:max]
+            min_val = att - @margin
+            max_val = att + @margin
+            pipe[i][:min] = min_val if min_val < pipe[i][:min]
+            pipe[i][:max] = max_val if max_val > pipe[i][:max]
           else
             pipe[i][att] = true
-          end  
+          end
         end
       end
       
