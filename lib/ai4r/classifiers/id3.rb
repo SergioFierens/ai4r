@@ -156,9 +156,9 @@ module Ai4r
         return EvaluationNode.new(@data_set.data_labels, min_entropy_index, domain[min_entropy_index], nodes)
       end
 
-      private 
+      private
       def self.sum(values)
-        values.inject( 0 ) { |sum,x| sum+x }
+        values.sum
       end
 
       private
