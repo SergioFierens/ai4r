@@ -42,6 +42,7 @@ module Ai4r
         net.initialize_weights(@data_set)
         assert_equal 15, net.weights.length
         net.weights.each_with_index {|w_row, i| assert_equal i+1, w_row.length}
+        assert_in_delta 1.0, net.read_weight(1,0), 0.00001
       end
       
       def test_run
