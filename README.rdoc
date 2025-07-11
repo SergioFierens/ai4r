@@ -76,7 +76,7 @@ RNG before choosing initial centroids.
 
 = Documentation
 
-Tutorials for genetic algorithms, ID3 decision trees and neural networks are available in the +docs/+ directory.
+Tutorials for genetic algorithms, ID3 decision trees, Hyperpipes and neural networks are available in the +docs/+ directory.
 
 = Disclaimer
 
