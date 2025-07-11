@@ -75,13 +75,14 @@ module Ai4r
         @domains[0...-1].each {|domain| @inputs += domain.length}
         @structure = [@inputs] + @hidden_layers + [@outputs]
         @network = @network_class.new @structure
-        @training_iterations.times do
-          data_set.data_items.each do |data_item|
-            input_values = data_to_input(data_item[0...-1])
-            output_values = data_to_output(data_item.last)
-            @network.train(input_values, output_values)
-          end
+        inputs = []
+        outputs = []
+        data_set.data_items.each do |data_item|
+          inputs << data_to_input(data_item[0...-1])
+          outputs << data_to_output(data_item.last)
         end
+        @network.train_epochs(inputs, outputs,
+                              epochs: @training_iterations, batch_size: 1)
         return self
       end
       
