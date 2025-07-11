@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Author::    Malav Bhavsar
 # License::   MPL 1.1
 # Project::   ai4r

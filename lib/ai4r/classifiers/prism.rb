@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Author::    Sergio Fierens (Implementation only, Cendrowska is 
 # the creator of the algorithm)
 # License::   MPL 1.1

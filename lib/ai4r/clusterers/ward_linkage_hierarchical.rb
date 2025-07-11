@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Author::    Peter Lubell-Doughtie
 # License::   BSD 3 Clause
 # Project::   ai4r
