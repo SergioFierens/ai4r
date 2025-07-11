@@ -10,6 +10,7 @@
 
 require_relative '../data/data_set'
 require_relative '../clusterers/single_linkage'
+require_relative '../clusterers/cluster_tree'
 
 module Ai4r
   module Clusterers
@@ -25,6 +26,8 @@ module Ai4r
     #
     #   D(cx, (ci U cj)) =  ( ni * D(cx, ci) + nj * D(cx, cj)) / (ni + nj)
     class WeightedAverageLinkage < SingleLinkage
+
+      include ClusterTree
 
     parameters_info :distance_function =>
           "Custom implementation of distance function. " +
@@ -43,6 +46,10 @@ module Ai4r
       # once it has been built. Rebuild the cluster including you data element.
       def eval(_data_item)
         raise NotImplementedError, 'Eval of new data is not supported by this algorithm.'
+      end
+
+      def supports_eval?
+        false
       end
 
       protected
