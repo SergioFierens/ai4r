@@ -263,7 +263,3 @@ module Ai4r
   end
 end
 
-# Monkeypatch to support both ruby 1.8 and 1.9 (key vs index method)
-class Hash
-  alias_method(:key, :index) unless method_defined?(:key)
-end
