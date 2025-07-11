@@ -1,5 +1,5 @@
 require 'benchmark'
-require File.dirname(__FILE__) + '/../data/data_set' 
+require_relative '../data/data_set' 
 
 
 module Ai4r

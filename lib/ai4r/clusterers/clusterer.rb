@@ -7,7 +7,7 @@
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../data/parameterizable'
+require_relative '../data/parameterizable'
 
 module Ai4r
   module Clusterers

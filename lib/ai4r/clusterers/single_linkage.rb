@@ -7,9 +7,9 @@
 # the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../data/data_set'
-require File.dirname(__FILE__) + '/../data/proximity'
-require File.dirname(__FILE__) + '/../clusterers/clusterer'
+require_relative '../data/data_set'
+require_relative '../data/proximity'
+require_relative '../clusterers/clusterer'
 
 module Ai4r
   module Clusterers
