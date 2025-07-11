@@ -59,10 +59,12 @@ eval id3.get_rules
 puts marketing_target  # => 'Y'
 ```
 
+Further reading: [ID3 Algorithm](http://en.wikipedia.org/wiki/ID3_algorithm) and [Decision Trees](http://en.wikipedia.org/wiki/Decision_tree).
+
 ## Numeric Attributes
 
-ID3 can evaluate numeric features by automatically searching for the best
-threshold. Each numeric split generates rules using comparison operators:
+ID3 also works with numeric features by automatically searching for the best
+threshold. Each numeric split produces rules with comparison operators:
 
 ```ruby
 labels = ['size', 'label']
@@ -71,5 +73,3 @@ id3 = ID3.new.build(DataSet.new(:data_items => items, :data_labels => labels))
 puts id3.get_rules
 # => "size <= 45.0 ? ..."
 ```
-
-Further reading: [ID3 Algorithm](http://en.wikipedia.org/wiki/ID3_algorithm) and [Decision Trees](http://en.wikipedia.org/wiki/Decision_tree).

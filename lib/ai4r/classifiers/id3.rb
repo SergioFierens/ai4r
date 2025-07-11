@@ -155,14 +155,14 @@ module Ai4r
 
         domain[0..-2].each_index do |index|
           next if flag_att.include?(index)
+
           if data_examples.first[index].is_a?(Numeric)
             values = data_examples.collect { |ex| ex[index] }.uniq.sort
-            thresholds = candidate_thresholds(values)
-            thresholds.each do |thr|
+            candidate_thresholds(values).each do |thr|
               grid = freq_grid_numeric(index, data_examples, domain, thr)
-              entropy = entropy(grid, data_examples.length)
-              if !best_entropy || entropy < best_entropy
-                best_entropy = entropy
+              ent = entropy(grid, data_examples.length)
+              if !best_entropy || ent < best_entropy
+                best_entropy = ent
                 best_index = index
                 best_threshold = thr
                 best_split = split_numeric_data_examples(data_examples, index, thr)
@@ -170,9 +170,9 @@ module Ai4r
             end
           else
             grid = freq_grid(index, data_examples, domain)
-            entropy_val = entropy(grid, data_examples.length)
-            if !best_entropy || entropy_val < best_entropy
-              best_entropy = entropy_val
+            ent = entropy(grid, data_examples.length)
+            if !best_entropy || ent < best_entropy
+              best_entropy = ent
               best_index = index
               best_threshold = nil
               best_split = split_data_examples(data_examples, domain, index)
@@ -182,8 +182,8 @@ module Ai4r
 
         return CategoryNode.new(@data_set.category_label, most_freq(data_examples, domain)) if best_split.length == 1
 
-        nodes = best_split.collect do |partial_data_examples|
-          build_node(partial_data_examples, [*flag_att, best_index])
+        nodes = best_split.collect do |partial|
+          build_node(partial, [*flag_att, best_index])
         end
 
         split_value = best_threshold.nil? ? domain[best_index] : best_threshold
