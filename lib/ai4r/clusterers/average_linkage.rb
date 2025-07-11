@@ -46,6 +46,12 @@ module Ai4r
         raise NotImplementedError, 'Eval of new data is not supported by this algorithm.'
       end
 
+      # Average linkage builds a dendrogram and cannot classify new data
+      # once built.
+      def supports_eval?
+        false
+      end
+
       protected
 
       # return distance between cluster cx and cluster (ci U cj),

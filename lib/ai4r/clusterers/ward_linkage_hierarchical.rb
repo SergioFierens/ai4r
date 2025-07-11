@@ -30,6 +30,10 @@ module Ai4r
         return self
       end
 
+      def supports_eval?
+        false
+      end
+
       protected
 
       def merge_clusters(index_a, index_b, index_clusters)

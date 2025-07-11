@@ -74,6 +74,14 @@ RNG before choosing initial centroids.
   kmeans = Ai4r::Clusterers::KMeans.new
   kmeans.set_parameters(:random_seed => 1).build(data, 2)
 
+== Checking eval availability
+
+Some hierarchical algorithms cannot classify new items once built.  Use
+`supports_eval?` to verify before calling `eval`:
+
+  clusterer = Ai4r::Clusterers::AverageLinkage.new.build(data, 2)
+  clusterer.supports_eval? # => false
+
 = Documentation
 
 Tutorials for genetic algorithms, ID3 decision trees and neural networks are available in the +docs/+ directory.

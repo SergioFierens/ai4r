@@ -46,6 +46,10 @@ module Ai4r
         raise NotImplementedError, 'Eval of new data is not supported by this algorithm.'
       end
 
+      def supports_eval?
+        false
+      end
+
       protected
 
       # return distance between cluster cx and cluster (ci U cj),
