@@ -65,8 +65,26 @@ net.set_parameters(loss_function: :cross_entropy)
 ## Batch Training API
 
 Use `train_batch` to update the network with a list of examples and
-`train_epochs` to run multiple passes over the dataset. Both methods
-return the average loss for the processed data.
+`train_epochs` to run multiple passes over the dataset. `train_epochs`
+returns an array with the loss of each epoch so you can easily plot the
+learning curve. Training can also stop early by providing
+`early_stopping_patience` and `min_delta` parameters.
+
+```ruby
+history = net.train_epochs(
+  inputs, outputs,
+  epochs: 100,
+  batch_size: 1,
+  early_stopping_patience: 5,
+  min_delta: 0.001
+)
+
+require 'gruff'
+g = Gruff::Line.new
+g.title = 'Training Loss'
+g.data(:loss, history)
+g.write('loss.png')
+```
 
 For a recurrent associative network that can recall patterns from noisy inputs see the [Hopfield network](hopfield_network.md) document.
 
