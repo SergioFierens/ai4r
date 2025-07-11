@@ -26,7 +26,11 @@ puts "Some random selected tours costs: "
 end
 
 puts "Beginning genetic search, please wait... "
-search = Ai4r::GeneticAlgorithm::GeneticSearch.new(800, 100, Ai4r::GeneticAlgorithm::TspChromosome)
+search = Ai4r::GeneticAlgorithm::GeneticSearch.new(
+  800, 100, Ai4r::GeneticAlgorithm::TspChromosome,
+  0.3, 0.4, nil, nil,
+  lambda { |generation, best| puts "Generation #{generation}: best fitness #{best}" }
+)
 result = search.run
 puts "COST #{-1 * result.fitness} TOUR: "+
   "#{result.data.collect{|c| data_set.data_labels[c]} * ', '}"

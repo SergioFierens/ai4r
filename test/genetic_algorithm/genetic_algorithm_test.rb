@@ -73,7 +73,31 @@ module Ai4r
         search.replace_worst_ranked offsprings
         assert_equal 10, search.population.length
         offsprings.each { |c| assert search.population.include?(c)}
-      end 
+      end
+
+      def test_on_generation_callback
+        TspChromosome.set_cost_matrix(COSTS)
+        gens = []
+        search = GeneticSearch.new(10, 2, TspChromosome, 0.3, 0.4, nil, nil,
+                                   lambda { |g, f| gens << g })
+        search.run
+        assert gens.include?(0)
+        assert gens.max <= 2
+      end
+
+      def test_fitness_threshold
+        TspChromosome.set_cost_matrix(COSTS)
+        search = GeneticSearch.new(10, 5, TspChromosome, 0.3, 0.4, -1_000_000)
+        search.run
+        assert_equal 1, search.instance_variable_get(:@generation)
+      end
+
+      def test_max_stagnation
+        TspChromosome.set_cost_matrix(COSTS)
+        search = GeneticSearch.new(10, 5, TspChromosome, 0.3, 0.4, nil, 0)
+        search.run
+        assert_equal 1, search.instance_variable_get(:@generation)
+      end
 
     end
 
