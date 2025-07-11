@@ -23,6 +23,7 @@ require 'ai4r'
 * [Hopfield Networks](hopfield_network.md) – memory based recognition of noisy patterns.
 * [Hierarchical Clustering](hierarchical_clustering.md) – build dendrograms from merge steps.
 * **Automatic Classifiers** – identify relevant marketing targets using decision trees.
+* [Hyperpipes Classifier](hyperpipes.md) – baseline voting using attribute ranges.
 
 ## Contact
 
