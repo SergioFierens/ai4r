@@ -236,6 +236,17 @@ class ID3Test < Test::Unit::TestCase
     end
     assert_equal true, true
   end
+
+  def test_numeric_attribute
+    labels = ['size', 'label']
+    items = [[20, 'S'], [30, 'S'], [40, 'S'], [50, 'L'], [60, 'L'], [70, 'L']]
+    id3 = ID3.new.build(DataSet.new(:data_items => items, :data_labels => labels))
+    assert_equal 'S', id3.eval([25])
+    assert_equal 'L', id3.eval([65])
+    rules = id3.get_rules
+    assert_match(/size <= 45.0/, rules)
+    assert_match(/size > 45.0/, rules)
+  end
 end
 
   
