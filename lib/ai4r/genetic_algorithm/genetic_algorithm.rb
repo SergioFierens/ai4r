@@ -129,7 +129,7 @@ module Ai4r
       # Replace worst ranked part of population with offspring
       def replace_worst_ranked(offsprings)
         size = offsprings.length
-        @population = @population [0..((-1*size)-1)] + offsprings
+        @population = @population[0..(-size-1)] + offsprings
       end
 
       # Select the best chromosome in the population
