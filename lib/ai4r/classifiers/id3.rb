@@ -91,8 +91,18 @@ module Ai4r
     # License::   MPL 1.1
     # Url::       https://github.com/SergioFierens/ai4r
     class ID3 < Classifier
-      
-      attr_reader :data_set
+
+      attr_reader :data_set, :majority_class
+
+      parameters_info :max_depth => 'Maximum recursion depth. Default is nil (no limit).',
+        :min_gain => 'Minimum information gain required to split. Default is 0.',
+        :on_unknown => 'Behaviour when evaluating unseen attribute values: :raise (default), :most_frequent or :nil.'
+
+      def initialize
+        @max_depth = nil
+        @min_gain = 0
+        @on_unknown = :raise
+      end
        
       # Create a new ID3 classifier. You must provide a DataSet instance
       # as parameter. The last attribute of each item is considered as the
@@ -108,7 +118,7 @@ module Ai4r
       # e.g.
       #   id3.eval(['New York',  '<30', 'F'])  # => 'Y'
       def eval(data)
-        @tree.value(data) if @tree
+        @tree.value(data, self) if @tree
       end
 
       # This method returns the generated rules in ruby code.
@@ -139,21 +149,32 @@ module Ai4r
 
       private
       def preprocess_data(data_examples)
-        @tree = build_node(data_examples)
+        @majority_class = most_freq(data_examples, domain(data_examples))
+        @tree = build_node(data_examples, [], 0)
       end
 
       private
-      def build_node(data_examples, flag_att = [])
+      def build_node(data_examples, flag_att = [], depth = 0)
         return ErrorNode.new if data_examples.length == 0
-        domain = domain(data_examples)   
+        domain = domain(data_examples)
         return CategoryNode.new(@data_set.category_label, domain.last[0]) if domain.last.length == 1
+
+        if @max_depth && depth >= @max_depth
+          return CategoryNode.new(@data_set.category_label, most_freq(data_examples, domain))
+        end
+
         min_entropy_index = min_entropy_index(data_examples, domain, flag_att)
+        gain = information_gain(data_examples, domain, min_entropy_index)
+        return CategoryNode.new(@data_set.category_label, most_freq(data_examples, domain)) if gain < @min_gain
+
         split_data_examples = split_data_examples(data_examples, domain, min_entropy_index)
         return CategoryNode.new(@data_set.category_label, most_freq(data_examples, domain)) if split_data_examples.length == 1
-        nodes = split_data_examples.collect do |partial_data_examples|  
-          build_node(partial_data_examples, [*flag_att, min_entropy_index])
+
+        nodes = split_data_examples.collect do |partial_data_examples|
+          build_node(partial_data_examples, [*flag_att, min_entropy_index], depth + 1)
         end
-        return EvaluationNode.new(@data_set.data_labels, min_entropy_index, domain[min_entropy_index], nodes)
+        majority = most_freq(data_examples, domain)
+        return EvaluationNode.new(@data_set.data_labels, min_entropy_index, domain[min_entropy_index], nodes, majority)
       end
 
       private
@@ -221,6 +242,26 @@ module Ai4r
       end
 
       private
+      def information_gain(data_examples, domain, att_index)
+        total_entropy = class_entropy(data_examples, domain)
+        freq_grid_att = freq_grid(att_index, data_examples, domain)
+        att_entropy = entropy(freq_grid_att, data_examples.length)
+        total_entropy - att_entropy
+      end
+
+      private
+      def class_entropy(data_examples, domain)
+        category_domain = domain.last
+        freqs = Array.new(category_domain.length, 0)
+        data_examples.each do |ex|
+          cat = ex.last
+          idx = category_domain.index(cat)
+          freqs[idx] += 1
+        end
+        entropy([freqs], data_examples.length)
+      end
+
+      private
       def domain(data_examples)
         #return build_domains(data_examples)
         domain = Array.new( @data_set.data_labels.length ) { [] }
@@ -272,20 +313,30 @@ module Ai4r
     end
 
     class EvaluationNode #:nodoc: all
-      
+
       attr_reader :index, :values, :nodes
-      
-      def initialize(data_labels, index, values, nodes)
+
+      def initialize(data_labels, index, values, nodes, majority)
         @index = index
         @values = values
         @nodes = nodes
+        @majority = majority
         @data_labels = data_labels
       end
-      
-      def value(data)
+
+      def value(data, classifier)
         value = data[@index]
-        return ErrorNode.new.value(data) unless @values.include?(value)
-        return nodes[@values.index(value)].value(data)
+        unless @values.include?(value)
+          case classifier.on_unknown
+          when :nil
+            return nil
+          when :most_frequent
+            return @majority
+          else
+            return ErrorNode.new.value(data, classifier)
+          end
+        end
+        return nodes[@values.index(value)].value(data, classifier)
       end
       
       def get_rules
@@ -308,7 +359,7 @@ module Ai4r
         @label = label
         @value = value
       end
-      def value(data)
+      def value(data, classifier=nil)
         return @value
       end
       def get_rules
@@ -321,7 +372,7 @@ module Ai4r
     end
 
     class ErrorNode #:nodoc: all
-      def value(data)
+      def value(data, classifier=nil)
         raise ModelFailureError, "There was not enough information during training to do a proper induction for the data element #{data}."
       end
       def get_rules
