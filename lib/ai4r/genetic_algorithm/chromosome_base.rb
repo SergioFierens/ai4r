@@ -19,11 +19,11 @@ module Ai4r
         raise NotImplementedError, 'Implement .seed in subclass'
       end
 
-      def self.reproduce(_a, _b)
+      def self.reproduce(_a, _b, _crossover_rate = 0.4)
         raise NotImplementedError, 'Implement .reproduce in subclass'
       end
 
-      def self.mutate(_chromosome)
+      def self.mutate(_chromosome, _mutation_rate = 0.3)
         raise NotImplementedError, 'Implement .mutate in subclass'
       end
     end
