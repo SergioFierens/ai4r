@@ -13,13 +13,15 @@ This project aims to produce ruby implementations of algorithms covering several
 
 2. Include require statements in your code:
 
-  require "rubygems"
   require "ai4r"
+
+= Documentation
+
+Tutorials for genetic algorithms, ID3 decision trees and neural networks are available in the +docs/+ directory.
 
 = Contact
 
-If you have questions or constructive comments about this project send it to me:
-{Sergio Fierens}[https://github.com/SergioFierens], email address: (sergio (at) gmail (dot) com).
+If you have questions or constructive comments about this project send it to me: {Sergio Fierens}[https://github.com/SergioFierens], email address: (sergio (at) gmail (dot) com).
 
 = Contributors
 

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Author::    Thomas Kern
 # License::   MPL 1.1
 # Project::   ai4r
@@ -7,10 +8,10 @@
 # the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../data/parameterizable'
-require File.dirname(__FILE__) + '/layer'
-require File.dirname(__FILE__) + '/two_phase_layer'
-require File.dirname(__FILE__) + '/node'
+require_relative '../data/parameterizable'
+require_relative 'layer'
+require_relative 'two_phase_layer'
+require_relative 'node'
 
 module Ai4r
 
@@ -129,7 +130,9 @@ module Ai4r
 
       # returns the node at position (x,y) in the square map
       def get_node(x, y)
-        raise(Exception.new) if check_param_for_som(x,y)
+        if check_param_for_som(x, y)
+          raise ArgumentError, "invalid node coordinates (#{x}, #{y})"
+        end
         @nodes[y + x * @number_of_nodes]
       end
 

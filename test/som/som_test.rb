@@ -50,13 +50,11 @@ module Ai4r
       end
 
       def test_access_to_nodes
-        assert_raise Exception do
-          @som.get_node(5, 5)
-        end
+        ex = assert_raise(ArgumentError) { @som.get_node(5, 5) }
+        assert_equal 'invalid node coordinates (5, 5)', ex.message
 
-        assert_raise Exception do
-          @som.get_node(5, -3)
-        end
+        ex = assert_raise(ArgumentError) { @som.get_node(5, -3) }
+        assert_equal 'invalid node coordinates (5, -3)', ex.message
 
         assert_equal Node, @som.get_node(0, 0).class
       end

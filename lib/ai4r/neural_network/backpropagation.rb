@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Author::    Sergio Fierens
 # License::   MPL 1.1
 # Project::   ai4r
@@ -7,7 +8,9 @@
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../data/parameterizable' 
+require_relative '../data/parameterizable'
+require_relative 'activation_functions'
+require_relative 'weight_initializations'
 
 module Ai4r
   
@@ -51,10 +54,13 @@ module Ai4r
     #   layer n+1. By default a random number in [-1, 1) range.
     # * :propagation_function => By default: 
     #   lambda { |x| 1/(1+Math.exp(-1*(x))) }
-    # * :derivative_propagation_function => Derivative of the propagation 
-    #   function, based on propagation function output. 
+    # * :derivative_propagation_function => Derivative of the propagation
+    #   function, based on propagation function output.
     #   By default: lambda { |y| y*(1-y) }, where y=propagation_function(x)
-    # * :learning_rate => By default 0.25        
+    # * :activation => Built-in activation name (:sigmoid, :tanh or :relu).
+    #   Selecting this overrides propagation_function and derivative_propagation_function.
+    #   Default: :sigmoid
+    # * :learning_rate => By default 0.25
     # * :momentum => By default 0.1. Set this parameter to 0 to disable
     #   momentum
     # 
@@ -91,16 +97,38 @@ module Ai4r
         :initial_weight_function => "f(n, i, j) must return the initial "+
             "weight for the conection between the node i in layer n, and "+
             "node j in layer n+1. By default a random number in [-1, 1) range.",
-        :propagation_function => "By default: " + 
-            "lambda { |x| 1/(1+Math.exp(-1*(x))) }",         
+        :weight_init => "Built-in weight initialization strategy (:uniform, :xavier or :he). Default: :uniform",
+        :propagation_function => "By default: " +
+            "lambda { |x| 1/(1+Math.exp(-1*(x))) }",
         :derivative_propagation_function => "Derivative of the propagation "+
             "function, based on propagation function output. By default: " +
             "lambda { |y| y*(1-y) }, where y=propagation_function(x)",
-        :learning_rate => "By default 0.25",        
+        :activation => "Built-in activation function (:sigmoid, :tanh or :relu). Default: :sigmoid",
+        :learning_rate => "By default 0.25",
         :momentum => "By default 0.1. Set this parameter to 0 to disable "+
-            "momentum."
+            "momentum.",
+        :loss_function => "Loss function used when training (:mse or " +
+            ":cross_entropy). Default: :mse"
           
       attr_accessor :structure, :weights, :activation_nodes, :last_changes
+      # When the activation symbol changes, update internal lambdas
+      def activation=(symbol)
+        @activation = symbol
+        @propagation_function = Ai4r::NeuralNetwork::ActivationFunctions::FUNCTIONS[@activation] || Ai4r::NeuralNetwork::ActivationFunctions::FUNCTIONS[:sigmoid]
+        @derivative_propagation_function = Ai4r::NeuralNetwork::ActivationFunctions::DERIVATIVES[@activation] || Ai4r::NeuralNetwork::ActivationFunctions::DERIVATIVES[:sigmoid]
+      end
+
+      def weight_init=(symbol)
+        @weight_init = symbol
+        @initial_weight_function = case symbol
+          when :xavier
+            Ai4r::NeuralNetwork::WeightInitializations.xavier(@structure)
+          when :he
+            Ai4r::NeuralNetwork::WeightInitializations.he(@structure)
+          else
+            Ai4r::NeuralNetwork::WeightInitializations.uniform
+          end
+      end
       
       # Creates a new network specifying the its architecture.
       # E.g.
@@ -114,19 +142,15 @@ module Ai4r
       #   net = Backpropagation.new([2, 1])   # 2 inputs
       #                                       # No hidden layer
       #                                       # 1 output      
-      def initialize(network_structure)
+      def initialize(network_structure, activation = :sigmoid, weight_init = :uniform)
         @structure = network_structure
-        @initial_weight_function = lambda { |n, i, j| ((rand 2000)/1000.0) - 1}
-        @propagation_function = lambda { |x| 1/(1+Math.exp(-1*(x))) } #lambda { |x| Math.tanh(x) }
-        @derivative_propagation_function = lambda { |y| y*(1-y) } #lambda { |y| 1.0 - y**2 }
+        self.weight_init = weight_init
+        self.activation = activation
         @disable_bias = false
         @learning_rate = 0.25
         @momentum = 0.1
+        @loss_function = :mse
       end
-
-      # Evaluates the input.
-      # E.g.
-      #     net = Backpropagation.new([4, 3, 2])
       #     net.eval([25, 32.3, 12.8, 1.5])
       #         # =>  [0.83, 0.03]
       def eval(input_values)
@@ -153,12 +177,55 @@ module Ai4r
       # 
       # output: Expected output for the given input.
       #
-      # This method returns the network error:
-      # => 0.5 * sum( (expected_value[i] - output_value[i])**2 )
+      # This method returns the training loss according to +loss_function+.
       def train(inputs, outputs)
         eval(inputs)
         backpropagate(outputs)
-        calculate_error(outputs)
+        calculate_loss(outputs, @activation_nodes.last)
+      end
+
+      # Train a list of input/output pairs and return average loss.
+      def train_batch(batch_inputs, batch_outputs)
+        raise ArgumentError, "Inputs and outputs size mismatch" if batch_inputs.length != batch_outputs.length
+        sum_error = 0.0
+        batch_inputs.each_index do |i|
+          sum_error += train(batch_inputs[i], batch_outputs[i])
+        end
+        sum_error / batch_inputs.length.to_f
+      end
+
+      # Train for a number of epochs over the dataset. Optionally define a batch size.
+      # Returns an array with the average loss of each epoch.
+      def train_epochs(data_inputs, data_outputs, epochs:, batch_size: 1,
+                       early_stopping_patience: nil, min_delta: 0.0)
+        raise ArgumentError, "Inputs and outputs size mismatch" if data_inputs.length != data_outputs.length
+        losses = []
+        best_loss = Float::INFINITY
+        patience = early_stopping_patience
+        patience_counter = 0
+        epochs.times do
+          epoch_error = 0.0
+          index = 0
+          while index < data_inputs.length
+            batch_in = data_inputs[index, batch_size]
+            batch_out = data_outputs[index, batch_size]
+            batch_error = train_batch(batch_in, batch_out)
+            epoch_error += batch_error * batch_in.length
+            index += batch_size
+          end
+          epoch_loss = epoch_error / data_inputs.length.to_f
+          losses << epoch_loss
+          if patience
+            if best_loss - epoch_loss > min_delta
+              best_loss = epoch_loss
+              patience_counter = 0
+            else
+              patience_counter += 1
+              break if patience_counter >= patience
+            end
+          end
+        end
+        losses
       end
       
       # Initialize (or reset) activation nodes and weights, with the 
@@ -187,7 +254,8 @@ module Ai4r
           @momentum,
           @weights,
           @last_changes,
-          @activation_nodes
+          @activation_nodes,
+          @activation
         ]
       end
 
@@ -198,10 +266,10 @@ module Ai4r
            @momentum,
            @weights,
            @last_changes,
-           @activation_nodes = ary
-        @initial_weight_function = lambda { |n, i, j| ((rand 2000)/1000.0) - 1}
-        @propagation_function = lambda { |x| 1/(1+Math.exp(-1*(x))) } #lambda { |x| Math.tanh(x) }
-        @derivative_propagation_function = lambda { |y| y*(1-y) } #lambda { |y| 1.0 - y**2 }
+           @activation_nodes,
+           @activation = ary
+        self.weight_init = :uniform
+        self.activation = @activation || :sigmoid
       end
 
 
@@ -308,16 +376,38 @@ module Ai4r
         end
       end
       
-      # Calculate quadratic error for a expected output value 
+      # Calculate quadratic error for an expected output value
       # Error = 0.5 * sum( (expected_value[i] - output_value[i])**2 )
       def calculate_error(expected_output)
         output_values = @activation_nodes.last
         error = 0.0
         expected_output.each_index do |output_index|
-          error += 
+          error +=
             0.5*(output_values[output_index]-expected_output[output_index])**2
         end
         return error
+      end
+
+      # Calculate loss for expected/actual vectors according to selected
+      # loss_function (:mse or :cross_entropy).
+      def calculate_loss(expected, actual)
+        case @loss_function
+        when :cross_entropy
+          epsilon = 1e-12
+          loss = 0.0
+          expected.each_index do |i|
+            p = [[actual[i], epsilon].max, 1 - epsilon].min
+            loss -= expected[i] * Math.log(p) + (1 - expected[i]) * Math.log(1 - p)
+          end
+          loss
+        else
+          # Mean squared error
+          error = 0.0
+          expected.each_index do |i|
+            error += 0.5 * (expected[i] - actual[i])**2
+          end
+          error
+        end
       end
       
       def check_input_dimension(inputs)

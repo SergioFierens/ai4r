@@ -1,36 +1,37 @@
+# frozen_string_literal: true
 # Data
-require File.dirname(__FILE__) +  "/ai4r/data/data_set"
-require File.dirname(__FILE__) +  "/ai4r/data/statistics"
-require File.dirname(__FILE__) +  "/ai4r/data/proximity"
-require File.dirname(__FILE__) +  "/ai4r/data/parameterizable"
+require_relative 'ai4r/data/data_set'
+require_relative 'ai4r/data/statistics'
+require_relative 'ai4r/data/proximity'
+require_relative 'ai4r/data/parameterizable'
 # Clusterers
-require File.dirname(__FILE__) +  "/ai4r/clusterers/clusterer"
-require File.dirname(__FILE__) +  "/ai4r/clusterers/k_means"
-require File.dirname(__FILE__) +  "/ai4r/clusterers/bisecting_k_means"
-require File.dirname(__FILE__) +  "/ai4r/clusterers/single_linkage"
-require File.dirname(__FILE__) +  "/ai4r/clusterers/complete_linkage"
-require File.dirname(__FILE__) +  "/ai4r/clusterers/average_linkage"
-require File.dirname(__FILE__) +  "/ai4r/clusterers/weighted_average_linkage"
-require File.dirname(__FILE__) +  "/ai4r/clusterers/centroid_linkage"
-require File.dirname(__FILE__) +  "/ai4r/clusterers/median_linkage"
-require File.dirname(__FILE__) +  "/ai4r/clusterers/ward_linkage"
-require File.dirname(__FILE__) +  "/ai4r/clusterers/ward_linkage_hierarchical"
-require File.dirname(__FILE__) +  "/ai4r/clusterers/diana"
+require_relative 'ai4r/clusterers/clusterer'
+require_relative 'ai4r/clusterers/k_means'
+require_relative 'ai4r/clusterers/bisecting_k_means'
+require_relative 'ai4r/clusterers/single_linkage'
+require_relative 'ai4r/clusterers/complete_linkage'
+require_relative 'ai4r/clusterers/average_linkage'
+require_relative 'ai4r/clusterers/weighted_average_linkage'
+require_relative 'ai4r/clusterers/centroid_linkage'
+require_relative 'ai4r/clusterers/median_linkage'
+require_relative 'ai4r/clusterers/ward_linkage'
+require_relative 'ai4r/clusterers/ward_linkage_hierarchical'
+require_relative 'ai4r/clusterers/diana'
 # Classifiers
-require File.dirname(__FILE__) +  "/ai4r/classifiers/classifier"
-require File.dirname(__FILE__) +  "/ai4r/classifiers/id3"
-require File.dirname(__FILE__) +  "/ai4r/classifiers/multilayer_perceptron"
-require File.dirname(__FILE__) +  "/ai4r/classifiers/prism"
-require File.dirname(__FILE__) +  "/ai4r/classifiers/one_r"
-require File.dirname(__FILE__) +  "/ai4r/classifiers/zero_r"
-require File.dirname(__FILE__) +  "/ai4r/classifiers/hyperpipes"
-require File.dirname(__FILE__) +  "/ai4r/classifiers/naive_bayes"
-require File.dirname(__FILE__) +  "/ai4r/classifiers/ib1"
+require_relative 'ai4r/classifiers/classifier'
+require_relative 'ai4r/classifiers/id3'
+require_relative 'ai4r/classifiers/multilayer_perceptron'
+require_relative 'ai4r/classifiers/prism'
+require_relative 'ai4r/classifiers/one_r'
+require_relative 'ai4r/classifiers/zero_r'
+require_relative 'ai4r/classifiers/hyperpipes'
+require_relative 'ai4r/classifiers/naive_bayes'
+require_relative 'ai4r/classifiers/ib1'
 # Neural networks
-require File.dirname(__FILE__) +  "/ai4r/neural_network/backpropagation"
-require File.dirname(__FILE__) +  "/ai4r/neural_network/hopfield"
+require_relative 'ai4r/neural_network/backpropagation'
+require_relative 'ai4r/neural_network/hopfield'
 # Genetic Algorithms
-require File.dirname(__FILE__) +  "/ai4r/genetic_algorithm/genetic_algorithm"
+require_relative 'ai4r/genetic_algorithm/genetic_algorithm'
 # SOM
-require File.dirname(__FILE__) +  "/ai4r/som/som"
+require_relative 'ai4r/som/som'
 

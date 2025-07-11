@@ -257,6 +257,45 @@ class ID3Test < Test::Unit::TestCase
     end
     assert_equal true, true
   end
+
+  def test_on_unknown_nil
+    bad_data_items = [ ['a', 'Y'], ['b', 'N'] ]
+    bad_data_labels = ['bogus', 'target']
+    id3 = ID3.new.set_parameters(:on_unknown => :nil).build(DataSet.new(:data_items => bad_data_items, :data_labels => bad_data_labels))
+    assert_nil id3.eval(['c'])
+  end
+
+  def test_on_unknown_most_frequent
+    bad_data_items = [ ['a', 'Y'], ['b', 'N'], ['b', 'Y'] ]
+    bad_data_labels = ['bogus', 'target']
+    id3 = ID3.new.set_parameters(:on_unknown => :most_frequent).build(DataSet.new(:data_items => bad_data_items, :data_labels => bad_data_labels))
+    assert_equal 'Y', id3.eval(['c'])
+  end
+
+  def test_max_depth_and_min_gain
+    ds = DataSet.new(:data_items => DATA_ITEMS, :data_labels => DATA_LABELS)
+    id3 = ID3.new.set_parameters(:max_depth => 0).build(ds)
+    assert_equal 'Y', id3.eval(['New York', '<30', 'M'])
+    id3 = ID3.new.set_parameters(:min_gain => 1.0).build(ds)
+    assert_equal 'Y', id3.eval(['New York', '<30', 'F'])
+  end
+
+  def test_prune
+    labels = ['a', 'b', 'target']
+    training = [[0,0,'N'], [0,1,'Y'], [1,0,'Y'], [1,1,'N']]
+    validation = [[1,1,'Y'], [1,0,'Y']]
+
+    train_ds = DataSet.new(:data_items => training, :data_labels => labels)
+    val_ds = DataSet.new(:data_items => validation, :data_labels => labels)
+    id3 = ID3.new.build(train_ds, :validation_set => val_ds)
+
+    before = validation.count { |ex| id3.eval(ex[0..-2]) == ex.last } / validation.length.to_f
+    id3.prune!
+    after = validation.count { |ex| id3.eval(ex[0..-2]) == ex.last } / validation.length.to_f
+
+    assert after >= before
+    assert_equal 'Y', id3.eval([1,1])
+  end
 end
 
   

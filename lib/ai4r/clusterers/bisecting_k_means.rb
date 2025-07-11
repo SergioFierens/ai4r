@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Author::    Sergio Fierens (implementation)
 # License::   MPL 1.1
 # Project::   ai4r
@@ -7,8 +8,8 @@
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../data/data_set'
-require File.dirname(__FILE__) + '/../clusterers/k_means'
+require_relative '../data/data_set'
+require_relative '../clusterers/k_means'
 
 module Ai4r
   module Clusterers
@@ -41,7 +42,8 @@ module Ai4r
             "result of the bisecting approach."
       
       
-      def intialize
+      def initialize
+        super
         @refine = true
       end
       
