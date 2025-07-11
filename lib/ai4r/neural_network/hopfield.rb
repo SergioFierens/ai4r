@@ -35,19 +35,25 @@ require_relative '../data/parameterizable'
       include Ai4r::Data::Parameterizable
       
       attr_reader :weights, :nodes
-      
+
       parameters_info :eval_iterations => "The network will run for a maximum "+
         "of 'eval_iterations' iterations while evaluating an input. 500 by " +
         "default.",
         :active_node_value => "Default: 1",
         :inactive_node_value => "Default: -1",
-        :threshold => "Default: 0"
+        :threshold => "Default: 0",
+        :weight_scaling => "Scale factor applied when computing weights. " +
+          "Default 1.0 / patterns_count",
+        :stop_when_stable => "Stop evaluation when consecutive energy " +
+          "values do not change. False by default"
             
       def initialize
         @eval_iterations = 500
         @active_node_value = 1
         @inactive_node_value = -1
         @threshold = 0
+        @weight_scaling = nil
+        @stop_when_stable = false
       end
 
       # Prepares the network to memorize the given data set.
@@ -81,14 +87,30 @@ require_relative '../data/parameterizable'
       # patterns, or a maximum of "eval_iterations" times.
       def eval(input)
         set_input(input)
+        prev_energy = energy
         @eval_iterations.times do
-          propagate  
-          break if @data_set.data_items.include?(@nodes)
+          propagate
+          return @nodes if @data_set.data_items.include?(@nodes)
+          new_energy = energy
+          break if @stop_when_stable && new_energy == prev_energy
+          prev_energy = new_energy
         end
         return @nodes
       end
-      
-      protected 
+
+      # Calculate network energy using current node states and weights.
+      # Energy = -0.5 * Σ w_ij * s_i * s_j
+      def energy
+        sum = 0.0
+        @nodes.each_with_index do |s_i, i|
+          i.times do |j|
+            sum += read_weight(i, j) * s_i * @nodes[j]
+          end
+        end
+        -sum
+      end
+
+      protected
       # Set all nodes state to the given input.
       # inputs parameter must have the same dimension as nodes
       def set_input(inputs)
@@ -127,10 +149,13 @@ require_relative '../data/parameterizable'
       # 
       # Use read_weight(i,j) to find out weight between node i and j
       def initialize_weights(data_set)
+        patterns_count = data_set.data_items.length
+        scaling = @weight_scaling || (1.0 / patterns_count)
         @weights = Array.new(@nodes.length-1) {|l| Array.new(l+1)}
         @nodes.each_index do |i|
           i.times do |j|
-            @weights[i-1][j] = data_set.data_items.inject(0) { |sum, item| sum+= item[i]*item[j] }
+            sum = data_set.data_items.inject(0) { |s, item| s + item[i] * item[j] }
+            @weights[i-1][j] = sum * scaling
           end
         end
       end
