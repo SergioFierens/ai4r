@@ -40,6 +40,7 @@ Alternatively you can simply specify the activation name:
 net = Ai4r::NeuralNetwork::Backpropagation.new([256, 3], :tanh)
 net.set_parameters(activation: :relu)
 ```
+
 For a recurrent associative network that can recall patterns from noisy inputs see the [Hopfield network](hopfield_network.md) document.
 
 See the [Artificial Neural Network](http://en.wikipedia.org/wiki/Artificial_neural_network) and [Backpropagation](http://en.wikipedia.org/wiki/Backpropagation) articles for more information.
