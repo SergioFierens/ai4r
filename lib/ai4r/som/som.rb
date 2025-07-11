@@ -129,7 +129,9 @@ module Ai4r
 
       # returns the node at position (x,y) in the square map
       def get_node(x, y)
-        raise(Exception.new) if check_param_for_som(x,y)
+        if check_param_for_som(x, y)
+          raise ArgumentError, "invalid node coordinates (#{x}, #{y})"
+        end
         @nodes[y + x * @number_of_nodes]
       end
 
