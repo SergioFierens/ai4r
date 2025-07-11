@@ -44,6 +44,14 @@ module Ai4r
         net.weights.each_with_index {|w_row, i| assert_equal i+1, w_row.length}
         assert_in_delta 1.0, net.read_weight(1,0), 0.00001
       end
+
+      def test_weight_scaling_parameter
+        net = Hopfield.new
+        net.weight_scaling = 0.5
+        net.initialize_nodes @data_set
+        net.initialize_weights(@data_set)
+        assert_in_delta 2.0, net.read_weight(1, 0), 0.00001
+      end
       
       def test_run
         net = Hopfield.new
