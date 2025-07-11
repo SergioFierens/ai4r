@@ -26,7 +26,7 @@ module Ai4r
       # You can provide the mean if you have it already, to speed up things.
       def self.variance(data_set, attribute, mean = nil)
         index = data_set.get_index(attribute)
-        mean = mean(data_set, attribute)
+        mean ||= mean(data_set, attribute)
         sum = 0.0
         data_set.data_items.each { |item| sum += (item[index]-mean)**2 }
         return sum / (data_set.data_items.length-1)
