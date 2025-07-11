@@ -204,7 +204,7 @@ module Ai4r
       def self.mutate(chromosome)
         if chromosome.normalized_fitness && rand < ((1 - chromosome.normalized_fitness) * 0.3)
           data = chromosome.data
-          index = rand(data.length-1)
+          index = (0...data.length - 1).to_a.sample
           data[index], data[index+1] = data[index+1], data[index]
           chromosome.data = data
           @fitness = nil
@@ -233,7 +233,7 @@ module Ai4r
           elsif token != a.data.last && available.include?(a.data[a.data.index(token)+1])
             next_token = a.data[a.data.index(token)+1] 
           else
-            next_token = available[rand(available.length)]
+            next_token = available.sample
           end
           #Add to spawn
           token = next_token
@@ -253,9 +253,8 @@ module Ai4r
         available = []
         0.upto(data_size-1) { |n| available << n }
         seed = []
-        while available.length > 0 do 
-          index = rand(available.length)
-          seed << available.delete_at(index)
+        while available.length > 0 do
+          seed << available.delete(available.sample)
         end
         return Chromosome.new(seed)
       end

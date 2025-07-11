@@ -137,12 +137,12 @@ module Ai4r
         tried_indexes = []
         case populate_method
         when 'random' # for initial assignment (without the :centroid_indices option) and for reassignment of empty cluster centroids (with :on_empty option 'random')
-          while @centroids.length < number_of_clusters && 
+          while @centroids.length < number_of_clusters &&
               tried_indexes.length < @data_set.data_items.length
-            random_index = rand(@data_set.data_items.length)
+            random_index = (0...@data_set.data_items.length).to_a.sample
             if !tried_indexes.include?(random_index)
               tried_indexes << random_index
-              if !@centroids.include? @data_set.data_items[random_index] 
+              if !@centroids.include? @data_set.data_items[random_index]
                 @centroids << @data_set.data_items[random_index]
               end
             end
