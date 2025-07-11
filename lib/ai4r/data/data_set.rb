@@ -83,7 +83,9 @@ module Ai4r
       def parse_csv(filepath)
         items = []
         open_csv_file(filepath) do |row|
-          items << row.collect{|x| is_number?(x) ? Float(x) : x }
+          items << row.collect do |x|
+            is_number?(x) ? Float(x, exception: false) : x
+          end
         end
         set_data_items(items)
       end
@@ -238,7 +240,7 @@ module Ai4r
       protected
 
       def is_number?(x)
-        true if Float(x) rescue false
+        !Float(x, exception: false).nil?
       end
 
       def check_data_items(data_items)
