@@ -45,7 +45,9 @@ require_relative '../data/parameterizable'
         :weight_scaling => "Scale factor applied when computing weights. " +
           "Default 1.0 / patterns_count",
         :stop_when_stable => "Stop evaluation when consecutive energy " +
-          "values do not change. False by default"
+          "values do not change. False by default",
+        :update_strategy => "Update mode: :async_random (default), " +
+          ":async_sequential, :synchronous"
             
       def initialize
         @eval_iterations = 500
@@ -54,6 +56,7 @@ require_relative '../data/parameterizable'
         @threshold = 0
         @weight_scaling = nil
         @stop_when_stable = false
+        @update_strategy = :async_random
       end
 
       # Prepares the network to memorize the given data set.
@@ -118,12 +121,44 @@ require_relative '../data/parameterizable'
         inputs.each_with_index { |input, i| @nodes[i] = input}
       end
       
-      # Select a single node randomly and propagate its state to all other nodes
+      # Propagate network state according to configured update strategy.
       def propagate
+        case @update_strategy
+        when :async_sequential
+          propagate_async_sequential
+        when :synchronous
+          propagate_synchronous
+        else
+          propagate_async_random
+        end
+      end
+
+      # Select a single node randomly and propagate its state to all other nodes
+      def propagate_async_random
         sum = 0
         i = (rand * @nodes.length).floor
-        @nodes.each_with_index {|node, j| sum += read_weight(i,j)*node }
+        @nodes.each_with_index { |node, j| sum += read_weight(i, j) * node }
         @nodes[i] = (sum > @threshold) ? @active_node_value : @inactive_node_value
+      end
+
+      # Iterate through nodes sequentially, updating each immediately
+      def propagate_async_sequential
+        @nodes.each_index do |i|
+          sum = 0
+          @nodes.each_with_index { |node, j| sum += read_weight(i, j) * node }
+          @nodes[i] = (sum > @threshold) ? @active_node_value : @inactive_node_value
+        end
+      end
+
+      # Update all nodes simultaneously using previous state
+      def propagate_synchronous
+        new_nodes = Array.new(@nodes.length)
+        @nodes.each_index do |i|
+          sum = 0
+          @nodes.each_with_index { |node, j| sum += read_weight(i, j) * node }
+          new_nodes[i] = (sum > @threshold) ? @active_node_value : @inactive_node_value
+        end
+        @nodes = new_nodes
       end
       
       # Initialize all nodes with "inactive" state.
