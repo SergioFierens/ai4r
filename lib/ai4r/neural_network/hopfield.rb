@@ -41,13 +41,16 @@ require_relative '../data/parameterizable'
         "default.",
         :active_node_value => "Default: 1",
         :inactive_node_value => "Default: -1",
-        :threshold => "Default: 0"
+        :threshold => "Default: 0",
+        :weight_scaling => "Scale factor applied when computing weights. " +
+          "Default 1.0 / patterns_count"
             
       def initialize
         @eval_iterations = 500
         @active_node_value = 1
         @inactive_node_value = -1
         @threshold = 0
+        @weight_scaling = nil
       end
 
       # Prepares the network to memorize the given data set.
@@ -127,10 +130,13 @@ require_relative '../data/parameterizable'
       # 
       # Use read_weight(i,j) to find out weight between node i and j
       def initialize_weights(data_set)
+        patterns_count = data_set.data_items.length
+        scaling = @weight_scaling || (1.0 / patterns_count)
         @weights = Array.new(@nodes.length-1) {|l| Array.new(l+1)}
         @nodes.each_index do |i|
           i.times do |j|
-            @weights[i-1][j] = data_set.data_items.inject(0) { |sum, item| sum+= item[i]*item[j] }
+            sum = data_set.data_items.inject(0) { |s, item| s + item[i] * item[j] }
+            @weights[i-1][j] = sum * scaling
           end
         end
       end
