@@ -82,6 +82,22 @@ module Ai4r
         assert_equal 2, distancer(3, 2, 1, 3)
       end
 
+      def test_weight_options
+        som = Som.new 2, 2, Layer.new(3, 3), { range: -1..0, seed: 1 }
+        som.initiate_map
+        som.nodes.each do |node|
+          node.weights.each do |w|
+            assert w <= 0
+            assert w >= -1
+          end
+        end
+
+        other = Som.new 2, 2, Layer.new(3, 3)
+        other.set_parameters({ :init_weight_options => { range: -1..0, seed: 1 } })
+        other.initiate_map
+        assert_equal som.nodes.map(&:weights), other.nodes.map(&:weights)
+      end
+
       private
 
       def distancer(x1, y1, x2, y2)
