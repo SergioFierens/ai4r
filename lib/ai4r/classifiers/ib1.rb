@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Author::    Sergio Fierens (Implementation only)
 # License::   MPL 1.1
 # Project::   ai4r
@@ -8,8 +9,8 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'set'
-require File.dirname(__FILE__) + '/../data/data_set'
-require File.dirname(__FILE__) + '/../classifiers/classifier'
+require_relative '../data/data_set'
+require_relative '../classifiers/classifier'
 
 module Ai4r
   module Classifiers

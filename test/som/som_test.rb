@@ -50,13 +50,11 @@ module Ai4r
       end
 
       def test_access_to_nodes
-        assert_raise Exception do
-          @som.get_node(5, 5)
-        end
+        ex = assert_raise(ArgumentError) { @som.get_node(5, 5) }
+        assert_equal 'invalid node coordinates (5, 5)', ex.message
 
-        assert_raise Exception do
-          @som.get_node(5, -3)
-        end
+        ex = assert_raise(ArgumentError) { @som.get_node(5, -3) }
+        assert_equal 'invalid node coordinates (5, -3)', ex.message
 
         assert_equal Node, @som.get_node(0, 0).class
       end
@@ -82,6 +80,22 @@ module Ai4r
         assert_equal 2, distancer(0, 0, 2, 1)
         assert_equal 4, distancer(3, 4, 1, 0)
         assert_equal 2, distancer(3, 2, 1, 3)
+      end
+
+      def test_weight_options
+        som = Som.new 2, 2, Layer.new(3, 3), { range: -1..0, seed: 1 }
+        som.initiate_map
+        som.nodes.each do |node|
+          node.weights.each do |w|
+            assert w <= 0
+            assert w >= -1
+          end
+        end
+
+        other = Som.new 2, 2, Layer.new(3, 3)
+        other.set_parameters({ :init_weight_options => { range: -1..0, seed: 1 } })
+        other.initiate_map
+        assert_equal som.nodes.map(&:weights), other.nodes.map(&:weights)
       end
 
       private

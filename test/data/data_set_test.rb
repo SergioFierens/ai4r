@@ -27,6 +27,15 @@ module Ai4r
         assert_equal ["zone", "rooms", "size", "price"], set.data_labels
         assert_equal ["Moron Sur (GBA)",2.0,"[28 m2 - 39 m2]","[29K-35K]"], set.data_items.first
       end
+
+      def test_open_csv_file
+        rows = []
+        DataSet.new.open_csv_file("#{File.dirname(__FILE__)}/data_set.csv") do |row|
+          rows << row
+        end
+        assert_equal 121, rows.length
+        assert_equal ["zone", "rooms", "size", "price"], rows.first
+      end
       
       def test_build_domains
         domains =  [  Set.new(["New York", "Chicago"]), 

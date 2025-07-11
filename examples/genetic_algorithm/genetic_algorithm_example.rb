@@ -16,17 +16,21 @@ data_filename = "#{File.dirname(__FILE__)}/travel_cost.csv"
 data_set = Ai4r::Data::DataSet.new.load_csv_with_labels data_filename
 data_set.data_items.collect! {|column| column.collect {|element| element.to_f}}
 
-Ai4r::GeneticAlgorithm::Chromosome.set_cost_matrix(data_set.data_items)
+Ai4r::GeneticAlgorithm::TspChromosome.set_cost_matrix(data_set.data_items)
 
 puts "Some random selected tours costs: "
 3.times do
-  c = Ai4r::GeneticAlgorithm::Chromosome.seed
+  c = Ai4r::GeneticAlgorithm::TspChromosome.seed
   puts "COST #{-1 * c.fitness} TOUR: "+
    "#{c.data.collect{|c| data_set.data_labels[c]} * ', '}"
 end
 
 puts "Beginning genetic search, please wait... "
-search = Ai4r::GeneticAlgorithm::GeneticSearch.new(800, 100)
+search = Ai4r::GeneticAlgorithm::GeneticSearch.new(
+  800, 100, Ai4r::GeneticAlgorithm::TspChromosome,
+  0.3, 0.4, nil, nil,
+  lambda { |generation, best| puts "Generation #{generation}: best fitness #{best}" }
+)
 result = search.run
 puts "COST #{-1 * result.fitness} TOUR: "+
   "#{result.data.collect{|c| data_set.data_labels[c]} * ', '}"

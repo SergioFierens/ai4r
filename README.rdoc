@@ -13,22 +13,51 @@ This project aims to produce ruby implementations of algorithms covering several
 
 2. Include require statements in your code:
 
-  require "rubygems"
   require "ai4r"
 
 OneR now supports numeric attributes by discretizing them into a fixed
 number of bins. The amount of bins can be controlled with the
 `bin_count` parameter.
 
-= Contact
+= Examples
 
-If you have questions or constructive comments about this project send it to me:
-{Sergio Fierens}[https://github.com/SergioFierens], email address: (sergio (at) gmail (dot) com).
+== Using OneR and ZeroR
 
-= Contributors
+OneR and ZeroR now expose parameters that let you experiment with different
+strategies.  You can list available parameters by calling
+`get_parameters_info` on the class.  Parameters can be set with
+`set_parameters` before building the model.
 
-This project was created and is maintained by {Sergio Fierens}[https://github.com/SergioFierens].
-There are other (great and absolutely cool) people who have donated time and code to make this project better. You can check out the complete AI4R contributors list: http://github.com/SergioFierens/ai4r/graphs/contributors.
+  data = Ai4r::Data::DataSet.new.load_csv_with_labels 'examples/classifiers/zero_one_r_data.csv'
+
+  # ZeroR will return the most frequent class.  The ``tie_strategy'' parameter
+  # controls what happens when more than one class has the same frequency.
+  zero_r = Ai4r::Classifiers::ZeroR.new
+  zero_r.set_parameters(:tie_strategy => :random)
+  zero_r.build(data)
+
+  # OneR selects the single attribute with the lowest prediction error.  You
+  # may force the attribute with ``selected_attribute'' or change the tie break
+  # behaviour with ``tie_break''.
+  one_r = Ai4r::Classifiers::OneR.new
+  one_r.set_parameters(:selected_attribute => 0, :tie_break => :last)
+  one_r.build(data)
+
+== SimpleLinearRegression
+
+The regression classifier was renamed ``SimpleLinearRegression''.  It selects
+the attribute that minimises mean squared error and derives a slope and
+intercept using standard linear regression.  After building the model you can
+inspect these coefficients:
+
+  r = Ai4r::Classifiers::SimpleLinearRegression.new.build(data)
+  puts r.attribute      # attribute name used for the regression
+  puts r.slope          # regression slope
+  puts r.intercept      # regression intercept
+
+= Documentation
+
+Tutorials for genetic algorithms, ID3 decision trees and neural networks are available in the +docs/+ directory.
 
 = Disclaimer
 

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Author::    Sergio Fierens
 # License::   MPL 1.1
 # Project::   ai4r
@@ -9,7 +10,7 @@
 
 require 'csv'
 require 'set'
-require File.dirname(__FILE__) + '/statistics'
+require_relative 'statistics'
 
 module Ai4r
   module Data
@@ -54,18 +55,10 @@ module Ai4r
         set_data_items(items)
       end
 
-      # opens a csv-file and reads it line by line
-      # for each line, a block is called and the row is passed to the block
-      # ruby1.8 and 1.9 safe
+      # Open a CSV file and yield each row to the provided block.
       def open_csv_file(filepath, &block)
-        if CSV.const_defined? :Reader
-          CSV::Reader.parse(File.open(filepath, 'r')) do |row|
-            block.call row
-          end
-        else
-          CSV.parse(File.open(filepath, 'r')) do |row|
-            block.call row
-          end
+        CSV.foreach(filepath) do |row|
+          block.call row
         end
       end
 
@@ -80,7 +73,9 @@ module Ai4r
       def parse_csv(filepath)
         items = []
         open_csv_file(filepath) do |row|
-          items << row.collect{|x| is_number?(x) ? Float(x) : x }
+          items << row.collect do |x|
+            is_number?(x) ? Float(x, exception: false) : x
+          end
         end
         set_data_items(items)
       end
@@ -235,7 +230,7 @@ module Ai4r
       protected
 
       def is_number?(x)
-        true if Float(x) rescue false
+        !Float(x, exception: false).nil?
       end
 
       def check_data_items(data_items)

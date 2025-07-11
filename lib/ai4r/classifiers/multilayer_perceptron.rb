@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Author::    Sergio Fierens (Implementation only)
 # License::   MPL 1.1
 # Project::   ai4r
@@ -7,9 +8,9 @@
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../data/data_set.rb'
-require File.dirname(__FILE__) + '/../classifiers/classifier'
-require File.dirname(__FILE__) + '/../neural_network/backpropagation'
+require_relative '../data/data_set.rb'
+require_relative '../classifiers/classifier'
+require_relative '../neural_network/backpropagation'
 
 module Ai4r
   module Classifiers
@@ -74,13 +75,14 @@ module Ai4r
         @domains[0...-1].each {|domain| @inputs += domain.length}
         @structure = [@inputs] + @hidden_layers + [@outputs]
         @network = @network_class.new @structure
-        @training_iterations.times do
-          data_set.data_items.each do |data_item|
-            input_values = data_to_input(data_item[0...-1])
-            output_values = data_to_output(data_item.last)
-            @network.train(input_values, output_values)
-          end
+        inputs = []
+        outputs = []
+        data_set.data_items.each do |data_item|
+          inputs << data_to_input(data_item[0...-1])
+          outputs << data_to_output(data_item.last)
         end
+        @network.train_epochs(inputs, outputs,
+                              epochs: @training_iterations, batch_size: 1)
         return self
       end
       
