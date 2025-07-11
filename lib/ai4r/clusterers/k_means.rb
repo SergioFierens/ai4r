@@ -48,6 +48,10 @@ module Ai4r
           "empty cluster to the point furthest from its centroid).",
         :random_seed => "Seed value used to initialize Ruby's random number " +
           "generator when selecting random centroids.",
+        :init_method => "Strategy to initialize centroids. Available values: " +
+          ":random (default) and :kmeans_plus_plus.",
+        :restarts => "Number of random initializations to perform. " +
+          "The best run (lowest SSE) will be kept."
         :track_history => "Keep centroids and assignments for each iteration " +
           "when building the clusterer."
       
@@ -60,6 +64,8 @@ module Ai4r
         @centroid_indices = []
         @on_empty = 'eliminate' # default if none specified
         @random_seed = nil
+        @init_method = :random
+        @restarts = 1
         @track_history = false
       end
       
@@ -72,22 +78,42 @@ module Ai4r
         @number_of_clusters = number_of_clusters
         raise ArgumentError, 'Length of centroid indices array differs from the specified number of clusters' unless @centroid_indices.empty? || @centroid_indices.length == @number_of_clusters
         raise ArgumentError, 'Invalid value for on_empty' unless @on_empty == 'eliminate' || @on_empty == 'terminate' || @on_empty == 'random' || @on_empty == 'outlier'
-        @iterations = 0
-        @history = [] if @track_history
-        
-        calc_initial_centroids
-        while(not stop_criteria_met)
-          calculate_membership_clusters
-          if @track_history
-            @history << {
-              :centroids => @centroids.collect { |c| c.dup },
-              :assignments => @assignments.dup
-            }
+
+        seed_base = @random_seed
+        best_sse = nil
+        best_centroids = nil
+        best_clusters = nil
+        best_iterations = nil
+
+        (@restarts || 1).times do |i|
+          @random_seed = seed_base.nil? ? nil : seed_base + i
+          @iterations = 0
+          @history = [] if @track_history
+          calc_initial_centroids
+          while(not stop_criteria_met)
+            calculate_membership_clusters
+            if @track_history
+              @history << {
+                :centroids => @centroids.collect { |c| c.dup },
+                :assignments => @assignments.dup
+              }
+            end
+            recompute_centroids
           end
-          recompute_centroids
+          current_sse = sse
+          if best_sse.nil? || current_sse < best_sse
+            best_sse = current_sse
+            best_centroids = Marshal.load(Marshal.dump(@centroids))
+            best_clusters = Marshal.load(Marshal.dump(@clusters))
+            best_iterations = @iterations
+          end
         end
-        
-        return self
+
+        @random_seed = seed_base
+        @centroids = best_centroids
+        @clusters = best_clusters
+        @iterations = best_iterations
+        self
       end
       
       # Classifies the given data item, returning the cluster index it belongs 
@@ -128,9 +154,13 @@ module Ai4r
       protected      
       
       def calc_initial_centroids
-        @centroids, @old_centroids = [], nil 
+        @centroids, @old_centroids = [], nil
         if @centroid_indices.empty?
-          populate_centroids('random')
+          if @init_method == :kmeans_plus_plus
+            kmeans_plus_plus_init
+          else
+            populate_centroids('random')
+          end
         else
           populate_centroids('indices')
         end
@@ -160,7 +190,37 @@ module Ai4r
       def recompute_centroids
         @old_centroids = @centroids
         @iterations += 1
-        @centroids = @centroid_function.call(@clusters) 
+        @centroids = @centroid_function.call(@clusters)
+      end
+
+      def kmeans_plus_plus_init
+        srand(@random_seed) if @random_seed
+        chosen_indices = []
+        first_index = (0...@data_set.data_items.length).to_a.sample
+        return if first_index.nil?
+        @centroids << @data_set.data_items[first_index]
+        chosen_indices << first_index
+        while @centroids.length < @number_of_clusters &&
+              chosen_indices.length < @data_set.data_items.length
+          distances = []
+          total = 0.0
+          @data_set.data_items.each_with_index do |item, index|
+            next if chosen_indices.include?(index)
+            min_dist = @centroids.map { |c| distance(item, c) }.min
+            distances << [index, min_dist]
+            total += min_dist
+          end
+          break if distances.empty?
+          r = rand * total
+          cumulative = 0.0
+          chosen = distances.find do |idx, dist|
+            cumulative += dist
+            cumulative >= r
+          end
+          chosen_indices << chosen[0]
+          @centroids << @data_set.data_items[chosen[0]]
+        end
+        @number_of_clusters = @centroids.length
       end
 
       def populate_centroids(populate_method, number_of_clusters=@number_of_clusters)
