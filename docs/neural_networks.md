@@ -50,6 +50,16 @@ net = Ai4r::NeuralNetwork::Backpropagation.new([256, 3], :tanh)
 net.set_parameters(activation: :relu)
 ```
 
+You can provide a `random_seed` to reproduce the same initial weights and
+inspect them through the `weights` and `activation_nodes` accessors:
+
+```ruby
+net = Ai4r::NeuralNetwork::Backpropagation.new([256, 3], random_seed: 123)
+net.init_network
+net.weights          # deterministic weights
+net.activation_nodes # initial activations
+```
+
 ## Loss Functions
 
 Backpropagation returns the training loss after each update. The default

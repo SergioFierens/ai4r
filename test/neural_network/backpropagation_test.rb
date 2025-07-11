@@ -95,6 +95,15 @@ module Ai4r
         net.weights.first.flatten.each { |w| assert w.abs <= limit }
       end
 
+      def test_random_seed_determinism
+        net1 = Backpropagation.new([2, 1], :sigmoid, :uniform, random_seed: 42).init_network
+        net2 = Backpropagation.new([2, 1], :sigmoid, :uniform, random_seed: 42).init_network
+        assert_equality_of_nested_list net1.weights, net2.weights
+
+        net3 = Backpropagation.new([2, 1], :sigmoid, :uniform, random_seed: 43).init_network
+        refute_equal net1.weights, net3.weights
+      end
+
       def test_loss_function_and_train_return
         net = Backpropagation.new([1, 1])
         assert_in_delta 0.125, net.calculate_loss([0], [0.5]), 0.0001
