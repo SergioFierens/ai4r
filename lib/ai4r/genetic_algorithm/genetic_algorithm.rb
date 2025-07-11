@@ -7,17 +7,15 @@
 # You can redistribute it and/or modify it under the terms of 
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
+require_relative 'chromosome_base'
+require_relative 'tsp_chromosome'
+
 module Ai4r
-  
-  # The GeneticAlgorithm module implements the GeneticSearch and Chromosome 
-  # classes. The GeneticSearch is a generic class, and can be used to solved 
-  # any kind of problems. The GeneticSearch class performs a stochastic search 
-  # of the solution of a given problem.
-  # 
-  # The Chromosome is "problem specific". Ai4r built-in Chromosome class was 
-  # designed to model the Travelling salesman problem. If you want to solve other 
-  # type of problem, you will have to modify the Chromosome class, by overwriting 
-  # its fitness, reproduce, and mutate functions, to model your specific problem.
+
+  # The GeneticAlgorithm module implements the GeneticSearch class. The
+  # GeneticSearch is a generic class, and can be used to solve any kind of
+  # problem. The Chromosome implementation is problem specific and must conform
+  # to +ChromosomeBase+.
   module GeneticAlgorithm
 
     #   This class is used to automatically:
@@ -37,12 +35,14 @@ module Ai4r
     class GeneticSearch
 
       attr_accessor :population
+      attr_reader :chromosome_class
 
 
-      def initialize(initial_population_size, generations)
+      def initialize(initial_population_size, generations, chromosome_class = TspChromosome)
         @population_size = initial_population_size
         @max_generation = generations
         @generation = 0
+        @chromosome_class = chromosome_class
       end
 
       #     1. Choose initial population
@@ -68,7 +68,7 @@ module Ai4r
       def generate_initial_population
        @population = []
        @population_size.times do
-         population << Chromosome.seed
+         population << @chromosome_class.seed
        end
       end
 
@@ -118,13 +118,13 @@ module Ai4r
       #     rand < ((1 - chromosome.normalized_fitness) * 0.4)
       def reproduction(selected_to_breed)
         offsprings = []
-        0.upto(selected_to_breed.length/2-1) do |i|
-          offsprings << Chromosome.reproduce(selected_to_breed[2*i], selected_to_breed[2*i+1])
+        0.upto(selected_to_breed.length/2 - 1) do |i|
+          offsprings << @chromosome_class.reproduce(selected_to_breed[2 * i], selected_to_breed[2 * i + 1])
         end
         @population.each do |individual|
-          Chromosome.mutate(individual)
+          @chromosome_class.mutate(individual)
         end
-        return offsprings
+        offsprings
       end
 
       # Replace worst ranked part of population with offspring
@@ -152,117 +152,6 @@ module Ai4r
         end
       end
 
-    end
-
-    # A Chromosome is a representation of an individual solution for a specific 
-    # problem. You will have to redifine the Chromosome representation for each
-    # particular problem, along with its fitness, mutate, reproduce, and seed 
-    # methods.
-    class Chromosome
-
-      attr_accessor :data
-      attr_accessor :normalized_fitness
-
-      def initialize(data)
-        @data = data
-      end
-
-      # The fitness method quantifies the optimality of a solution 
-      # (that is, a chromosome) in a genetic algorithm so that that particular 
-      # chromosome may be ranked against all the other chromosomes. 
-      # 
-      # Optimal chromosomes, or at least chromosomes which are more optimal, 
-      # are allowed to breed and mix their datasets by any of several techniques, 
-      # producing a new generation that will (hopefully) be even better.
-      def fitness
-        return @fitness if @fitness
-        last_token = @data[0]
-        cost = 0
-        @data[1..-1].each do |token|
-          cost += @@costs[last_token][token]
-          last_token = token
-        end
-        @fitness = -1 * cost
-        return @fitness
-      end
-
-      # mutation method is used to maintain genetic diversity from one 
-      # generation of a population of chromosomes to the next. It is analogous 
-      # to biological mutation. 
-      # 
-      # The purpose of mutation in GAs is to allow the 
-      # algorithm to avoid local minima by preventing the population of 
-      # chromosomes from becoming too similar to each other, thus slowing or even 
-      # stopping evolution.
-      # 
-      # Calling the mutate function will "probably" slightly change a chromosome
-      # randomly. 
-      #
-      # This implementation of "mutation" will (probably) reverse the 
-      # order of 2 consecutive randome nodes 
-      # (e.g. from [ 0, 1, 2, 4] to [0, 2, 1, 4]) if:
-      #     ((1 - chromosome.normalized_fitness) * 0.4)
-      def self.mutate(chromosome)
-        if chromosome.normalized_fitness && rand < ((1 - chromosome.normalized_fitness) * 0.3)
-          data = chromosome.data
-          index = (0...data.length - 1).to_a.sample
-          data[index], data[index+1] = data[index+1], data[index]
-          chromosome.data = data
-          @fitness = nil
-        end
-      end
-
-      # Reproduction method is used to combine two chromosomes (solutions) into 
-      # a single new chromosome. There are several ways to
-      # combine two chromosomes: One-point crossover, Two-point crossover,
-      # "Cut and splice", edge recombination, and more. 
-      # 
-      # The method is usually dependant of the problem domain.
-      # In this case, we have implemented edge recombination, wich is the 
-      # most used reproduction algorithm for the Travelling salesman problem.
-      def self.reproduce(a, b)
-        data_size = @@costs[0].length
-        available = []
-        0.upto(data_size-1) { |n| available << n }
-        token = a.data[0]
-        spawn = [token]
-        available.delete(token)
-        while available.length > 0 do 
-          #Select next
-          if token != b.data.last && available.include?(b.data[b.data.index(token)+1])
-            next_token = b.data[b.data.index(token)+1]
-          elsif token != a.data.last && available.include?(a.data[a.data.index(token)+1])
-            next_token = a.data[a.data.index(token)+1] 
-          else
-            next_token = available.sample
-          end
-          #Add to spawn
-          token = next_token
-          available.delete(token)
-          spawn << next_token
-          a, b = b, a if rand < 0.4
-        end
-        return Chromosome.new(spawn)
-      end
-
-      # Initializes an individual solution (chromosome) for the initial 
-      # population. Usually the chromosome is generated randomly, but you can 
-      # use some problem domain knowledge, to generate a 
-      # (probably) better initial solution.
-      def self.seed
-        data_size = @@costs[0].length
-        available = []
-        0.upto(data_size-1) { |n| available << n }
-        seed = []
-        while available.length > 0 do
-          seed << available.delete(available.sample)
-        end
-        return Chromosome.new(seed)
-      end
-
-      def self.set_cost_matrix(costs)
-        @@costs = costs
-      end
     end
 
   end
