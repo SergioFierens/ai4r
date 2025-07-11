@@ -20,7 +20,7 @@ module Ai4r
     class SomTest < Test::Unit::TestCase
 
       def setup
-        @som = Som.new 2, 5, Layer.new(3, 3)
+        @som = Som.new 2, 5, 5, Layer.new(3, 3)
         @som.initiate_map
       end
 
@@ -83,7 +83,7 @@ module Ai4r
       end
 
       def test_weight_options
-        som = Som.new 2, 2, Layer.new(3, 3), { range: -1..0, seed: 1 }
+        som = Som.new 2, 2, 2, Layer.new(3, 3), { range: -1..0, seed: 1 }
         som.initiate_map
         som.nodes.each do |node|
           node.weights.each do |w|
@@ -92,10 +92,19 @@ module Ai4r
           end
         end
 
-        other = Som.new 2, 2, Layer.new(3, 3)
+        other = Som.new 2, 2, 2, Layer.new(3, 3)
         other.set_parameters({ :init_weight_options => { range: -1..0, seed: 1 } })
         other.initiate_map
         assert_equal som.nodes.map(&:weights), other.nodes.map(&:weights)
+      end
+
+      def test_rectangular_node_positions
+        som = Som.new 1, 2, 3, Layer.new(3, 3)
+        som.initiate_map
+        assert_equal 6, som.nodes.length
+        assert_equal [0, 0], [som.get_node(0, 0).x, som.get_node(0, 0).y]
+        assert_equal [2, 0], [som.get_node(0, 2).x, som.get_node(0, 2).y]
+        assert_equal [1, 1], [som.get_node(1, 1).x, som.get_node(1, 1).y]
       end
 
       private

@@ -473,17 +473,27 @@ module Ai4r
 
       attr_reader :index, :values, :nodes, :numeric, :threshold, :majority
 
-      def initialize(data_labels, index, values_or_threshold, nodes, numeric=false, majority=nil)
+
+      # The last parameter can either be a boolean flag indicating a numeric
+      # split, or the majority class value for this node.
+      def initialize(data_labels, index, values_or_threshold, nodes, param=nil)
         @index = index
-        @numeric = numeric
-        if numeric
+        if param == true || param == false
+          @numeric = param
+          @majority = nil
+        else
+          @numeric = false
+          @majority = param
+        end
+
+        if @numeric
           @threshold = values_or_threshold
           @values = nil
         else
           @values = values_or_threshold
         end
+
         @nodes = nodes
-        @majority = majority
         @data_labels = data_labels
       end
 
@@ -511,6 +521,9 @@ module Ai4r
           end
           return @nodes[@values.index(value)].value(data, classifier)
         end
+
+        @nodes[@values.index(value)].value(data, classifier)
+
       end
 
       def get_rules

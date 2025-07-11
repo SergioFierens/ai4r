@@ -38,14 +38,17 @@ module Ai4r
                       :id => "id of the node"      
 
       # creates an instance of Node and instantiates the weights
-      # the parameters is a uniq and sequential ID as well as the number of total nodes
-      # dimensions signals the dimension of the input vector
-      def self.create(id, total, dimensions, options = {})
+      #
+      # +id+:: unique identifier for this node
+      # +rows+:: number of rows of the SOM grid
+      # +columns+:: number of columns of the SOM grid
+      # +dimensions+:: dimension of the input vector
+      def self.create(id, rows, columns, dimensions, options = {})
         n = Node.new
         n.id = id
         n.instantiate_weight dimensions, options
-        n.x = id % total
-        n.y = (id / total.to_f).to_i
+        n.x = id % columns
+        n.y = (id / columns.to_f).to_i
         n
       end
 
