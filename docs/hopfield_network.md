@@ -46,15 +46,25 @@ The resulting plot shows how the energy decreases as the network converges.
 
 ## Parameters
 
-`Ai4r::NeuralNetwork::Hopfield` supports several parameters which can be set with `set_parameters`:
+`Ai4r::NeuralNetwork::Hopfield` exposes several tunable parameters. Use
+`set_parameters` to override the defaults:
 
-* `eval_iterations` – maximum number of iterations when calling `eval` (default `500`).
-* `active_node_value` – value representing an active neuron (default `1`).
-* `inactive_node_value` – value representing an inactive neuron (default `-1`).
-* `threshold` – activation threshold used during propagation (default `0`).
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `eval_iterations` | maximum number of iterations when calling `eval` | `500` |
+| `active_node_value` | value representing an active neuron | `1` |
+| `inactive_node_value` | value representing an inactive neuron | `-1` |
+| `threshold` | activation threshold used during propagation | `0` |
+| `weight_scaling` | scale factor applied when computing weights | `1.0 / patterns_count` |
+| `stop_when_stable` | stop evaluation if energy remains unchanged | `false` |
+| `update_strategy` | update mode: `:async_random`, `:async_sequential` or `:synchronous` | `:async_random` |
 
 ```ruby
-net.set_parameters(eval_iterations: 1000, threshold: 0.2)
+net.set_parameters(
+  eval_iterations: 1000,
+  threshold: 0.2,
+  stop_when_stable: true
+)
 ```
 
 ## Theory
