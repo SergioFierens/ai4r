@@ -7,9 +7,9 @@
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../data/data_set.rb'
-require File.dirname(__FILE__) + '/../classifiers/classifier'
-require File.dirname(__FILE__) + '/../neural_network/backpropagation'
+require_relative '../data/data_set.rb'
+require_relative '../classifiers/classifier'
+require_relative '../neural_network/backpropagation'
 
 module Ai4r
   module Classifiers

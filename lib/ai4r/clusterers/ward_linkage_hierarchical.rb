@@ -3,7 +3,7 @@
 # Project::   ai4r
 # Url::       http://peet.ldee.org
 
-require File.dirname(__FILE__) + '/../clusterers/ward_linkage'
+require_relative '../clusterers/ward_linkage'
 
 module Ai4r
   module Clusterers

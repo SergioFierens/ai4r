@@ -7,8 +7,8 @@
 # the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../data/parameterizable'
-require File.dirname(__FILE__) + '/layer'
+require_relative '../data/parameterizable'
+require_relative 'layer'
 
 module Ai4r
 

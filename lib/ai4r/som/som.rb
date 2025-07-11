@@ -7,10 +7,10 @@
 # the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../data/parameterizable'
-require File.dirname(__FILE__) + '/layer'
-require File.dirname(__FILE__) + '/two_phase_layer'
-require File.dirname(__FILE__) + '/node'
+require_relative '../data/parameterizable'
+require_relative 'layer'
+require_relative 'two_phase_layer'
+require_relative 'node'
 
 module Ai4r
 

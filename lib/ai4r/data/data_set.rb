@@ -9,7 +9,7 @@
 
 require 'csv'
 require 'set'
-require File.dirname(__FILE__) + '/statistics'
+require_relative 'statistics'
 
 module Ai4r
   module Data
