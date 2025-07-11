@@ -89,17 +89,29 @@ require_relative '../data/parameterizable'
 
       # Propagates the input until the network returns one of the memorized
       # patterns, or a maximum of "eval_iterations" times.
-      def eval(input)
+      #
+      # If +trace: true+ is passed the method returns a hash with the
+      # :states and :energies recorded at every iteration (including the
+      # initial state). This can be used to visualize convergence.
+      def eval(input, trace: false)
         set_input(input)
         prev_energy = energy
+        if trace
+          states = [@nodes.clone]
+          energies = [prev_energy]
+        end
         @eval_iterations.times do
           propagate
-          return @nodes if @data_set.data_items.include?(@nodes)
           new_energy = energy
+          if trace
+            states << @nodes.clone
+            energies << new_energy
+          end
+          return(trace ? { states: states, energies: energies } : @nodes) if @data_set.data_items.include?(@nodes)
           break if @stop_when_stable && new_energy == prev_energy
           prev_energy = new_energy
         end
-        return @nodes
+        trace ? { states: states, energies: energies } : @nodes
       end
 
       # Calculate network energy using current node states and weights.

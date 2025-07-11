@@ -25,6 +25,25 @@ Evaluation uses the same vector format:
 result = net.eval(noisy_pattern)
 ```
 
+## Tracing Convergence
+
+Pass `trace: true` to `eval` to record the network state and energy after each
+iteration. The method returns a hash with `:states` and `:energies` arrays.
+
+```ruby
+trace = net.eval(noisy_pattern, trace: true)
+
+require 'gnuplot'
+Gnuplot.open do |gp|
+  Gnuplot::Plot.new(gp) do |plot|
+    plot.title = 'Hopfield Energy'
+    plot.data << Gnuplot::DataSet.new(trace[:energies]) { |ds| ds.with = 'lines' }
+  end
+end
+```
+
+The resulting plot shows how the energy decreases as the network converges.
+
 ## Parameters
 
 `Ai4r::NeuralNetwork::Hopfield` supports several parameters which can be set with `set_parameters`:
