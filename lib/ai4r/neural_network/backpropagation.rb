@@ -181,6 +181,36 @@ module Ai4r
         backpropagate(outputs)
         calculate_error(outputs)
       end
+
+      # Train a list of input/output pairs and return average loss.
+      def train_batch(batch_inputs, batch_outputs)
+        raise ArgumentError, "Inputs and outputs size mismatch" if batch_inputs.length != batch_outputs.length
+        sum_error = 0.0
+        batch_inputs.each_index do |i|
+          sum_error += train(batch_inputs[i], batch_outputs[i])
+        end
+        sum_error / batch_inputs.length.to_f
+      end
+
+      # Train for a number of epochs over the dataset. Optionally define a batch size.
+      # Returns an array with the average loss of each epoch.
+      def train_epochs(data_inputs, data_outputs, epochs:, batch_size: 1)
+        raise ArgumentError, "Inputs and outputs size mismatch" if data_inputs.length != data_outputs.length
+        losses = []
+        epochs.times do
+          epoch_error = 0.0
+          index = 0
+          while index < data_inputs.length
+            batch_in = data_inputs[index, batch_size]
+            batch_out = data_outputs[index, batch_size]
+            batch_error = train_batch(batch_in, batch_out)
+            epoch_error += batch_error * batch_in.length
+            index += batch_size
+          end
+          losses << epoch_error / data_inputs.length.to_f
+        end
+        losses
+      end
       
       # Initialize (or reset) activation nodes and weights, with the 
       # provided net structure and parameters.

@@ -6,16 +6,14 @@ AI4R includes a backpropagation neural network implementation. Neural networks i
 
 The library demonstrates a simple optical character recognition system. Patterns such as triangles, squares and crosses are represented by 16x16 matrices where pixels range from 0 (white) to 10 (black). The network has 256 input neurons and three outputs corresponding to the shapes.
 
-Training data looks like this:
+Training data looks like this using the `train_epochs` helper:
 
 ```ruby
 net = Ai4r::NeuralNetwork::Backpropagation.new([256, 3])
 # TRIANGLE, SQUARE and CROSS are 16x16 matrices
-100.times do
-  net.train(TRIANGLE.flatten.map { |v| v.to_f / 10 }, [1,0,0])
-  net.train(SQUARE.flatten.map { |v| v.to_f / 10 }, [0,1,0])
-  net.train(CROSS.flatten.map { |v| v.to_f / 10 }, [0,0,1])
-end
+inputs  = [TRIANGLE, SQUARE, CROSS].map { |m| m.flatten.map { |v| v.to_f / 10 } }
+outputs = [[1,0,0], [0,1,0], [0,0,1]]
+net.train_epochs(inputs, outputs, epochs: 100, batch_size: 1)
 ```
 
 After training, the network can evaluate noisy patterns with good accuracy.
@@ -51,6 +49,12 @@ Alternatively you can simply specify the activation name:
 net = Ai4r::NeuralNetwork::Backpropagation.new([256, 3], :tanh)
 net.set_parameters(activation: :relu)
 ```
+
+## Batch Training API
+
+Use `train_batch` to update the network with a list of examples and
+`train_epochs` to run multiple passes over the dataset. Both methods
+return the average loss for the processed data.
 
 For a recurrent associative network that can recall patterns from noisy inputs see the [Hopfield network](hopfield_network.md) document.
 
