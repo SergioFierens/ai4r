@@ -131,6 +131,13 @@ class KMeansTest < Test::Unit::TestCase
     assert_equal("Invalid centroid index #{@@data.size+10}", exception.message)
   end
 
+  def test_random_seed
+    data_set = DataSet.new(:data_items => @@data, :data_labels => ["X", "Y"])
+    clusterer1 = KMeans.new.set_parameters(:random_seed => 1).build(data_set, 4)
+    clusterer2 = KMeans.new.set_parameters(:random_seed => 1).build(data_set, 4)
+    assert_equal clusterer1.centroids, clusterer2.centroids
+  end
+
   def test_on_empty
     data_set = DataSet.new(:data_items => @@empty_cluster_data, :data_labels => ["X", "Y"])
     clusterer = KMeans.new.set_parameters({:centroid_indices=>@@empty_centroid_indices}).build(data_set, @@empty_centroid_indices.size)

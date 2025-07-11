@@ -25,15 +25,15 @@ module Ai4r
       attr_reader :data_set, :number_of_clusters
       attr_reader :clusters, :centroids, :iterations
       
-      parameters_info :max_iterations => "Maximum number of iterations to " + 
+      parameters_info :max_iterations => "Maximum number of iterations to " +
         "build the clusterer. By default it is uncapped.",
         :distance_function => "Custom implementation of distance function. " +
           "It must be a closure receiving two data items and return the " +
-          "distance between them. By default, this algorithm uses " + 
+          "distance between them. By default, this algorithm uses " +
           "euclidean distance of numeric attributes to the power of 2.",
         :centroid_function => "Custom implementation to calculate the " +
           "centroid of a cluster. It must be a closure receiving an array of " +
-          "data sets, and return an array of data items, representing the " + 
+          "data sets, and return an array of data items, representing the " +
           "centroids of for each data set. " +
           "By default, this algorithm returns a data items using the mode "+
           "or mean of each attribute on each data set.",
@@ -41,19 +41,22 @@ module Ai4r
           "the initial centroids.  Otherwise, the initial centroids will be " +
           "assigned randomly from the data set.",
         :on_empty => "Action to take if a cluster becomes empty, with values " +
-          "'eliminate' (the default action, eliminate the empty cluster), " + 
+          "'eliminate' (the default action, eliminate the empty cluster), " +
           "'terminate' (terminate with error), 'random' (relocate the " +
-          "empty cluster to a random point), 'outlier' (relocate the " + 
-          "empty cluster to the point furthest from its centroid)."
+          "empty cluster to a random point), 'outlier' (relocate the " +
+          "empty cluster to the point furthest from its centroid).",
+        :random_seed => "Seed value used to initialize Ruby's random number " +
+          "generator when selecting random centroids."
       
       def initialize
         @distance_function = nil
         @max_iterations = nil
-        @centroid_function = lambda do |data_sets| 
+        @centroid_function = lambda do |data_sets|
           data_sets.collect{ |data_set| data_set.get_mean_or_mode}
         end
         @centroid_indices = []
         @on_empty = 'eliminate' # default if none specified
+        @random_seed = nil
       end
       
       
@@ -138,6 +141,7 @@ module Ai4r
         tried_indexes = []
         case populate_method
         when 'random' # for initial assignment (without the :centroid_indices option) and for reassignment of empty cluster centroids (with :on_empty option 'random')
+          srand(@random_seed) if @random_seed
           while @centroids.length < number_of_clusters &&
               tried_indexes.length < @data_set.data_items.length
             random_index = (0...@data_set.data_items.length).to_a.sample
