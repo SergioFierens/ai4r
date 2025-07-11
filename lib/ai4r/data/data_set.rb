@@ -23,6 +23,18 @@ module Ai4r
 
       attr_reader :data_labels, :data_items
 
+      # Return a new DataSet with numeric attributes normalized.
+      # Available methods are:
+      # * +:zscore+ - subtract the mean and divide by the standard deviation
+      # * +:minmax+ - scale values to the [0,1] range
+      def self.normalized(data_set, method: :zscore)
+        new_set = DataSet.new(
+          data_items: data_set.data_items.map { |row| row.dup },
+          data_labels: data_set.data_labels.dup
+        )
+        new_set.normalize!(method)
+      end
+
       # Create a new DataSet. By default, empty.
       # Optionaly, you can provide the initial data items and data labels.
       # 
@@ -220,6 +232,39 @@ module Ai4r
                   end
         end
         return mean
+      end
+
+      # Normalize numeric attributes in place. Supported methods are
+      # +:zscore+ (default) and +:minmax+.
+      def normalize!(method = :zscore)
+        numeric_indices = (0...num_attributes).select do |i|
+          @data_items.first[i].is_a?(Numeric)
+        end
+
+        case method
+        when :zscore
+          means = numeric_indices.map { |i| Statistics.mean(self, i) }
+          sds = numeric_indices.map { |i| Statistics.standard_deviation(self, i) }
+          @data_items.each do |row|
+            numeric_indices.each_with_index do |idx, j|
+              sd = sds[j]
+              row[idx] = sd.zero? ? 0 : (row[idx] - means[j]) / sd
+            end
+          end
+        when :minmax
+          mins = numeric_indices.map { |i| Statistics.min(self, i) }
+          maxs = numeric_indices.map { |i| Statistics.max(self, i) }
+          @data_items.each do |row|
+            numeric_indices.each_with_index do |idx, j|
+              range = maxs[j] - mins[j]
+              row[idx] = range.zero? ? 0 : (row[idx] - mins[j]) / range.to_f
+            end
+          end
+        else
+          raise ArgumentError, "Unknown normalization method #{method}"
+        end
+
+        self
       end
 
       # Returns label of category

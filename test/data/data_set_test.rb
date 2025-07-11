@@ -113,6 +113,23 @@ module Ai4r
         set = DataSet.new(:data_labels => labels)
         assert_equal "Category Label", set.category_label
       end
+
+      def test_normalize_inplace
+        items = [["A", 10], ["B", 20], ["C", 30]]
+        labels = ["name", "value"]
+        set = DataSet.new(:data_items => items, :data_labels => labels)
+        set.normalize!(:zscore)
+        assert_equal [["A", -1.0], ["B", 0.0], ["C", 1.0]], set.data_items
+      end
+
+      def test_normalized_returns_new_dataset
+        items = [["A", 10, "x"], ["B", 20, "y"], ["A", 30, "z"]]
+        labels = ["city", "num", "class"]
+        set = DataSet.new(:data_items => items, :data_labels => labels)
+        copy = DataSet.normalized(set, method: :minmax)
+        assert_equal items, set.data_items
+        assert_equal [["A", 0.0, "x"], ["B", 0.5, "y"], ["A", 1.0, "z"]], copy.data_items
+      end
      
     end
   end
