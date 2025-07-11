@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Data
 require File.dirname(__FILE__) +  "/ai4r/data/data_set"
 require File.dirname(__FILE__) +  "/ai4r/data/statistics"
