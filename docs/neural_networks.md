@@ -22,7 +22,8 @@ After training, the network can evaluate noisy patterns with good accuracy.
 
 ## Customizing Parameters
 
-You can tweak the learning rate, momentum and propagation function:
+You can tweak the learning rate, momentum and propagation function. You can also
+pick one of the built-in activation functions with the `activation` parameter:
 
 ```ruby
 net.set_parameters(
@@ -33,6 +34,12 @@ net.set_parameters(
 )
 ```
 
+Alternatively you can simply specify the activation name:
+
+```ruby
+net = Ai4r::NeuralNetwork::Backpropagation.new([256, 3], :tanh)
+net.set_parameters(activation: :relu)
+```
 For a recurrent associative network that can recall patterns from noisy inputs see the [Hopfield network](hopfield_network.md) document.
 
 See the [Artificial Neural Network](http://en.wikipedia.org/wiki/Artificial_neural_network) and [Backpropagation](http://en.wikipedia.org/wiki/Backpropagation) articles for more information.
