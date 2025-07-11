@@ -24,6 +24,14 @@ module Ai4r
       
       attr_reader :data_set, :rule
 
+      parameters_info :selected_attribute => 'Index of the attribute to force.',
+        :tie_break => 'Strategy when two attributes yield the same accuracy.'
+
+      def initialize
+        @selected_attribute = nil
+        @tie_break = :first
+      end
+
       # Build a new OneR classifier. You must provide a DataSet instance
       # as parameter. The last attribute of each item is considered as 
       # the item class.
@@ -38,9 +46,16 @@ module Ai4r
         end
         domains = @data_set.build_domains
         @rule = nil
-        domains[1...-1].each_index do |attr_index|
-          rule = build_rule(@data_set.data_items, attr_index, domains)
-          @rule = rule if !@rule || rule[:correct] > @rule[:correct]
+        if @selected_attribute
+          @rule = build_rule(@data_set.data_items, @selected_attribute, domains)
+        else
+          domains[1...-1].each_index do |attr_index|
+            rule = build_rule(@data_set.data_items, attr_index, domains)
+            if !@rule || rule[:correct] > @rule[:correct] ||
+              (rule[:correct] == @rule[:correct] && @tie_break == :last)
+              @rule = rule
+            end
+          end
         end
         return self
       end
