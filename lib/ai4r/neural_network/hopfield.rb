@@ -211,11 +211,13 @@ require_relative '../data/parameterizable'
       def initialize_weights(data_set)
         patterns_count = data_set.data_items.length
         scaling = @weight_scaling || (1.0 / patterns_count)
-        @weights = Array.new(@nodes.length-1) {|l| Array.new(l+1)}
+        @weights = Array.new(@nodes.length - 1) { |l| Array.new(l + 1) }
         @nodes.each_index do |i|
           i.times do |j|
-            sum = data_set.data_items.inject(0) { |s, item| s + item[i] * item[j] }
-            @weights[i-1][j] = sum * scaling
+            sum = data_set.data_items.inject(0) do |s, item|
+              s + item[i] * item[j]
+            end
+            @weights[i - 1][j] = sum * scaling
           end
         end
       end
