@@ -493,9 +493,20 @@ module Ai4r
           node = value <= @threshold ? @nodes[0] : @nodes[1]
           return node.value(data, classifier)
         else
-          unless @values.include?(value)
-            return nil if classifier&.on_unknown == :nil
-            return @majority if classifier&.on_unknown == :most_frequent
+          return ErrorNode.new.value(data) unless @values.include?(value)
+          @nodes[@values.index(value)].value(data)
+        end
+      end
+
+      def value(data, classifier)
+        value = data[@index]
+        unless @values.include?(value)
+          case classifier.on_unknown
+          when :nil
+            return nil
+          when :most_frequent
+            return @majority
+          else
             return ErrorNode.new.value(data, classifier)
           end
           return @nodes[@values.index(value)].value(data, classifier)

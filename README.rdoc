@@ -55,6 +55,16 @@ inspect these coefficients:
   puts r.slope          # regression slope
   puts r.intercept      # regression intercept
 
+== DataSet normalization
+
+Numeric attributes can be normalized with `normalize!`. By default it applies
+z-score normalization, but you can also use `:minmax` to scale values to the
+`[0,1]` range.
+
+  data = Ai4r::Data::DataSet.new(:data_items => [[1, 10], [2, 20]])
+  Ai4r::Data::DataSet.normalized(data, method: :minmax)
+  data.normalize!  # in place using z-score
+
 = Documentation
 
 Tutorials for genetic algorithms, ID3 decision trees and neural networks are available in the +docs/+ directory.
