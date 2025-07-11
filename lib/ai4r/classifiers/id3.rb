@@ -92,7 +92,7 @@ module Ai4r
     # Url::       https://github.com/SergioFierens/ai4r
     class ID3 < Classifier
 
-      attr_reader :data_set, :majority_class
+      attr_reader :data_set, :majority_class, :validation_set
 
       parameters_info :max_depth => 'Maximum recursion depth. Default is nil (no limit).',
         :min_gain => 'Minimum information gain required to split. Default is 0.',
@@ -107,10 +107,12 @@ module Ai4r
       # Create a new ID3 classifier. You must provide a DataSet instance
       # as parameter. The last attribute of each item is considered as the
       # item class.
-      def build(data_set)
+      def build(data_set, options = {})
         data_set.check_not_empty
         @data_set = data_set
+        @validation_set = options[:validation_set]
         preprocess_data(@data_set.data_items)
+        prune! if @validation_set
         return self
       end
 
@@ -145,6 +147,15 @@ module Ai4r
           "#{rule[0..-2].join(' and ')} then #{rule.last}"
         end
         return "if #{rules.join("\nelsif ")}\nelse raise 'There was not enough information during training to do a proper induction for this data element' end"
+      end
+
+      # Prune the decision tree using the validation set provided during build.
+      # Subtrees are replaced by a single leaf when this increases the
+      # classification accuracy on the validation data.
+      def prune!
+        return self unless @validation_set
+        @tree = prune_node(@tree, @validation_set.data_items)
+        self
       end
 
       private
@@ -309,12 +320,46 @@ module Ai4r
       end
 
       private
+      def prune_node(node, examples)
+        return node if node.is_a?(CategoryNode) || node.is_a?(ErrorNode)
+
+        subsets = Array.new(node.values.length) { [] }
+        examples.each do |ex|
+          idx = node.values.index(ex[node.index])
+          subsets[idx] << ex if idx
+        end
+
+        node.nodes.each_with_index do |child, i|
+          node.nodes[i] = prune_node(child, subsets[i])
+        end
+
+        before = accuracy_for_node(node, examples)
+        leaf = CategoryNode.new(@data_set.category_label, node.majority)
+        after = accuracy_for_node(leaf, examples)
+
+        if after && before && after >= before
+          leaf
+        else
+          node
+        end
+      end
+
+      private
+      def accuracy_for_node(node, examples)
+        return nil if examples.empty?
+        correct = examples.count do |ex|
+          node.value(ex[0..-2], self) == ex.last
+        end
+        correct.to_f / examples.length
+      end
+
+      private
       LOG2 = Math.log(2)
     end
 
     class EvaluationNode #:nodoc: all
 
-      attr_reader :index, :values, :nodes
+      attr_reader :index, :values, :nodes, :majority
 
       def initialize(data_labels, index, values, nodes, majority)
         @index = index
