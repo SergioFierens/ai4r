@@ -95,6 +95,21 @@ module Ai4r
         net.weights.first.flatten.each { |w| assert w.abs <= limit }
       end
 
+      def test_loss_function_and_train_return
+        net = Backpropagation.new([1, 1])
+        assert_in_delta 0.125, net.calculate_loss([0], [0.5]), 0.0001
+        net.loss_function = :cross_entropy
+        assert_in_delta 0.6931, net.calculate_loss([1], [0.5]), 0.0001
+
+        net = Backpropagation.new([2, 1])
+        net.set_parameters(loss_function: :cross_entropy)
+        loss = net.train([0, 0], [0])
+        assert_in_delta net.calculate_loss([0], net.activation_nodes.last), loss, 0.0000001
+        net.set_parameters(loss_function: :mse)
+        loss = net.train([1, 1], [1])
+        assert_in_delta net.calculate_loss([1], net.activation_nodes.last), loss, 0.0000001
+      end
+
 
     end
 

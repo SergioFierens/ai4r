@@ -50,6 +50,18 @@ net = Ai4r::NeuralNetwork::Backpropagation.new([256, 3], :tanh)
 net.set_parameters(activation: :relu)
 ```
 
+## Loss Functions
+
+Backpropagation returns the training loss after each update. The default
+loss is mean squared error (`:mse`) which is suitable for regression or
+continuous outputs. For classification problems you can switch to
+cross entropy (`:cross_entropy`) which penalizes confident mistakes:
+
+```ruby
+net = Ai4r::NeuralNetwork::Backpropagation.new([256, 3])
+net.set_parameters(loss_function: :cross_entropy)
+```
+
 ## Batch Training API
 
 Use `train_batch` to update the network with a list of examples and
