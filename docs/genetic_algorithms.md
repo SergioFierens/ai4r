@@ -68,6 +68,12 @@ search = Ai4r::GeneticAlgorithm::GeneticSearch.new(
   whether to mutate a chromosome (default `0.3`).
 * `crossover_rate` – probability that parents swap roles during reproduction (default `0.4`).
 
+Additional optional arguments control termination and progress monitoring:
+
+* `fitness_threshold` – stop the search early once the best fitness reaches this value.
+* `max_stagnation` – stop if no improvement occurs for this many generations.
+* `on_generation` – callback invoked every generation with `(generation, best_fitness)`.
+
 Running the search with a larger population and more generations usually finds cheaper tours.
 
 ## Example Usage
@@ -81,7 +87,11 @@ costs = []
 CSV.read('travel_cost.csv').each { |row| costs << row.map(&:to_f) }
 Ai4r::GeneticAlgorithm::TspChromosome.set_cost_matrix(costs)
 
-search = Ai4r::GeneticAlgorithm::GeneticSearch.new(800, 100)
+search = Ai4r::GeneticAlgorithm::GeneticSearch.new(
+  800, 100, Ai4r::GeneticAlgorithm::TspChromosome,
+  0.3, 0.4, nil, nil,
+  lambda { |gen, best| puts "Generation #{gen}: #{best}" }
+)
 result = search.run
 puts "Result cost: #{result.fitness}"
 puts "Result tour: #{result.data.inspect}"

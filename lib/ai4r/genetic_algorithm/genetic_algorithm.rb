@@ -37,16 +37,21 @@ module Ai4r
       attr_accessor :population
       attr_reader :chromosome_class
       attr_accessor :mutation_rate, :crossover_rate
+      attr_accessor :fitness_threshold, :max_stagnation, :on_generation
 
 
       def initialize(initial_population_size, generations, chromosome_class = TspChromosome,
-                     mutation_rate = 0.3, crossover_rate = 0.4)
+                     mutation_rate = 0.3, crossover_rate = 0.4,
+                     fitness_threshold = nil, max_stagnation = nil, on_generation = nil)
         @population_size = initial_population_size
         @max_generation = generations
         @generation = 0
         @chromosome_class = chromosome_class
         @mutation_rate = mutation_rate
         @crossover_rate = crossover_rate
+        @fitness_threshold = fitness_threshold
+        @max_stagnation = max_stagnation
+        @on_generation = on_generation
       end
 
       #     1. Choose initial population
@@ -59,13 +64,29 @@ module Ai4r
       #     4. Until termination    
       #     5. Return the best chromosome
       def run
-        generate_initial_population                    #Generate initial population 
+        generate_initial_population                    #Generate initial population
+        best = best_chromosome
+        best_fitness = best.fitness
+        stagnation = 0
+        @on_generation.call(@generation, best_fitness) if @on_generation
         @max_generation.times do
-          selected_to_breed = selection                #Evaluates current population 
+          @generation += 1
+          selected_to_breed = selection                #Evaluates current population
           offsprings = reproduction selected_to_breed  #Generate the population for this new generation
           replace_worst_ranked offsprings
+          current_best = best_chromosome
+          if current_best.fitness > best_fitness
+            best_fitness = current_best.fitness
+            best = current_best
+            stagnation = 0
+          else
+            stagnation += 1
+          end
+          @on_generation.call(@generation, best_fitness) if @on_generation
+          break if (@fitness_threshold && best_fitness >= @fitness_threshold) ||
+                   (@max_stagnation && stagnation >= @max_stagnation)
         end
-        return best_chromosome
+        best
       end
 
 
