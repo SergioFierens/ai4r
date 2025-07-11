@@ -145,15 +145,49 @@ module Ai4r
       private
       def build_node(data_examples, flag_att = [])
         return ErrorNode.new if data_examples.length == 0
-        domain = domain(data_examples)   
+        domain = domain(data_examples)
         return CategoryNode.new(@data_set.category_label, domain.last[0]) if domain.last.length == 1
-        min_entropy_index = min_entropy_index(data_examples, domain, flag_att)
-        split_data_examples = split_data_examples(data_examples, domain, min_entropy_index)
-        return CategoryNode.new(@data_set.category_label, most_freq(data_examples, domain)) if split_data_examples.length == 1
-        nodes = split_data_examples.collect do |partial_data_examples|  
-          build_node(partial_data_examples, [*flag_att, min_entropy_index])
+
+        best_index = nil
+        best_entropy = nil
+        best_split = nil
+        best_threshold = nil
+
+        domain[0..-2].each_index do |index|
+          next if flag_att.include?(index)
+
+          if data_examples.first[index].is_a?(Numeric)
+            values = data_examples.collect { |ex| ex[index] }.uniq.sort
+            candidate_thresholds(values).each do |thr|
+              grid = freq_grid_numeric(index, data_examples, domain, thr)
+              ent = entropy(grid, data_examples.length)
+              if !best_entropy || ent < best_entropy
+                best_entropy = ent
+                best_index = index
+                best_threshold = thr
+                best_split = split_numeric_data_examples(data_examples, index, thr)
+              end
+            end
+          else
+            grid = freq_grid(index, data_examples, domain)
+            ent = entropy(grid, data_examples.length)
+            if !best_entropy || ent < best_entropy
+              best_entropy = ent
+              best_index = index
+              best_threshold = nil
+              best_split = split_data_examples(data_examples, domain, index)
+            end
+          end
         end
-        return EvaluationNode.new(@data_set.data_labels, min_entropy_index, domain[min_entropy_index], nodes)
+
+        return CategoryNode.new(@data_set.category_label, most_freq(data_examples, domain)) if best_split.length == 1
+
+        nodes = best_split.collect do |partial|
+          build_node(partial, [*flag_att, best_index])
+        end
+
+        split_value = best_threshold.nil? ? domain[best_index] : best_threshold
+        EvaluationNode.new(@data_set.data_labels, best_index, split_value, nodes)
       end
 
       private
@@ -201,6 +235,41 @@ module Ai4r
            data_examples_array[att_value_index] = example_set
         end
         return data_examples_array
+      end
+
+      private
+      def split_numeric_data_examples(data_examples, att_index, threshold)
+        lower = []
+        higher = []
+        data_examples.each do |example|
+          if example[att_index] <= threshold
+            lower << example
+          else
+            higher << example
+          end
+        end
+        [lower, higher]
+      end
+
+      private
+      def candidate_thresholds(sorted_values)
+        thresholds = []
+        sorted_values.each_cons(2) do |a, b|
+          thresholds << (a + b) / 2.0
+        end
+        thresholds.empty? ? sorted_values : thresholds
+      end
+
+      private
+      def freq_grid_numeric(att_index, data_examples, domain, threshold)
+        category_domain = domain.last
+        grid = Array.new(2) { Array.new(category_domain.length, 0) }
+        data_examples.each do |example|
+          category_index = category_domain.index(example.last)
+          pos = example[att_index] <= threshold ? 0 : 1
+          grid[pos][category_index] += 1
+        end
+        grid
       end
 
       private 
@@ -272,33 +341,54 @@ module Ai4r
     end
 
     class EvaluationNode #:nodoc: all
-      
+
       attr_reader :index, :values, :nodes
-      
+
       def initialize(data_labels, index, values, nodes)
         @index = index
-        @values = values
         @nodes = nodes
         @data_labels = data_labels
+        if values.is_a?(Array)
+          @values = values
+          @threshold = nil
+        else
+          @threshold = values
+          @values = nil
+        end
       end
-      
+
       def value(data)
         value = data[@index]
-        return ErrorNode.new.value(data) unless @values.include?(value)
-        return nodes[@values.index(value)].value(data)
+        if @threshold
+          node = value <= @threshold ? @nodes[0] : @nodes[1]
+          node.value(data)
+        else
+          return ErrorNode.new.value(data) unless @values.include?(value)
+          nodes[@values.index(value)].value(data)
+        end
       end
-      
+
       def get_rules
         rule_set = []
-        @nodes.each_with_index do |child_node, child_node_index|
-          my_rule = "#{@data_labels[@index]}=='#{@values[child_node_index]}'"
-          child_node_rules = child_node.get_rules
-          child_node_rules.each do |child_rule|
-            child_rule.unshift(my_rule)
+        if @threshold
+          @nodes.each_with_index do |child_node, idx|
+            op = idx.zero? ? '<=' : '>'
+            my_rule = "#{@data_labels[@index]} #{op} #{@threshold}"
+            child_node_rules = child_node.get_rules
+            child_node_rules.each { |r| r.unshift(my_rule) }
+            rule_set += child_node_rules
           end
-          rule_set += child_node_rules
+        else
+          @nodes.each_with_index do |child_node, child_node_index|
+            my_rule = "#{@data_labels[@index]}=='#{@values[child_node_index]}'"
+            child_node_rules = child_node.get_rules
+            child_node_rules.each do |child_rule|
+              child_rule.unshift(my_rule)
+            end
+            rule_set += child_node_rules
+          end
         end
-        return rule_set
+        rule_set
       end
       
     end
