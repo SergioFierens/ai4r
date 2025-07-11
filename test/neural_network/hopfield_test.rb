@@ -124,6 +124,19 @@ module Ai4r
         assert_equal 5, net2.propagate_count
       end
 
+      def test_train_validates_values
+        net = Hopfield.new
+        invalid = Ai4r::Data::DataSet.new :data_items => [[1, 0, -1]]
+        assert_raise(ArgumentError) { net.train(invalid) }
+
+        net.active_node_value = 1
+        net.inactive_node_value = 0
+        valid = Ai4r::Data::DataSet.new :data_items => [[1,0,1,0]]
+        net.train(valid)
+        invalid2 = Ai4r::Data::DataSet.new :data_items => [[1,2,0]]
+        assert_raise(ArgumentError) { net.train(invalid2) }
+      end
+
     end
   end
 end
