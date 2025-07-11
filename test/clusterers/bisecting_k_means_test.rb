@@ -21,9 +21,13 @@ class BisectingKMeansTest < Test::Unit::TestCase
   def test_build_without_refine
     build(false)
   end
-  
+
   def test_build_with_refine
     build(true)
+  end
+
+  def test_refine_defaults_to_true
+    assert_equal true, BisectingKMeans.new.refine
   end
   
   protected
