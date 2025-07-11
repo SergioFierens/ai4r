@@ -59,4 +59,19 @@ eval id3.get_rules
 puts marketing_target  # => 'Y'
 ```
 
+## Validation and Pruning
+
+Pass a separate validation set when building the tree and call `prune!` to
+remove branches that decrease accuracy. You can also limit the depth of the
+induction with the `:max_depth` parameter.
+
+```ruby
+training = DataSet.new(:data_items => DATA_SET, :data_labels => DATA_LABELS)
+validation = DataSet.new(:data_items => VALIDATION_ITEMS,
+                         :data_labels => DATA_LABELS)
+id3 = ID3.new.set_parameters(:max_depth => 3)
+         .build(training, :validation_set => validation)
+id3.prune!
+```
+
 Further reading: [ID3 Algorithm](http://en.wikipedia.org/wiki/ID3_algorithm) and [Decision Trees](http://en.wikipedia.org/wiki/Decision_tree).

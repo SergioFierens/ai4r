@@ -258,6 +258,23 @@ class ID3Test < Test::Unit::TestCase
     id3 = ID3.new.set_parameters(:min_gain => 1.0).build(ds)
     assert_equal 'Y', id3.eval(['New York', '<30', 'F'])
   end
+
+  def test_prune
+    labels = ['a', 'b', 'target']
+    training = [[0,0,'N'], [0,1,'Y'], [1,0,'Y'], [1,1,'N']]
+    validation = [[1,1,'Y'], [1,0,'Y']]
+
+    train_ds = DataSet.new(:data_items => training, :data_labels => labels)
+    val_ds = DataSet.new(:data_items => validation, :data_labels => labels)
+    id3 = ID3.new.build(train_ds, :validation_set => val_ds)
+
+    before = validation.count { |ex| id3.eval(ex[0..-2]) == ex.last } / validation.length.to_f
+    id3.prune!
+    after = validation.count { |ex| id3.eval(ex[0..-2]) == ex.last } / validation.length.to_f
+
+    assert after >= before
+    assert_equal 'Y', id3.eval([1,1])
+  end
 end
 
   
