@@ -8,6 +8,7 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
  
 require 'ai4r/genetic_algorithm/genetic_algorithm'
+require 'ai4r/genetic_algorithm/tsp_chromosome'
 require 'test/unit'
 
 module Ai4r
@@ -34,19 +35,19 @@ module Ai4r
     class GeneticAlgorithmTest < Test::Unit::TestCase
 
       def test_chromosome_seed
-        Chromosome.set_cost_matrix(COSTS)
-        chromosome = Chromosome.seed
+        TspChromosome.set_cost_matrix(COSTS)
+        chromosome = TspChromosome.seed
         assert_equal [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], chromosome.data.sort
       end
 
       def test_fitness
-        Chromosome.set_cost_matrix(COSTS)
-        chromosome = Chromosome.new([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+        TspChromosome.set_cost_matrix(COSTS)
+        chromosome = TspChromosome.new([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         assert_equal( -206, chromosome.fitness)
       end
 
       def test_selection
-        search = GeneticSearch.new(10, 5)
+        search = GeneticSearch.new(10, 5, TspChromosome)
         search.generate_initial_population
         selected =  search.selection
         selected.each { |c| assert c!=nil }
@@ -57,7 +58,7 @@ module Ai4r
       end
 
       def test_reproduction
-        search = GeneticSearch.new(10, 5)
+        search = GeneticSearch.new(10, 5, TspChromosome)
         search.generate_initial_population
         selected =  search.selection
         offsprings = search.reproduction selected
@@ -65,7 +66,7 @@ module Ai4r
       end    
 
       def test_replace_worst_ranked
-        search = GeneticSearch.new(10, 5)
+        search = GeneticSearch.new(10, 5, TspChromosome)
         search.generate_initial_population
         selected =  search.selection
         offsprings = search.reproduction selected
