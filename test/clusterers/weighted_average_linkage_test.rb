@@ -48,4 +48,9 @@ class Ai4r::Clusterers::WeightedAverageLinkageTest < Test::Unit::TestCase
     assert_equal 93.5, clusterer.linkage_distance(0,1,2)
     assert_equal 37.5, clusterer.linkage_distance(4,2,5)
   end
+
+  def test_eval_unsupported
+    clusterer = Ai4r::Clusterers::WeightedAverageLinkage.new
+    assert_raise(NotImplementedError) { clusterer.eval([0, 0]) }
+  end
 end

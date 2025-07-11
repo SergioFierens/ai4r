@@ -49,4 +49,9 @@ class Ai4r::Clusterers::WardLinkageTest < Test::Unit::TestCase
     assert_equal 27.75, clusterer.linkage_distance(4,2,5)
   end
 
+  def test_eval_unsupported
+    clusterer = Ai4r::Clusterers::WardLinkage.new
+    assert_raise(NotImplementedError) { clusterer.eval([0, 0]) }
+  end
+
 end
