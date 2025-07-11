@@ -87,6 +87,20 @@ SPLIT_DATA_ITEMS_BY_AGE_HASH = {
                               '[50-80]' => OLD_DATA_ITEMS,
                               '>80' => ELDER_DATA_ITEMS }
 
+NUM_LABELS = ['age', 'marketing_target']
+NUM_DATA_ITEMS = [
+  [18, 'Y'],
+  [22, 'Y'],
+  [27, 'Y'],
+  [35, 'N'],
+  [40, 'N'],
+  [45, 'N']
+]
+EXPECTED_NUMERIC_RULES_STRING =
+  "if age <= 31.0 then marketing_target='Y'\n"+
+  "elsif age > 31.0 then marketing_target='N'\n"+
+  "else raise 'There was not enough information during training to do a proper induction for this data element' end"
+
   EXPECTED_RULES_STRING =  
     "if age_range=='<30' then marketing_target='Y'\n"+
     "elsif age_range=='[30-50)' and city=='Chicago' then marketing_target='Y'\n"+
@@ -223,6 +237,13 @@ class ID3Test < Test::Unit::TestCase
     city='New York'
     eval id3.get_rules
     assert_equal 'N', marketing_target
+  end
+
+  def test_numeric_attribute
+    id3 = ID3.new.build(DataSet.new(:data_items => NUM_DATA_ITEMS, :data_labels => NUM_LABELS))
+    assert_equal 'Y', id3.eval([20])
+    assert_equal 'N', id3.eval([50])
+    assert_equal EXPECTED_NUMERIC_RULES_STRING, id3.get_rules
   end
 
   def test_model_failure
