@@ -75,6 +75,15 @@ module Ai4r
         assert_approximate_equality_of_nested_list net.last_changes, x.last_changes
         assert_approximate_equality_of_nested_list net.activation_nodes, x.activation_nodes
       end
+      def test_activation_parameter
+        net = Backpropagation.new([2, 1], :tanh)
+        assert_equal :tanh, net.activation
+        assert_in_delta Math.tanh(0.5), net.instance_variable_get(:@propagation_function).call(0.5), 0.0001
+        net.set_parameters(activation: :relu)
+        assert_equal :relu, net.activation
+        assert_equal 0.0, net.instance_variable_get(:@derivative_propagation_function).call(-1.0)
+      end
+
 
     end
 

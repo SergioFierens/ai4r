@@ -8,7 +8,8 @@
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require_relative '../data/parameterizable' 
+require_relative '../data/parameterizable'
+require_relative 'activation_functions'
 
 module Ai4r
   
@@ -52,10 +53,13 @@ module Ai4r
     #   layer n+1. By default a random number in [-1, 1) range.
     # * :propagation_function => By default: 
     #   lambda { |x| 1/(1+Math.exp(-1*(x))) }
-    # * :derivative_propagation_function => Derivative of the propagation 
-    #   function, based on propagation function output. 
+    # * :derivative_propagation_function => Derivative of the propagation
+    #   function, based on propagation function output.
     #   By default: lambda { |y| y*(1-y) }, where y=propagation_function(x)
-    # * :learning_rate => By default 0.25        
+    # * :activation => Built-in activation name (:sigmoid, :tanh or :relu).
+    #   Selecting this overrides propagation_function and derivative_propagation_function.
+    #   Default: :sigmoid
+    # * :learning_rate => By default 0.25
     # * :momentum => By default 0.1. Set this parameter to 0 to disable
     #   momentum
     # 
@@ -97,11 +101,18 @@ module Ai4r
         :derivative_propagation_function => "Derivative of the propagation "+
             "function, based on propagation function output. By default: " +
             "lambda { |y| y*(1-y) }, where y=propagation_function(x)",
+        :activation => "Built-in activation function (:sigmoid, :tanh or :relu). Default: :sigmoid",
         :learning_rate => "By default 0.25",        
         :momentum => "By default 0.1. Set this parameter to 0 to disable "+
             "momentum."
           
       attr_accessor :structure, :weights, :activation_nodes, :last_changes
+      # When the activation symbol changes, update internal lambdas
+      def activation=(symbol)
+        @activation = symbol
+        @propagation_function = Ai4r::NeuralNetwork::ActivationFunctions::FUNCTIONS[@activation] || Ai4r::NeuralNetwork::ActivationFunctions::FUNCTIONS[:sigmoid]
+        @derivative_propagation_function = Ai4r::NeuralNetwork::ActivationFunctions::DERIVATIVES[@activation] || Ai4r::NeuralNetwork::ActivationFunctions::DERIVATIVES[:sigmoid]
+      end
       
       # Creates a new network specifying the its architecture.
       # E.g.
@@ -115,19 +126,14 @@ module Ai4r
       #   net = Backpropagation.new([2, 1])   # 2 inputs
       #                                       # No hidden layer
       #                                       # 1 output      
-      def initialize(network_structure)
+      def initialize(network_structure, activation = :sigmoid)
         @structure = network_structure
-        @initial_weight_function = lambda { |n, i, j| ((rand 2000)/1000.0) - 1}
-        @propagation_function = lambda { |x| 1/(1+Math.exp(-1*(x))) } #lambda { |x| Math.tanh(x) }
-        @derivative_propagation_function = lambda { |y| y*(1-y) } #lambda { |y| 1.0 - y**2 }
+        @initial_weight_function = lambda { |n, i, j| ((rand 2000)/1000.0) - 1 }
+        self.activation = activation
         @disable_bias = false
         @learning_rate = 0.25
         @momentum = 0.1
       end
-
-      # Evaluates the input.
-      # E.g.
-      #     net = Backpropagation.new([4, 3, 2])
       #     net.eval([25, 32.3, 12.8, 1.5])
       #         # =>  [0.83, 0.03]
       def eval(input_values)
@@ -188,7 +194,8 @@ module Ai4r
           @momentum,
           @weights,
           @last_changes,
-          @activation_nodes
+          @activation_nodes,
+          @activation
         ]
       end
 
@@ -199,10 +206,10 @@ module Ai4r
            @momentum,
            @weights,
            @last_changes,
-           @activation_nodes = ary
-        @initial_weight_function = lambda { |n, i, j| ((rand 2000)/1000.0) - 1}
-        @propagation_function = lambda { |x| 1/(1+Math.exp(-1*(x))) } #lambda { |x| Math.tanh(x) }
-        @derivative_propagation_function = lambda { |y| y*(1-y) } #lambda { |y| 1.0 - y**2 }
+           @activation_nodes,
+           @activation = ary
+        @initial_weight_function = lambda { |n, i, j| ((rand 2000)/1000.0) - 1 }
+        self.activation = @activation || :sigmoid
       end
 
 
