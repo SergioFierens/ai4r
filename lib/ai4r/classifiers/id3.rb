@@ -149,6 +149,25 @@ module Ai4r
         return "if #{rules.join("\nelsif ")}\nelse raise 'There was not enough information during training to do a proper induction for this data element' end"
       end
 
+      # Return a nested Hash representation of the decision tree.  This
+      # structure can easily be converted to JSON or other formats.
+      # Leaf nodes are represented by their category value, while internal
+      # nodes are hashes keyed by attribute value.
+      def to_h
+        @tree.to_h if @tree
+      end
+
+      # Generate GraphViz DOT syntax describing the decision tree.  Nodes are
+      # labeled with attribute names or category values and edges are labeled
+      # with attribute values.
+      def to_graphviz
+        return "digraph G {}" unless @tree
+        lines = ["digraph G {"]
+        @tree.to_graphviz(0, lines)
+        lines << "}"
+        lines.join("\n")
+      end
+
       # Prune the decision tree using the validation set provided during build.
       # Subtrees are replaced by a single leaf when this increases the
       # classification accuracy on the validation data.
@@ -396,6 +415,28 @@ module Ai4r
         end
         return rule_set
       end
+
+      def to_h
+        hash = {}
+        @nodes.each_with_index do |child, i|
+          hash[@values[i]] = child.to_h
+        end
+        { @data_labels[@index] => hash }
+      end
+
+      def to_graphviz(id, lines, parent=nil, edge_label=nil)
+        my_id = id
+        lines << "  node#{my_id} [label=\"#{@data_labels[@index]}\"]"
+        if parent
+          lines << "  node#{parent} -> node#{my_id} [label=\"#{edge_label}\"]"
+        end
+        next_id = my_id
+        @nodes.each_with_index do |child, idx|
+          next_id += 1
+          next_id = child.to_graphviz(next_id, lines, my_id, @values[idx])
+        end
+        next_id
+      end
       
     end
 
@@ -410,6 +451,17 @@ module Ai4r
       def get_rules
         return [["#{@label}='#{@value}'"]]
       end
+
+      def to_h
+        @value
+      end
+
+      def to_graphviz(id, lines, parent=nil, edge_label=nil)
+        my_id = id
+        lines << "  node#{my_id} [label=\"#{@value}\", shape=box]"
+        lines << "  node#{parent} -> node#{my_id} [label=\"#{edge_label}\"]" if parent
+        my_id
+      end
     end
 
     class ModelFailureError < StandardError
@@ -422,6 +474,17 @@ module Ai4r
       end
       def get_rules
         return []
+      end
+
+      def to_h
+        nil
+      end
+
+      def to_graphviz(id, lines, parent=nil, edge_label=nil)
+        my_id = id
+        lines << "  node#{my_id} [label=\"?\", shape=box]"
+        lines << "  node#{parent} -> node#{my_id} [label=\"#{edge_label}\"]" if parent
+        my_id
       end
     end
 

@@ -75,3 +75,17 @@ id3.prune!
 ```
 
 Further reading: [ID3 Algorithm](http://en.wikipedia.org/wiki/ID3_algorithm) and [Decision Trees](http://en.wikipedia.org/wiki/Decision_tree).
+
+## Tree Visualization
+
+The induced tree can be exported to a nested Ruby hash using `id3.to_h` or to
+GraphViz DOT format using `id3.to_graphviz`.
+
+```ruby
+id3 = ID3.new(DATA_SET, DATA_LABELS)
+dot = id3.to_graphviz
+File.write('tree.dot', dot)
+```
+
+Running `dot -Tpng tree.dot -o tree.png` will generate an image of the decision
+tree.
