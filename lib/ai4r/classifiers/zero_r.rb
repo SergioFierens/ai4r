@@ -31,18 +31,10 @@ module Ai4r
       def build(data_set)
         data_set.check_not_empty
         @data_set = data_set
-        frequencies = {}
-        max_freq = 0
-        @class_value = nil
-        @data_set.data_items.each do |example|
-          class_value = example.last
-          frequencies[class_value] = frequencies[class_value].nil? ? 1 : frequencies[class_value] + 1
-          class_frequency = frequencies[class_value]
-          if max_freq < class_frequency
-            max_freq = class_frequency
-            @class_value = class_value
-          end
-        end
+        frequencies = @data_set.data_items
+                       .map { |example| example.last }
+                       .tally
+        @class_value, = frequencies.max_by { |_, freq| freq }
         return self
       end
       
