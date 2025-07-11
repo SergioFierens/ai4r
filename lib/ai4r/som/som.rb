@@ -42,7 +42,8 @@ module Ai4r
     #
     # = Parameters
     # * dim => dimension of the input vector
-    # * number_of_nodes => is the number of nodes per row/column (square som).
+    # * rows => number of rows for the map
+    # * columns => number of columns for the map
     # * layer => instante of a layer-algorithm class
     #
     # = About the project
@@ -54,17 +55,20 @@ module Ai4r
 
       include Ai4r::Data::Parameterizable
 
-      parameters_info :nodes  => "sets the architecture of the map (nodes x nodes)",
+      parameters_info :rows  => "number of rows for the map",
+                      :columns => "number of columns for the map",
+                      :nodes => "array holding all nodes of the map",
                       :dimension => "sets the dimension of the input",
                       :layer => "instance of a layer, defines how the training algorithm works",
                       :epoch => "number of finished epochs",
                       :init_weight_options => "Hash with :range and :seed to initialize node weights"
 
-      def initialize(dim, number_of_nodes, layer, init_weight_options = { range: 0..1, seed: nil })
+      def initialize(dim, rows, columns, layer, init_weight_options = { range: 0..1, seed: nil })
         @layer = layer
         @dimension = dim
-        @number_of_nodes = number_of_nodes
-        @nodes = Array.new(number_of_nodes * number_of_nodes)
+        @rows = rows
+        @columns = columns
+        @nodes = Array.new(rows * columns)
         @epoch = 0
         @cache = {}
         @init_weight_options = init_weight_options
@@ -130,19 +134,19 @@ module Ai4r
         false
       end
 
-      # returns the node at position (x,y) in the square map
+      # returns the node at position (x,y) in the map
       def get_node(x, y)
         if check_param_for_som(x, y)
           raise ArgumentError, "invalid node coordinates (#{x}, #{y})"
         end
-        @nodes[y + x * @number_of_nodes]
+        @nodes[y + x * @columns]
       end
 
-      # intitiates the map by creating (@number_of_nodes * @number_of_nodes) nodes
+      # intitiates the map by creating (@rows * @columns) nodes
       def initiate_map
         srand(@init_weight_options[:seed]) unless @init_weight_options[:seed].nil?
         @nodes.each_with_index do |node, i|
-          @nodes[i] = Node.create i, @number_of_nodes, @dimension, @init_weight_options
+          @nodes[i] = Node.create i, @rows, @columns, @dimension, @init_weight_options
         end
       end
 
@@ -151,7 +155,7 @@ module Ai4r
       # checks whether or not there is a node in the map at the coordinates (x,y).
       # x is the row, y the column indicator
       def check_param_for_som(x, y)
-        y > @number_of_nodes - 1 || x > @number_of_nodes - 1  || x < 0 || y < 0
+        y > @columns - 1 || x > @rows - 1  || x < 0 || y < 0
       end
 
     end

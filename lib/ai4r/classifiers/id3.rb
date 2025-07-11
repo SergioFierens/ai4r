@@ -189,7 +189,6 @@ module Ai4r
         domain = domain(data_examples)
         return CategoryNode.new(@data_set.category_label, domain.last[0]) if domain.last.length == 1
 
-<<<<<<< HEAD
         best_index = nil
         best_entropy = nil
         best_split = nil
@@ -473,19 +472,28 @@ module Ai4r
 
     class EvaluationNode #:nodoc: all
 
-      attr_reader :index, :values, :nodes, :numeric, :threshold
+      attr_reader :index, :values, :nodes, :numeric, :threshold, :majority
 
-      def initialize(data_labels, index, values_or_threshold, nodes, numeric=false)
+      # The last parameter can either be a boolean flag indicating a numeric
+      # split, or the majority class value for this node.
+      def initialize(data_labels, index, values_or_threshold, nodes, param=nil)
         @index = index
-        @numeric = numeric
-        if numeric
+        if param == true || param == false
+          @numeric = param
+          @majority = nil
+        else
+          @numeric = false
+          @majority = param
+        end
+
+        if @numeric
           @threshold = values_or_threshold
           @values = nil
         else
           @values = values_or_threshold
         end
+
         @nodes = nodes
-        @majority = majority
         @data_labels = data_labels
       end
 
@@ -498,6 +506,7 @@ module Ai4r
           return ErrorNode.new.value(data) unless @values.include?(value)
           @nodes[@values.index(value)].value(data)
         end
+      end
 
       def value(data, classifier)
         value = data[@index]
@@ -511,7 +520,7 @@ module Ai4r
             return ErrorNode.new.value(data, classifier)
           end
         end
-        return nodes[@values.index(value)].value(data, classifier)
+        @nodes[@values.index(value)].value(data, classifier)
       end
 
       def get_rules
