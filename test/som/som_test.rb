@@ -12,6 +12,7 @@
 
 require 'ai4r/som/som'
 require 'test/unit'
+require 'tmpdir'
 require_relative '../test_helper'
 
 module Ai4r
@@ -106,6 +107,19 @@ module Ai4r
         assert_equal [0, 0], [som.get_node(0, 0).x, som.get_node(0, 0).y]
         assert_equal [2, 0], [som.get_node(0, 2).x, som.get_node(0, 2).y]
         assert_equal [1, 1], [som.get_node(1, 1).x, som.get_node(1, 1).y]
+      end
+
+      def test_save_and_load
+        input = [0.4, 0.7]
+        original_bmu = @som.find_bmu(input)[0].id
+
+        Dir.mktmpdir do |dir|
+          path = File.join(dir, 'som.yml')
+          @som.save_yaml(path)
+          loaded = Som.load_yaml(path)
+          assert_equal original_bmu, loaded.find_bmu(input)[0].id
+          assert_equal @som.nodes.map(&:weights), loaded.nodes.map(&:weights)
+        end
       end
 
       def test_train_with_error_threshold
