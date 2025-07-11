@@ -56,7 +56,7 @@ require_relative '../data/parameterizable'
         @threshold = 0
         @weight_scaling = nil
         @stop_when_stable = false
-        @update_strategy = :async_random
+        @update_strategy = :async_sequential
       end
 
       # Prepares the network to memorize the given data set.
