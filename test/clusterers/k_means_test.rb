@@ -19,6 +19,7 @@ class KMeansTest < Test::Unit::TestCase
               [1, 3], [8, 1], [2, 9], [2, 5], [3, 3], [9, 4]]
 
   @@sse_data = [[1,1],[1,2],[2,1],[2,2],[8,8],[8,9],[9,8],[9,9]]
+  @@restart_data = [[0,0],[0,1],[10,10],[10,11],[20,20],[20,21]]
 
   # k-means will generate an empty cluster with this data and initial centroid assignment
   @@empty_cluster_data = [[-0.1, 0], [0, 0], [0.1, 0], [-0.1, 10], [0.1, 10], [0.2, 10]]
@@ -138,6 +139,23 @@ class KMeansTest < Test::Unit::TestCase
     clusterer1 = KMeans.new.set_parameters(:random_seed => 1).build(data_set, 4)
     clusterer2 = KMeans.new.set_parameters(:random_seed => 1).build(data_set, 4)
     assert_equal clusterer1.centroids, clusterer2.centroids
+  end
+
+  def test_kmeans_plus_plus_seed
+    data_set = DataSet.new(:data_items => @@data, :data_labels => ["X", "Y"])
+    c1 = KMeans.new.set_parameters(:init_method => :kmeans_plus_plus,
+                                   :random_seed => 1).build(data_set, 4)
+    c2 = KMeans.new.set_parameters(:init_method => :kmeans_plus_plus,
+                                   :random_seed => 1).build(data_set, 4)
+    assert_equal c1.centroids, c2.centroids
+  end
+
+  def test_restarts
+    data_set = DataSet.new(:data_items => @@restart_data)
+    params = { :random_seed => 2 }
+    sse1 = KMeans.new.set_parameters(params).build(data_set, 2).sse
+    sse2 = KMeans.new.set_parameters(params.merge(:restarts => 5)).build(data_set, 2).sse
+    assert sse2 <= sse1
   end
 
   def test_on_empty
