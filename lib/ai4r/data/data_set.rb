@@ -59,11 +59,13 @@ module Ai4r
       # ruby1.8 and 1.9 safe
       def open_csv_file(filepath, &block)
         if CSV.const_defined? :Reader
-          CSV::Reader.parse(File.open(filepath, 'r')) do |row|
-            block.call row
+          File.open(filepath, 'r') do |f|
+            CSV::Reader.parse(f) do |row|
+              block.call row
+            end
           end
         else
-          CSV.parse(File.open(filepath, 'r')) do |row|
+          CSV.foreach(filepath) do |row|
             block.call row
           end
         end
