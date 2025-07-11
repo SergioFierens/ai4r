@@ -98,6 +98,19 @@ module Ai4r
         assert_equal(-1.0, net.energy)
       end
 
+      def test_eval_trace
+        net = Hopfield.new
+        net.eval_iterations = 10
+        net.train @data_set
+        pattern = [1,1,-1,1,1,1,-1,-1,1,1,-1,-1,1,1,1,-1]
+        trace = net.eval(pattern, trace: true)
+        assert_kind_of Hash, trace
+        assert_kind_of Array, trace[:states]
+        assert_kind_of Array, trace[:energies]
+        assert_equal trace[:states].length, trace[:energies].length
+        assert_equal @data_set.data_items[0], trace[:states].last
+      end
+
       class CountingHopfield < Hopfield
         attr_reader :propagate_count
         def propagate
