@@ -5,6 +5,7 @@
 # Url::       http://peet.ldee.org
 
 require_relative '../clusterers/ward_linkage'
+require_relative '../clusterers/cluster_tree'
 
 module Ai4r
   module Clusterers
@@ -12,7 +13,7 @@ module Ai4r
     # Hierarchical version to store classes as merges occur.
     class WardLinkageHierarchical < WardLinkage
 
-      attr_reader :cluster_tree
+      include ClusterTree
 
       def initialize(depth = nil)
         @cluster_tree = []
@@ -28,6 +29,10 @@ module Ai4r
         @cluster_tree << self.clusters
         @cluster_tree.reverse!
         return self
+      end
+
+      def supports_eval?
+        false
       end
 
       protected

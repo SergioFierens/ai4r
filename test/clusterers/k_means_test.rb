@@ -184,6 +184,18 @@ class KMeansTest < Test::Unit::TestCase
     assert_in_delta 4.0, clusterer.sse, 0.0001
   end
 
+  def test_track_history
+    data_set = DataSet.new(:data_items => @@data, :data_labels => ["X", "Y"])
+    clusterer = KMeans.new.set_parameters(max_iterations: 1, track_history: true, random_seed: 1).build(data_set, 3)
+    assert_equal 1, clusterer.history.length
+    first = clusterer.history.first
+    assert_equal data_set.data_items.length, first[:assignments].length
+    assert_equal 3, first[:centroids].length
+
+    clusterer2 = KMeans.new.build(data_set, 3)
+    assert_nil clusterer2.history
+  end
+
   private
   def draw_map(clusterer)
     map = Array.new(11) {Array.new(11, 0)}
