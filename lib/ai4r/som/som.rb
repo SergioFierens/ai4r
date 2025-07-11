@@ -154,7 +154,8 @@ module Ai4r
       def initiate_map
         srand(@init_weight_options[:seed]) unless @init_weight_options[:seed].nil?
         @nodes.each_with_index do |node, i|
-          @nodes[i] = Node.create i, @rows, @columns, @dimension, @init_weight_options
+          options = @init_weight_options.merge(distance_metric: @layer.distance_metric)
+          @nodes[i] = Node.create i, @rows, @columns, @dimension, options
         end
       end
 
