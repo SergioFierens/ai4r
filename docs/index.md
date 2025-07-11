@@ -20,6 +20,7 @@ require 'ai4r'
 
 * **Genetic Algorithms** – optimization of the Travelling Salesman Problem.
 * **Neural Networks** – simple OCR recognition of visual patterns.
+* [Hopfield Networks](hopfield_network.md) – memory based recognition of noisy patterns.
 * **Automatic Classifiers** – identify relevant marketing targets using decision trees.
 
 ## Contact
