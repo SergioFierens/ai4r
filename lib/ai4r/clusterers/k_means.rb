@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Author::    Sergio Fierens (implementation)
 # License::   MPL 1.1
 # Project::   ai4r
@@ -7,9 +8,9 @@
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../data/data_set'
-require File.dirname(__FILE__) + '/../data/proximity'
-require File.dirname(__FILE__) + '/../clusterers/clusterer'
+require_relative '../data/data_set'
+require_relative '../data/proximity'
+require_relative '../clusterers/clusterer'
 
 module Ai4r
   module Clusterers
@@ -137,12 +138,12 @@ module Ai4r
         tried_indexes = []
         case populate_method
         when 'random' # for initial assignment (without the :centroid_indices option) and for reassignment of empty cluster centroids (with :on_empty option 'random')
-          while @centroids.length < number_of_clusters && 
+          while @centroids.length < number_of_clusters &&
               tried_indexes.length < @data_set.data_items.length
-            random_index = rand(@data_set.data_items.length)
+            random_index = (0...@data_set.data_items.length).to_a.sample
             if !tried_indexes.include?(random_index)
               tried_indexes << random_index
-              if !@centroids.include? @data_set.data_items[random_index] 
+              if !@centroids.include? @data_set.data_items[random_index]
                 @centroids << @data_set.data_items[random_index]
               end
             end

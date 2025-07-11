@@ -12,7 +12,6 @@
 # the word "Diana" by "KMeans", "AverageLinkage", or any other cluster implementation.
 # The cluster API is the same, so you can play around and observe different results.
 
-require 'rubygems'
 require 'ai4r'
 include Ai4r::Data
 include Ai4r::Clusterers

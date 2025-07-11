@@ -75,6 +75,53 @@ module Ai4r
         assert_approximate_equality_of_nested_list net.last_changes, x.last_changes
         assert_approximate_equality_of_nested_list net.activation_nodes, x.activation_nodes
       end
+      def test_activation_parameter
+        net = Backpropagation.new([2, 1], :tanh)
+        assert_equal :tanh, net.activation
+        assert_in_delta Math.tanh(0.5), net.instance_variable_get(:@propagation_function).call(0.5), 0.0001
+        net.set_parameters(activation: :relu)
+        assert_equal :relu, net.activation
+        assert_equal 0.0, net.instance_variable_get(:@derivative_propagation_function).call(-1.0)
+      end
+
+      def test_weight_init_parameter
+        net = Backpropagation.new([2, 2, 1], :sigmoid, :xavier).init_network
+        limit = Math.sqrt(6.0 / (2 + 2))
+        net.weights.first.flatten.each { |w| assert w.abs <= limit }
+
+        net.set_parameters(weight_init: :he)
+        net.init_network
+        limit = Math.sqrt(6.0 / 2)
+        net.weights.first.flatten.each { |w| assert w.abs <= limit }
+      end
+
+      def test_loss_function_and_train_return
+        net = Backpropagation.new([1, 1])
+        assert_in_delta 0.125, net.calculate_loss([0], [0.5]), 0.0001
+        net.loss_function = :cross_entropy
+        assert_in_delta 0.6931, net.calculate_loss([1], [0.5]), 0.0001
+
+        net = Backpropagation.new([2, 1])
+        net.set_parameters(loss_function: :cross_entropy)
+        loss = net.train([0, 0], [0])
+        assert_in_delta net.calculate_loss([0], net.activation_nodes.last), loss, 0.0000001
+        net.set_parameters(loss_function: :mse)
+        loss = net.train([1, 1], [1])
+        assert_in_delta net.calculate_loss([1], net.activation_nodes.last), loss, 0.0000001
+      end
+
+      def test_train_epochs_with_early_stopping
+        net = Backpropagation.new([1, 1])
+        # Mock train_batch to return predefined losses
+        losses = [0.5, 0.4, 0.41, 0.42]
+        net.define_singleton_method(:train_batch) do |_, _|
+          losses.shift
+        end
+        history = net.train_epochs([[0]], [[0]], epochs: 10, early_stopping_patience: 1)
+        assert_equal 3, history.length
+        assert history[0] > history[1]
+      end
+
 
     end
 

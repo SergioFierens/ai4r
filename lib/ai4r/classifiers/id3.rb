@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Author::    Sergio Fierens (Implementation, Quinlan is 
 # the creator of the algorithm)
 # License::   MPL 1.1
@@ -8,8 +9,8 @@
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../data/data_set'
-require File.dirname(__FILE__) + '/../classifiers/classifier'
+require_relative '../data/data_set'
+require_relative '../classifiers/classifier'
 
 module Ai4r
   
@@ -90,16 +91,28 @@ module Ai4r
     # License::   MPL 1.1
     # Url::       https://github.com/SergioFierens/ai4r
     class ID3 < Classifier
-      
-      attr_reader :data_set
+
+      attr_reader :data_set, :majority_class, :validation_set
+
+      parameters_info :max_depth => 'Maximum recursion depth. Default is nil (no limit).',
+        :min_gain => 'Minimum information gain required to split. Default is 0.',
+        :on_unknown => 'Behaviour when evaluating unseen attribute values: :raise (default), :most_frequent or :nil.'
+
+      def initialize
+        @max_depth = nil
+        @min_gain = 0
+        @on_unknown = :raise
+      end
        
       # Create a new ID3 classifier. You must provide a DataSet instance
       # as parameter. The last attribute of each item is considered as the
       # item class.
-      def build(data_set)
+      def build(data_set, options = {})
         data_set.check_not_empty
         @data_set = data_set
+        @validation_set = options[:validation_set]
         preprocess_data(@data_set.data_items)
+        prune! if @validation_set
         return self
       end
 
@@ -107,7 +120,7 @@ module Ai4r
       # e.g.
       #   id3.eval(['New York',  '<30', 'F'])  # => 'Y'
       def eval(data)
-        @tree.value(data) if @tree
+        @tree.value(data, self) if @tree
       end
 
       # This method returns the generated rules in ruby code.
@@ -136,17 +149,47 @@ module Ai4r
         return "if #{rules.join("\nelsif ")}\nelse raise 'There was not enough information during training to do a proper induction for this data element' end"
       end
 
-      private
-      def preprocess_data(data_examples)
-        @tree = build_node(data_examples)
+      # Return a nested Hash representation of the decision tree.  This
+      # structure can easily be converted to JSON or other formats.
+      # Leaf nodes are represented by their category value, while internal
+      # nodes are hashes keyed by attribute value.
+      def to_h
+        @tree.to_h if @tree
+      end
+
+      # Generate GraphViz DOT syntax describing the decision tree.  Nodes are
+      # labeled with attribute names or category values and edges are labeled
+      # with attribute values.
+      def to_graphviz
+        return "digraph G {}" unless @tree
+        lines = ["digraph G {"]
+        @tree.to_graphviz(0, lines)
+        lines << "}"
+        lines.join("\n")
+      end
+
+      # Prune the decision tree using the validation set provided during build.
+      # Subtrees are replaced by a single leaf when this increases the
+      # classification accuracy on the validation data.
+      def prune!
+        return self unless @validation_set
+        @tree = prune_node(@tree, @validation_set.data_items)
+        self
       end
 
       private
-      def build_node(data_examples, flag_att = [])
+      def preprocess_data(data_examples)
+        @majority_class = most_freq(data_examples, domain(data_examples))
+        @tree = build_node(data_examples, [], 0)
+      end
+
+      private
+      def build_node(data_examples, flag_att = [], depth = 0)
         return ErrorNode.new if data_examples.length == 0
         domain = domain(data_examples)
         return CategoryNode.new(@data_set.category_label, domain.last[0]) if domain.last.length == 1
 
+<<<<<<< HEAD
         best_index = nil
         best_entropy = nil
         best_split = nil
@@ -187,11 +230,28 @@ module Ai4r
         else
           EvaluationNode.new(@data_set.data_labels, best_index, domain[best_index], nodes)
         end
+        
+	if @max_depth && depth >= @max_depth
+          return CategoryNode.new(@data_set.category_label, most_freq(data_examples, domain))
+        end
+
+        min_entropy_index = min_entropy_index(data_examples, domain, flag_att)
+        gain = information_gain(data_examples, domain, min_entropy_index)
+        return CategoryNode.new(@data_set.category_label, most_freq(data_examples, domain)) if gain < @min_gain
+
+        split_data_examples = split_data_examples(data_examples, domain, min_entropy_index)
+        return CategoryNode.new(@data_set.category_label, most_freq(data_examples, domain)) if split_data_examples.length == 1
+
+        nodes = split_data_examples.collect do |partial_data_examples|
+          build_node(partial_data_examples, [*flag_att, min_entropy_index], depth + 1)
+        end
+        majority = most_freq(data_examples, domain)
+        return EvaluationNode.new(@data_set.data_labels, min_entropy_index, domain[min_entropy_index], nodes, majority)
       end
 
-      private 
+      private
       def self.sum(values)
-        values.inject( 0 ) { |sum,x| sum+x }
+        values.sum
       end
 
       private
@@ -307,6 +367,26 @@ module Ai4r
       end
 
       private
+      def information_gain(data_examples, domain, att_index)
+        total_entropy = class_entropy(data_examples, domain)
+        freq_grid_att = freq_grid(att_index, data_examples, domain)
+        att_entropy = entropy(freq_grid_att, data_examples.length)
+        total_entropy - att_entropy
+      end
+
+      private
+      def class_entropy(data_examples, domain)
+        category_domain = domain.last
+        freqs = Array.new(category_domain.length, 0)
+        data_examples.each do |ex|
+          cat = ex.last
+          idx = category_domain.index(cat)
+          freqs[idx] += 1
+        end
+        entropy([freqs], data_examples.length)
+      end
+
+      private
       def domain(data_examples)
         #return build_domains(data_examples)
         domain = Array.new( @data_set.data_labels.length ) { [] }
@@ -354,6 +434,40 @@ module Ai4r
       end
 
       private
+      def prune_node(node, examples)
+        return node if node.is_a?(CategoryNode) || node.is_a?(ErrorNode)
+
+        subsets = Array.new(node.values.length) { [] }
+        examples.each do |ex|
+          idx = node.values.index(ex[node.index])
+          subsets[idx] << ex if idx
+        end
+
+        node.nodes.each_with_index do |child, i|
+          node.nodes[i] = prune_node(child, subsets[i])
+        end
+
+        before = accuracy_for_node(node, examples)
+        leaf = CategoryNode.new(@data_set.category_label, node.majority)
+        after = accuracy_for_node(leaf, examples)
+
+        if after && before && after >= before
+          leaf
+        else
+          node
+        end
+      end
+
+      private
+      def accuracy_for_node(node, examples)
+        return nil if examples.empty?
+        correct = examples.count do |ex|
+          node.value(ex[0..-2], self) == ex.last
+        end
+        correct.to_f / examples.length
+      end
+
+      private
       LOG2 = Math.log(2)
     end
 
@@ -371,6 +485,7 @@ module Ai4r
           @values = values_or_threshold
         end
         @nodes = nodes
+        @majority = majority
         @data_labels = data_labels
       end
 
@@ -383,6 +498,20 @@ module Ai4r
           return ErrorNode.new.value(data) unless @values.include?(value)
           @nodes[@values.index(value)].value(data)
         end
+
+      def value(data, classifier)
+        value = data[@index]
+        unless @values.include?(value)
+          case classifier.on_unknown
+          when :nil
+            return nil
+          when :most_frequent
+            return @majority
+          else
+            return ErrorNode.new.value(data, classifier)
+          end
+        end
+        return nodes[@values.index(value)].value(data, classifier)
       end
 
       def get_rules
@@ -402,6 +531,28 @@ module Ai4r
         end
         rule_set
       end
+
+      def to_h
+        hash = {}
+        @nodes.each_with_index do |child, i|
+          hash[@values[i]] = child.to_h
+        end
+        { @data_labels[@index] => hash }
+      end
+
+      def to_graphviz(id, lines, parent=nil, edge_label=nil)
+        my_id = id
+        lines << "  node#{my_id} [label=\"#{@data_labels[@index]}\"]"
+        if parent
+          lines << "  node#{parent} -> node#{my_id} [label=\"#{edge_label}\"]"
+        end
+        next_id = my_id
+        @nodes.each_with_index do |child, idx|
+          next_id += 1
+          next_id = child.to_graphviz(next_id, lines, my_id, @values[idx])
+        end
+        next_id
+      end
       
     end
 
@@ -410,11 +561,22 @@ module Ai4r
         @label = label
         @value = value
       end
-      def value(data)
+      def value(data, classifier=nil)
         return @value
       end
       def get_rules
         return [["#{@label}='#{@value}'"]]
+      end
+
+      def to_h
+        @value
+      end
+
+      def to_graphviz(id, lines, parent=nil, edge_label=nil)
+        my_id = id
+        lines << "  node#{my_id} [label=\"#{@value}\", shape=box]"
+        lines << "  node#{parent} -> node#{my_id} [label=\"#{edge_label}\"]" if parent
+        my_id
       end
     end
 
@@ -423,11 +585,22 @@ module Ai4r
     end
 
     class ErrorNode #:nodoc: all
-      def value(data)
+      def value(data, classifier=nil)
         raise ModelFailureError, "There was not enough information during training to do a proper induction for the data element #{data}."
       end
       def get_rules
         return []
+      end
+
+      def to_h
+        nil
+      end
+
+      def to_graphviz(id, lines, parent=nil, edge_label=nil)
+        my_id = id
+        lines << "  node#{my_id} [label=\"?\", shape=box]"
+        lines << "  node#{parent} -> node#{my_id} [label=\"#{edge_label}\"]" if parent
+        my_id
       end
     end
 

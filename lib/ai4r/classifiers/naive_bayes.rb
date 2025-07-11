@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Author::    Thomas Kern
 # License::   MPL 1.1
 # Project::   ai4r
@@ -7,8 +8,8 @@
 # the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../data/data_set'
-require File.dirname(__FILE__) + '/classifier'
+require_relative '../data/data_set'
+require_relative 'classifier'
 
 module Ai4r
   module Classifiers
@@ -149,7 +150,7 @@ module Ai4r
 
       # sums an array up; returns a number of type Float
       def sum(array)
-        array.inject(0.0) { |b, i| b + i }
+        array.sum(0.0)
       end
 
       # returns the name of the class when the index is found
@@ -262,7 +263,3 @@ module Ai4r
   end
 end
 
-# Monkeypatch to support both ruby 1.8 and 1.9 (key vs index method)
-class Hash
-  alias_method(:key, :index) unless method_defined?(:key)
-end

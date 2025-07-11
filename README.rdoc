@@ -13,7 +13,6 @@ This project aims to produce ruby implementations of algorithms covering several
 
 2. Include require statements in your code:
 
-  require "rubygems"
   require "ai4r"
 
 = Examples
@@ -52,15 +51,9 @@ inspect these coefficients:
   puts r.slope          # regression slope
   puts r.intercept      # regression intercept
 
-= Contact
+= Documentation
 
-If you have questions or constructive comments about this project send it to me:
-{Sergio Fierens}[https://github.com/SergioFierens], email address: (sergio (at) gmail (dot) com).
-
-= Contributors
-
-This project was created and is maintained by {Sergio Fierens}[https://github.com/SergioFierens].
-There are other (great and absolutely cool) people who have donated time and code to make this project better. You can check out the complete AI4R contributors list: http://github.com/SergioFierens/ai4r/graphs/contributors.
+Tutorials for genetic algorithms, ID3 decision trees and neural networks are available in the +docs/+ directory.
 
 = Disclaimer
 

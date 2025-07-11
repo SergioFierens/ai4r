@@ -2,22 +2,29 @@ GEM
   remote: https://rubygems.org/
   specs:
     csv (3.3.5)
-    json (1.8.6)
+    date (3.4.1)
+    erb (5.0.1)
     power_assert (2.0.5)
+    psych (5.2.6)
+      date
+      stringio
     rake (13.3.0)
-    rdoc (4.1.0)
-      json (~> 1.4)
+    rdoc (6.14.2)
+      erb
+      psych (>= 4.0.0)
+    stringio (3.1.7)
     test-unit (3.7.0)
       power_assert
 
 PLATFORMS
   ruby
+  x86_64-linux
 
 DEPENDENCIES
-  csv
-  rake
-  rdoc
-  test-unit
+  csv (~> 3)
+  rake (~> 13)
+  rdoc (~> 6)
+  test-unit (~> 3)
 
 BUNDLED WITH
    2.6.7

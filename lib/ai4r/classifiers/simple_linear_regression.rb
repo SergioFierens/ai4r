@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Author::    Malav Bhavsar
 # License::   MPL 1.1
 # Project::   ai4r
@@ -7,8 +8,8 @@
 # the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../data/data_set'
-require File.dirname(__FILE__) + '/classifier'
+require_relative '../data/data_set'
+require_relative 'classifier'
 
 module Ai4r
   module Classifiers
@@ -75,7 +76,7 @@ module Ai4r
             slope = 0
             data.data_items.map do |instance|
               x_diff = instance[attr_index] - x_mean
-              y_diff = instance[attr_index] - y_mean
+              y_diff = instance[data.num_attributes - 1] - y_mean
               slope += x_diff * y_diff
               sum_x_diff_squared += x_diff * x_diff
               sum_y_diff_squared += y_diff * y_diff

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Author::    Sergio Fierens (Implementation only, Cendrowska is 
 # the creator of the algorithm)
 # License::   MPL 1.1
@@ -11,8 +12,8 @@
 # J. Cendrowska (1987). PRISM: An algorithm for inducing modular rules. 
 # International Journal of Man-Machine Studies. 27(4):349-370.
 
-require File.dirname(__FILE__) + '/../data/data_set'
-require File.dirname(__FILE__) + '/../classifiers/classifier'
+require_relative '../data/data_set'
+require_relative '../classifiers/classifier'
 
 module Ai4r
   module Classifiers

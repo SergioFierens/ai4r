@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Author::    Sergio Fierens (Implementation only)
 # License::   MPL 1.1
 # Project::   ai4r
@@ -7,8 +8,8 @@
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../data/data_set.rb'
-require File.dirname(__FILE__) + '/../classifiers/classifier'
+require_relative '../data/data_set.rb'
+require_relative '../classifiers/classifier'
 
 module Ai4r
   module Classifiers
@@ -40,7 +41,8 @@ module Ai4r
       # the item class.
       def build(data_set)
         @data_set = data_set
-        if @data_set.data_items.empty?
+        
+	if @data_set.data_items.empty?
           @class_value = @default_class
           return self
         end
