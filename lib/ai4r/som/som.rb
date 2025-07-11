@@ -105,9 +105,14 @@ module Ai4r
 
       # main method for the som. trains the map with the passed data vector
       # calls train_step as long as train_step returns false
-      def train(data)
-        while !train_step(data)
+      def train(data, error_threshold: nil)
+        errors = []
+        while @epoch < @layer.epochs
+          error = train_step(data, error_threshold: error_threshold)
+          errors << error
+          yield error if block_given?
         end
+        errors
       end
 
       # calculates the global distance error for all data entries
@@ -115,13 +120,13 @@ module Ai4r
         data.inject(0) {|sum,entry| sum + find_bmu(entry)[1]**2 }
        end
 
-      # trains the map with the data as long as the @epoch is smaller than the epoch-value of
-      # @layer
-      # returns true if @epoch is greater than the fixed epoch-value in @layer, otherwise false
-      # 1 is added to @epoch at each method call
-      # the radius and learning rate is decreased at each method call/epoch as well
-      def train_step(data)
-        return true if @epoch >= @layer.epochs
+      # Train the map for one epoch using +data+.
+      # Returns the computed +global_error+ for that epoch. If a block is
+      # provided, the error is yielded instead of returned.
+      # Training stops early when +error_threshold+ is defined and the computed
+      # error falls below it.
+      def train_step(data, error_threshold: nil)
+        return nil if @epoch >= @layer.epochs
 
         radius = @layer.radius_decay @epoch
         learning_rate = @layer.learning_rate_decay @epoch
@@ -131,7 +136,10 @@ module Ai4r
         end
 
         @epoch += 1
-        false
+        error = global_error(data)
+        @epoch = @layer.epochs if error_threshold && error <= error_threshold
+        yield error if block_given?
+        error
       end
 
       # returns the node at position (x,y) in the map
