@@ -108,9 +108,11 @@ module Ai4r
         :momentum => "By default 0.1. Set this parameter to 0 to disable "+
             "momentum.",
         :loss_function => "Loss function used when training (:mse or " +
-            ":cross_entropy). Default: :mse"
+            ":cross_entropy). Default: :mse",
+        :random_seed => "Seed used to initialize random weights"
           
-      attr_accessor :structure, :weights, :activation_nodes, :last_changes
+      attr_accessor :structure, :last_changes
+      attr_reader :weights, :activation_nodes
       # When the activation symbol changes, update internal lambdas
       def activation=(symbol)
         @activation = symbol
@@ -120,14 +122,6 @@ module Ai4r
 
       def weight_init=(symbol)
         @weight_init = symbol
-        @initial_weight_function = case symbol
-          when :xavier
-            Ai4r::NeuralNetwork::WeightInitializations.xavier(@structure)
-          when :he
-            Ai4r::NeuralNetwork::WeightInitializations.he(@structure)
-          else
-            Ai4r::NeuralNetwork::WeightInitializations.uniform
-          end
       end
       
       # Creates a new network specifying the its architecture.
@@ -142,8 +136,9 @@ module Ai4r
       #   net = Backpropagation.new([2, 1])   # 2 inputs
       #                                       # No hidden layer
       #                                       # 1 output      
-      def initialize(network_structure, activation = :sigmoid, weight_init = :uniform)
+      def initialize(network_structure, activation = :sigmoid, weight_init = :uniform, random_seed: nil)
         @structure = network_structure
+        @random_seed = random_seed
         self.weight_init = weight_init
         self.activation = activation
         @disable_bias = false
@@ -231,9 +226,11 @@ module Ai4r
       # Initialize (or reset) activation nodes and weights, with the 
       # provided net structure and parameters.
       def init_network
+        previous_seed = srand(@random_seed) if @random_seed
         init_activation_nodes
         init_weights
         init_last_changes
+        srand(previous_seed) if @random_seed
         return self
       end
 
@@ -310,16 +307,32 @@ module Ai4r
       # Initialize the weight arrays using function specified with the
       # initial_weight_function parameter
       def init_weights
+        rng = @random_seed ? Random.new(@random_seed) : Random
+        weight_function = case @weight_init
+                          when :xavier
+                            lambda do |layer, _i, _j|
+                              limit = Math.sqrt(6.0 / (@structure[layer] + @structure[layer + 1]))
+                              rng.rand * 2 * limit - limit
+                            end
+                          when :he
+                            lambda do |layer, _i, _j|
+                              limit = Math.sqrt(6.0 / @structure[layer])
+                              rng.rand * 2 * limit - limit
+                            end
+                          else
+                            ->(_n, _i, _j) { rng.rand * 2 - 1 }
+                          end
+
         @weights = Array.new(@structure.length-1) do |i|
           nodes_origin = @activation_nodes[i].length
           nodes_target = @structure[i+1]
           Array.new(nodes_origin) do |j|
-            Array.new(nodes_target) do |k| 
-              @initial_weight_function.call(i, j, k)
+            Array.new(nodes_target) do |k|
+              weight_function.call(i, j, k)
             end
           end
         end
-      end   
+      end
 
       # Momentum usage need to know how much a weight changed in the 
       # previous training. This method initialize the @last_changes 
