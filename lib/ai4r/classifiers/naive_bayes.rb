@@ -121,7 +121,7 @@ module Ai4r
         @domains = data.build_domains
         @data_items = data.data_items.map { |item| DataEntry.new(item[0...-1], item.last) }
         @data_labels = data.data_labels[0...-1]
-        @klasses = @domains.last.to_a
+        @klasses = @domains.last.to_a.sort
       end
 
 
@@ -166,7 +166,7 @@ module Ai4r
 
         0.upto(@data_labels.length - 1) do |index|
           @values[index] = {}
-          @domains[index].each_with_index do |d, d_index|
+          @domains[index].to_a.sort.each_with_index do |d, d_index|
             @values[index][d] = d_index
           end
         end
