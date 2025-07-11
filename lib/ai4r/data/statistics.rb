@@ -60,14 +60,14 @@ module Ai4r
       # Get the maximum value of an attribute in the data set
       def self.max(data_set, attribute)
         index = data_set.get_index(attribute)
-        item = data_set.data_items.max {|x,y| x[index] <=> y[index]}
+        item = data_set.data_items.max_by { |item| item[index] }
         return (item) ? item[index] : (-1.0/0)
       end
 
       # Get the minimum value of an attribute in the data set
       def self.min(data_set, attribute)
         index = data_set.get_index(attribute)
-        item = data_set.data_items.min {|x,y| x[index] <=> y[index]}
+        item = data_set.data_items.min_by { |item| item[index] }
         return (item) ? item[index] : (1.0/0)
       end
 
