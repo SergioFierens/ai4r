@@ -13,6 +13,7 @@
 require 'ai4r/som/som'
 require 'test/unit'
 require 'tmpdir'
+require_relative '../test_helper'
 
 module Ai4r
 
@@ -119,6 +120,28 @@ module Ai4r
           assert_equal original_bmu, loaded.find_bmu(input)[0].id
           assert_equal @som.nodes.map(&:weights), loaded.nodes.map(&:weights)
         end
+      end
+
+      def test_train_with_error_threshold
+        som = Som.new 2, 3, 3, Layer.new(3, 3, 10)
+        som.initiate_map
+        errors = som.train([[0, 0], [1, 1]], error_threshold: 0.01)
+        assert errors.length < som.layer.epochs
+        assert_operator errors.last, :<=, 0.01
+      end
+
+      def test_euclidean_distance_metric
+        layer = Layer.new(3, 3, 100, 0.7, distance_metric: :euclidean)
+        som = Som.new 1, 2, 2, layer
+        som.initiate_map
+        assert_approximate_equality Math.sqrt(2), som.get_node(0,0).distance_to_node(som.get_node(1,1))
+      end
+
+      def test_manhattan_distance_metric
+        layer = Layer.new(3, 3, 100, 0.7, distance_metric: :manhattan)
+        som = Som.new 1, 2, 2, layer
+        som.initiate_map
+        assert_equal 2, som.get_node(0,0).distance_to_node(som.get_node(1,1))
       end
 
       private

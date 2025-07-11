@@ -76,5 +76,9 @@ class Ai4r::Clusterers::WardLinkageHierarchicalTest < Test::Unit::TestCase
     assert_equal 5, clusterer.cluster_tree.last.length
   end
 
+  def test_supports_eval
+    assert_equal false, Ai4r::Clusterers::WardLinkageHierarchical.new.supports_eval?
+  end
+
 
 end
