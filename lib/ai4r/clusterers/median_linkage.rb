@@ -42,7 +42,7 @@ module Ai4r
       # This algorithms does not allow classification of new data items
       # once it has been built. Rebuild the cluster including you data element.
       def eval(data_item)
-        Raise "Eval of new data is not supported by this algorithm."
+        raise "Eval of new data is not supported by this algorithm."
       end
 
       protected
