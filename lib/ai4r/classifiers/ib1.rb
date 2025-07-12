@@ -75,14 +75,9 @@ module Ai4r
       # classifier state unchanged. Use +update_with_instance+ to
       # incorporate new samples.
       def eval(data)
-        min_distance = 1.0/0
-        klass = nil
-        @data_set.data_items.each do |train_item|
-          d = distance(data, train_item)
-          if d < min_distance
-            min_distance = d
-            klass = train_item.last
-          end
+        metric = @distance_function || method(:distance)
+        neighbors = @data_set.data_items.map do |train_item|
+          [metric.call(data, train_item), train_item.last]
         end
         neighbors.sort_by! { |d, _| d }
         k_neighbors = neighbors.first([@k, @data_set.data_items.length].min)
