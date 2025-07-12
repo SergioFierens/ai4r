@@ -43,7 +43,8 @@ net.set_parameters(weight_init: :he)
 well with sigmoid or tanh activations while `he` is better suited for ReLU
 networks.
 
-Alternatively you can simply specify the activation name:
+Alternatively you can simply specify the activation name. Available activations
+are `:sigmoid`, `:tanh`, `:relu` and `:softmax`:
 
 ```ruby
 net = Ai4r::NeuralNetwork::Backpropagation.new([256, 3], :tanh)
@@ -61,6 +62,8 @@ cross entropy (`:cross_entropy`) which penalizes confident mistakes:
 net = Ai4r::NeuralNetwork::Backpropagation.new([256, 3])
 net.set_parameters(loss_function: :cross_entropy)
 ```
+This will automatically use the `:softmax` activation on the output layer
+unless you override the activation or propagation functions.
 
 ## Batch Training API
 

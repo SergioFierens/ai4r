@@ -77,11 +77,27 @@ module Ai4r
       end
       def test_activation_parameter
         net = Backpropagation.new([2, 1], :tanh)
-        assert_equal :tanh, net.activation
-        assert_in_delta Math.tanh(0.5), net.instance_variable_get(:@propagation_function).call(0.5), 0.0001
+        assert_equal [:tanh], net.activation
+        assert_in_delta Math.tanh(0.5), net.instance_variable_get(:@propagation_functions).first.call(0.5), 0.0001
         net.set_parameters(activation: :relu)
-        assert_equal :relu, net.activation
-        assert_equal 0.0, net.instance_variable_get(:@derivative_propagation_function).call(-1.0)
+        assert_equal [:relu], net.activation
+        assert_equal 0.0, net.instance_variable_get(:@derivative_functions).first.call(-1.0)
+      end
+
+      def test_layer_specific_activation
+        net = Backpropagation.new([2, 2, 2], [:relu, :softmax])
+        net.disable_bias = true
+        net.init_network
+        net.weights = [
+          [[1.0, -1.0], [1.0, -1.0]],
+          [[1.0, 0.0], [0.0, 1.0]]
+        ]
+        net.feedforward([1, 1])
+        assert_equal [2.0, 0.0], net.activation_nodes[1]
+        exp2 = Math.exp(2)
+        soft = [exp2 / (exp2 + 1), 1.0 / (exp2 + 1)]
+        assert_in_delta soft[0], net.activation_nodes.last[0], 0.000001
+        assert_in_delta soft[1], net.activation_nodes.last[1], 0.000001
       end
 
       def test_weight_init_parameter
@@ -110,6 +126,24 @@ module Ai4r
         assert_in_delta net.calculate_loss([1], net.activation_nodes.last), loss, 0.0000001
       end
 
+      def test_cross_entropy_auto_softmax
+        net = Backpropagation.new([2, 2])
+        net.set_parameters(loss_function: :cross_entropy)
+        assert_equal :softmax, net.activation
+        net2 = Backpropagation.new([2, 2], :tanh)
+        net2.set_parameters(loss_function: :cross_entropy)
+        assert_equal :tanh, net2.activation
+      end
+
+      def test_softmax_output_probabilities
+        net = Backpropagation.new([2, 2])
+        net.set_parameters(loss_function: :cross_entropy)
+        net.train([0, 0], [1, 0])
+        output = net.eval([0, 0])
+        sum = output.inject(0.0) { |a, v| a + v }
+        assert_in_delta 1.0, sum, 0.0001
+      end
+
       def test_train_epochs_with_early_stopping
         net = Backpropagation.new([1, 1])
         # Mock train_batch to return predefined losses
@@ -121,6 +155,7 @@ module Ai4r
         assert_equal 3, history.length
         assert history[0] > history[1]
       end
+
 
       def test_train_epochs_yields_epoch_and_loss
         net = Backpropagation.new([1, 1])
@@ -136,6 +171,52 @@ module Ai4r
           yielded << [epoch, loss, acc]
         end
         assert_equal [[0, 0.2, 1.0], [1, 0.1, 1.0]], yielded
+      end
+
+      def test_train_epochs_shuffling
+        net = Backpropagation.new([1, 1])
+        order = []
+        net.define_singleton_method(:train_batch) do |batch_in, _|
+          order << batch_in.first.first
+          0.0
+        end
+        inputs = [[0], [1], [2], [3]]
+        outputs = [[0], [1], [2], [3]]
+        net.train_epochs(inputs, outputs, epochs: 1, batch_size: 1, shuffle: false)
+        assert_equal [0, 1, 2, 3], order
+
+        order.clear
+        seed = 42
+        net.train_epochs(inputs, outputs, epochs: 1, batch_size: 1,
+                         shuffle: true, random_seed: seed)
+        expected = (0...4).to_a.shuffle(random: Random.new(seed))
+        assert_equal expected, order
+      end
+
+      def test_train_epochs_shuffling_reproducible
+        inputs = [[0], [1], [2], [3]]
+        outputs = [[0], [1], [2], [3]]
+        seed = 99
+
+        order1 = []
+        net1 = Backpropagation.new([1, 1])
+        net1.define_singleton_method(:train_batch) do |batch_in, _|
+          order1 << batch_in.first.first
+          0.0
+        end
+        net1.train_epochs(inputs, outputs, epochs: 1, batch_size: 1,
+                          shuffle: true, random_seed: seed)
+
+        order2 = []
+        net2 = Backpropagation.new([1, 1])
+        net2.define_singleton_method(:train_batch) do |batch_in, _|
+          order2 << batch_in.first.first
+          0.0
+        end
+        net2.train_epochs(inputs, outputs, epochs: 1, batch_size: 1,
+                          shuffle: true, random_seed: seed)
+
+        assert_equal order1, order2
       end
 
 
