@@ -18,6 +18,7 @@ require 'ai4r'
 
 ## Practical Examples
 
+* [User Guide](user_guide.md) – start with the basics and explore the library in depth.
 * **Genetic Algorithms** – optimization of the Travelling Salesman Problem.
 * **Neural Networks** – simple OCR recognition of visual patterns.
 * [Hopfield Networks](hopfield_network.md) – memory based recognition of noisy patterns.
