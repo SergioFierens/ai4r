@@ -103,7 +103,7 @@ module Ai4r
         :derivative_propagation_function => "Derivative of the propagation "+
             "function, based on propagation function output. By default: " +
             "lambda { |y| y*(1-y) }, where y=propagation_function(x)",
-        :activation => "Built-in activation function (:sigmoid, :tanh or :relu). Default: :sigmoid",
+        :activation => "Activation function per layer. Provide a symbol or an array of symbols (:sigmoid, :tanh, :relu or :softmax). Default: :sigmoid",
         :learning_rate => "By default 0.25",
         :momentum => "By default 0.1. Set this parameter to 0 to disable "+
             "momentum.",
@@ -112,25 +112,30 @@ module Ai4r
           
       attr_accessor :structure, :weights, :activation_nodes, :last_changes
 
-      # Track if user manually changed activation or propagation lambdas
-      def propagation_function=(func)
-        @custom_propagation = true
-        @propagation_function = func
+      # When the activation parameter changes, update internal lambdas for each
+      # layer. Accepts a single symbol or an array of symbols (one for each
+      # layer except the input layer).
+      def activation=(symbols)
+        symbols = [symbols] unless symbols.is_a?(Array)
+        layer_count = @structure.length - 1
+        if symbols.length == 1
+          symbols = Array.new(layer_count, symbols.first)
+        elsif symbols.length != layer_count
+          raise ArgumentError, "Activation array size must match number of layers (#{layer_count})"
+        end
+        @activation = symbols
+        @propagation_functions = @activation.map do |a|
+          Ai4r::NeuralNetwork::ActivationFunctions::FUNCTIONS[a] ||
+            Ai4r::NeuralNetwork::ActivationFunctions::FUNCTIONS[:sigmoid]
+        end
+        @derivative_functions = @activation.map do |a|
+          Ai4r::NeuralNetwork::ActivationFunctions::DERIVATIVES[a] ||
+            Ai4r::NeuralNetwork::ActivationFunctions::DERIVATIVES[:sigmoid]
+        end
       end
 
-      def derivative_propagation_function=(func)
-        @custom_propagation = true
-        @derivative_propagation_function = func
-      end
-      # When the activation symbol changes, update internal lambdas
-      def activation=(symbol)
-        @activation = symbol
-        @propagation_function = Ai4r::NeuralNetwork::ActivationFunctions::FUNCTIONS[@activation] || Ai4r::NeuralNetwork::ActivationFunctions::FUNCTIONS[:sigmoid]
-        @derivative_propagation_function = Ai4r::NeuralNetwork::ActivationFunctions::DERIVATIVES[@activation] || Ai4r::NeuralNetwork::ActivationFunctions::DERIVATIVES[:sigmoid]
-        unless @set_by_loss
-          @activation_overridden = true
-        end
-        @set_by_loss = false
+      def activation
+        @activation
       end
 
       def weight_init=(symbol)
@@ -223,20 +228,31 @@ module Ai4r
       end
 
       # Train for a number of epochs over the dataset. Optionally define a batch size.
+      # Data can be shuffled between epochs passing +shuffle: true+ (default).
+      # Use +random_seed+ to make shuffling deterministic.
       # Returns an array with the average loss of each epoch.
       def train_epochs(data_inputs, data_outputs, epochs:, batch_size: 1,
-                       early_stopping_patience: nil, min_delta: 0.0)
+                       early_stopping_patience: nil, min_delta: 0.0,
+                       shuffle: true, random_seed: nil)
         raise ArgumentError, "Inputs and outputs size mismatch" if data_inputs.length != data_outputs.length
         losses = []
         best_loss = Float::INFINITY
         patience = early_stopping_patience
         patience_counter = 0
+        rng = random_seed.nil? ? Random.new : Random.new(random_seed)
         epochs.times do
           epoch_error = 0.0
+          epoch_inputs = data_inputs
+          epoch_outputs = data_outputs
+          if shuffle
+            indices = (0...data_inputs.length).to_a.shuffle(random: rng)
+            epoch_inputs = data_inputs.values_at(*indices)
+            epoch_outputs = data_outputs.values_at(*indices)
+          end
           index = 0
-          while index < data_inputs.length
-            batch_in = data_inputs[index, batch_size]
-            batch_out = data_outputs[index, batch_size]
+          while index < epoch_inputs.length
+            batch_in = epoch_inputs[index, batch_size]
+            batch_out = epoch_outputs[index, batch_size]
             batch_error = train_batch(batch_in, batch_out)
             epoch_error += batch_error * batch_in.length
             index += batch_size
@@ -311,7 +327,7 @@ module Ai4r
       
       # Propagate values forward
       def feedforward(input_values)
-        input_values.each_index do |input_index| 
+        input_values.each_index do |input_index|
           @activation_nodes.first[input_index] = input_values[input_index]
         end
         @weights.each_index do |n|
@@ -328,6 +344,16 @@ module Ai4r
           else
             @structure[n+1].times do |j|
               @activation_nodes[n+1][j] = @propagation_function.call(sums[j])
+            end
+          end
+            end
+          end
+          if @activation[n] == :softmax
+            values = @propagation_functions[n].call(sums)
+            values.each_index { |j| @activation_nodes[n+1][j] = values[j] }
+          else
+            sums.each_index do |j|
+              @activation_nodes[n+1][j] = @propagation_functions[n].call(sums[j])
             end
           end
         end
@@ -372,6 +398,7 @@ module Ai4r
       def calculate_output_deltas(expected_values)
         output_values = @activation_nodes.last
         output_deltas = []
+        func = @derivative_functions.last
         output_values.each_index do |output_index|
           if @loss_function == :cross_entropy && @activation == :softmax
             output_deltas << (output_values[output_index] - expected_values[output_index])
@@ -394,8 +421,8 @@ module Ai4r
             @structure[layer_index+1].times do |k|
               error += prev_deltas[k] * @weights[layer_index][j][k]
             end
-            layer_deltas[j] = (@derivative_propagation_function.call(
-              @activation_nodes[layer_index][j]) * error)
+            func = @derivative_functions[layer_index - 1]
+            layer_deltas[j] = func.call(@activation_nodes[layer_index][j]) * error
           end
           prev_deltas = layer_deltas
           @deltas.unshift(layer_deltas)

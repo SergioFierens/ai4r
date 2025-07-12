@@ -16,7 +16,13 @@ module Ai4r
         sigmoid: ->(x) { 1.0 / (1.0 + Math.exp(-x)) },
         tanh: ->(x) { Math.tanh(x) },
         relu: ->(x) { x > 0 ? x : 0 },
-        softmax: ->(x) { Math.exp(x) }
+
+        softmax: lambda do |arr|
+          max = arr.max
+          exps = arr.map { |v| Math.exp(v - max) }
+          sum = exps.inject(:+)
+          exps.map { |e| e / sum }
+        end
       }
 
       DERIVATIVES = {
