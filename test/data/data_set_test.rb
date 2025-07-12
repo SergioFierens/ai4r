@@ -133,6 +133,27 @@ module Ai4r
         assert_equal items, set.data_items
         assert_equal [["A", 0.0, "x"], ["B", 0.5, "y"], ["A", 1.0, "z"]], copy.data_items
       end
+
+      def test_shuffle_deterministic
+        items = [[1], [2], [3], [4]]
+        set = DataSet.new(data_items: items, data_labels: ['val'])
+        expected = items.shuffle(random: Random.new(5))
+        result = set.shuffle!(seed: 5)
+        assert_equal set, result
+        assert_equal expected, set.data_items
+      end
+
+      def test_split_ratio
+        items = (1..5).map { |i| [i] }
+        labels = ['v']
+        set = DataSet.new(data_items: items, data_labels: labels)
+        first, second = set.split(ratio: 0.6)
+        assert_equal items, set.data_items
+        assert_equal [[1], [2], [3]], first.data_items
+        assert_equal [[4], [5]], second.data_items
+        assert_equal labels, first.data_labels
+        assert_equal labels, second.data_labels
+      end
      
     end
   end

@@ -170,7 +170,7 @@ module Ai4r
             end
           elsif att_a.is_a? Numeric
             if att_b.is_a? Numeric
-              diff = norm(att_a, i) - norm(att_b, i);
+              diff = norm(att_a, i) - norm(att_b, i)
             else
               diff = norm(att_a, i)
               diff = 1.0 - diff if diff < 0.5
@@ -182,7 +182,7 @@ module Ai4r
           end
           d += diff * diff
         end
-        return d
+        d
       end
 
       # Returns normalized value att
