@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 require 'benchmark'
-require_relative '../data/data_set' 
+require_relative '../data/data_set'
+require_relative 'split'
 
 
 module Ai4r
@@ -78,8 +79,49 @@ module Ai4r
         @classifiers.each do |classifier|
           result_data_items << test_classifier(classifier, data_set)
         end
-        return Ai4r::Data::DataSet.new(:data_items => result_data_items, 
+        return Ai4r::Data::DataSet.new(:data_items => result_data_items,
           :data_labels => ["Classifier","Testing Time","Errors","Success rate"])
+      end
+
+      # Perform k-fold cross validation on all classifiers.
+      # The dataset is split into +k+ folds using the Split utility. For each
+      # fold, classifiers are trained on the remaining folds and then tested on
+      # the held-out fold. The method returns a DataSet with the average time
+      # (build and test) and accuracy for each classifier.
+      # @param data_set [Ai4r::Data::DataSet] data to evaluate
+      # @param k [Integer] number of folds
+      # @return [Ai4r::Data::DataSet]
+      def cross_validate(data_set, k:)
+        folds = Split.split(data_set, k: k)
+        times = Array.new(@classifiers.length, 0.0)
+        accuracies = Array.new(@classifiers.length, 0.0)
+
+        folds.each_with_index do |test_set, i|
+          train_items = []
+          folds.each_with_index do |fold, j|
+            next if i == j
+            train_items.concat(fold.data_items)
+          end
+          train_set = Ai4r::Data::DataSet.new(
+            data_items: train_items,
+            data_labels: data_set.data_labels
+          )
+
+          @classifiers.each_with_index do |classifier, idx|
+            build_time = Benchmark.measure { classifier.build(train_set) }.real
+            result = test_classifier(classifier, test_set)
+            times[idx] += build_time + result[1]
+            accuracies[idx] += result[3]
+          end
+        end
+
+        result_items = @classifiers.each_index.map do |idx|
+          [@classifiers[idx], times[idx] / k, accuracies[idx] / k]
+        end
+        Ai4r::Data::DataSet.new(
+          data_items: result_items,
+          data_labels: ["Classifier", "Avg. Time", "Avg. Success rate"]
+        )
       end
       
       private
