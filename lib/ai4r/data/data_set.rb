@@ -27,6 +27,9 @@ module Ai4r
       # Available methods are:
       # * +:zscore+ - subtract the mean and divide by the standard deviation
       # * +:minmax+ - scale values to the [0,1] range
+      # @param data_set [Object]
+      # @param method [Object]
+      # @return [Object]
       def self.normalized(data_set, method: :zscore)
         new_set = DataSet.new(
           data_items: data_set.data_items.map { |row| row.dup },
@@ -42,6 +45,8 @@ module Ai4r
       # 
       # If you provide data items, but no data labels, the data set will
       # use the default data label values (see set_data_labels)
+      # @param options [Object]
+      # @return [Object]
       def initialize(options = {})
         @data_labels = []
         @data_items = options[:data_items] || []
@@ -51,6 +56,8 @@ module Ai4r
 
       # Retrieve a new DataSet, with the item(s) selected by the provided 
       # index. You can specify an index range, too.
+      # @param index [Object]
+      # @return [Object]
       def [](index)
         selected_items = (index.is_a?(Integer)) ?
                 [@data_items[index]] : @data_items[index]
@@ -59,6 +66,8 @@ module Ai4r
       end
 
       # Load data items from csv file
+      # @param filepath [Object]
+      # @return [Object]
       def load_csv(filepath)
         items = []
         open_csv_file(filepath) do |entry|
@@ -68,6 +77,9 @@ module Ai4r
       end
 
       # Open a CSV file and yield each row to the provided block.
+      # @param filepath [Object]
+      # @param block [Object]
+      # @return [Object]
       def open_csv_file(filepath, &block)
         CSV.foreach(filepath) do |row|
           block.call row
@@ -75,6 +87,8 @@ module Ai4r
       end
 
       # Load data items from csv file. The first row is used as data labels.
+      # @param filepath [Object]
+      # @return [Object]
       def load_csv_with_labels(filepath)
         load_csv(filepath)
         @data_labels = @data_items.shift
@@ -82,6 +96,8 @@ module Ai4r
       end
 
       # Same as load_csv, but it will try to convert cell contents as numbers.
+      # @param filepath [Object]
+      # @return [Object]
       def parse_csv(filepath)
         items = []
         open_csv_file(filepath) do |row|
@@ -93,6 +109,8 @@ module Ai4r
       end
 
       # Same as load_csv_with_labels, but it will try to convert cell contents as numbers.
+      # @param filepath [Object]
+      # @return [Object]
       def parse_csv_with_labels(filepath)
         parse_csv(filepath)
         @data_labels = @data_items.shift
@@ -106,6 +124,8 @@ module Ai4r
       # If you do not provide labels for you data, the following labels will
       # be created by default:
       #     [ 'attribute_1', 'attribute_2', 'attribute_3', 'class_value'  ]      
+      # @param labels [Object]
+      # @return [Object]
       def set_data_labels(labels)
         check_data_labels(labels)
         @data_labels = labels
@@ -141,6 +161,8 @@ module Ai4r
       #        ]
       # 
       # This method returns the classifier (self), allowing method chaining.
+      # @param items [Object]
+      # @return [Object]
       def set_data_items(items)
         check_data_items(items)
         @data_labels = default_data_labels(items) if @data_labels.empty?
@@ -158,6 +180,7 @@ module Ai4r
       #     #<Set: {"M", "F"}>,
       #     [5, 85], 
       #     #<Set: {"Y", "N"}>]
+      # @return [Object]
       def build_domains
         @data_labels.collect {|attr_label| build_domain(attr_label) }
       end
@@ -175,6 +198,8 @@ module Ai4r
       # 
       #   build_domain(2) # In this example, the third attribute is gender
       #   => #<Set: {"M", "F"}>
+      # @param attr [Object]
+      # @return [Object]
       def build_domain(attr)
         index = get_index(attr)
         if @data_items.first[index].is_a?(Numeric)
@@ -185,6 +210,7 @@ module Ai4r
       end
 
       # Returns attributes number, including class attribute
+      # @return [Object]
       def num_attributes
         return (@data_items.empty?) ? 0 : @data_items.first.size
       end
@@ -193,11 +219,14 @@ module Ai4r
       # For example, if "gender" is the third attribute, then:
       #   get_index("gender") 
       #   => 2
+      # @param attr [Object]
+      # @return [Object]
       def get_index(attr)
         return (attr.is_a?(Integer) || attr.is_a?(Range)) ? attr : @data_labels.index(attr)
       end
 
       # Raise an exception if there is no data item.
+      # @return [Object]
       def check_not_empty
         if @data_items.empty?
           raise ArgumentError, "Examples data set must not be empty."
@@ -205,6 +234,7 @@ module Ai4r
       end
 
       # Add a data item to the data set
+      # @return [Object]
       def << data_item
         if data_item.nil? || !data_item.is_a?(Enumerable) || data_item.empty?
           raise ArgumentError, "Data must not be an non empty array."
@@ -221,6 +251,7 @@ module Ai4r
 
       # Returns an array with the mean value of numeric attributes, and 
       # the most frequent value of non numeric attributes
+      # @return [Object]
       def get_mean_or_mode
         mean = []
         num_attributes.times do |i|
@@ -236,6 +267,8 @@ module Ai4r
 
       # Normalize numeric attributes in place. Supported methods are
       # +:zscore+ (default) and +:minmax+.
+      # @param method [Object]
+      # @return [Object]
       def normalize!(method = :zscore)
         numeric_indices = (0...num_attributes).select do |i|
           @data_items.first[i].is_a?(Numeric)
@@ -268,16 +301,21 @@ module Ai4r
       end
 
       # Returns label of category
+      # @return [Object]
       def category_label
         data_labels.last
       end
 
       protected
 
+      # @param x [Object]
+      # @return [Object]
       def is_number?(x)
         !Float(x, exception: false).nil?
       end
 
+      # @param data_items [Object]
+      # @return [Object]
       def check_data_items(data_items)
         if !data_items || data_items.empty?
           raise ArgumentError, "Examples data set must not be empty."
@@ -295,6 +333,8 @@ module Ai4r
         end
       end
 
+      # @param labels [Object]
+      # @return [Object]
       def check_data_labels(labels)
         if !@data_items.empty?
           if labels.length != @data_items.first.length
@@ -306,6 +346,8 @@ module Ai4r
         end
       end
 
+      # @param data_items [Object]
+      # @return [Object]
       def default_data_labels(data_items)
         data_labels = []
         data_items[0][0..-2].each_index do |i|

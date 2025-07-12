@@ -38,12 +38,18 @@ module Ai4r
       # Build a new clusterer, using data examples found in data_set.
       # Items will be clustered in "number_of_clusters" different
       # clusters.
+      # @param data_set [Object]
+      # @param number_of_clusters [Object]
+      # @param *options [Object]
+      # @return [Object]
       def build(data_set, number_of_clusters = 1, **options)
         super
       end
 
       # Classifies the given data item, returning the cluster index it belongs
       # to (0-based).
+      # @param data_item [Object]
+      # @return [Object]
       def eval(data_item)
         super
       end
@@ -52,11 +58,18 @@ module Ai4r
 
       # return distance between cluster cx and new cluster (ci U cj),
       # using complete linkage
+      # @param cx [Object]
+      # @param ci [Object]
+      # @param cj [Object]
+      # @return [Object]
       def linkage_distance(cx, ci, cj)
         [read_distance_matrix(cx, ci),
           read_distance_matrix(cx, cj)].max
       end
 
+      # @param data_item [Object]
+      # @param cluster [Object]
+      # @return [Object]
       def distance_between_item_and_cluster(data_item, cluster)
         max_dist = 0
         cluster.data_items.each do |another_item|

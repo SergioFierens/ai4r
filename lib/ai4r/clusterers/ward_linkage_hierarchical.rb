@@ -15,6 +15,8 @@ module Ai4r
 
       include ClusterTree
 
+      # @param depth [Object]
+      # @return [Object]
       def initialize(depth = nil)
         @cluster_tree = []
         @depth = depth
@@ -22,6 +24,10 @@ module Ai4r
         super()
       end
 
+      # @param data_set [Object]
+      # @param number_of_clusters [Object]
+      # @param *options [Object]
+      # @return [Object]
       def build(data_set, number_of_clusters = 1, **options)
         data_len = data_set.data_items.length
         @total_merges = data_len - number_of_clusters
@@ -31,12 +37,17 @@ module Ai4r
         return self
       end
 
+      # @return [Object]
       def supports_eval?
         false
       end
 
       protected
 
+      # @param index_a [Object]
+      # @param index_b [Object]
+      # @param index_clusters [Object]
+      # @return [Object]
       def merge_clusters(index_a, index_b, index_clusters)
         # only store if no or above depth
         if @depth.nil? or @merges_so_far > @total_merges - @depth

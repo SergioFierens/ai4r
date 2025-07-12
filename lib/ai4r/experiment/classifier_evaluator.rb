@@ -17,11 +17,14 @@ module Ai4r
       
       attr_reader :build_times, :eval_times, :classifiers
       
+      # @return [Object]
       def initialize
         @classifiers = []
       end
 
       # Add a classifier instance to the test batch
+      # @param classifier [Object]
+      # @return [Object]
       def add_classifier(classifier)
         @classifiers << classifier
         return self
@@ -34,6 +37,8 @@ module Ai4r
       # item class.
       # Building times are measured by separate, and can be accessed
       # through build_times attribute reader.
+      # @param data_set [Object]
+      # @return [Object]
       def build(data_set)
         @build_times = []
         @classifiers.each do |classifier|
@@ -48,6 +53,8 @@ module Ai4r
       #   => ['Y', 'Y', 'Y', 'N', 'Y', 'Y', 'N']
       # Evaluation times are measured by separate, and can be accessed
       # through eval_times attribute reader.
+      # @param data [Object]
+      # @return [Object]
       def eval(data)
         @eval_times = []
         results = []
@@ -64,6 +71,8 @@ module Ai4r
       # The return data set has a row for every classifier tested, and the 
       # following attributes:
       #   ["Classifier", "Testing Time", "Errors", "Success rate"]
+      # @param data_set [Object]
+      # @return [Object]
       def test(data_set)
         result_data_items = []
         @classifiers.each do |classifier|
@@ -74,6 +83,9 @@ module Ai4r
       end
       
       private
+      # @param classifier [Object]
+      # @param data_set [Object]
+      # @return [Object]
       def test_classifier(classifier, data_set)
         data_set_size = data_set.data_items.length
         errors = 0

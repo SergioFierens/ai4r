@@ -6,6 +6,9 @@ module Ai4r
     module ClusterTree
       attr_reader :cluster_tree
 
+      # @param depth [Object]
+      # @param args [Object]
+      # @return [Object]
       def initialize(depth = nil, *args)
         @cluster_tree = []
         @depth = depth
@@ -13,6 +16,10 @@ module Ai4r
         super(*args)
       end
 
+      # @param data_set [Object]
+      # @param number_of_clusters [Object]
+      # @param *options [Object]
+      # @return [Object]
       def build(data_set, number_of_clusters = 1, **options)
         @total_merges = data_set.data_items.length - number_of_clusters
         super
@@ -23,6 +30,10 @@ module Ai4r
 
       protected
 
+      # @param index_a [Object]
+      # @param index_b [Object]
+      # @param index_clusters [Object]
+      # @return [Object]
       def merge_clusters(index_a, index_b, index_clusters)
         if @depth.nil? || @merges_so_far > @total_merges - @depth
           stored_distance_matrix = @distance_matrix.dup

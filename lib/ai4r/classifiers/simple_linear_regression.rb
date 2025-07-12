@@ -36,6 +36,7 @@ module Ai4r
 
       attr_reader :attribute, :attribute_index, :slope, :intercept
 
+      # @return [Object]
       def initialize
         @attribute = nil
         @attribute_index = 0
@@ -47,6 +48,8 @@ module Ai4r
       # e.g.
       #   c.eval([1,158,105.8,192.7,71.4,55.7,2844,136,3.19,3.4,8.5,110,5500,19,25])
       #     => 11876.96774193548
+      # @param data [Object]
+      # @return [Object]
       def eval(data)
         @intercept + @slope * data[@attribute_index]
       end
@@ -54,6 +57,8 @@ module Ai4r
       # Gets the best attribute and does Linear Regression using it to find out the
       # slope and intercept.
       # Parameter data has to be an instance of DataSet
+      # @param data [Object]
+      # @return [Object]
       def build(data)
         raise "Error instance must be passed" unless data.is_a?(DataSet)
         raise "Data should not be empty" if data.data_items.length == 0
