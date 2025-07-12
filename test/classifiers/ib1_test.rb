@@ -83,6 +83,25 @@ class IB1Test < Test::Unit::TestCase
     assert_equal 8, classifier.data_set.data_items.length
   end
 
+  def test_eval_does_not_update_ranges
+    classifier = IB1.new.build(@data_set)
+    before_min = classifier.min_values.clone
+    before_max = classifier.max_values.clone
+    classifier.eval(['Chicago', 90, 'M'])
+    assert_equal(before_min, classifier.min_values)
+    assert_equal(before_max, classifier.max_values)
+  end
+
+  def test_update_with_instance
+    classifier = IB1.new.build(@data_set)
+    size = classifier.data_set.data_items.length
+    classifier.update_with_instance(['Chicago', 90, 'M', 'N'])
+    assert_equal 90, classifier.max_values[1]
+    assert_equal size, classifier.data_set.data_items.length
+    classifier.update_with_instance(['Chicago', 90, 'M', 'N'], learn: true)
+    assert_equal size + 1, classifier.data_set.data_items.length
+  end
+
 end
 
   
