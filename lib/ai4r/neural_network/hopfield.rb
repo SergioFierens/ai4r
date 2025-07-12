@@ -49,14 +49,15 @@ require_relative '../data/parameterizable'
         :update_strategy => "Update mode: :async_random (default), " +
           ":async_sequential, :synchronous"
             
-      def initialize
+      def initialize(params = {})
         @eval_iterations = 500
         @active_node_value = 1
         @inactive_node_value = -1
         @threshold = 0
         @weight_scaling = nil
         @stop_when_stable = false
-        @update_strategy = :async_random
+        @update_strategy = :async_sequential
+        set_parameters(params) if params && !params.empty?
       end
 
       # Prepares the network to memorize the given data set.
