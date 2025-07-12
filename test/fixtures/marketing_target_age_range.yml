@@ -1,0 +1,67 @@
+---
+data_labels:
+  - city
+  - age_range
+  - gender
+  - marketing_target
+data_items:
+  - - New York
+    - '<30'
+    - M
+    - Y
+  - - Chicago
+    - '<30'
+    - M
+    - Y
+  - - Chicago
+    - '<30'
+    - F
+    - Y
+  - - New York
+    - '<30'
+    - M
+    - Y
+  - - New York
+    - '<30'
+    - M
+    - Y
+  - - Chicago
+    - '[30-50)'
+    - M
+    - Y
+  - - New York
+    - '[30-50)'
+    - F
+    - N
+  - - Chicago
+    - '[30-50)'
+    - F
+    - Y
+  - - New York
+    - '[30-50)'
+    - F
+    - N
+  - - Chicago
+    - '[50-80]'
+    - M
+    - N
+  - - New York
+    - '[50-80]'
+    - F
+    - N
+  - - New York
+    - '[50-80]'
+    - M
+    - N
+  - - Chicago
+    - '[50-80]'
+    - M
+    - N
+  - - New York
+    - '[50-80]'
+    - F
+    - N
+  - - Chicago
+    - '>80'
+    - F
+    - Y
