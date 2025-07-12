@@ -77,6 +77,8 @@ RNG before choosing initial centroids.
 = Documentation
 
 Tutorials for genetic algorithms, ID3 decision trees and neural networks are available in the +docs/+ directory.
+Documentation for the PRISM rule induction algorithm is available in
+[docs/prism.md](docs/prism.md).
 
 = Disclaimer
 

@@ -23,6 +23,7 @@ require 'ai4r'
 * [Hopfield Networks](hopfield_network.md) – memory based recognition of noisy patterns.
 * [Hierarchical Clustering](hierarchical_clustering.md) – build dendrograms from merge steps.
 * **Automatic Classifiers** – identify relevant marketing targets using decision trees.
+* [PRISM](prism.md) – rule induction algorithm for discrete attributes.
 
 ## Contact
 
