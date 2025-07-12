@@ -1,29 +1,28 @@
-# IB1 Classifier
 
-IB1 performs nearest neighbour classification while automatically normalizing numeric attributes. It stores every training instance and compares them to new data when evaluating.
+# IB1 Instance-Based Classifier
 
-```ruby
-require 'ai4r/classifiers/ib1'
-require 'ai4r/data/data_set'
+IB1 is the simplest instance-based learning algorithm. It predicts the class of a new item using the single nearest neighbour from the training set. Numeric attributes are normalised when computing distances while nominal attributes are compared for equality. Missing values are tolerated by assigning a maximum penalty.
 
-labels = %w[city age gender marketing_target]
-items = [
-  ['New York', 25, 'M', 'Y'],
-  ['Chicago', 43, 'M', 'Y']
-]
+## Parameters
 
-set = Ai4r::Data::DataSet.new(data_items: items, data_labels: labels)
-classifier = Ai4r::Classifiers::IB1.new.build(set)
-```
+`Ai4r::Classifiers::IB1` exposes no tunable parameters. Build the classifier with a dataset where the last attribute represents the class label.
 
-## Incremental learning
-
-New training instances can be added at any time using `add_instance`:
+## Example
 
 ```ruby
-classifier.add_instance(['Chicago', 55, 'M', 'N'])
+require 'ai4r'
+include Ai4r::Classifiers
+include Ai4r::Data
+
+file = 'examples/classifiers/hyperpipes_data.csv'
+data = DataSet.new.parse_csv_with_labels(file)
+
+classifier = IB1.new.build(data)
+
+sample = ['Chicago', 55, 'M']
+puts "Prediction for #{sample.inspect}: #{classifier.eval(sample)}"
 ```
 
-`add_instance` appends the item to the internal dataset and updates the
-stored minimum and maximum values so that distance calculations remain
-normalized.
+The classifier automatically updates attribute ranges as new examples are seen and returns the class of the closest training instance.
+
+
