@@ -27,10 +27,11 @@ module Ai4r
       
       attr_reader :data_set, :rule
 
-      parameters_info :selected_attribute => 'Index of the attribute to force.',
-        :tie_break => 'Strategy when two attributes yield the same accuracy.',
-        :bin_count => 'Number of bins used to discretize numeric attributes.'
+      parameters_info selected_attribute: 'Index of the attribute to force.',
+        tie_break: 'Strategy when two attributes yield the same accuracy.',
+        bin_count: 'Number of bins used to discretize numeric attributes.'
 
+      # @return [Object]
       def initialize
         @selected_attribute = nil
         @tie_break = :first
@@ -40,6 +41,8 @@ module Ai4r
       # Build a new OneR classifier. You must provide a DataSet instance
       # as parameter. The last attribute of each item is considered as 
       # the item class.
+      # @param data_set [Object]
+      # @return [Object]
       def build(data_set)
         data_set.check_not_empty
         @data_set = data_set
@@ -68,6 +71,8 @@ module Ai4r
       # You can evaluate new data, predicting its class.
       # e.g.
       #   classifier.eval(['New York',  '<30', 'F'])  # => 'Y'      
+      # @param data [Object]
+      # @return [Object]
       def eval(data)
         return @zero_r.eval(data) if @zero_r
         attr_value = data[@rule[:attr_index]]
@@ -92,6 +97,7 @@ module Ai4r
       #     eval classifier.get_rules   
       #     puts marketing_target
       #       # =>  'Y'
+      # @return [Object]
       def get_rules
         return @zero_r.get_rules if @zero_r
         sentences = []
@@ -109,6 +115,10 @@ module Ai4r
       
       protected
       
+      # @param data_examples [Object]
+      # @param attr_index [Object]
+      # @param domains [Object]
+      # @return [Object]
       def build_rule(data_examples, attr_index, domains)
         domain = domains[attr_index]
         bins = nil
@@ -140,9 +150,12 @@ module Ai4r
           end
           correct_instances += max_freq
         end
-        return {:attr_index => attr_index, :rule => rule, :correct => correct_instances, :bins => bins}
+        return { attr_index: attr_index, rule: rule, correct: correct_instances, bins: bins }
       end
 
+      # @param range [Object]
+      # @param bins [Object]
+      # @return [Object]
       def discretize_range(range, bins)
         min, max = range
         step = (max - min).to_f / bins

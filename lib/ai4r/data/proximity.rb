@@ -53,6 +53,7 @@ module Ai4r
       # Sup distance, or L-intinity norm
       # Parameters a and b are vectors with continuous attributes.      
       def sup_distance(a, b)
+
         distance = 0.0
         a.each_with_index do |item_a, i|
           item_b = b[i]

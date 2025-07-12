@@ -7,7 +7,7 @@ include Ai4r::Data
 
 # Simple two-cluster data set
 points = [[1,1],[1,2],[2,1],[2,2],[8,8],[8,9],[9,8],[9,9]]
-data_set = DataSet.new(:data_items => points)
+data_set = DataSet.new(data_items: points)
 
 # Manhattan distance instead of the default squared Euclidean distance
 manhattan = lambda do |a, b|
@@ -15,7 +15,7 @@ manhattan = lambda do |a, b|
 end
 
 kmeans = KMeans.new
-kmeans.set_parameters(:distance_function => manhattan, :random_seed => 1)
+kmeans.set_parameters(distance_function: manhattan, random_seed: 1)
        .build(data_set, 2)
 
 kmeans.clusters.each_with_index do |cluster, idx|

@@ -1,42 +1,22 @@
 require 'test/unit'
 require 'ai4r/classifiers/prism'
+require 'yaml'
 
 
 class PrismTest < Test::Unit::TestCase
-  
+
   include Ai4r::Classifiers
   include Ai4r::Data
 
-  @@data_examples = [   ['New York',  '<30',      'M', 'Y'],
-                ['Chicago',     '<30',      'M', 'Y'],
-                ['Chicago',     '<30',      'F', 'Y'],
-                ['New York',  '<30',      'M', 'Y'],
-                ['New York',  '<30',      'M', 'Y'],
-                ['Chicago',     '[30-50)',  'M', 'Y'],
-                ['New York',  '[30-50)',  'F', 'N'],
-                ['Chicago',     '[30-50)',  'F', 'Y'],
-                ['New York',  '[30-50)',  'F', 'N'],
-                ['Chicago',     '[50-80]', 'M', 'N'],
-                ['New York',  '[50-80]', 'F', 'N'],
-                ['New York',  '[50-80]', 'M', 'N'],
-                ['Chicago',     '[50-80]', 'M', 'N'],
-                ['New York',  '[50-80]', 'F', 'N'],
-                ['Chicago',     '>80',      'F', 'Y']
-              ]
+  fixture = YAML.load_file(File.expand_path('../fixtures/marketing_target_age_range.yml', __dir__))
 
-  @@data_labels = [ 'city', 'age_range', 'gender', 'marketing_target'  ]
+  @@data_examples = fixture['data_items']
+  @@data_labels   = fixture['data_labels']
 
-  @@numeric_examples = [
-    ['New York', 20, 'M', 'Y'],
-    ['Chicago', 25, 'M', 'Y'],
-    ['New York', 28, 'M', 'Y'],
-    ['New York', 35, 'F', 'N'],
-    ['Chicago', 40, 'F', 'Y'],
-    ['New York', 45, 'F', 'N'],
-    ['Chicago', 55, 'M', 'N']
-  ]
+  numeric_fixture = YAML.load_file(File.expand_path('../fixtures/prism_numeric_examples.yml', __dir__))
 
-  @@numeric_labels = [ 'city', 'age', 'gender', 'marketing_target' ]
+  @@numeric_examples = numeric_fixture['data_items']
+  @@numeric_labels   = numeric_fixture['data_labels']
   
   def test_build
     assert_raise(ArgumentError) { Prism.new.build(DataSet.new) } 

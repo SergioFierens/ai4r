@@ -34,4 +34,14 @@ class SimpleLinearRegressionTest < Test::Unit::TestCase
     assert_equal 18607.025513298104, result
   end
 
+  def test_selected_attribute
+    classifier = SimpleLinearRegression.new
+      .set_parameters(selected_attribute: 0)
+      .build(@data_set)
+    assert_equal 0, classifier.attribute_index
+    expected = 14084.580645161293
+    result = classifier.eval(@data_set.data_items.first[0...-1])
+    assert_in_delta expected, result, 0.0001
+  end
+
 end

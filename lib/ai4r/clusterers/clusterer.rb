@@ -23,11 +23,16 @@ module Ai4r
       # Build a new clusterer, using data examples found in data_set.
       # Data items will be clustered in "number_of_clusters" different
       # clusters.
+      # @param data_set [Object]
+      # @param number_of_clusters [Object]
+      # @return [Object]
       def build(data_set, number_of_clusters)
         raise NotImplementedError
       end
       
       # Classifies the given data item, returning the cluster it belongs to.
+      # @param data_item [Object]
+      # @return [Object]
       def eval(data_item)
         raise NotImplementedError
       end
@@ -35,11 +40,14 @@ module Ai4r
       # Returns +true+ if this clusterer supports evaluating new data items
       # with {#eval}. Hierarchical algorithms that only build a dendrogram
       # will override this method to return +false+.
+      # @return [Object]
       def supports_eval?
         true
       end
       
       protected    
+      # @param array [Object]
+      # @return [Object]
       def get_min_index(array)
         min = array.first
         index = 0
