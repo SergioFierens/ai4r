@@ -42,6 +42,14 @@ module Ai4r
         @attr_bins = {}
       end
 
+      parameters_info :default_class => 'Return this value when no rule matches.',
+        :tie_break => 'Strategy when multiple conditions have equal ratios.'
+
+      def initialize
+        @default_class = nil
+        @tie_break = :first
+      end
+
       # Build a new Prism classifier. You must provide a DataSet instance
       # as parameter. The last attribute of each item is considered as 
       # the item class.
@@ -191,13 +199,13 @@ module Ai4r
         condition = nil
         freq_table.each do |attr_label, attr_freqs|
           attr_freqs.each do |attr_value, pt|
-            if(better_pt(pt, best_pt))
+            if better_pt(pt, best_pt)
               condition = { attr_label => attr_value }
               best_pt = pt
             end
           end
         end
-        return condition
+        condition
       end
       
       # pt = [p, t]
@@ -209,10 +217,11 @@ module Ai4r
       def better_pt(pt, best_pt)
         return false if pt[1] == 0
         return true if best_pt[1] == 0
-        a = pt[0]*best_pt[1]
-        b = best_pt[0]*pt[1]
-        return true if a>b || (a==b && pt[0]>best_pt[0])
-        return false
+        a = pt[0] * best_pt[1]
+        b = best_pt[0] * pt[1]
+        return true if a > b || (a == b && pt[0] > best_pt[0])
+        return true if a == b && pt[0] == best_pt[0] && @tie_break == :last
+        false
       end
 
       def discretize_range(range, bins)
