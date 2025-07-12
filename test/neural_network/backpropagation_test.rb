@@ -126,6 +126,24 @@ module Ai4r
         assert_in_delta net.calculate_loss([1], net.activation_nodes.last), loss, 0.0000001
       end
 
+      def test_cross_entropy_auto_softmax
+        net = Backpropagation.new([2, 2])
+        net.set_parameters(loss_function: :cross_entropy)
+        assert_equal :softmax, net.activation
+        net2 = Backpropagation.new([2, 2], :tanh)
+        net2.set_parameters(loss_function: :cross_entropy)
+        assert_equal :tanh, net2.activation
+      end
+
+      def test_softmax_output_probabilities
+        net = Backpropagation.new([2, 2])
+        net.set_parameters(loss_function: :cross_entropy)
+        net.train([0, 0], [1, 0])
+        output = net.eval([0, 0])
+        sum = output.inject(0.0) { |a, v| a + v }
+        assert_in_delta 1.0, sum, 0.0001
+      end
+
       def test_train_epochs_with_early_stopping
         net = Backpropagation.new([1, 1])
         # Mock train_batch to return predefined losses

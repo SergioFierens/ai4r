@@ -26,8 +26,9 @@ module Ai4r
       attr_reader :clusters, :centroids, :iterations
       attr_reader :history
       
-      parameters_info :max_iterations => "Maximum number of iterations to " +
-        "build the clusterer. By default it is uncapped.",
+      parameters_info(
+        :max_iterations => "Maximum number of iterations to " +
+          "build the clusterer. By default it is uncapped.",
         :distance_function => "Custom implementation of distance function. " +
           "It must be a closure receiving two data items and return the " +
           "distance between them. By default, this algorithm uses " +
@@ -51,9 +52,10 @@ module Ai4r
         :init_method => "Strategy to initialize centroids. Available values: " +
           ":random (default) and :kmeans_plus_plus.",
         :restarts => "Number of random initializations to perform. " +
-          "The best run (lowest SSE) will be kept."
+          "The best run (lowest SSE) will be kept.",
         :track_history => "Keep centroids and assignments for each iteration " +
           "when building the clusterer."
+      )
       
       def initialize
         @distance_function = nil

@@ -149,6 +149,15 @@ module Ai4r
             Ai4r::NeuralNetwork::WeightInitializations.uniform
           end
       end
+
+      def loss_function=(symbol)
+        @loss_function = symbol
+        if symbol == :cross_entropy && !@activation_overridden && !@custom_propagation
+          @set_by_loss = true
+          self.activation = :softmax
+          @activation_overridden = false
+        end
+      end
       
       # Creates a new network specifying the its architecture.
       # E.g.
@@ -165,7 +174,11 @@ module Ai4r
       def initialize(network_structure, activation = :sigmoid, weight_init = :uniform)
         @structure = network_structure
         self.weight_init = weight_init
+        @custom_propagation = false
+        @set_by_loss = true
         self.activation = activation
+        @activation_overridden = (activation != :sigmoid)
+        @set_by_loss = false
         @disable_bias = false
         @learning_rate = 0.25
         @momentum = 0.1
@@ -324,6 +337,17 @@ module Ai4r
               sums[j] += (@activation_nodes[n][i] * @weights[n][i][j])
             end
           end
+          if n == @weights.length - 1 && @activation == :softmax
+            exps = sums.map { |s| @propagation_function.call(s) }
+            total = exps.inject(0.0) { |a, v| a + v }
+            @activation_nodes[n+1][0...@structure[n+1]] = exps.map { |e| e / total }
+          else
+            @structure[n+1].times do |j|
+              @activation_nodes[n+1][j] = @propagation_function.call(sums[j])
+            end
+          end
+            end
+          end
           if @activation[n] == :softmax
             values = @propagation_functions[n].call(sums)
             values.each_index { |j| @activation_nodes[n+1][j] = values[j] }
@@ -376,8 +400,13 @@ module Ai4r
         output_deltas = []
         func = @derivative_functions.last
         output_values.each_index do |output_index|
-          error = expected_values[output_index] - output_values[output_index]
-          output_deltas << func.call(output_values[output_index]) * error
+          if @loss_function == :cross_entropy && @activation == :softmax
+            output_deltas << (output_values[output_index] - expected_values[output_index])
+          else
+            error = expected_values[output_index] - output_values[output_index]
+            output_deltas << @derivative_propagation_function.call(
+              output_values[output_index]) * error
+          end
         end
         @deltas = [output_deltas]
       end
@@ -433,9 +462,16 @@ module Ai4r
         when :cross_entropy
           epsilon = 1e-12
           loss = 0.0
-          expected.each_index do |i|
-            p = [[actual[i], epsilon].max, 1 - epsilon].min
-            loss -= expected[i] * Math.log(p) + (1 - expected[i]) * Math.log(1 - p)
+          if @activation == :softmax
+            expected.each_index do |i|
+              p = [[actual[i], epsilon].max, 1 - epsilon].min
+              loss -= expected[i] * Math.log(p)
+            end
+          else
+            expected.each_index do |i|
+              p = [[actual[i], epsilon].max, 1 - epsilon].min
+              loss -= expected[i] * Math.log(p) + (1 - expected[i]) * Math.log(1 - p)
+            end
           end
           loss
         else
