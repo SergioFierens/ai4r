@@ -29,8 +29,8 @@ module Ai4r
 
       attr_reader :data_set, :rules, :majority_class
 
-      parameters_info :fallback_class => 'Default class returned when no rule matches.',
-        :bin_count => 'Number of bins used to discretize numeric attributes.'
+      parameters_info fallback_class: 'Default class returned when no rule matches.',
+        bin_count: 'Number of bins used to discretize numeric attributes.'
 
 
       def initialize
@@ -138,7 +138,7 @@ module Ai4r
       end
       
       def build_rule(class_value, instances)
-        rule = {:class_value => class_value, :conditions => {}}
+        rule = { class_value: class_value, conditions: {} }
         rule_instances = instances.collect {|data| data }
         attributes = @data_set.data_labels[0...-1].collect {|label| label }
         until(is_perfect(instances, rule) || attributes.empty?)

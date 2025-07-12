@@ -43,16 +43,16 @@ module Ai4r
 
       TRAINING_ITERATIONS = 500
       
-      parameters_info :network_class => "Neural network implementation class."+
+      parameters_info network_class: "Neural network implementation class."+
           "By default: Ai4r::NeuralNetwork::Backpropagation.",
-        :network_parameters => "parameters to be forwarded to the back end " +
-          "neural network.", 
-        :hidden_layers => "Hidden layer structure. E.g. [8, 6] will generate " +
+        network_parameters: "parameters to be forwarded to the back end " +
+          "neural network.",
+        hidden_layers: "Hidden layer structure. E.g. [8, 6] will generate " +
           "2 hidden layers with 8 and 6 neurons each. By default []",
-        :training_iterations => "How many times the training should be " +
+        training_iterations: "How many times the training should be " +
           "repeated. By default: #{TRAINING_ITERATIONS}",
-        :active_node_value => "Default: 1",
-        :inactive_node_value => "Default: 0"
+        active_node_value: "Default: 1",
+        inactive_node_value: "Default: 0"
     
       def initialize
         @network_class = Ai4r::NeuralNetwork::Backpropagation

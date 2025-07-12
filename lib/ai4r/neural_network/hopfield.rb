@@ -36,17 +36,17 @@ require_relative '../data/parameterizable'
       
       attr_reader :weights, :nodes
 
-      parameters_info :eval_iterations => "The network will run for a maximum "+
+      parameters_info eval_iterations: "The network will run for a maximum "+
         "of 'eval_iterations' iterations while evaluating an input. 500 by " +
         "default.",
-        :active_node_value => "Default: 1",
-        :inactive_node_value => "Default: -1",
-        :threshold => "Default: 0",
-        :weight_scaling => "Scale factor applied when computing weights. " +
+        active_node_value: "Default: 1",
+        inactive_node_value: "Default: -1",
+        threshold: "Default: 0",
+        weight_scaling: "Scale factor applied when computing weights. " +
           "Default 1.0 / patterns_count",
-        :stop_when_stable => "Stop evaluation when consecutive energy " +
+        stop_when_stable: "Stop evaluation when consecutive energy " +
           "values do not change. False by default",
-        :update_strategy => "Update mode: :async_random (default), " +
+        update_strategy: "Update mode: :async_random (default), " +
           ":async_sequential, :synchronous"
             
       def initialize(params = {})

@@ -25,9 +25,9 @@ module Ai4r
 
       attr_reader :data_set, :class_value
 
-      parameters_info :default_class => "Return this value when the provided " +
+      parameters_info default_class: "Return this value when the provided " +
         "dataset is empty.",
-        :tie_strategy => "Strategy used when more than one class has the " +
+        tie_strategy: "Strategy used when more than one class has the " +
           "same maximal frequency. Valid values are :first (default) " +
           "and :random."
 

@@ -60,9 +60,9 @@ module Ai4r
 
       attr_reader :class_prob, :pcc, :pcp
 
-      parameters_info :m => 'Default value is set to 0. It may be set to a value greater than ' +
+      parameters_info m: 'Default value is set to 0. It may be set to a value greater than ' +
         '0 when the size of the dataset is relatively small',
-        :unknown_value_strategy => 'Behaviour when evaluating unseen attribute values: ' +
+        unknown_value_strategy: 'Behaviour when evaluating unseen attribute values: ' +
         ':ignore (default), :uniform or :error.'
           
       def initialize

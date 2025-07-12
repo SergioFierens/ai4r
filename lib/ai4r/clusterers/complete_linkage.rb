@@ -28,7 +28,7 @@ module Ai4r
 
       include ClusterTree
 
-      parameters_info :distance_function =>
+      parameters_info distance_function:
           "Custom implementation of distance function. " +
           "It must be a closure receiving two data items and return the " +
           "distance between them. By default, this algorithm uses " +

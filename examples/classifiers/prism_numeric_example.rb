@@ -12,7 +12,7 @@ items = [
 ]
 labels = ['temperature', 'humidity', 'play']
 
-data = DataSet.new(:data_items => items, :data_labels => labels)
+data = DataSet.new(data_items: items, data_labels: labels)
 
 classifier = Prism.new.build(data)
 

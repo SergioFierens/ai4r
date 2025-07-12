@@ -56,13 +56,13 @@ module Ai4r
 
       include Ai4r::Data::Parameterizable
 
-      parameters_info :rows  => "number of rows for the map",
-                      :columns => "number of columns for the map",
-                      :nodes => "array holding all nodes of the map",
-                      :dimension => "sets the dimension of the input",
-                      :layer => "instance of a layer, defines how the training algorithm works",
-                      :epoch => "number of finished epochs",
-                      :init_weight_options => "Hash with :range and :seed to initialize node weights"
+      parameters_info rows: "number of rows for the map",
+                      columns: "number of columns for the map",
+                      nodes: "array holding all nodes of the map",
+                      dimension: "sets the dimension of the input",
+                      layer: "instance of a layer, defines how the training algorithm works",
+                      epoch: "number of finished epochs",
+                      init_weight_options: "Hash with :range and :seed to initialize node weights"
 
       def initialize(dim, rows, columns, layer, init_weight_options = { range: 0..1, seed: nil })
         @layer = layer

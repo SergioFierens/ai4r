@@ -54,8 +54,8 @@ module Ai4r
       def [](index)
         selected_items = (index.is_a?(Integer)) ?
                 [@data_items[index]] : @data_items[index]
-        return DataSet.new(:data_items => selected_items,
-                           :data_labels =>@data_labels)
+        return DataSet.new(data_items: selected_items,
+                           data_labels: @data_labels)
       end
 
       # Load data items from csv file

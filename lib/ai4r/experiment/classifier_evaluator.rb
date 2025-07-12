@@ -69,8 +69,8 @@ module Ai4r
         @classifiers.each do |classifier|
           result_data_items << test_classifier(classifier, data_set)
         end
-        return Ai4r::Data::DataSet.new(:data_items => result_data_items, 
-          :data_labels => ["Classifier","Testing Time","Errors","Success rate"])
+        return Ai4r::Data::DataSet.new(data_items: result_data_items,
+          data_labels: ["Classifier","Testing Time","Errors","Success rate"])
       end
       
       private

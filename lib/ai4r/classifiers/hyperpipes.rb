@@ -26,9 +26,9 @@ module Ai4r
 
       attr_reader :data_set, :pipes
 
-      parameters_info :tie_strategy => 'Strategy used when more than one class has the same maximal vote. ' +
+      parameters_info tie_strategy: 'Strategy used when more than one class has the same maximal vote. ' +
         'Valid values are :last (default) and :random.',
-        :margin => 'Numeric margin added to the bounds of numeric attributes.'
+        margin: 'Numeric margin added to the bounds of numeric attributes.'
 
       def initialize
         @tie_strategy = :last
@@ -142,7 +142,7 @@ module Ai4r
       def build_pipe(data_set)
         data_set.data_items.first[0...-1].collect do |att|
           if att.is_a? Numeric
-            {:min => Float::INFINITY, :max => -Float::INFINITY}
+            { min: Float::INFINITY, max: -Float::INFINITY }
           else
             Hash.new(false)
           end

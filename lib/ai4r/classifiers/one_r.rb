@@ -27,9 +27,9 @@ module Ai4r
       
       attr_reader :data_set, :rule
 
-      parameters_info :selected_attribute => 'Index of the attribute to force.',
-        :tie_break => 'Strategy when two attributes yield the same accuracy.',
-        :bin_count => 'Number of bins used to discretize numeric attributes.'
+      parameters_info selected_attribute: 'Index of the attribute to force.',
+        tie_break: 'Strategy when two attributes yield the same accuracy.',
+        bin_count: 'Number of bins used to discretize numeric attributes.'
 
       def initialize
         @selected_attribute = nil
@@ -140,7 +140,7 @@ module Ai4r
           end
           correct_instances += max_freq
         end
-        return {:attr_index => attr_index, :rule => rule, :correct => correct_instances, :bins => bins}
+        return { attr_index: attr_index, rule: rule, correct: correct_instances, bins: bins }
       end
 
       def discretize_range(range, bins)
