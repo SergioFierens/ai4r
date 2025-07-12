@@ -215,20 +215,31 @@ module Ai4r
       end
 
       # Train for a number of epochs over the dataset. Optionally define a batch size.
+      # Data can be shuffled between epochs passing +shuffle: true+ (default).
+      # Use +random_seed+ to make shuffling deterministic.
       # Returns an array with the average loss of each epoch.
       def train_epochs(data_inputs, data_outputs, epochs:, batch_size: 1,
-                       early_stopping_patience: nil, min_delta: 0.0)
+                       early_stopping_patience: nil, min_delta: 0.0,
+                       shuffle: true, random_seed: nil)
         raise ArgumentError, "Inputs and outputs size mismatch" if data_inputs.length != data_outputs.length
         losses = []
         best_loss = Float::INFINITY
         patience = early_stopping_patience
         patience_counter = 0
+        rng = random_seed.nil? ? Random.new : Random.new(random_seed)
         epochs.times do
           epoch_error = 0.0
+          epoch_inputs = data_inputs
+          epoch_outputs = data_outputs
+          if shuffle
+            indices = (0...data_inputs.length).to_a.shuffle(random: rng)
+            epoch_inputs = data_inputs.values_at(*indices)
+            epoch_outputs = data_outputs.values_at(*indices)
+          end
           index = 0
-          while index < data_inputs.length
-            batch_in = data_inputs[index, batch_size]
-            batch_out = data_outputs[index, batch_size]
+          while index < epoch_inputs.length
+            batch_in = epoch_inputs[index, batch_size]
+            batch_out = epoch_outputs[index, batch_size]
             batch_error = train_batch(batch_in, batch_out)
             epoch_error += batch_error * batch_in.length
             index += batch_size
