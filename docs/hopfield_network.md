@@ -52,9 +52,20 @@ The resulting plot shows how the energy decreases as the network converges.
 * `active_node_value` – value representing an active neuron (default `1`).
 * `inactive_node_value` – value representing an inactive neuron (default `-1`).
 * `threshold` – activation threshold used during propagation (default `0`).
+* `weight_scaling` – scale factor applied when computing weights (default
+  `1.0 / patterns_count`). Increasing it strengthens pattern recall while
+  smaller values soften convergence.
 
 ```ruby
 net.set_parameters(eval_iterations: 1000, threshold: 0.2)
+```
+
+You can also change the weight scaling factor:
+
+```ruby
+net = Ai4r::NeuralNetwork::Hopfield.new
+net.set_parameters(weight_scaling: 0.5)
+net.train(data)
 ```
 
 ## Theory
