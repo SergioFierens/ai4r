@@ -29,15 +29,11 @@ module Ai4r
 
       attr_reader :data_set, :rules, :majority_class
 
-      parameters_info :fallback_class => 'Default class returned when no rule matches.'
+      parameters_info :fallback_class => 'Default class returned when no rule matches.',
+        :bin_count => 'Number of bins used to discretize numeric attributes.'
 
       def initialize
         @fallback_class = nil
-      end
-
-      parameters_info :bin_count => 'Number of bins used to discretize numeric attributes.'
-
-      def initialize
         @bin_count = 10
         @attr_bins = {}
       end
