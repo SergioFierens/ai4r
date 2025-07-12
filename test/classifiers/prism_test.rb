@@ -81,5 +81,27 @@ class PrismTest < Test::Unit::TestCase
     assert classifier.matches_conditions(['New York', '<30', 'M', 'Y'], {"age_range" => "<30"})
     assert !classifier.matches_conditions(['New York', '<30', 'M', 'Y'], {"age_range" => "[50-80]"})
   end
+
+  def test_default_class
+    classifier = Prism.new.set_parameters(:default_class => 'Z').build(
+      DataSet.new(:data_items => @@data_examples, :data_labels => @@data_labels))
+    classifier.instance_variable_set(:@rules, [])
+    assert_equal('Z', classifier.eval(['Paris', '<30', 'M']))
+  end
+
+  def test_tie_break
+    tie_examples = [
+      ['A', 'X', 'foo', 'Y'],
+      ['B', 'X', 'foo', 'Y'],
+      ['A', 'Y', 'foo', 'Y'],
+      ['B', 'Y', 'foo', 'N']
+    ]
+    labels = ['att0', 'att1', 'att2', 'class']
+    ds = DataSet.new(:data_items => tie_examples, :data_labels => labels)
+    c_first = Prism.new.build(ds)
+    assert_equal({'att0' => 'A'}, c_first.rules.first[:conditions])
+    c_last = Prism.new.set_parameters(:tie_break => :last).build(ds)
+    assert_equal({'att1' => 'X'}, c_last.rules.first[:conditions])
+  end
 end
 
