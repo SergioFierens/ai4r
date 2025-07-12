@@ -25,6 +25,18 @@ class PrismTest < Test::Unit::TestCase
               ]
 
   @@data_labels = [ 'city', 'age_range', 'gender', 'marketing_target'  ]
+
+  @@numeric_examples = [
+    ['New York', 20, 'M', 'Y'],
+    ['Chicago', 25, 'M', 'Y'],
+    ['New York', 28, 'M', 'Y'],
+    ['New York', 35, 'F', 'N'],
+    ['Chicago', 40, 'F', 'Y'],
+    ['New York', 45, 'F', 'N'],
+    ['Chicago', 55, 'M', 'N']
+  ]
+
+  @@numeric_labels = [ 'city', 'age', 'gender', 'marketing_target' ]
   
   def test_build
     assert_raise(ArgumentError) { Prism.new.build(DataSet.new) } 
@@ -103,5 +115,52 @@ class PrismTest < Test::Unit::TestCase
     c_last = Prism.new.set_parameters(:tie_break => :last).build(ds)
     assert_equal({'att1' => 'X'}, c_last.rules.first[:conditions])
   end
+
+  def test_fallback_class
+    classifier = Prism.new.build(DataSet.new(:data_items => @@data_examples))
+    classifier.rules.pop
+    assert_equal(classifier.majority_class,
+      classifier.eval(['New York', '[50-80]', 'M']))
+
+    classifier = Prism.new.set_parameters(:fallback_class => 'Z').build(
+      DataSet.new(:data_items => @@data_examples))
+    classifier.rules.pop
+    assert_equal('Z', classifier.eval(['New York', '[50-80]', 'M']))
+  end
+
+  def test_rules_have_unique_attributes
+    classifier = Prism.new.build(DataSet.new(:data_labels => @@data_labels,
+      :data_items => @@data_examples))
+    classifier.rules.each do |rule|
+      keys = rule[:conditions].keys
+      assert_equal keys.uniq, keys
+    end
+  end
+
+  def test_build_with_single_attribute
+    examples = [
+      ['red', 'apple'],
+      ['red', 'berry'],
+      ['blue', 'berry']
+    ]
+    labels = ['color', 'kind']
+    classifier = Prism.new.build(DataSet.new(:data_items => examples,
+                                             :data_labels => labels))
+    assert_not_nil classifier.rules
+    assert !classifier.rules.empty?
+    classifier.rules.each do |rule|
+      assert rule[:conditions].keys.size <= 1
+    end
+  end
+
+  def test_numeric_data
+    classifier = Prism.new.build(DataSet.new(
+      :data_items => @@numeric_examples,
+      :data_labels => @@numeric_labels))
+    assert classifier.rules.any? { |r| r[:conditions].values.any? { |v| v.is_a?(Range) } }
+    assert_equal('Y', classifier.eval(['New York', 20, 'M']))
+    assert_equal('N', classifier.eval(['Chicago', 55, 'M']))
+  end
+  
 end
 

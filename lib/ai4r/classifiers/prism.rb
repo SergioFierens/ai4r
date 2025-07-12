@@ -27,7 +27,20 @@ module Ai4r
     # International Journal of Man-Machine Studies. 27(4):349-370.
     class Prism < Classifier
 
-      attr_reader :data_set, :rules
+      attr_reader :data_set, :rules, :majority_class
+
+      parameters_info :fallback_class => 'Default class returned when no rule matches.'
+
+      def initialize
+        @fallback_class = nil
+      end
+
+      parameters_info :bin_count => 'Number of bins used to discretize numeric attributes.'
+
+      def initialize
+        @bin_count = 10
+        @attr_bins = {}
+      end
 
       parameters_info :default_class => 'Return this value when no rule matches.',
         :tie_break => 'Strategy when multiple conditions have equal ratios.'
@@ -43,7 +56,19 @@ module Ai4r
       def build(data_set)
         data_set.check_not_empty
         @data_set = data_set
+
+        freqs = Hash.new(0)
+        @data_set.data_items.each { |item| freqs[item.last] += 1 }
+        @majority_class = freqs.max_by { |_, v| v }&.first
+        @fallback_class = @majority_class if @fallback_class.nil?
+
         domains = @data_set.build_domains
+        @attr_bins = {}
+        domains[0...-1].each_with_index do |domain, i|
+          if domain.is_a?(Array) && domain.length == 2 && domain.all? { |v| v.is_a? Numeric }
+            @attr_bins[@data_set.data_labels[i]] = discretize_range(domain, @bin_count)
+          end
+        end
         instances = @data_set.data_items.collect {|data| data }
         @rules = []
         domains.last.each do |class_value|
@@ -63,7 +88,7 @@ module Ai4r
         @rules.each do |rule|
           return rule[:class_value] if matches_conditions(instace, rule[:conditions])
         end
-        @default_class
+        @fallback_class
       end
       
       # This method returns the generated rules in ruby code.
@@ -113,7 +138,12 @@ module Ai4r
       
       def matches_conditions(data, conditions)
         conditions.each_pair do |attr_label, attr_value|
-          return false if get_attr_value(data, attr_label) != attr_value
+          value = get_attr_value(data, attr_label)
+          if attr_value.is_a?(Range)
+            return false unless attr_value.include?(value)
+          else
+            return false unless value == attr_value
+          end
         end
         return true
       end
@@ -126,8 +156,9 @@ module Ai4r
           freq_table = build_freq_table(rule_instances, attributes, class_value)
           condition = get_condition(freq_table)
           rule[:conditions].merge!(condition)
-          rule_instances = rule_instances.select do |data| 
-            matches_conditions(data, condition) 
+          attributes.delete(condition.keys.first)
+          rule_instances = rule_instances.select do |data|
+            matches_conditions(data, condition)
           end
         end
         return rule
@@ -146,9 +177,13 @@ module Ai4r
         rule_instances.each do |data|
           attributes.each do |attr_label|
             attr_freqs = freq_table[attr_label] || Hash.new([0, 0])
-            pt = attr_freqs[get_attr_value(data, attr_label)]
+            value = get_attr_value(data, attr_label)
+            if (bins = @attr_bins[attr_label])
+              value = bins.find { |b| b.include?(value) }
+            end
+            pt = attr_freqs[value]
             pt = [(data.last == class_value) ? pt[0]+1 : pt[0], pt[1]+1]
-            attr_freqs[get_attr_value(data, attr_label)] = pt
+            attr_freqs[value] = pt
             freq_table[attr_label] = attr_freqs
           end
         end
@@ -188,11 +223,27 @@ module Ai4r
         return true if a == b && pt[0] == best_pt[0] && @tie_break == :last
         false
       end
+
+      def discretize_range(range, bins)
+        min, max = range
+        step = (max - min).to_f / bins
+        ranges = []
+        bins.times do |i|
+          low = min + i * step
+          high = (i == bins - 1) ? max : min + (i + 1) * step
+          ranges << (i == bins - 1 ? (low..high) : (low...high))
+        end
+        ranges
+      end
       
       def join_terms(rule)
         terms = []
-        rule[:conditions].each do |attr_label, attr_value| 
-            terms << "#{attr_label} == '#{attr_value}'"
+        rule[:conditions].each do |attr_label, attr_value|
+            if attr_value.is_a?(Range)
+              terms << "(#{attr_value}).include?(#{attr_label})"
+            else
+              terms << "#{attr_label} == '#{attr_value}'"
+            end
         end
         "#{terms.join(" and ")}"
       end
