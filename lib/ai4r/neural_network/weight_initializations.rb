@@ -19,7 +19,6 @@ module Ai4r
 
       # Xavier/Glorot initialization based on layer dimensions
       def xavier(structure)
-
         lambda do |layer, _i, _j|
           limit = Math.sqrt(6.0 / (structure[layer] + structure[layer + 1]))
           rand * 2 * limit - limit
@@ -27,9 +26,7 @@ module Ai4r
       end
 
       # He initialization suitable for ReLU activations
-
       def he(structure)
-
         lambda do |layer, _i, _j|
           limit = Math.sqrt(6.0 / structure[layer])
           rand * 2 * limit - limit

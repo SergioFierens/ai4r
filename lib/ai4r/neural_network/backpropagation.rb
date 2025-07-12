@@ -393,7 +393,6 @@ module Ai4r
           if @activation[n] == :softmax
             values = @propagation_functions[n].call(sums)
             values.each_index { |j| @activation_nodes[n + 1][j] = values[j] }
-
           else
             sums.each_index do |j|
               @activation_nodes[n + 1][j] = @propagation_functions[n].call(sums[j])
