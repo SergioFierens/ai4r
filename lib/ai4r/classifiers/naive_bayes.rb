@@ -58,6 +58,8 @@ module Ai4r
     
     class NaiveBayes < Classifier
 
+      attr_reader :class_prob, :pcc, :pcp
+
       parameters_info :m => 'Default value is set to 0. It may be set to a value greater than ' +
         '0 when the size of the dataset is relatively small'
           
