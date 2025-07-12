@@ -31,6 +31,13 @@ module Ai4r
       def eval(data_item)
         raise NotImplementedError
       end
+
+      # Returns +true+ if this clusterer supports evaluating new data items
+      # with {#eval}. Hierarchical algorithms that only build a dendrogram
+      # will override this method to return +false+.
+      def supports_eval?
+        true
+      end
       
       protected    
       def get_min_index(array)
