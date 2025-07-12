@@ -70,7 +70,17 @@ class IB1Test < Test::Unit::TestCase
     assert_equal('N', classifier.eval(['Chicago',  55, 'M']))
     assert_equal('N', classifier.eval(['New York', 35, 'F']))
     assert_equal('Y', classifier.eval(['New York', 25, 'M']))
-    assert_equal('Y', classifier.eval(['Chicago',  85, 'F'])) 
+    assert_equal('Y', classifier.eval(['Chicago',  85, 'F']))
+  end
+
+  def test_add_instance
+    items = @@data_items[0...7]
+    data_set = DataSet.new(data_items: items, data_labels: @@data_labels)
+    classifier = IB1.new.build(data_set)
+    assert_equal('Y', classifier.eval(['Chicago', 55, 'M']))
+    classifier.add_instance(['Chicago', 55, 'M', 'N'])
+    assert_equal('N', classifier.eval(['Chicago', 55, 'M']))
+    assert_equal 8, classifier.data_set.data_items.length
   end
 
 end
