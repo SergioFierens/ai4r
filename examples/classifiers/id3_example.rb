@@ -7,7 +7,7 @@
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../../lib/ai4r/classifiers/id3'
+require_relative '../../lib/ai4r/classifiers/id3'
 
 # Load data from data_set.csv
 data_filename = "#{File.dirname(__FILE__)}/id3_data.csv"

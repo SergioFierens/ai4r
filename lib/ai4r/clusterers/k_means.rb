@@ -25,38 +25,38 @@ module Ai4r
       attr_reader :data_set, :number_of_clusters
       attr_reader :clusters, :centroids, :iterations
       attr_reader :history
-      
+
       parameters_info(
-        :max_iterations => "Maximum number of iterations to " +
-          "build the clusterer. By default it is uncapped.",
-        :distance_function => "Custom implementation of distance function. " +
+        max_iterations: "Maximum number of iterations to build the clusterer. By default it is uncapped.",
+        distance_function: "Custom implementation of distance function. " +
           "It must be a closure receiving two data items and return the " +
           "distance between them. By default, this algorithm uses " +
           "euclidean distance of numeric attributes to the power of 2.",
-        :centroid_function => "Custom implementation to calculate the " +
+        centroid_function: "Custom implementation to calculate the " +
           "centroid of a cluster. It must be a closure receiving an array of " +
           "data sets, and return an array of data items, representing the " +
           "centroids of for each data set. " +
-          "By default, this algorithm returns a data items using the mode "+
+          "By default, this algorithm returns a data items using the mode " +
           "or mean of each attribute on each data set.",
-        :centroid_indices => "Indices of data items (indexed from 0) to be " +
+        centroid_indices: "Indices of data items (indexed from 0) to be " +
           "the initial centroids.  Otherwise, the initial centroids will be " +
           "assigned randomly from the data set.",
-        :on_empty => "Action to take if a cluster becomes empty, with values " +
+        on_empty: "Action to take if a cluster becomes empty, with values " +
           "'eliminate' (the default action, eliminate the empty cluster), " +
           "'terminate' (terminate with error), 'random' (relocate the " +
           "empty cluster to a random point), 'outlier' (relocate the " +
           "empty cluster to the point furthest from its centroid).",
-        :random_seed => "Seed value used to initialize Ruby's random number " +
+        random_seed: "Seed value used to initialize Ruby's random number " +
           "generator when selecting random centroids.",
-        :init_method => "Strategy to initialize centroids. Available values: " +
+        init_method: "Strategy to initialize centroids. Available values: " +
           ":random (default) and :kmeans_plus_plus.",
-        :restarts => "Number of random initializations to perform. " +
+        restarts: "Number of random initializations to perform. " +
           "The best run (lowest SSE) will be kept.",
-        :track_history => "Keep centroids and assignments for each iteration " +
+        track_history: "Keep centroids and assignments for each iteration " +
           "when building the clusterer."
       )
       
+      # @return [Object]
       def initialize
         @distance_function = nil
         @max_iterations = nil
@@ -75,6 +75,9 @@ module Ai4r
       # Build a new clusterer, using data examples found in data_set.
       # Items will be clustered in "number_of_clusters" different
       # clusters.
+      # @param data_set [Object]
+      # @param number_of_clusters [Object]
+      # @return [Object]
       def build(data_set, number_of_clusters)
         @data_set = data_set
         @number_of_clusters = number_of_clusters
@@ -96,8 +99,8 @@ module Ai4r
             calculate_membership_clusters
             if @track_history
               @history << {
-                :centroids => @centroids.collect { |c| c.dup },
-                :assignments => @assignments.dup
+                centroids: @centroids.collect { |c| c.dup },
+                assignments: @assignments.dup
               }
             end
             recompute_centroids
@@ -120,6 +123,8 @@ module Ai4r
       
       # Classifies the given data item, returning the cluster index it belongs 
       # to (0-based).
+      # @param data_item [Object]
+      # @return [Object]
       def eval(data_item)
         get_min_index(@centroids.collect {|centroid|
             distance(data_item, centroid)})
@@ -127,6 +132,7 @@ module Ai4r
 
       # Sum of squared distances of all points to their respective centroids.
       # It can be used as a measure of cluster compactness (SSE).
+      # @return [Object]
       def sse
         sum = 0.0
         @clusters.each_with_index do |cluster, i|
@@ -146,6 +152,9 @@ module Ai4r
       # 1- Overwriting this method
       # 
       # 2- Providing a closure to the :distance_function parameter
+      # @param a [Object]
+      # @param b [Object]
+      # @return [Object]
       def distance(a, b)
         return @distance_function.call(a, b) if @distance_function
         return Ai4r::Data::Proximity.squared_euclidean_distance(
@@ -155,6 +164,7 @@ module Ai4r
       
       protected      
       
+      # @return [Object]
       def calc_initial_centroids
         @centroids, @old_centroids = [], nil
         if @centroid_indices.empty?
@@ -168,14 +178,16 @@ module Ai4r
         end
       end
       
+      # @return [Object]
       def stop_criteria_met
         @old_centroids == @centroids || 
           (@max_iterations && (@max_iterations <= @iterations))
       end
       
+      # @return [Object]
       def calculate_membership_clusters
         @clusters = Array.new(@number_of_clusters) do
-          Ai4r::Data::DataSet.new :data_labels => @data_set.data_labels
+          Ai4r::Data::DataSet.new data_labels: @data_set.data_labels
         end
         @cluster_indices = Array.new(@number_of_clusters) {[]}
         @assignments = Array.new(@data_set.data_items.length)
@@ -189,12 +201,14 @@ module Ai4r
         manage_empty_clusters if has_empty_cluster?
       end
       
+      # @return [Object]
       def recompute_centroids
         @old_centroids = @centroids
         @iterations += 1
         @centroids = @centroid_function.call(@clusters)
       end
 
+      # @return [Object]
       def kmeans_plus_plus_init
         srand(@random_seed) if @random_seed
         chosen_indices = []
@@ -225,6 +239,9 @@ module Ai4r
         @number_of_clusters = @centroids.length
       end
 
+      # @param populate_method [Object]
+      # @param number_of_clusters [Object]
+      # @return [Object]
       def populate_centroids(populate_method, number_of_clusters=@number_of_clusters)
         tried_indexes = []
         case populate_method
@@ -270,6 +287,7 @@ module Ai4r
       
        # Sort cluster points by distance to assigned centroid.  Utilizes @cluster_indices.
        # Returns indices, sorted in order from the nearest to furthest.
+       # @return [Object]
        def sort_data_indices_by_dist_to_centroid 
          sorted_data_indices = []
          h = {}
@@ -285,6 +303,7 @@ module Ai4r
          sorted_data_indices = h.sort_by{|k,v| v}.collect{|a,b| a}
        end
       
+      # @return [Object]
       def has_empty_cluster?
         found_empty = false
         @number_of_clusters.times do |c|
@@ -293,6 +312,7 @@ module Ai4r
         found_empty
       end
       
+      # @return [Object]
       def manage_empty_clusters
         return if self.on_empty == 'terminate' # Do nothing to terminate with error. (The empty cluster will be assigned a nil centroid, and then calculating the distance from this centroid to another point will raise an exception.)
         
@@ -303,6 +323,7 @@ module Ai4r
         calculate_membership_clusters 
       end
       
+      # @return [Object]
       def eliminate_empty_clusters
         old_clusters, old_centroids, old_cluster_indices = @clusters, @centroids, @cluster_indices
         old_assignments = @assignments

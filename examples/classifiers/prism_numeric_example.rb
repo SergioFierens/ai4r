@@ -1,5 +1,5 @@
-require File.dirname(__FILE__) + '/../../lib/ai4r/classifiers/prism'
-require File.dirname(__FILE__) + '/../../lib/ai4r/data/data_set'
+require_relative '../../lib/ai4r/classifiers/prism'
+require_relative '../../lib/ai4r/data/data_set'
 
 include Ai4r::Classifiers
 include Ai4r::Data
@@ -12,7 +12,7 @@ items = [
 ]
 labels = ['temperature', 'humidity', 'play']
 
-data = DataSet.new(:data_items => items, :data_labels => labels)
+data = DataSet.new(data_items: items, data_labels: labels)
 
 classifier = Prism.new.build(data)
 

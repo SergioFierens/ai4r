@@ -1,5 +1,5 @@
-require File.dirname(__FILE__) + '/../../lib/ai4r/classifiers/hyperpipes'
-require File.dirname(__FILE__) + '/../../lib/ai4r/data/data_set'
+require_relative '../../lib/ai4r/classifiers/hyperpipes'
+require_relative '../../lib/ai4r/data/data_set'
 
 include Ai4r::Classifiers
 include Ai4r::Data
@@ -9,7 +9,7 @@ file = File.dirname(__FILE__) + '/hyperpipes_data.csv'
 data = DataSet.new.parse_csv_with_labels(file)
 
 # Build the classifier using custom parameters
-classifier = Hyperpipes.new.set_parameters(:tie_strategy => :random).build(data)
+classifier = Hyperpipes.new.set_parameters(tie_strategy: :random).build(data)
 
 # Inspect the generated pipes
 pipes_summary = classifier.pipes

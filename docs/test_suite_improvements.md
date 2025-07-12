@@ -1,0 +1,36 @@
+# Testing Suite Improvement Proposal
+
+This document outlines several ways to improve the current AI4R test suite.
+
+## Use Modern Test Frameworks
+
+The project relies on `Test::Unit`. Migrating to `Minitest` (or to `RSpec` for a behavior-driven approach) would provide a larger ecosystem of plugins and clearer syntax while still running with `rake test`.
+
+## Centralize Mock Data
+
+Many test files define the same marketing or clustering data using constants or class variables. Consider moving repeated data into helper methods or fixture files (YAML or CSV) under `test/fixtures/`. Loading shared datasets keeps tests concise and avoids duplication.
+
+## Avoid Modifying Classes Under Test
+
+Several tests call `send(:public, *Class.protected_instance_methods)` to expose internals. Instead, invoke protected methods with `send` or design public APIs that expose the necessary behavior. This prevents warnings about method redefinition and keeps class visibility unchanged.
+
+## Deterministic Randomness
+
+Some algorithms rely on randomness. Tests set global seeds with `srand`, which can lead to fragile ordering. Inject a `Random` instance or allow passing a seed via parameters so each test can initialize its own deterministic RNG.
+
+## Add Edge‑Case Coverage
+
+Current tests focus on typical scenarios. Additional cases to cover include:
+
+- Handling invalid or empty data sets.
+- Testing exception messages and parameter validation thoroughly.
+- Verifying behavior when unknown attribute values appear and when optional parameters are omitted.
+
+## Measure Coverage
+
+Using a tool like `SimpleCov` during `rake test` helps track which methods lack tests. Aim to increase coverage for algorithms such as IB1, where the current tests do not exercise all branches (e.g., tie‑break logic).
+
+## Continuous Integration
+
+Automate `bundle exec rake test` on every pull request via GitHub Actions or another CI platform. This ensures the test suite always runs against supported Ruby versions.
+

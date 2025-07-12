@@ -10,6 +10,7 @@
 require 'ai4r/classifiers/hyperpipes'
 require 'test/unit'
 require 'set'
+require 'yaml'
 
 class Ai4r::Classifiers::Hyperpipes
   attr_accessor :data_set, :pipes
@@ -20,22 +21,10 @@ include Ai4r::Data
 
 class HyperpipesTest < Test::Unit::TestCase
 
-  @@data_labels = [ 'city', 'age', 'gender', 'marketing_target'  ]
+  fixture = YAML.load_file(File.expand_path('../fixtures/marketing_target_numeric.yml', __dir__))
 
-  @@data_items = [['New York',  25, 'M', 'Y'],
-              ['New York',  23, 'M', 'Y'],
-              ['New York',  18, 'M', 'Y'],
-              ['Chicago',   43, 'M', 'Y'],
-              ['New York',  34, 'F', 'N'],
-              ['Chicago',   33, 'F', 'Y'],
-              ['New York',  31, 'F', 'N'],
-              ['Chicago',   55, 'M', 'N'],
-              ['New York',  58, 'F', 'N'],
-              ['New York',  59, 'M', 'N'],
-              ['Chicago',   71, 'M', 'N'],
-              ['New York',  60, 'F', 'N'],
-              ['Chicago',   85, 'F', 'Y']
-            ]
+  @@data_labels = fixture['data_labels']
+  @@data_items  = fixture['data_items']
   
   
   def setup
