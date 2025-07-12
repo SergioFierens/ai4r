@@ -54,7 +54,7 @@ module Ai4r
         :restarts => "Number of random initializations to perform. " +
           "The best run (lowest SSE) will be kept.",
         :track_history => "Keep centroids and assignments for each iteration " +
-          "when building the clusterer."
+          "when building the clusterer.",
       )
       
       # @return [Object]
