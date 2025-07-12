@@ -27,8 +27,8 @@ module Ai4r
     # it normalizes its attributes' ranges, processes instances
     # incrementally, and has a simple policy for tolerating missing values
     class IB1 < Classifier
-
-      attr_reader :data_set
+      
+      attr_reader :data_set, :min_values, :max_values
 
       parameters_info :k => 'Number of nearest neighbors to consider. Default is 1.',
         :distance_function => 'Optional custom distance metric taking two instances.',
@@ -87,6 +87,18 @@ module Ai4r
         else
           k_neighbors.each { |_, klass| return klass if tied.include?(klass) }
         end
+      end
+
+      # Returns an array with the +k+ nearest instances from the training set
+      # for the given +data+ item. The returned elements are the training data
+      # rows themselves, ordered from the closest to the furthest.
+      def neighbors_for(data, k)
+        update_min_max(data)
+        @data_set.data_items
+          .map { |train_item| [train_item, distance(data, train_item)] }
+          .sort_by { |pair| pair.last }
+          .first(k)
+          .map(&:first)
       end
       
       protected

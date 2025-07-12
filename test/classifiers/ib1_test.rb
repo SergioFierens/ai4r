@@ -10,9 +10,7 @@
 require 'ai4r/classifiers/ib1'
 require 'test/unit'
 
-class Ai4r::Classifiers::IB1
-  attr_accessor :data_set, :min_values, :max_values
-end
+
 
 include Ai4r::Classifiers
 include Ai4r::Data
@@ -80,6 +78,15 @@ class IB1Test < Test::Unit::TestCase
     assert_equal('Y', classifier.eval(['Chicago',  85, 'F']))
   end
 
+
+  def test_neighbors_for
+    expected = [
+      ['Chicago', 55, 'M', 'N'],
+      ['Chicago', 43, 'M', 'Y'],
+      ['Chicago', 71, 'M', 'N']
+    ]
+    assert_equal(expected, @classifier.neighbors_for(['Chicago', 55, 'M'], 3))
+  end
 
   def test_k_nearest
     classifier = IB1.new.set_parameters(:k => 3).build(@data_set)
