@@ -79,6 +79,16 @@ class IB1Test < Test::Unit::TestCase
     ]
     assert_equal(expected, @classifier.neighbors_for(['Chicago', 55, 'M'], 3))
   end
+    
+  def test_add_instance
+    items = @@data_items[0...7]
+    data_set = DataSet.new(data_items: items, data_labels: @@data_labels)
+    classifier = IB1.new.build(data_set)
+    assert_equal('Y', classifier.eval(['Chicago', 55, 'M']))
+    classifier.add_instance(['Chicago', 55, 'M', 'N'])
+    assert_equal('N', classifier.eval(['Chicago', 55, 'M']))
+    assert_equal 8, classifier.data_set.data_items.length
+  end
 
 end
 

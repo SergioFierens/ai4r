@@ -75,6 +75,7 @@ trace = net.train(data).eval(noisy_pattern, trace: true)
 
 You can also change the weight scaling factor:
 
+
 ```ruby
 net = Ai4r::NeuralNetwork::Hopfield.new
 net.set_parameters(weight_scaling: 0.5)

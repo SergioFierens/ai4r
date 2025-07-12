@@ -26,6 +26,7 @@ require 'ai4r'
 * [PRISM](prism.md) – rule induction algorithm for discrete attributes.
 * [Naive Bayes Classifier](naive_bayes.md) – probabilistic classification for categorical data.
 * [Hyperpipes](hyperpipes.md) – baseline classifier using value ranges.
+* [IB1 Classifier](ib1.md) – instance-based nearest neighbour algorithm.
 
 ## Contact
 

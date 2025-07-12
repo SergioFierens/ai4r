@@ -41,6 +41,16 @@ module Ai4r
         data_set.data_items.each { |data_item| update_min_max(data_item[0...-1]) }
         return self
       end
+
+      # Append a new instance to the internal dataset. The last element is
+      # considered the class label. Minimum and maximum values for numeric
+      # attributes are updated so that future distance calculations remain
+      # normalized.
+      def add_instance(data_item)
+        @data_set << data_item
+        update_min_max(data_item[0...-1])
+        self
+      end
       
       # You can evaluate new data, predicting its class.
       # e.g.
