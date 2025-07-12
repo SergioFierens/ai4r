@@ -28,7 +28,7 @@ module Ai4r
     # incrementally, and has a simple policy for tolerating missing values
     class IB1 < Classifier
       
-      attr_reader :data_set
+      attr_reader :data_set, :min_values, :max_values
 
       # Build a new IB1 classifier. You must provide a DataSet instance
       # as parameter. The last attribute of each item is considered as 
@@ -57,6 +57,18 @@ module Ai4r
           end
         end
         return klass
+      end
+
+      # Returns an array with the +k+ nearest instances from the training set
+      # for the given +data+ item. The returned elements are the training data
+      # rows themselves, ordered from the closest to the furthest.
+      def neighbors_for(data, k)
+        update_min_max(data)
+        @data_set.data_items
+          .map { |train_item| [train_item, distance(data, train_item)] }
+          .sort_by { |pair| pair.last }
+          .first(k)
+          .map(&:first)
       end
       
       protected
