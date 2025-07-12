@@ -16,7 +16,7 @@ patterns = [
 ]
 
 data = Ai4r::Data::DataSet.new(data_items: patterns)
-net = Ai4r::NeuralNetwork::Hopfield.new.train(data)
+net = Ai4r::NeuralNetwork::Hopfield.new(eval_iterations: 1000).train(data)
 ```
 
 Evaluation uses the same vector format:
@@ -53,7 +53,7 @@ The resulting plot shows how the energy decreases as the network converges.
 
 ## Parameters
 
-`Ai4r::NeuralNetwork::Hopfield` supports several parameters which can be set with `set_parameters`:
+`Ai4r::NeuralNetwork::Hopfield` supports several parameters which can be set when the network is created or later with `set_parameters`:
 
 * `eval_iterations` – maximum number of iterations when calling `eval` (default `500`).
 * `active_node_value` – numeric value representing an active neuron (default `1`).
@@ -65,10 +65,12 @@ The resulting plot shows how the energy decreases as the network converges.
   `:async_sequential` and `:synchronous` offer alternative behaviors.
 
 ```ruby
+
 net.set_parameters(eval_iterations: 1000,
                    update_strategy: :async_random,
                    stop_when_stable: true)
 trace = net.train(data).eval(noisy_pattern, trace: true)
+
 ```
 
 ## Theory

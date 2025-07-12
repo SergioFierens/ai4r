@@ -29,23 +29,14 @@ module Ai4r
 
       attr_reader :data_set, :rules, :majority_class
 
-      parameters_info(
-        fallback_class: 'Default class returned when no rule matches.',
-        bin_count: 'Number of bins used to discretize numeric attributes.'
-      )
+      parameters_info :fallback_class => 'Default class returned when no rule matches.',
+        :bin_count => 'Number of bins used to discretize numeric attributes.'
+
 
       def initialize
         @fallback_class = nil
         @bin_count = 10
         @attr_bins = {}
-      end
-
-      parameters_info :default_class => 'Return this value when no rule matches.',
-        :tie_break => 'Strategy when multiple conditions have equal ratios.'
-
-      def initialize
-        @default_class = nil
-        @tie_break = :first
       end
 
       # Build a new Prism classifier. You must provide a DataSet instance
