@@ -4,8 +4,8 @@
 #
 # Simple example showing how to use OneR with numeric attributes.
 
-require File.dirname(__FILE__) + '/../../lib/ai4r/classifiers/one_r'
-require File.dirname(__FILE__) + '/../../lib/ai4r/data/data_set'
+require_relative '../../lib/ai4r/classifiers/one_r'
+require_relative '../../lib/ai4r/data/data_set'
 
 include Ai4r::Classifiers
 include Ai4r::Data
@@ -21,7 +21,7 @@ items = [
 ]
 labels = ['city', 'age', 'gender', 'marketing_target']
 
-ds = DataSet.new(:data_items => items, :data_labels => labels)
+ds = DataSet.new(data_items: items, data_labels: labels)
 
 classifier = OneR.new.build(ds)
 puts classifier.get_rules

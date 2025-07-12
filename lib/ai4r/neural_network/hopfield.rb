@@ -36,33 +36,40 @@ require_relative '../data/parameterizable'
       
       attr_reader :weights, :nodes
 
-      parameters_info :eval_iterations => "The network will run for a maximum "+
+      parameters_info eval_iterations: "The network will run for a maximum "+
         "of 'eval_iterations' iterations while evaluating an input. 500 by " +
         "default.",
-        :active_node_value => "Default: 1",
-        :inactive_node_value => "Default: -1",
-        :threshold => "Default: 0",
-        :weight_scaling => "Scale factor applied when computing weights. " +
+        active_node_value: "Default: 1",
+        inactive_node_value: "Default: -1",
+        threshold: "Default: 0",
+        weight_scaling: "Scale factor applied when computing weights. " +
           "Default 1.0 / patterns_count",
-        :stop_when_stable => "Stop evaluation when consecutive energy " +
+        stop_when_stable: "Stop evaluation when consecutive energy " +
           "values do not change. False by default",
-        :update_strategy => "Update mode: :async_random (default), " +
+        update_strategy: "Update mode: :async_random (default), " +
           ":async_sequential, :synchronous"
             
-      def initialize
+      # @param params [Object]
+      # @return [Object]
+      def initialize(params = {})
         @eval_iterations = 500
         @active_node_value = 1
         @inactive_node_value = -1
         @threshold = 0
         @weight_scaling = nil
         @stop_when_stable = false
-        @update_strategy = :async_sequential
+        @update_strategy = :async_random
+        # Deterministic random generator to guarantee reproducible behaviour
+        @rng = Random.new(3)
+        set_parameters(params) if params && !params.empty?
       end
 
       # Prepares the network to memorize the given data set.
       # Future calls to eval (should) return one of the memorized data items.
       # A Hopfield network converges to a local minimum, but converge to one 
       # of the "memorized" patterns is not guaranteed.
+      # @param data_set [Object]
+      # @return [Object]
       def train(data_set)
         @data_set = data_set
         validate_training_data
@@ -81,6 +88,8 @@ require_relative '../data/parameterizable'
       #      pattern = net.run(pattern)
       #      puts pattern.inspect
       #   end
+      # @param input [Object]
+      # @return [Object]
       def run(input)
         set_input(input)
         propagate
@@ -93,6 +102,9 @@ require_relative '../data/parameterizable'
       # If +trace: true+ is passed the method returns a hash with the
       # :states and :energies recorded at every iteration (including the
       # initial state). This can be used to visualize convergence.
+      # @param input [Object]
+      # @param trace [Object]
+      # @return [Object]
       def eval(input, trace: false)
         set_input(input)
         prev_energy = energy
@@ -116,6 +128,7 @@ require_relative '../data/parameterizable'
 
       # Calculate network energy using current node states and weights.
       # Energy = -0.5 * Σ w_ij * s_i * s_j
+      # @return [Object]
       def energy
         sum = 0.0
         @nodes.each_with_index do |s_i, i|
@@ -129,12 +142,15 @@ require_relative '../data/parameterizable'
       protected
       # Set all nodes state to the given input.
       # inputs parameter must have the same dimension as nodes
+      # @param inputs [Object]
+      # @return [Object]
       def set_input(inputs)
         raise ArgumentError unless inputs.length == @nodes.length
         inputs.each_with_index { |input, i| @nodes[i] = input}
       end
       
       # Propagate network state according to configured update strategy.
+      # @return [Object]
       def propagate
         case @update_strategy
         when :async_sequential
@@ -147,14 +163,16 @@ require_relative '../data/parameterizable'
       end
 
       # Select a single node randomly and propagate its state to all other nodes
+      # @return [Object]
       def propagate_async_random
         sum = 0
-        i = (rand * @nodes.length).floor
+        i = (@rng.rand * @nodes.length).floor
         @nodes.each_with_index { |node, j| sum += read_weight(i, j) * node }
         @nodes[i] = (sum > @threshold) ? @active_node_value : @inactive_node_value
       end
 
       # Iterate through nodes sequentially, updating each immediately
+      # @return [Object]
       def propagate_async_sequential
         @nodes.each_index do |i|
           sum = 0
@@ -164,6 +182,7 @@ require_relative '../data/parameterizable'
       end
 
       # Update all nodes simultaneously using previous state
+      # @return [Object]
       def propagate_synchronous
         new_nodes = Array.new(@nodes.length)
         @nodes.each_index do |i|
@@ -175,12 +194,15 @@ require_relative '../data/parameterizable'
       end
 
       # Initialize all nodes with "inactive" state.
+      # @param data_set [Object]
+      # @return [Object]
       def initialize_nodes(data_set)
         @nodes = Array.new(data_set.data_items.first.length,
           @inactive_node_value)
       end
 
       # Ensure training data only contains active or inactive values.
+      # @return [Object]
       def validate_training_data
         allowed = [@active_node_value, @inactive_node_value]
         @data_set.data_items.each_with_index do |item, row|
@@ -208,6 +230,8 @@ require_relative '../data/parameterizable'
       # * w[i][j] = w[j][i] (weigths are symmetric)
       # 
       # Use read_weight(i,j) to find out weight between node i and j
+      # @param data_set [Object]
+      # @return [Object]
       def initialize_weights(data_set)
         patterns_count = data_set.data_items.length
         scaling = @weight_scaling || (1.0 / patterns_count)
@@ -222,6 +246,9 @@ require_relative '../data/parameterizable'
       
       # read_weight(i,j) reads the weigth matrix and returns weight between 
       # node i and j
+      # @param index_a [Object]
+      # @param index_b [Object]
+      # @return [Object]
       def read_weight(index_a, index_b)
         return 0 if index_a == index_b
         index_a, index_b = index_b, index_a if index_b > index_a

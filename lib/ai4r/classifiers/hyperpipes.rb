@@ -26,10 +26,11 @@ module Ai4r
 
       attr_reader :data_set, :pipes
 
-      parameters_info :tie_strategy => 'Strategy used when more than one class has the same maximal vote. ' +
+      parameters_info tie_strategy: 'Strategy used when more than one class has the same maximal vote. ' +
         'Valid values are :last (default) and :random.',
-        :margin => 'Numeric margin added to the bounds of numeric attributes.'
+        margin: 'Numeric margin added to the bounds of numeric attributes.'
 
+      # @return [Object]
       def initialize
         @tie_strategy = :last
         @margin = 0
@@ -38,6 +39,8 @@ module Ai4r
       # Build a new Hyperpipes classifier. You must provide a DataSet instance
       # as parameter. The last attribute of each item is considered as 
       # the item class.
+      # @param data_set [Object]
+      # @return [Object]
       def build(data_set)
         data_set.check_not_empty
         @data_set = data_set
@@ -54,6 +57,8 @@ module Ai4r
       # e.g.
       #   classifier.eval(['New York',  '<30', 'F'])  # => 'Y'      
       # Tie resolution is controlled by +tie_strategy+ parameter.
+      # @param data [Object]
+      # @return [Object]
       def eval(data)
         votes = Votes.new
         @pipes.each do |category, pipe|
@@ -82,6 +87,7 @@ module Ai4r
       #     eval classifier.get_rules   
       #     puts marketing_target
       #       # =>  'Y'
+      # @return [Object]
       def get_rules
         rules = []
         rules << "votes = Votes.new"
@@ -116,6 +122,8 @@ module Ai4r
       #
       # The optional +margin+ parameter expands numeric bounds by the given
       # fraction.  A value of 0.1 would enlarge each range by 10%.
+      # @param margin [Object]
+      # @return [Object]
       def pipes_summary(margin: 0)
         raise 'Model not built yet' unless @data_set && @pipes
         labels = @data_set.data_labels[0...-1]
@@ -139,16 +147,21 @@ module Ai4r
 
       protected
 
+      # @param data_set [Object]
+      # @return [Object]
       def build_pipe(data_set)
         data_set.data_items.first[0...-1].collect do |att|
           if att.is_a? Numeric
-            {:min => Float::INFINITY, :max => -Float::INFINITY}
+            { min: Float::INFINITY, max: -Float::INFINITY }
           else
             Hash.new(false)
           end
         end
       end
       
+      # @param pipe [Object]
+      # @param data_item [Object]
+      # @return [Object]
       def update_pipe(pipe, data_item)
         data_item[0...-1].each_with_index do |att, i|
           if att.is_a? Numeric

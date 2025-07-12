@@ -15,14 +15,24 @@ module Ai4r
       FUNCTIONS = {
         sigmoid: ->(x) { 1.0 / (1.0 + Math.exp(-x)) },
         tanh: ->(x) { Math.tanh(x) },
-        relu: ->(x) { x > 0 ? x : 0 }
+        relu: ->(x) { x > 0 ? x : 0 },
+
+        softmax: lambda do |arr|
+          max = arr.max
+          exps = arr.map { |v| Math.exp(v - max) }
+          sum = exps.inject(:+)
+          exps.map { |e| e / sum }
+        end
       }
 
       DERIVATIVES = {
         sigmoid: ->(y) { y * (1 - y) },
         tanh: ->(y) { 1.0 - y**2 },
-        relu: ->(y) { y > 0 ? 1.0 : 0.0 }
+        relu: ->(y) { y > 0 ? 1.0 : 0.0 },
+        softmax: ->(y) { y * (1 - y) }
       }
+
+      module_function
     end
   end
 end

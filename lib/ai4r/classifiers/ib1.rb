@@ -28,11 +28,24 @@ module Ai4r
     # incrementally, and has a simple policy for tolerating missing values
     class IB1 < Classifier
       
-      attr_reader :data_set
+      attr_reader :data_set, :min_values, :max_values
+
+      parameters_info k: 'Number of nearest neighbors to consider. Default is 1.',
+        distance_function: 'Optional custom distance metric taking two instances.',
+        tie_break: 'Strategy used when neighbors vote tie. Valid values are :first (default) and :random.'
+
+      # @return [Object]
+      def initialize
+        @k = 1
+        @distance_function = nil
+        @tie_break = :first
+      end
 
       # Build a new IB1 classifier. You must provide a DataSet instance
       # as parameter. The last attribute of each item is considered as 
       # the item class.
+      # @param data_set [Object]
+      # @return [Object]
       def build(data_set)
         data_set.check_not_empty
         @data_set = data_set
@@ -41,28 +54,87 @@ module Ai4r
         data_set.data_items.each { |data_item| update_min_max(data_item[0...-1]) }
         return self
       end
+
+      # Append a new instance to the internal dataset. The last element is
+      # considered the class label. Minimum and maximum values for numeric
+      # attributes are updated so that future distance calculations remain
+      # normalized.
+      # @param data_item [Object]
+      # @return [Object]
+      def add_instance(data_item)
+        @data_set << data_item
+        update_min_max(data_item[0...-1])
+        self
+      end
       
       # You can evaluate new data, predicting its class.
       # e.g.
-      #   classifier.eval(['New York',  '<30', 'F'])  # => 'Y'      
+      #   classifier.eval(['New York',  '<30', 'F'])  # => 'Y'
+      #
+      # Evaluation does not update internal statistics, keeping the
+      # classifier state unchanged. Use +update_with_instance+ to
+      # incorporate new samples.
       def eval(data)
-        update_min_max(data)
-        min_distance = 1.0/0
-        klass = nil
-        @data_set.data_items.each do |train_item|
-          d = distance(data, train_item)
-          if d < min_distance
-            min_distance = d
-            klass = train_item.last
-          end
+
+        neighbors = @data_set.data_items.map do |train_item|
+          [distance(data, train_item), train_item.last]
         end
-        return klass
+        neighbors.sort_by! { |d, _| d }
+        k_limit = [@k, @data_set.data_items.length].min
+        k_neighbors = neighbors.first(k_limit)
+
+        # Include any other neighbors tied with the last selected distance
+        last_distance = k_neighbors.last[0]
+        neighbors[k_limit..-1].to_a.each do |dist, klass|
+          break if dist > last_distance
+          k_neighbors << [dist, klass]
+        end
+
+        counts = Hash.new(0)
+        k_neighbors.each { |_, klass| counts[klass] += 1 }
+        max_votes = counts.values.max
+        tied = counts.select { |_, v| v == max_votes }.keys
+
+        return tied.first if tied.length == 1
+
+        case @tie_break
+        when :random
+          tied.sample
+        else
+          k_neighbors.each { |_, klass| return klass if tied.include?(klass) }
+        end
+      end
+
+      # Returns an array with the +k+ nearest instances from the training set
+      # for the given +data+ item. The returned elements are the training data
+      # rows themselves, ordered from the closest to the furthest.
+      # @param data [Object]
+      # @param k [Object]
+      # @return [Object]
+      def neighbors_for(data, k)
+        update_min_max(data)
+        @data_set.data_items
+          .map { |train_item| [train_item, distance(data, train_item)] }
+          .sort_by { |pair| pair.last }
+          .first(k)
+          .map(&:first)
+      end
+
+      # Update min/max values with the provided instance attributes. If
+      # +learn+ is true, also append the instance to the training set so the
+      # classifier learns incrementally.
+      def update_with_instance(data_item, learn: false)
+        update_min_max(data_item[0...-1])
+        @data_set << data_item if learn
+        self
       end
       
       protected
 
       # We keep in the state the min and max value of each attribute,
       # to provide normalized distances between to values of a numeric attribute
+      # @param atts [Object]
+      # @return [Object]
       def update_min_max(atts)
         atts.each_with_index do |att, i|
           if att && att.is_a?(Numeric)
@@ -81,7 +153,11 @@ module Ai4r
       #  * 1 if both atts are missing
       #  * normalized numeric att value if other att value is missing and > 0.5
       #  * 1.0-normalized numeric att value if other att value is missing and < 0.5
+      # @param a [Object]
+      # @param b [Object]
+      # @return [Object]
       def distance(a, b)
+        return @distance_function.call(a, b) if @distance_function
         d = 0
         a.each_with_index do |att_a, i|
           att_b = b[i]
@@ -94,7 +170,7 @@ module Ai4r
             end
           elsif att_a.is_a? Numeric
             if att_b.is_a? Numeric
-              diff = norm(att_a, i) - norm(att_b, i);
+              diff = norm(att_a, i) - norm(att_b, i)
             else
               diff = norm(att_a, i)
               diff = 1.0 - diff if diff < 0.5
@@ -106,12 +182,15 @@ module Ai4r
           end
           d += diff * diff
         end
-        return d
+        d
       end
 
       # Returns normalized value att
       #
       # index is the index of the attribute in the instance.
+      # @param att [Object]
+      # @param index [Object]
+      # @return [Object]
       def norm(att, index)
         return 0 if @min_values[index].nil?
         return 1.0*(att - @min_values[index]) / (@max_values[index] -@min_values[index]);

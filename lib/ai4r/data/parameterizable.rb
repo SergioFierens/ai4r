@@ -17,6 +17,7 @@ module Ai4r
         # Get info on what can be parameterized on this algorithm.
         # It returns a hash with the following format:
         # { :param_name => "Info on the parameter" }
+        # @return [Object]
         def get_parameters_info
           return @_params_info_ || {}
         end
@@ -24,6 +25,8 @@ module Ai4r
         # Set info on what can be parameterized on this algorithm.
         # You must provide a hash with the following format:
         # { :param_name => "Info on the parameter" }        
+        # @param params_info [Object]
+        # @return [Object]
         def parameters_info(params_info)
           @_params_info_ = get_parameters_info.merge(params_info)
           params_info.keys.each do |param|
@@ -35,6 +38,8 @@ module Ai4r
       # Set parameter values on this algorithm instance.
       # You must provide a hash with the folowing format:
       # { :param_name => parameter_value }
+      # @param params [Object]
+      # @return [Object]
       def set_parameters(params)
         self.class.get_parameters_info.keys.each do | key |
           if self.respond_to?("#{key}=".to_sym)
@@ -47,6 +52,7 @@ module Ai4r
       # Get parameter values on this algorithm instance.
       # Returns a hash with the folowing format:
       # { :param_name => parameter_value }
+      # @return [Object]
       def get_parameters
         params = {}
         self.class.get_parameters_info.keys.each do | key |
@@ -55,6 +61,8 @@ module Ai4r
         return params
       end
 
+      # @param base [Object]
+      # @return [Object]
       def self.included(base)
         base.extend(ClassMethods)
       end

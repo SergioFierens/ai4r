@@ -1,0 +1,35 @@
+---
+data_labels:
+  - city
+  - age
+  - gender
+  - marketing_target
+data_items:
+  - - New York
+    - 20
+    - M
+    - Y
+  - - Chicago
+    - 25
+    - M
+    - Y
+  - - New York
+    - 28
+    - M
+    - Y
+  - - New York
+    - 35
+    - F
+    - N
+  - - Chicago
+    - 40
+    - F
+    - Y
+  - - New York
+    - 45
+    - F
+    - N
+  - - Chicago
+    - 55
+    - M
+    - N

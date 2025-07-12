@@ -18,6 +18,7 @@ require 'ai4r'
 
 ## Practical Examples
 
+* [User Guide](user_guide.md) – start with the basics and explore the library in depth.
 * **Genetic Algorithms** – optimization of the Travelling Salesman Problem.
 * **Neural Networks** – simple OCR recognition of visual patterns.
 * [Hopfield Networks](hopfield_network.md) – memory based recognition of noisy patterns.
@@ -26,6 +27,12 @@ require 'ai4r'
 * [PRISM](prism.md) – rule induction algorithm for discrete attributes.
 * [Naive Bayes Classifier](naive_bayes.md) – probabilistic classification for categorical data.
 * [Hyperpipes](hyperpipes.md) – baseline classifier using value ranges.
+* [IB1 Classifier](ib1.md) – instance-based nearest neighbour algorithm.
+
+## Contributing
+
+If you want to modify AI4R or write new tutorials, start with the
+[Contributor Guide](contributor_guide.md).
 
 ## Contact
 

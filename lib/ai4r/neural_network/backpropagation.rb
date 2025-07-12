@@ -2,7 +2,7 @@
 # Author::    Sergio Fierens
 # License::   MPL 1.1
 # Project::   ai4r
-# Url::       hhttps://github.com/SergioFierens/ai4r
+# Url::       https://github.com/SergioFierens/ai4r
 #
 # You can redistribute it and/or modify it under the terms of 
 # the Mozilla Public License version 1.1  as published by the 
@@ -92,32 +92,65 @@ module Ai4r
       
       include Ai4r::Data::Parameterizable
       
-      parameters_info :disable_bias => "If true, the algorithm will not use "+
+      parameters_info disable_bias: "If true, the algorithm will not use "+
             "bias nodes. False by default.",
-        :initial_weight_function => "f(n, i, j) must return the initial "+
+        initial_weight_function: "f(n, i, j) must return the initial "+
             "weight for the conection between the node i in layer n, and "+
             "node j in layer n+1. By default a random number in [-1, 1) range.",
-        :weight_init => "Built-in weight initialization strategy (:uniform, :xavier or :he). Default: :uniform",
-        :propagation_function => "By default: " +
+        weight_init: "Built-in weight initialization strategy (:uniform, :xavier or :he). Default: :uniform",
+        propagation_function: "By default: " +
             "lambda { |x| 1/(1+Math.exp(-1*(x))) }",
-        :derivative_propagation_function => "Derivative of the propagation "+
+        derivative_propagation_function: "Derivative of the propagation "+
             "function, based on propagation function output. By default: " +
             "lambda { |y| y*(1-y) }, where y=propagation_function(x)",
-        :activation => "Built-in activation function (:sigmoid, :tanh or :relu). Default: :sigmoid",
-        :learning_rate => "By default 0.25",
-        :momentum => "By default 0.1. Set this parameter to 0 to disable "+
+        activation: "Activation function per layer. Provide a symbol or an array of symbols (:sigmoid, :tanh, :relu or :softmax). Default: :sigmoid",
+        learning_rate: "By default 0.25",
+        momentum: "By default 0.1. Set this parameter to 0 to disable "+
             "momentum.",
-        :loss_function => "Loss function used when training (:mse or " +
+        loss_function: "Loss function used when training (:mse or " +
             ":cross_entropy). Default: :mse"
           
       attr_accessor :structure, :weights, :activation_nodes, :last_changes
-      # When the activation symbol changes, update internal lambdas
-      def activation=(symbol)
-        @activation = symbol
-        @propagation_function = Ai4r::NeuralNetwork::ActivationFunctions::FUNCTIONS[@activation] || Ai4r::NeuralNetwork::ActivationFunctions::FUNCTIONS[:sigmoid]
-        @derivative_propagation_function = Ai4r::NeuralNetwork::ActivationFunctions::DERIVATIVES[@activation] || Ai4r::NeuralNetwork::ActivationFunctions::DERIVATIVES[:sigmoid]
+
+      # When the activation parameter changes, update internal lambdas for each
+      # layer. Accepts a single symbol or an array of symbols (one for each
+      # layer except the input layer).
+      # @param symbols [Object]
+      # @return [Object]
+      def activation=(symbols)
+        symbols = [symbols] unless symbols.is_a?(Array)
+        layer_count = @structure.length - 1
+        if symbols.length == 1
+          symbols = Array.new(layer_count, symbols.first)
+        elsif symbols.length != layer_count
+          raise ArgumentError, "Activation array size must match number of layers (#{layer_count})"
+        end
+        @activation = symbols
+        @propagation_functions = @activation.map do |a|
+          Ai4r::NeuralNetwork::ActivationFunctions::FUNCTIONS[a] ||
+            Ai4r::NeuralNetwork::ActivationFunctions::FUNCTIONS[:sigmoid]
+        end
+        @derivative_functions = @activation.map do |a|
+          Ai4r::NeuralNetwork::ActivationFunctions::DERIVATIVES[a] ||
+            Ai4r::NeuralNetwork::ActivationFunctions::DERIVATIVES[:sigmoid]
+        end
       end
 
+      # @return [Object]
+      def activation
+        if @activation.is_a?(Array)
+          if @set_by_loss || (@loss_function == :cross_entropy && @activation_overridden)
+            @activation.first
+          else
+            @activation
+          end
+        else
+          @activation
+        end
+      end
+
+      # @param symbol [Object]
+      # @return [Object]
       def weight_init=(symbol)
         @weight_init = symbol
         @initial_weight_function = case symbol
@@ -128,6 +161,17 @@ module Ai4r
           else
             Ai4r::NeuralNetwork::WeightInitializations.uniform
           end
+      end
+
+      # @param symbol [Object]
+      # @return [Object]
+      def loss_function=(symbol)
+        @loss_function = symbol
+        if symbol == :cross_entropy && !@activation_overridden && !@custom_propagation
+          @set_by_loss = true
+          self.activation = :softmax
+          @activation_overridden = false
+        end
       end
       
       # Creates a new network specifying the its architecture.
@@ -142,10 +186,18 @@ module Ai4r
       #   net = Backpropagation.new([2, 1])   # 2 inputs
       #                                       # No hidden layer
       #                                       # 1 output      
+      # @param network_structure [Object]
+      # @param activation [Object]
+      # @param weight_init [Object]
+      # @return [Object]
       def initialize(network_structure, activation = :sigmoid, weight_init = :uniform)
         @structure = network_structure
         self.weight_init = weight_init
+        @custom_propagation = false
+        @set_by_loss = true
         self.activation = activation
+        @activation_overridden = (activation != :sigmoid)
+        @set_by_loss = false
         @disable_bias = false
         @learning_rate = 0.25
         @momentum = 0.1
@@ -153,6 +205,8 @@ module Ai4r
       end
       #     net.eval([25, 32.3, 12.8, 1.5])
       #         # =>  [0.83, 0.03]
+      # @param input_values [Object]
+      # @return [Object]
       def eval(input_values)
         check_input_dimension(input_values.length)
         init_network if !@weights
@@ -166,6 +220,8 @@ module Ai4r
       #     net.eval_result([25, 32.3, 12.8, 1.5])
       #         # eval gives [0.83, 0.03]
       #         # =>  0
+      # @param input_values [Object]
+      # @return [Object]
       def eval_result(input_values)
         result = eval(input_values)
         result.index(result.max)
@@ -178,6 +234,9 @@ module Ai4r
       # output: Expected output for the given input.
       #
       # This method returns the training loss according to +loss_function+.
+      # @param inputs [Object]
+      # @param outputs [Object]
+      # @return [Object]
       def train(inputs, outputs)
         eval(inputs)
         backpropagate(outputs)
@@ -185,6 +244,9 @@ module Ai4r
       end
 
       # Train a list of input/output pairs and return average loss.
+      # @param batch_inputs [Object]
+      # @param batch_outputs [Object]
+      # @return [Object]
       def train_batch(batch_inputs, batch_outputs)
         raise ArgumentError, "Inputs and outputs size mismatch" if batch_inputs.length != batch_outputs.length
         batch_size = batch_inputs.length
@@ -230,26 +292,53 @@ module Ai4r
       end
 
       # Train for a number of epochs over the dataset. Optionally define a batch size.
+      # Data can be shuffled between epochs passing +shuffle: true+ (default).
+      # Use +random_seed+ to make shuffling deterministic.
       # Returns an array with the average loss of each epoch.
+      # @return [Object]
       def train_epochs(data_inputs, data_outputs, epochs:, batch_size: 1,
-                       early_stopping_patience: nil, min_delta: 0.0)
+                       early_stopping_patience: nil, min_delta: 0.0,
+                       shuffle: true, random_seed: nil, &block)
         raise ArgumentError, "Inputs and outputs size mismatch" if data_inputs.length != data_outputs.length
         losses = []
         best_loss = Float::INFINITY
         patience = early_stopping_patience
         patience_counter = 0
-        epochs.times do
+        rng = random_seed.nil? ? Random.new : Random.new(random_seed)
+        epochs.times do |epoch|
           epoch_error = 0.0
+          epoch_inputs = data_inputs
+          epoch_outputs = data_outputs
+          if shuffle
+            indices = (0...data_inputs.length).to_a.shuffle(random: rng)
+            epoch_inputs = data_inputs.values_at(*indices)
+            epoch_outputs = data_outputs.values_at(*indices)
+          end
           index = 0
-          while index < data_inputs.length
-            batch_in = data_inputs[index, batch_size]
-            batch_out = data_outputs[index, batch_size]
+          while index < epoch_inputs.length
+            batch_in = epoch_inputs[index, batch_size]
+            batch_out = epoch_outputs[index, batch_size]
             batch_error = train_batch(batch_in, batch_out)
             epoch_error += batch_error * batch_in.length
             index += batch_size
           end
           epoch_loss = epoch_error / data_inputs.length.to_f
           losses << epoch_loss
+          if block
+            if block.arity >= 3
+              correct = 0
+              data_inputs.each_index do |i|
+                output = eval(data_inputs[i])
+                predicted = output.index(output.max)
+                expected = data_outputs[i].index(data_outputs[i].max)
+                correct += 1 if predicted == expected
+              end
+              accuracy = correct.to_f / data_inputs.length
+              block.call(epoch, epoch_loss, accuracy)
+            else
+              block.call(epoch, epoch_loss)
+            end
+          end
           if patience
             if best_loss - epoch_loss > min_delta
               best_loss = epoch_loss
@@ -265,6 +354,7 @@ module Ai4r
       
       # Initialize (or reset) activation nodes and weights, with the 
       # provided net structure and parameters.
+      # @return [Object]
       def init_network
         init_activation_nodes
         init_weights
@@ -281,6 +371,7 @@ module Ai4r
       # * propagation_function
       # * derivative_propagation_function
       # you must restore their values manually after loading the instance.
+      # @return [Object]
       def marshal_dump
         [
           @structure,
@@ -294,6 +385,8 @@ module Ai4r
         ]
       end
 
+      # @param ary [Object]
+      # @return [Object]
       def marshal_load(ary)
         @structure,
            @disable_bias,
@@ -309,6 +402,8 @@ module Ai4r
 
 
       # Propagate error backwards
+      # @param expected_output_values [Object]
+      # @return [Object]
       def backpropagate(expected_output_values)
         check_output_dimension(expected_output_values.length)
         calculate_output_deltas(expected_output_values)
@@ -317,22 +412,32 @@ module Ai4r
       end
       
       # Propagate values forward
+      # @param input_values [Object]
+      # @return [Object]
       def feedforward(input_values)
-        input_values.each_index do |input_index| 
+        input_values.each_index do |input_index|
           @activation_nodes.first[input_index] = input_values[input_index]
         end
         @weights.each_index do |n|
-          @structure[n+1].times do |j|
-            sum = 0.0
+          sums = Array.new(@structure[n + 1], 0.0)
+          @structure[n + 1].times do |j|
             @activation_nodes[n].each_index do |i|
-              sum += (@activation_nodes[n][i] * @weights[n][i][j])
+              sums[j] += (@activation_nodes[n][i] * @weights[n][i][j])
             end
-            @activation_nodes[n+1][j] = @propagation_function.call(sum)
           end
-        end        
+          if @activation[n] == :softmax
+            values = @propagation_functions[n].call(sums)
+            values.each_index { |j| @activation_nodes[n + 1][j] = values[j] }
+          else
+            sums.each_index do |j|
+              @activation_nodes[n + 1][j] = @propagation_functions[n].call(sums[j])
+            end
+          end
+        end
       end
       
       # Initialize neurons structure.
+      # @return [Object]
       def init_activation_nodes
         @activation_nodes = Array.new(@structure.length) do |n| 
           Array.new(@structure[n], 1.0)
@@ -344,6 +449,7 @@ module Ai4r
       
       # Initialize the weight arrays using function specified with the
       # initial_weight_function parameter
+      # @return [Object]
       def init_weights
         @weights = Array.new(@structure.length-1) do |i|
           nodes_origin = @activation_nodes[i].length
@@ -359,6 +465,7 @@ module Ai4r
       # Momentum usage need to know how much a weight changed in the 
       # previous training. This method initialize the @last_changes 
       # structure with 0 values.
+      # @return [Object]
       def init_last_changes
         @last_changes = Array.new(@weights.length) do |w|
           Array.new(@weights[w].length) do |i| 
@@ -368,18 +475,25 @@ module Ai4r
       end
       
       # Calculate deltas for output layer
+      # @param expected_values [Object]
+      # @return [Object]
       def calculate_output_deltas(expected_values)
         output_values = @activation_nodes.last
         output_deltas = []
+        func = @derivative_functions.last
         output_values.each_index do |output_index|
-          error = expected_values[output_index] - output_values[output_index]
-          output_deltas << @derivative_propagation_function.call(
-            output_values[output_index]) * error
+          if @loss_function == :cross_entropy && @activation == :softmax
+            output_deltas << (output_values[output_index] - expected_values[output_index])
+          else
+            error = expected_values[output_index] - output_values[output_index]
+            output_deltas << func.call(output_values[output_index]) * error
+          end
         end
         @deltas = [output_deltas]
       end
       
       # Calculate deltas for hidden layers
+      # @return [Object]
       def calculate_internal_deltas
         prev_deltas = @deltas.last
         (@activation_nodes.length-2).downto(1) do |layer_index|
@@ -389,8 +503,8 @@ module Ai4r
             @structure[layer_index+1].times do |k|
               error += prev_deltas[k] * @weights[layer_index][j][k]
             end
-            layer_deltas[j] = (@derivative_propagation_function.call(
-              @activation_nodes[layer_index][j]) * error)
+            func = @derivative_functions[layer_index - 1]
+            layer_deltas[j] = func.call(@activation_nodes[layer_index][j]) * error
           end
           prev_deltas = layer_deltas
           @deltas.unshift(layer_deltas)
@@ -398,6 +512,7 @@ module Ai4r
       end
       
       # Update weights after @deltas have been calculated.
+      # @return [Object]
       def update_weights
         (@weights.length-1).downto(0) do |n|
           @weights[n].each_index do |i|  
@@ -413,6 +528,8 @@ module Ai4r
       
       # Calculate quadratic error for an expected output value
       # Error = 0.5 * sum( (expected_value[i] - output_value[i])**2 )
+      # @param expected_output [Object]
+      # @return [Object]
       def calculate_error(expected_output)
         output_values = @activation_nodes.last
         error = 0.0
@@ -425,14 +542,24 @@ module Ai4r
 
       # Calculate loss for expected/actual vectors according to selected
       # loss_function (:mse or :cross_entropy).
+      # @param expected [Object]
+      # @param actual [Object]
+      # @return [Object]
       def calculate_loss(expected, actual)
         case @loss_function
         when :cross_entropy
           epsilon = 1e-12
           loss = 0.0
-          expected.each_index do |i|
-            p = [[actual[i], epsilon].max, 1 - epsilon].min
-            loss -= expected[i] * Math.log(p) + (1 - expected[i]) * Math.log(1 - p)
+          if @activation == :softmax
+            expected.each_index do |i|
+              p = [[actual[i], epsilon].max, 1 - epsilon].min
+              loss -= expected[i] * Math.log(p)
+            end
+          else
+            expected.each_index do |i|
+              p = [[actual[i], epsilon].max, 1 - epsilon].min
+              loss -= expected[i] * Math.log(p) + (1 - expected[i]) * Math.log(1 - p)
+            end
           end
           loss
         else
@@ -445,12 +572,16 @@ module Ai4r
         end
       end
       
+      # @param inputs [Object]
+      # @return [Object]
       def check_input_dimension(inputs)
         raise ArgumentError, "Wrong number of inputs. " +
           "Expected: #{@structure.first}, " +
           "received: #{inputs}." if inputs!=@structure.first
       end
 
+      # @param outputs [Object]
+      # @return [Object]
       def check_output_dimension(outputs)
         raise ArgumentError, "Wrong number of outputs. " +
           "Expected: #{@structure.last}, " +
