@@ -94,6 +94,32 @@ class PrismTest < Test::Unit::TestCase
     assert !classifier.matches_conditions(['New York', '<30', 'M', 'Y'], {"age_range" => "[50-80]"})
   end
 
+
+  def test_rules_have_unique_attributes
+    classifier = Prism.new.build(DataSet.new(:data_labels => @@data_labels,
+      :data_items => @@data_examples))
+    classifier.rules.each do |rule|
+      keys = rule[:conditions].keys
+      assert_equal keys.uniq, keys
+    end
+  end
+
+  def test_build_with_single_attribute
+    examples = [
+      ['red', 'apple'],
+      ['red', 'berry'],
+      ['blue', 'berry']
+    ]
+    labels = ['color', 'kind']
+    classifier = Prism.new.build(DataSet.new(:data_items => examples,
+                                             :data_labels => labels))
+    assert_not_nil classifier.rules
+    assert !classifier.rules.empty?
+    classifier.rules.each do |rule|
+      assert rule[:conditions].keys.size <= 1
+    end
+  end
+
   def test_numeric_data
     classifier = Prism.new.build(DataSet.new(
       :data_items => @@numeric_examples,
@@ -102,5 +128,6 @@ class PrismTest < Test::Unit::TestCase
     assert_equal('Y', classifier.eval(['New York', 20, 'M']))
     assert_equal('N', classifier.eval(['Chicago', 55, 'M']))
   end
+  
 end
 

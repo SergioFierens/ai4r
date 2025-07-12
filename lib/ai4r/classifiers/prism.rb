@@ -136,8 +136,9 @@ module Ai4r
           freq_table = build_freq_table(rule_instances, attributes, class_value)
           condition = get_condition(freq_table)
           rule[:conditions].merge!(condition)
-          rule_instances = rule_instances.select do |data| 
-            matches_conditions(data, condition) 
+          attributes.delete(condition.keys.first)
+          rule_instances = rule_instances.select do |data|
+            matches_conditions(data, condition)
           end
         end
         return rule
