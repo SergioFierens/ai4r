@@ -117,7 +117,7 @@ module Ai4r
       # A positive value means that the items is closer to the
       # splinter group than to its current cluster.
       def max_distance_difference(cluster_to_split, splinter_cluster)
-        max_diff = -1.0/0
+        max_diff = -Float::INFINITY
         max_diff_index = 0
         cluster_to_split.data_items.each_with_index do |item, index|
           dist_a = distance_sum(item, cluster_to_split) / (cluster_to_split.data_items.length-1)

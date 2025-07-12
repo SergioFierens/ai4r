@@ -53,7 +53,7 @@ module Ai4r
       # number_of_clusters are reached or no distance among clusters are below :distance
       def build(data_set, number_of_clusters = 1, **options)
         @data_set = data_set
-        distance = options[:distance] || (1.0/0)
+        distance = options[:distance] || (Float::INFINITY)
 
         @index_clusters = create_initial_index_clusters
         create_distance_matrix(data_set)
@@ -228,7 +228,7 @@ module Ai4r
       # Returns ans array with the indexes of the two closest
       # clusters => [index_cluster_a, index_cluster_b]
       def get_closest_clusters(index_clusters)
-        min_distance = 1.0/0
+        min_distance = Float::INFINITY
         closest_clusters = [1, 0]
         index_clusters.each_index do |index_a|
           index_a.times do |index_b|
@@ -243,7 +243,7 @@ module Ai4r
       end
 
       def distance_between_item_and_cluster(data_item, cluster)
-        min_dist = 1.0/0
+        min_dist = Float::INFINITY
         cluster.data_items.each do |another_item|
           dist = @distance_function.call(data_item, another_item)
           min_dist = dist if dist < min_dist
