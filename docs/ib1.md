@@ -1,3 +1,4 @@
+
 # IB1 Instance-Based Classifier
 
 IB1 is the simplest instance-based learning algorithm. It predicts the class of a new item using the single nearest neighbour from the training set. Numeric attributes are normalised when computing distances while nominal attributes are compared for equality. Missing values are tolerated by assigning a maximum penalty.
@@ -23,4 +24,5 @@ puts "Prediction for #{sample.inspect}: #{classifier.eval(sample)}"
 ```
 
 The classifier automatically updates attribute ranges as new examples are seen and returns the class of the closest training instance.
+
 
