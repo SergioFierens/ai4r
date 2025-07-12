@@ -68,12 +68,16 @@ module Ai4r
       # Load data items from csv file
       # @param filepath [Object]
       # @return [Object]
-      def load_csv(filepath)
-        items = []
-        open_csv_file(filepath) do |entry|
-          items << entry
+      def load_csv(filepath, parse_numeric: false)
+        if parse_numeric
+          parse_csv(filepath)
+        else
+          items = []
+          open_csv_file(filepath) do |entry|
+            items << entry
+          end
+          set_data_items(items)
         end
-        set_data_items(items)
       end
 
       # Open a CSV file and yield each row to the provided block.
@@ -89,8 +93,8 @@ module Ai4r
       # Load data items from csv file. The first row is used as data labels.
       # @param filepath [Object]
       # @return [Object]
-      def load_csv_with_labels(filepath)
-        load_csv(filepath)
+      def load_csv_with_labels(filepath, parse_numeric: false)
+        load_csv(filepath, parse_numeric: parse_numeric)
         @data_labels = @data_items.shift
         return self
       end
@@ -112,9 +116,7 @@ module Ai4r
       # @param filepath [Object]
       # @return [Object]
       def parse_csv_with_labels(filepath)
-        parse_csv(filepath)
-        @data_labels = @data_items.shift
-        return self
+        load_csv_with_labels(filepath, parse_numeric: true)
       end
 
       # Set data labels.
