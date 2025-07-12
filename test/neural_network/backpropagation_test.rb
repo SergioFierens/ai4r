@@ -77,11 +77,27 @@ module Ai4r
       end
       def test_activation_parameter
         net = Backpropagation.new([2, 1], :tanh)
-        assert_equal :tanh, net.activation
-        assert_in_delta Math.tanh(0.5), net.instance_variable_get(:@propagation_function).call(0.5), 0.0001
+        assert_equal [:tanh], net.activation
+        assert_in_delta Math.tanh(0.5), net.instance_variable_get(:@propagation_functions).first.call(0.5), 0.0001
         net.set_parameters(activation: :relu)
-        assert_equal :relu, net.activation
-        assert_equal 0.0, net.instance_variable_get(:@derivative_propagation_function).call(-1.0)
+        assert_equal [:relu], net.activation
+        assert_equal 0.0, net.instance_variable_get(:@derivative_functions).first.call(-1.0)
+      end
+
+      def test_layer_specific_activation
+        net = Backpropagation.new([2, 2, 2], [:relu, :softmax])
+        net.disable_bias = true
+        net.init_network
+        net.weights = [
+          [[1.0, -1.0], [1.0, -1.0]],
+          [[1.0, 0.0], [0.0, 1.0]]
+        ]
+        net.feedforward([1, 1])
+        assert_equal [2.0, 0.0], net.activation_nodes[1]
+        exp2 = Math.exp(2)
+        soft = [exp2 / (exp2 + 1), 1.0 / (exp2 + 1)]
+        assert_in_delta soft[0], net.activation_nodes.last[0], 0.000001
+        assert_in_delta soft[1], net.activation_nodes.last[1], 0.000001
       end
 
       def test_weight_init_parameter
