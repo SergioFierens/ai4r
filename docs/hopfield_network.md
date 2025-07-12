@@ -73,6 +73,14 @@ trace = net.train(data).eval(noisy_pattern, trace: true)
 
 ```
 
+You can also change the weight scaling factor:
+
+```ruby
+net = Ai4r::NeuralNetwork::Hopfield.new
+net.set_parameters(weight_scaling: 0.5)
+net.train(data)
+```
+
 ## Theory
 
 Each pattern is stored as a minimum of an energy function defined by the weight matrix. During evaluation the network repeatedly updates random neurons based on the weighted sum of their neighbours until the pattern stabilizes. If the input resembles one of the stored patterns the network will typically converge to it and thus clean the noise.
