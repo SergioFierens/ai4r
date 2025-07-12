@@ -346,29 +346,18 @@ module Ai4r
           @activation_nodes.first[input_index] = input_values[input_index]
         end
         @weights.each_index do |n|
-          sums = Array.new(@structure[n+1], 0.0)
-          @structure[n+1].times do |j|
+          sums = Array.new(@structure[n + 1], 0.0)
+          @structure[n + 1].times do |j|
             @activation_nodes[n].each_index do |i|
               sums[j] += (@activation_nodes[n][i] * @weights[n][i][j])
             end
           end
-          if n == @weights.length - 1 && @activation == :softmax
-            exps = sums.map { |s| @propagation_function.call(s) }
-            total = exps.inject(0.0) { |a, v| a + v }
-            @activation_nodes[n+1][0...@structure[n+1]] = exps.map { |e| e / total }
-          else
-            @structure[n+1].times do |j|
-              @activation_nodes[n+1][j] = @propagation_function.call(sums[j])
-            end
-          end
-            end
-          end
           if @activation[n] == :softmax
             values = @propagation_functions[n].call(sums)
-            values.each_index { |j| @activation_nodes[n+1][j] = values[j] }
+            values.each_index { |j| @activation_nodes[n + 1][j] = values[j] }
           else
             sums.each_index do |j|
-              @activation_nodes[n+1][j] = @propagation_functions[n].call(sums[j])
+              @activation_nodes[n + 1][j] = @propagation_functions[n].call(sums[j])
             end
           end
         end
