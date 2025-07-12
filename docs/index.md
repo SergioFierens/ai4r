@@ -28,6 +28,11 @@ require 'ai4r'
 * [Hyperpipes](hyperpipes.md) – baseline classifier using value ranges.
 * [IB1 Classifier](ib1.md) – instance-based nearest neighbour algorithm.
 
+## Contributing
+
+If you want to modify AI4R or write new tutorials, start with the
+[Contributor Guide](contributor_guide.md).
+
 ## Contact
 
 Questions and contributions are welcome. Contact [Sergio Fierens](https://github.com/SergioFierens) at `sergio dot fierens at gmail dot com`.
