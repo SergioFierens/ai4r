@@ -36,6 +36,11 @@ module Ai4r
         data_set = Ai4r::Data::DataSet.new :data_items => [[1,1,0,0,1,1,0,0]]
         assert_equal [-1,-1,-1,-1,-1,-1,-1,-1], net.initialize_nodes(data_set)
       end
+
+      def test_default_update_strategy
+        net = Hopfield.new
+        assert_equal :async_random, net.update_strategy
+      end
       
       def test_initialize_weights
         net = Hopfield.new
