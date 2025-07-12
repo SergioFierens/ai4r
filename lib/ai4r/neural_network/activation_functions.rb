@@ -31,6 +31,8 @@ module Ai4r
         relu: ->(y) { y > 0 ? 1.0 : 0.0 },
         softmax: ->(y) { y * (1 - y) }
       }
+
+      module_function
     end
   end
 end
