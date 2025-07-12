@@ -122,6 +122,52 @@ module Ai4r
         assert history[0] > history[1]
       end
 
+      def test_train_epochs_shuffling
+        net = Backpropagation.new([1, 1])
+        order = []
+        net.define_singleton_method(:train_batch) do |batch_in, _|
+          order << batch_in.first.first
+          0.0
+        end
+        inputs = [[0], [1], [2], [3]]
+        outputs = [[0], [1], [2], [3]]
+        net.train_epochs(inputs, outputs, epochs: 1, batch_size: 1, shuffle: false)
+        assert_equal [0, 1, 2, 3], order
+
+        order.clear
+        seed = 42
+        net.train_epochs(inputs, outputs, epochs: 1, batch_size: 1,
+                         shuffle: true, random_seed: seed)
+        expected = (0...4).to_a.shuffle(random: Random.new(seed))
+        assert_equal expected, order
+      end
+
+      def test_train_epochs_shuffling_reproducible
+        inputs = [[0], [1], [2], [3]]
+        outputs = [[0], [1], [2], [3]]
+        seed = 99
+
+        order1 = []
+        net1 = Backpropagation.new([1, 1])
+        net1.define_singleton_method(:train_batch) do |batch_in, _|
+          order1 << batch_in.first.first
+          0.0
+        end
+        net1.train_epochs(inputs, outputs, epochs: 1, batch_size: 1,
+                          shuffle: true, random_seed: seed)
+
+        order2 = []
+        net2 = Backpropagation.new([1, 1])
+        net2.define_singleton_method(:train_batch) do |batch_in, _|
+          order2 << batch_in.first.first
+          0.0
+        end
+        net2.train_epochs(inputs, outputs, epochs: 1, batch_size: 1,
+                          shuffle: true, random_seed: seed)
+
+        assert_equal order1, order2
+      end
+
 
     end
 
