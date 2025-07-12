@@ -9,7 +9,8 @@
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require 'ai4r'
+require 'ai4r/neural_network/hopfield'
+require 'ai4r/data/data_set'
 require 'test/unit'
 
 Ai4r::NeuralNetwork::Hopfield.send(:public, *Ai4r::NeuralNetwork::Hopfield.protected_instance_methods)  
@@ -34,6 +35,11 @@ module Ai4r
         net = Hopfield.new
         data_set = Ai4r::Data::DataSet.new :data_items => [[1,1,0,0,1,1,0,0]]
         assert_equal [-1,-1,-1,-1,-1,-1,-1,-1], net.initialize_nodes(data_set)
+      end
+
+      def test_default_update_strategy
+        net = Hopfield.new
+        assert_equal :async_random, net.update_strategy
       end
       
       def test_initialize_weights

@@ -52,6 +52,8 @@ The resulting plot shows how the energy decreases as the network converges.
 * `active_node_value` – value representing an active neuron (default `1`).
 * `inactive_node_value` – value representing an inactive neuron (default `-1`).
 * `threshold` – activation threshold used during propagation (default `0`).
+* `update_strategy` – update mode used during evaluation. `:async_random` (default) updates one randomly chosen neuron each step, while
+  `:async_sequential` and `:synchronous` offer alternative behaviors.
 
 ```ruby
 net.set_parameters(eval_iterations: 1000, threshold: 0.2)
