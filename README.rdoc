@@ -68,15 +68,44 @@ z-score normalization, but you can also use `:minmax` to scale values to the
 == KMeans random seed
 
 The ``random_seed'' parameter makes KMeans deterministic by seeding Ruby's
-RNG before choosing initial centroids.
+RNG before choosing initial centroids. It's often a good idea to normalize
+numeric attributes before clustering.
 
   data = Ai4r::Data::DataSet.new(:data_items => [[1, 2], [3, 4], [5, 6]])
+  data.normalize!
   kmeans = Ai4r::Clusterers::KMeans.new
   kmeans.set_parameters(:random_seed => 1).build(data, 2)
 
+== SOM distance metric
+
+Layers and nodes accept an optional ``distance_metric'' parameter.  It controls
+how neighbourhood distances are computed.  Supported metrics are
+``:chebyshev'' (default), ``:euclidean'' and ``:manhattan''.
+
+  layer = Ai4r::Som::TwoPhaseLayer.new(10, distance_metric: :euclidean)
+  som = Ai4r::Som::Som.new(4, 8, 8, layer)
+  som.initiate_map
+
+== Clusterer examples
+
+Scripts under `examples/clusterers` showcase additional features:
+
+* `kmeans_custom_example.rb` runs KMeans with a custom distance function and a
+  fixed seed.  It prints the final SSE and how many iterations were needed.
+* `hierarchical_dendrogram_example.rb` builds a hierarchical clusterer and
+  outputs a simple dendrogram using the recorded tree.
+
+== Checking eval availability
+
+Some hierarchical algorithms cannot classify new items once built.  Use
+`supports_eval?` to verify before calling `eval`:
+
+  clusterer = Ai4r::Clusterers::AverageLinkage.new.build(data, 2)
+  clusterer.supports_eval? # => false
+
 = Documentation
 
-Tutorials for genetic algorithms, ID3 decision trees, neural networks and a Naive Bayes classifier are available in the +docs/+ directory.
+Tutorials for genetic algorithms, ID3 decision trees, Hyperpipes, neural networks and a Naive Bayes classifier are available in the +docs/+ directory.
 
 = Disclaimer
 

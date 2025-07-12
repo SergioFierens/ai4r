@@ -10,6 +10,7 @@
 
 require_relative '../data/parameterizable'
 require_relative 'layer'
+require_relative 'distance_metrics'
 
 module Ai4r
 
@@ -35,7 +36,8 @@ module Ai4r
                       :instantiated_weight => "holds the very first weight",
                       :x => "holds the row ID of the unit in the map",
                       :y => "holds the column ID of the unit in the map",
-                      :id => "id of the node"      
+                      :id => "id of the node",
+                      :distance_metric => "metric used to compute node distance"
 
       # creates an instance of Node and instantiates the weights
       #
@@ -46,6 +48,7 @@ module Ai4r
       def self.create(id, rows, columns, dimensions, options = {})
         n = Node.new
         n.id = id
+        n.distance_metric = options[:distance_metric] || :chebyshev
         n.instantiate_weight dimensions, options
         n.x = id % columns
         n.y = (id / columns.to_f).to_i
@@ -90,13 +93,10 @@ module Ai4r
       # 2 2 2 2 2
       # 0 being the current node
       def distance_to_node(node)
-        max((self.x - node.x).abs, (self.y - node.y).abs)
-      end
-
-      private
-
-      def max(a, b)
-        a > b ? a : b
+        dx = self.x - node.x
+        dy = self.y - node.y
+        metric = (@distance_metric || :chebyshev)
+        DistanceMetrics.send(metric, dx, dy)
       end
 
     end

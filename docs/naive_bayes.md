@@ -1,3 +1,4 @@
+
 # Naive Bayes Classifier
 
 Naive Bayes uses probability theory to predict the most likely class for a data point. Each attribute is assumed to be independent given the class. During training the algorithm records how often each attribute value occurs with every class and converts these counts into probabilities. When evaluating new data the class with the highest posterior probability is returned.
@@ -25,3 +26,15 @@ puts classifier.get_probability_map(['Red', 'SUV', 'Domestic'])
 ```
 
 The last line prints a hash with the probability for each class.
+
+# Naive Bayes
+
+`Ai4r::Classifiers::NaiveBayes` computes several probability tables when built. These attributes are exposed as read-only accessors:
+
+* `class_prob` – Probability of each class in the training set.
+* `pcc` – Count of occurrences for every attribute value and class. Layout is `[attribute][value][class]`.
+* `pcp` – Conditional probability of an attribute value given a class. Shares the same layout as `pcc` and is derived from it using the `:m` parameter.
+
+Inspecting these arrays helps you understand the learned model.
+
+
