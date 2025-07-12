@@ -76,14 +76,25 @@ module Ai4r
       #         'Y'
       def get_rules
         out = "if #{join_terms(@rules.first)} then #{then_clause(@rules.first)}"
-        @rules[1...-1].each do |rule| 
+        @rules[1...-1].each do |rule|
           out += "\nelsif #{join_terms(rule)} then #{then_clause(rule)}"
         end
         out += "\nelse #{then_clause(@rules.last)}" if @rules.size > 1
         out += "\nend"
         return out
       end
-      
+
+      # Returns the generated rules as a Ruby data structure.  Each rule is a
+      # hash containing a ``:class_value'' key and a ``:conditions'' hash with
+      # attribute/value pairs.  This method is useful for iterating over the
+      # rules without evaluating Ruby code.
+      def rules_as_hash
+        @rules.map do |rule|
+          { :class_value => rule[:class_value],
+            :conditions  => rule[:conditions].dup }
+        end
+      end
+
       protected
       
       def get_attr_value(data, attr)

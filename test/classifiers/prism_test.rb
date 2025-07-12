@@ -25,6 +25,13 @@ class PrismTest < Test::Unit::TestCase
               ]
 
   @@data_labels = [ 'city', 'age_range', 'gender', 'marketing_target'  ]
+
+  EXPECTED_RULES = [
+    { :class_value => 'Y', :conditions => { 'age_range' => '<30' } },
+    { :class_value => 'Y', :conditions => { 'age_range' => '>80' } },
+    { :class_value => 'Y', :conditions => { 'city' => 'Chicago', 'age_range' => '[30-50)' } },
+    { :class_value => 'N', :conditions => {} }
+  ]
   
   def test_build
     assert_raise(ArgumentError) { Prism.new.build(DataSet.new) } 
@@ -53,7 +60,7 @@ class PrismTest < Test::Unit::TestCase
   end
   
   def test_get_rules
-    classifier = Prism.new.build(DataSet.new(:data_items => @@data_examples, 
+    classifier = Prism.new.build(DataSet.new(:data_items => @@data_examples,
         :data_labels => @@data_labels))
     marketing_target = nil
     age_range = nil
@@ -70,8 +77,14 @@ class PrismTest < Test::Unit::TestCase
     eval(classifier.get_rules) 
     assert_equal("N", marketing_target)
     age_range = '[50-80]'
-    eval(classifier.get_rules) 
-    assert_equal("N", marketing_target)   
+    eval(classifier.get_rules)
+    assert_equal("N", marketing_target)
+  end
+
+  def test_rules_as_hash
+    classifier = Prism.new.build(DataSet.new(:data_items => @@data_examples,
+        :data_labels => @@data_labels))
+    assert_equal(EXPECTED_RULES, classifier.rules_as_hash)
   end
     
   def test_matches_conditions

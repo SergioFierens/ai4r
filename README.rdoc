@@ -74,6 +74,17 @@ RNG before choosing initial centroids.
   kmeans = Ai4r::Clusterers::KMeans.new
   kmeans.set_parameters(:random_seed => 1).build(data, 2)
 
+== Prism rule hashes
+
+Prism exposes rules as Ruby hashes so you can iterate over them without
+evaluating Ruby code:
+
+  data = Ai4r::Data::DataSet.new.load_csv_with_labels 'examples/classifiers/zero_one_r_data.csv'
+  prism = Ai4r::Classifiers::Prism.new.build(data)
+  prism.rules_as_hash.each do |rule|
+    puts "If #{rule[:conditions]} then marketing_target='#{rule[:class_value]}'"
+  end
+
 = Documentation
 
 Tutorials for genetic algorithms, ID3 decision trees and neural networks are available in the +docs/+ directory.
