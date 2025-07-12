@@ -28,7 +28,7 @@ module Ai4r
         # @param params_info [Object]
         # @return [Object]
         def parameters_info(params_info)
-          @_params_info_ = params_info
+          @_params_info_ = get_parameters_info.merge(params_info)
           params_info.keys.each do |param|
             attr_accessor param
           end

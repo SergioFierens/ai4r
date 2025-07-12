@@ -25,10 +25,9 @@ module Ai4r
       attr_reader :data_set, :number_of_clusters
       attr_reader :clusters, :centroids, :iterations
       attr_reader :history
-      
+
       parameters_info(
-        max_iterations: "Maximum number of iterations to " +
-          "build the clusterer. By default it is uncapped.",
+        max_iterations: "Maximum number of iterations to build the clusterer. By default it is uncapped.",
         distance_function: "Custom implementation of distance function. " +
           "It must be a closure receiving two data items and return the " +
           "distance between them. By default, this algorithm uses " +
@@ -37,7 +36,7 @@ module Ai4r
           "centroid of a cluster. It must be a closure receiving an array of " +
           "data sets, and return an array of data items, representing the " +
           "centroids of for each data set. " +
-          "By default, this algorithm returns a data items using the mode "+
+          "By default, this algorithm returns a data items using the mode " +
           "or mean of each attribute on each data set.",
         centroid_indices: "Indices of data items (indexed from 0) to be " +
           "the initial centroids.  Otherwise, the initial centroids will be " +
@@ -55,7 +54,6 @@ module Ai4r
           "The best run (lowest SSE) will be kept.",
         track_history: "Keep centroids and assignments for each iteration " +
           "when building the clusterer."
-
       )
       
       # @return [Object]
