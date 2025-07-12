@@ -15,13 +15,15 @@ module Ai4r
       FUNCTIONS = {
         sigmoid: ->(x) { 1.0 / (1.0 + Math.exp(-x)) },
         tanh: ->(x) { Math.tanh(x) },
-        relu: ->(x) { x > 0 ? x : 0 }
+        relu: ->(x) { x > 0 ? x : 0 },
+        softmax: ->(x) { Math.exp(x) }
       }
 
       DERIVATIVES = {
         sigmoid: ->(y) { y * (1 - y) },
         tanh: ->(y) { 1.0 - y**2 },
-        relu: ->(y) { y > 0 ? 1.0 : 0.0 }
+        relu: ->(y) { y > 0 ? 1.0 : 0.0 },
+        softmax: ->(y) { y * (1 - y) }
       }
     end
   end

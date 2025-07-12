@@ -111,11 +111,26 @@ module Ai4r
             ":cross_entropy). Default: :mse"
           
       attr_accessor :structure, :weights, :activation_nodes, :last_changes
+
+      # Track if user manually changed activation or propagation lambdas
+      def propagation_function=(func)
+        @custom_propagation = true
+        @propagation_function = func
+      end
+
+      def derivative_propagation_function=(func)
+        @custom_propagation = true
+        @derivative_propagation_function = func
+      end
       # When the activation symbol changes, update internal lambdas
       def activation=(symbol)
         @activation = symbol
         @propagation_function = Ai4r::NeuralNetwork::ActivationFunctions::FUNCTIONS[@activation] || Ai4r::NeuralNetwork::ActivationFunctions::FUNCTIONS[:sigmoid]
         @derivative_propagation_function = Ai4r::NeuralNetwork::ActivationFunctions::DERIVATIVES[@activation] || Ai4r::NeuralNetwork::ActivationFunctions::DERIVATIVES[:sigmoid]
+        unless @set_by_loss
+          @activation_overridden = true
+        end
+        @set_by_loss = false
       end
 
       def weight_init=(symbol)
@@ -128,6 +143,15 @@ module Ai4r
           else
             Ai4r::NeuralNetwork::WeightInitializations.uniform
           end
+      end
+
+      def loss_function=(symbol)
+        @loss_function = symbol
+        if symbol == :cross_entropy && !@activation_overridden && !@custom_propagation
+          @set_by_loss = true
+          self.activation = :softmax
+          @activation_overridden = false
+        end
       end
       
       # Creates a new network specifying the its architecture.
@@ -145,7 +169,11 @@ module Ai4r
       def initialize(network_structure, activation = :sigmoid, weight_init = :uniform)
         @structure = network_structure
         self.weight_init = weight_init
+        @custom_propagation = false
+        @set_by_loss = true
         self.activation = activation
+        @activation_overridden = (activation != :sigmoid)
+        @set_by_loss = false
         @disable_bias = false
         @learning_rate = 0.25
         @momentum = 0.1
@@ -287,14 +315,22 @@ module Ai4r
           @activation_nodes.first[input_index] = input_values[input_index]
         end
         @weights.each_index do |n|
+          sums = Array.new(@structure[n+1], 0.0)
           @structure[n+1].times do |j|
-            sum = 0.0
             @activation_nodes[n].each_index do |i|
-              sum += (@activation_nodes[n][i] * @weights[n][i][j])
+              sums[j] += (@activation_nodes[n][i] * @weights[n][i][j])
             end
-            @activation_nodes[n+1][j] = @propagation_function.call(sum)
           end
-        end        
+          if n == @weights.length - 1 && @activation == :softmax
+            exps = sums.map { |s| @propagation_function.call(s) }
+            total = exps.inject(0.0) { |a, v| a + v }
+            @activation_nodes[n+1][0...@structure[n+1]] = exps.map { |e| e / total }
+          else
+            @structure[n+1].times do |j|
+              @activation_nodes[n+1][j] = @propagation_function.call(sums[j])
+            end
+          end
+        end
       end
       
       # Initialize neurons structure.
@@ -337,9 +373,13 @@ module Ai4r
         output_values = @activation_nodes.last
         output_deltas = []
         output_values.each_index do |output_index|
-          error = expected_values[output_index] - output_values[output_index]
-          output_deltas << @derivative_propagation_function.call(
-            output_values[output_index]) * error
+          if @loss_function == :cross_entropy && @activation == :softmax
+            output_deltas << (output_values[output_index] - expected_values[output_index])
+          else
+            error = expected_values[output_index] - output_values[output_index]
+            output_deltas << @derivative_propagation_function.call(
+              output_values[output_index]) * error
+          end
         end
         @deltas = [output_deltas]
       end
@@ -395,9 +435,16 @@ module Ai4r
         when :cross_entropy
           epsilon = 1e-12
           loss = 0.0
-          expected.each_index do |i|
-            p = [[actual[i], epsilon].max, 1 - epsilon].min
-            loss -= expected[i] * Math.log(p) + (1 - expected[i]) * Math.log(1 - p)
+          if @activation == :softmax
+            expected.each_index do |i|
+              p = [[actual[i], epsilon].max, 1 - epsilon].min
+              loss -= expected[i] * Math.log(p)
+            end
+          else
+            expected.each_index do |i|
+              p = [[actual[i], epsilon].max, 1 - epsilon].min
+              loss -= expected[i] * Math.log(p) + (1 - expected[i]) * Math.log(1 - p)
+            end
           end
           loss
         else
