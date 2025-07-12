@@ -69,14 +69,20 @@ module Ai4r
       
       # You can evaluate new data, predicting its class.
       # e.g.
-      #   classifier.eval(['New York',  '<30', 'F'])  # => 'Y'      
-      # @param data [Object]
-      # @return [Object]
+      #   classifier.eval(['New York',  '<30', 'F'])  # => 'Y'
+      #
+      # Evaluation does not update internal statistics, keeping the
+      # classifier state unchanged. Use +update_with_instance+ to
+      # incorporate new samples.
       def eval(data)
-        update_min_max(data)
-        metric = @distance_function || method(:distance)
-        neighbors = @data_set.data_items.map do |train_item|
-          [metric.call(data, train_item), train_item.last]
+        min_distance = 1.0/0
+        klass = nil
+        @data_set.data_items.each do |train_item|
+          d = distance(data, train_item)
+          if d < min_distance
+            min_distance = d
+            klass = train_item.last
+          end
         end
         neighbors.sort_by! { |d, _| d }
         k_neighbors = neighbors.first([@k, @data_set.data_items.length].min)
@@ -109,6 +115,15 @@ module Ai4r
           .sort_by { |pair| pair.last }
           .first(k)
           .map(&:first)
+      end
+
+      # Update min/max values with the provided instance attributes. If
+      # +learn+ is true, also append the instance to the training set so the
+      # classifier learns incrementally.
+      def update_with_instance(data_item, learn: false)
+        update_min_max(data_item[0...-1])
+        @data_set << data_item if learn
+        self
       end
       
       protected
