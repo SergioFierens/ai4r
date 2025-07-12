@@ -85,7 +85,7 @@ module Ai4r
       end
 
       def test_weight_options
-        som = Som.new 2, 2, 2, Layer.new(3, 3), { range: -1..0, seed: 1 }
+        som = Som.new 2, 2, 2, Layer.new(3, 3), { range: -1..0, random_seed: 1 }
         som.initiate_map
         som.nodes.each do |node|
           node.weights.each do |w|
@@ -95,7 +95,15 @@ module Ai4r
         end
 
         other = Som.new 2, 2, 2, Layer.new(3, 3)
-        other.set_parameters({ :init_weight_options => { range: -1..0, seed: 1 } })
+        other.set_parameters({ :init_weight_options => { range: -1..0, random_seed: 1 } })
+        other.initiate_map
+        assert_equal som.nodes.map(&:weights), other.nodes.map(&:weights)
+      end
+
+      def test_seed_alias
+        som = Som.new 2, 2, 2, Layer.new(3, 3), { range: -1..0, seed: 2 }
+        som.initiate_map
+        other = Som.new 2, 2, 2, Layer.new(3, 3), { range: -1..0, random_seed: 2 }
         other.initiate_map
         assert_equal som.nodes.map(&:weights), other.nodes.map(&:weights)
       end

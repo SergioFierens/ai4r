@@ -1,6 +1,6 @@
-require File.dirname(__FILE__) + '/../../lib/ai4r/classifiers/naive_bayes'
-require File.dirname(__FILE__) + '/../../lib/ai4r/data/data_set'
-require File.dirname(__FILE__) + '/../../lib/ai4r/classifiers/id3'
+require_relative '../../lib/ai4r/classifiers/naive_bayes'
+require_relative '../../lib/ai4r/data/data_set'
+require_relative '../../lib/ai4r/classifiers/id3'
 require 'benchmark'
 
 include Ai4r::Classifiers

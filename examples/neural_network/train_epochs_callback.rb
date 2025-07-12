@@ -4,7 +4,7 @@
 #
 # Simple example showing how to use Backpropagation#train_epochs with a callback.
 
-require File.dirname(__FILE__) + '/../../lib/ai4r/neural_network/backpropagation'
+require_relative '../../lib/ai4r/neural_network/backpropagation'
 
 inputs  = [[0,0], [0,1], [1,0], [1,1]]
 outputs = [[0], [1], [1], [0]]

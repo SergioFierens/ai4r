@@ -1,5 +1,5 @@
-require File.dirname(__FILE__) + '/../../lib/ai4r/classifiers/simple_linear_regression'
-require File.dirname(__FILE__) + '/../../lib/ai4r/data/data_set'
+require_relative '../../lib/ai4r/classifiers/simple_linear_regression'
+require_relative '../../lib/ai4r/data/data_set'
 
 include Ai4r::Classifiers
 include Ai4r::Data

@@ -19,6 +19,9 @@ module Ai4r
         assert_equal 120, set.data_items.length
         assert_equal ["zone", "rooms", "size", "price"], set.data_labels
         assert_equal ["Moron Sur (GBA)","2","[28 m2 - 39 m2]","[29K-35K]"], set.data_items.first
+
+        set = DataSet.new.load_csv_with_labels("#{File.dirname(__FILE__)}/data_set.csv", parse_numeric: true)
+        assert_equal ["Moron Sur (GBA)",2.0,"[28 m2 - 39 m2]","[29K-35K]"], set.data_items.first
       end
 
       def test_parse_csv_with_labels

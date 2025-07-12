@@ -77,6 +77,7 @@ module Ai4r
       def eval(data)
         neighbors = @data_set.data_items.map do |train_item|
           [distance(data, train_item), train_item.last]
+
         end
         neighbors.sort_by! { |d, _| d }
         k_neighbors = neighbors.first([@k, @data_set.data_items.length].min)
