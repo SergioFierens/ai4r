@@ -62,16 +62,18 @@ module Ai4r
                       :dimension => "sets the dimension of the input",
                       :layer => "instance of a layer, defines how the training algorithm works",
                       :epoch => "number of finished epochs",
-                      :init_weight_options => "Hash with :range and :seed to initialize node weights"
+                      :init_weight_options => "Hash with :range and :random_seed to initialize node weights (also accepts :seed)"
 
       # @param dim [Object]
       # @param rows [Object]
       # @param columns [Object]
       # @param layer [Object]
       # @param init_weight_options [Object]
-      # @param seed [Object]
+      #   Hash with :range and :random_seed used when initializing node weights.
+      #   The deprecated :seed key is still supported.
+      # @param random_seed [Object]
       # @return [Object]
-      def initialize(dim, rows, columns, layer, init_weight_options = { range: 0..1, seed: nil })
+      def initialize(dim, rows, columns, layer, init_weight_options = { range: 0..1, random_seed: nil })
         @layer = layer
         @dimension = dim
         @rows = rows
@@ -79,7 +81,9 @@ module Ai4r
         @nodes = Array.new(rows * columns)
         @epoch = 0
         @cache = {}
-        @init_weight_options = init_weight_options
+        opts = { range: 0..1, random_seed: nil, seed: nil }.merge(init_weight_options)
+        opts[:random_seed] = opts[:random_seed] || opts[:seed]
+        @init_weight_options = opts
       end
 
       # finds the best matching unit (bmu) of a certain input in all the @nodes
@@ -179,7 +183,8 @@ module Ai4r
       # intitiates the map by creating (@rows * @columns) nodes
       # @return [Object]
       def initiate_map
-        srand(@init_weight_options[:seed]) unless @init_weight_options[:seed].nil?
+        seed = @init_weight_options[:random_seed]
+        srand(seed) unless seed.nil?
         @nodes.each_with_index do |node, i|
           options = @init_weight_options.merge(distance_metric: @layer.distance_metric)
           @nodes[i] = Node.create i, @rows, @columns, @dimension, options
