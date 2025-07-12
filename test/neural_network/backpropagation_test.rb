@@ -122,6 +122,22 @@ module Ai4r
         assert history[0] > history[1]
       end
 
+      def test_train_epochs_yields_epoch_and_loss
+        net = Backpropagation.new([1, 1])
+        losses = [0.2, 0.1]
+        net.define_singleton_method(:train_batch) do |_, _|
+          losses.shift
+        end
+        net.define_singleton_method(:eval) do |_|
+          [0]
+        end
+        yielded = []
+        net.train_epochs([[0]], [[0]], epochs: 2) do |epoch, loss, acc|
+          yielded << [epoch, loss, acc]
+        end
+        assert_equal [[0, 0.2, 1.0], [1, 0.1, 1.0]], yielded
+      end
+
 
     end
 

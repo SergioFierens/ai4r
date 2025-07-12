@@ -195,15 +195,16 @@ module Ai4r
       end
 
       # Train for a number of epochs over the dataset. Optionally define a batch size.
+      # Yields the epoch number and loss (and optionally accuracy) to the given block.
       # Returns an array with the average loss of each epoch.
       def train_epochs(data_inputs, data_outputs, epochs:, batch_size: 1,
-                       early_stopping_patience: nil, min_delta: 0.0)
+                       early_stopping_patience: nil, min_delta: 0.0, &block)
         raise ArgumentError, "Inputs and outputs size mismatch" if data_inputs.length != data_outputs.length
         losses = []
         best_loss = Float::INFINITY
         patience = early_stopping_patience
         patience_counter = 0
-        epochs.times do
+        epochs.times do |epoch|
           epoch_error = 0.0
           index = 0
           while index < data_inputs.length
@@ -215,6 +216,21 @@ module Ai4r
           end
           epoch_loss = epoch_error / data_inputs.length.to_f
           losses << epoch_loss
+          if block
+            if block.arity >= 3
+              correct = 0
+              data_inputs.each_index do |i|
+                output = eval(data_inputs[i])
+                predicted = output.index(output.max)
+                expected = data_outputs[i].index(data_outputs[i].max)
+                correct += 1 if predicted == expected
+              end
+              accuracy = correct.to_f / data_inputs.length
+              block.call(epoch, epoch_loss, accuracy)
+            else
+              block.call(epoch, epoch_loss)
+            end
+          end
           if patience
             if best_loss - epoch_loss > min_delta
               best_loss = epoch_loss
