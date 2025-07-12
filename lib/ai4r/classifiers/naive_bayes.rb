@@ -58,11 +58,16 @@ module Ai4r
     
     class NaiveBayes < Classifier
 
+      attr_reader :class_prob, :pcc, :pcp
+
       parameters_info :m => 'Default value is set to 0. It may be set to a value greater than ' +
-        '0 when the size of the dataset is relatively small'
+        '0 when the size of the dataset is relatively small',
+        :unknown_value_strategy => 'Behaviour when evaluating unseen attribute values: ' +
+        ':ignore (default), :uniform or :error.'
           
       def initialize
         @m = 0
+        @unknown_value_strategy = :ignore
         @class_counts = []
         @class_prob = [] # stores the probability of the classes
         @pcc = [] # stores the number of instances divided into attribute/value/class
@@ -121,7 +126,7 @@ module Ai4r
         @domains = data.build_domains
         @data_items = data.data_items.map { |item| DataEntry.new(item[0...-1], item.last) }
         @data_labels = data.data_labels[0...-1]
-        @klasses = @domains.last.to_a
+        @klasses = @domains.last.to_a.sort
       end
 
 
@@ -132,8 +137,23 @@ module Ai4r
       def calculate_class_probabilities_for_entry(data, prob)
         0.upto(prob.length - 1) do |prob_index|
           data.each_with_index do |att, index|
-            next if value_index(att, index).nil?
-            prob[prob_index] *= @pcp[index][value_index(att, index)][prob_index]
+            val_index = value_index(att, index)
+            if val_index.nil?
+              case @unknown_value_strategy
+              when :ignore
+                next
+              when :uniform
+                value_count = @pcc[index].count { |arr| arr[prob_index] > 0 }
+                value_count = 1 if value_count.zero?
+                prob[prob_index] *= 1.0 / value_count
+              when :error
+                raise "Unknown value '#{att}' for attribute #{@data_labels[index]}"
+              else
+                next
+              end
+            else
+              prob[prob_index] *= @pcp[index][val_index][prob_index]
+            end
           end
         end
         
@@ -166,7 +186,7 @@ module Ai4r
 
         0.upto(@data_labels.length - 1) do |index|
           @values[index] = {}
-          @domains[index].each_with_index do |d, d_index|
+          @domains[index].to_a.sort.each_with_index do |d, d_index|
             @values[index][d] = d_index
           end
         end

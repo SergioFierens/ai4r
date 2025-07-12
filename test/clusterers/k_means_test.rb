@@ -19,6 +19,7 @@ class KMeansTest < Test::Unit::TestCase
               [1, 3], [8, 1], [2, 9], [2, 5], [3, 3], [9, 4]]
 
   @@sse_data = [[1,1],[1,2],[2,1],[2,2],[8,8],[8,9],[9,8],[9,9]]
+  @@restart_data = [[0,0],[0,1],[10,10],[10,11],[20,20],[20,21]]
 
   # k-means will generate an empty cluster with this data and initial centroid assignment
   @@empty_cluster_data = [[-0.1, 0], [0, 0], [0.1, 0], [-0.1, 10], [0.1, 10], [0.2, 10]]
@@ -140,6 +141,23 @@ class KMeansTest < Test::Unit::TestCase
     assert_equal clusterer1.centroids, clusterer2.centroids
   end
 
+  def test_kmeans_plus_plus_seed
+    data_set = DataSet.new(:data_items => @@data, :data_labels => ["X", "Y"])
+    c1 = KMeans.new.set_parameters(:init_method => :kmeans_plus_plus,
+                                   :random_seed => 1).build(data_set, 4)
+    c2 = KMeans.new.set_parameters(:init_method => :kmeans_plus_plus,
+                                   :random_seed => 1).build(data_set, 4)
+    assert_equal c1.centroids, c2.centroids
+  end
+
+  def test_restarts
+    data_set = DataSet.new(:data_items => @@restart_data)
+    params = { :random_seed => 2 }
+    sse1 = KMeans.new.set_parameters(params).build(data_set, 2).sse
+    sse2 = KMeans.new.set_parameters(params.merge(:restarts => 5)).build(data_set, 2).sse
+    assert sse2 <= sse1
+  end
+
   def test_on_empty
     data_set = DataSet.new(:data_items => @@empty_cluster_data, :data_labels => ["X", "Y"])
     clusterer = KMeans.new.set_parameters({:centroid_indices=>@@empty_centroid_indices}).build(data_set, @@empty_centroid_indices.size)
@@ -164,6 +182,18 @@ class KMeansTest < Test::Unit::TestCase
     data_set = DataSet.new(:data_items => @@sse_data)
     clusterer = KMeans.new.set_parameters(:centroid_indices => [0,4]).build(data_set, 2)
     assert_in_delta 4.0, clusterer.sse, 0.0001
+  end
+
+  def test_track_history
+    data_set = DataSet.new(:data_items => @@data, :data_labels => ["X", "Y"])
+    clusterer = KMeans.new.set_parameters(max_iterations: 1, track_history: true, random_seed: 1).build(data_set, 3)
+    assert_equal 1, clusterer.history.length
+    first = clusterer.history.first
+    assert_equal data_set.data_items.length, first[:assignments].length
+    assert_equal 3, first[:centroids].length
+
+    clusterer2 = KMeans.new.build(data_set, 3)
+    assert_nil clusterer2.history
   end
 
   private

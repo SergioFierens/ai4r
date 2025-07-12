@@ -30,9 +30,10 @@ module Ai4r
 
       parameters_info :nodes => "number of nodes, has to be equal to the som",
                       :epochs => "number of epochs the algorithm has to run",
-                      :radius => "sets the initial neighborhoud radius"
+                      :radius => "sets the initial neighborhoud radius",
+                      :distance_metric => "metric used to compute node distance"
 
-      def initialize(nodes, radius, epochs = 100, learning_rate = 0.7)
+      def initialize(nodes, radius, epochs = 100, learning_rate = 0.7, options = {})
         raise("Too few nodes") if nodes < 3
         
         @nodes = nodes
@@ -42,6 +43,7 @@ module Ai4r
         @time_for_epoch = @epochs + 1.0 if @time_for_epoch < @epochs
 
         @initial_learning_rate = learning_rate
+        @distance_metric = options[:distance_metric] || :chebyshev
       end
 
       # calculates the influnce decay for a certain distance and the current radius

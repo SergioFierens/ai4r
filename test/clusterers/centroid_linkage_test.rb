@@ -54,4 +54,8 @@ class Ai4r::Clusterers::CentroidLinkageTest < Test::Unit::TestCase
     assert_raise(NotImplementedError) { clusterer.eval([0, 0]) }
   end
 
+  def test_supports_eval
+    assert_equal false, Ai4r::Clusterers::CentroidLinkage.new.supports_eval?
+  end
+
 end
