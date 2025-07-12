@@ -150,6 +150,19 @@ module Ai4r
         assert_raise(ArgumentError) { net.train(invalid2) }
       end
 
+      def test_weight_scaling_changes_weights
+        default_net = Hopfield.new
+        default_net.train @data_set
+
+        scaled_net = Hopfield.new
+        scaled_net.set_parameters(weight_scaling: 0.5)
+        scaled_net.train @data_set
+
+        assert_not_equal default_net.weights, scaled_net.weights
+        assert_in_delta default_net.read_weight(1,0) * 2,
+          scaled_net.read_weight(1,0), 0.00001
+      end
+
     end
   end
 end
