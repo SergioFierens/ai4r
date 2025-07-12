@@ -1,5 +1,5 @@
 # Example using a custom chromosome to maximise ones in a bit string
-require File.dirname(__FILE__) + '/../../lib/ai4r/genetic_algorithm/genetic_algorithm'
+require_relative '../../lib/ai4r/genetic_algorithm/genetic_algorithm'
 
 class BitStringChromosome < Ai4r::GeneticAlgorithm::ChromosomeBase
   LENGTH = 16

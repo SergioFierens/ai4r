@@ -1,5 +1,5 @@
-require File.dirname(__FILE__) + '/../../lib/ai4r/classifiers/prism'
-require File.dirname(__FILE__) + '/../../lib/ai4r/data/data_set'
+require_relative '../../lib/ai4r/classifiers/prism'
+require_relative '../../lib/ai4r/data/data_set'
 
 include Ai4r::Classifiers
 include Ai4r::Data

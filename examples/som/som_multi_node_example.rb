@@ -1,6 +1,6 @@
 # Demonstrates how map size impacts error and uses early stopping.
-require File.dirname(__FILE__) + '/../../lib/ai4r/som/som'
-require File.dirname(__FILE__) + '/som_data'
+require_relative '../../lib/ai4r/som/som'
+require_relative 'som_data'
 require 'benchmark'
 
 10.times do |t|

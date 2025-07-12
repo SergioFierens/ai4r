@@ -16,7 +16,10 @@ module Ai4r
       
       # This is a faster computational replacement for eclidean distance.
       # Parameters a and b are vectors with continuous attributes.
-      def squared_euclidean_distance(a, b)
+      # @param a [Object]
+      # @param b [Object]
+      # @return [Object]
+      def self.squared_euclidean_distance(a, b)
         sum = 0.0
         a.each_with_index do |item_a, i|
           item_b = b[i]
@@ -34,6 +37,7 @@ module Ai4r
       # If attributes are measured with different units, 
       # attributes with larger values and variance will 
       # dominate the metric.
+
       def euclidean_distance(a, b)
         Math.sqrt(squared_euclidean_distance(a, b))
       end
@@ -42,6 +46,7 @@ module Ai4r
       # city block, Manhattan distance, or L1 norm.
       # Parameters a and b are vectors with continuous attributes.
       def manhattan_distance(a, b)
+
         sum = 0.0
         a.each_with_index do |item_a, i|
           item_b = b[i]
@@ -52,7 +57,9 @@ module Ai4r
       
       # Sup distance, or L-intinity norm
       # Parameters a and b are vectors with continuous attributes.      
+
       def sup_distance(a, b)
+
         distance = 0.0
         a.each_with_index do |item_a, i|
           item_b = b[i]
@@ -67,6 +74,7 @@ module Ai4r
       # vectors are different
       # This distance function is frequently used with binary attributes,
       # though it can be used with other discrete attributes.
+
       def hamming_distance(a,b)
         count = 0
         a.each_index do |i|
@@ -86,6 +94,7 @@ module Ai4r
       # * a and b must not include repeated items
       # * all attributes are treated equally
       # * all attributes are treated equally
+
       def simple_matching_distance(a,b)
         similarity = 0.0
         a.each {|item| similarity += 2 if b.include?(item)}

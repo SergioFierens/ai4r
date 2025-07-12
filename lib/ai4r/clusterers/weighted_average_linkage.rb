@@ -29,7 +29,7 @@ module Ai4r
 
       include ClusterTree
 
-    parameters_info :distance_function =>
+    parameters_info distance_function: 
           "Custom implementation of distance function. " +
           "It must be a closure receiving two data items and return the " +
           "distance between them. By default, this algorithm uses " +
@@ -38,16 +38,23 @@ module Ai4r
       # Build a new clusterer, using data examples found in data_set.
       # Items will be clustered in "number_of_clusters" different
       # clusters.
+      # @param data_set [Object]
+      # @param number_of_clusters [Object]
+      # @param *options [Object]
+      # @return [Object]
       def build(data_set, number_of_clusters = 1, **options)
         super
       end
 
       # This algorithms does not allow classification of new data items
       # once it has been built. Rebuild the cluster including you data element.
+      # @param _data_item [Object]
+      # @return [Object]
       def eval(_data_item)
         raise NotImplementedError, 'Eval of new data is not supported by this algorithm.'
       end
 
+      # @return [Object]
       def supports_eval?
         false
       end
@@ -56,6 +63,10 @@ module Ai4r
 
       # return distance between cluster cx and cluster (ci U cj),
       # using weighted average linkage
+      # @param cx [Object]
+      # @param ci [Object]
+      # @param cj [Object]
+      # @return [Object]
       def linkage_distance(cx, ci, cj)
         ni = @index_clusters[ci].length
         nj = @index_clusters[cj].length
