@@ -300,6 +300,40 @@ module Ai4r
         self
       end
 
+      # Randomizes the order of data items in place.
+      # If a +seed+ is provided, it is used to initialize the random number
+      # generator for deterministic shuffling.
+      #
+      #   data_set.shuffle!(seed: 123)
+      #
+      # @param seed [Integer, nil] Seed for the RNG
+      # @return [DataSet] self
+      def shuffle!(seed: nil)
+        rng = seed ? Random.new(seed) : Random.new
+        @data_items.shuffle!(random: rng)
+        self
+      end
+
+      # Split the dataset into two new DataSet instances using the given ratio
+      # for the first set.
+      #
+      #   train, test = data_set.split(ratio: 0.8)
+      #
+      # @param ratio [Float] fraction of items to place in the first set
+      # @return [Array<DataSet, DataSet>] the two resulting datasets
+      def split(ratio:)
+        raise ArgumentError, 'ratio must be between 0 and 1' unless ratio.positive? && ratio < 1
+
+        pivot = (ratio * @data_items.length).round
+        first_items = @data_items[0...pivot].map { |row| row.dup }
+        second_items = @data_items[pivot..-1].map { |row| row.dup }
+
+        [
+          DataSet.new(data_items: first_items, data_labels: @data_labels.dup),
+          DataSet.new(data_items: second_items, data_labels: @data_labels.dup)
+        ]
+      end
+
       # Returns label of category
       # @return [Object]
       def category_label

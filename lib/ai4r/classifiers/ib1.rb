@@ -75,14 +75,8 @@ module Ai4r
       # classifier state unchanged. Use +update_with_instance+ to
       # incorporate new samples.
       def eval(data)
-        min_distance = 1.0/0
-        klass = nil
-        @data_set.data_items.each do |train_item|
-          d = distance(data, train_item)
-          if d < min_distance
-            min_distance = d
-            klass = train_item.last
-          end
+        neighbors = @data_set.data_items.map do |train_item|
+          [distance(data, train_item), train_item.last]
         end
         neighbors.sort_by! { |d, _| d }
         k_neighbors = neighbors.first([@k, @data_set.data_items.length].min)
@@ -154,6 +148,7 @@ module Ai4r
       # @param b [Object]
       # @return [Object]
       def distance(a, b)
+        return @distance_function.call(a, b) if @distance_function
         d = 0
         a.each_with_index do |att_a, i|
           att_b = b[i]
@@ -166,7 +161,7 @@ module Ai4r
             end
           elsif att_a.is_a? Numeric
             if att_b.is_a? Numeric
-              diff = norm(att_a, i) - norm(att_b, i);
+              diff = norm(att_a, i) - norm(att_b, i)
             else
               diff = norm(att_a, i)
               diff = 1.0 - diff if diff < 0.5
@@ -178,7 +173,7 @@ module Ai4r
           end
           d += diff * diff
         end
-        return d
+        d
       end
 
       # Returns normalized value att
