@@ -1,6 +1,6 @@
-require File.dirname(__FILE__) + '/../../lib/ai4r/classifiers/zero_r'
-require File.dirname(__FILE__) + '/../../lib/ai4r/classifiers/one_r'
-require File.dirname(__FILE__) + '/../../lib/ai4r/data/data_set'
+require_relative '../../lib/ai4r/classifiers/zero_r'
+require_relative '../../lib/ai4r/classifiers/one_r'
+require_relative '../../lib/ai4r/data/data_set'
 
 include Ai4r::Classifiers
 include Ai4r::Data

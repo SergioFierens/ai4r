@@ -7,8 +7,8 @@
 # the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../../lib/ai4r/neural_network/hopfield'
-require File.dirname(__FILE__) + '/../../lib/ai4r/data/data_set'
+require_relative '../../lib/ai4r/neural_network/hopfield'
+require_relative '../../lib/ai4r/data/data_set'
 
 patterns = [
   [1,1,-1,-1,1,1,-1,-1,1,1,-1,-1,1,1,-1,-1],
