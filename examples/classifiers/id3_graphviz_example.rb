@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../lib/ai4r/classifiers/id3'
+require_relative '../../lib/ai4r/classifiers/id3'
 
 # Load the training data
 file = "#{File.dirname(__FILE__)}/id3_data.csv"

@@ -92,22 +92,22 @@ module Ai4r
       
       include Ai4r::Data::Parameterizable
       
-      parameters_info :disable_bias => "If true, the algorithm will not use "+
+      parameters_info disable_bias: "If true, the algorithm will not use "+
             "bias nodes. False by default.",
-        :initial_weight_function => "f(n, i, j) must return the initial "+
+        initial_weight_function: "f(n, i, j) must return the initial "+
             "weight for the conection between the node i in layer n, and "+
             "node j in layer n+1. By default a random number in [-1, 1) range.",
-        :weight_init => "Built-in weight initialization strategy (:uniform, :xavier or :he). Default: :uniform",
-        :propagation_function => "By default: " +
+        weight_init: "Built-in weight initialization strategy (:uniform, :xavier or :he). Default: :uniform",
+        propagation_function: "By default: " +
             "lambda { |x| 1/(1+Math.exp(-1*(x))) }",
-        :derivative_propagation_function => "Derivative of the propagation "+
+        derivative_propagation_function: "Derivative of the propagation "+
             "function, based on propagation function output. By default: " +
             "lambda { |y| y*(1-y) }, where y=propagation_function(x)",
-        :activation => "Activation function per layer. Provide a symbol or an array of symbols (:sigmoid, :tanh, :relu or :softmax). Default: :sigmoid",
-        :learning_rate => "By default 0.25",
-        :momentum => "By default 0.1. Set this parameter to 0 to disable "+
+        activation: "Activation function per layer. Provide a symbol or an array of symbols (:sigmoid, :tanh, :relu or :softmax). Default: :sigmoid",
+        learning_rate: "By default 0.25",
+        momentum: "By default 0.1. Set this parameter to 0 to disable "+
             "momentum.",
-        :loss_function => "Loss function used when training (:mse or " +
+        loss_function: "Loss function used when training (:mse or " +
             ":cross_entropy). Default: :mse"
           
       attr_accessor :structure, :weights, :activation_nodes, :last_changes
@@ -390,9 +390,21 @@ module Ai4r
               sums[j] += (@activation_nodes[n][i] * @weights[n][i][j])
             end
           end
-          if @activation[n] == :softmax
-            values = @propagation_functions[n].call(sums)
-            values.each_index { |j| @activation_nodes[n + 1][j] = values[j] }
+
+          if n == @weights.length - 1 && @activation == :softmax
+            exps = sums.map { |s| @propagation_functions[n].call(s) }
+            total = exps.inject(0.0) { |a, v| a + v }
+            @activation_nodes[n+1][0...@structure[n+1]] = exps.map { |e| e / total }
+          else
+            @structure[n+1].times do |j|
+
+              @activation_nodes[n+1][j] = @propagation_function.call(sums[j])
+            end
+          end
+        if @activation[n] == :softmax
+          values = @propagation_functions[n].call(sums)
+          values.each_index { |j| @activation_nodes[n+1][j] = values[j] }
+
           else
             sums.each_index do |j|
               @activation_nodes[n + 1][j] = @propagation_functions[n].call(sums[j])

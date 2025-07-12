@@ -28,10 +28,10 @@ module Ai4r
 
       include Ai4r::Data::Parameterizable
 
-      parameters_info :nodes => "number of nodes, has to be equal to the som",
-                      :epochs => "number of epochs the algorithm has to run",
-                      :radius => "sets the initial neighborhoud radius",
-                      :distance_metric => "metric used to compute node distance"
+      parameters_info nodes: "number of nodes, has to be equal to the som",
+                      epochs: "number of epochs the algorithm has to run",
+                      radius: "sets the initial neighborhoud radius",
+                      distance_metric: "metric used to compute node distance"
 
       # @param nodes [Object]
       # @param radius [Object]

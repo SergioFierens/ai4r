@@ -32,12 +32,12 @@ module Ai4r
 
       include Ai4r::Data::Parameterizable
 
-      parameters_info :weights => "holds the current weight",
-                      :instantiated_weight => "holds the very first weight",
-                      :x => "holds the row ID of the unit in the map",
-                      :y => "holds the column ID of the unit in the map",
-                      :id => "id of the node",
-                      :distance_metric => "metric used to compute node distance"
+      parameters_info weights: "holds the current weight",
+                      instantiated_weight: "holds the very first weight",
+                      x: "holds the row ID of the unit in the map",
+                      y: "holds the column ID of the unit in the map",
+                      id: "id of the node",
+                      distance_metric: "metric used to compute node distance"
 
       # creates an instance of Node and instantiates the weights
       #
@@ -50,6 +50,9 @@ module Ai4r
       # @param columns [Object]
       # @param dimensions [Object]
       # @param options [Object]
+      # @option options [Range] :range (0..1) range used to initialize weights
+      # @option options [Integer] :random_seed Seed for Ruby's RNG. The
+      #   deprecated :seed key is supported for backward compatibility.
       # @return [Object]
       def self.create(id, rows, columns, dimensions, options = {})
         n = Node.new
@@ -65,10 +68,14 @@ module Ai4r
       # for backup reasons, the instantiated weight is stored into @instantiated_weight  as well
       # @param dimensions [Object]
       # @param options [Object]
+      # @option options [Range] :range (0..1) range used to initialize weights
+      # @option options [Integer] :random_seed Seed for Ruby's RNG. The
+      #   deprecated :seed key is supported for backward compatibility.
       # @return [Object]
       def instantiate_weight(dimensions, options = {})
-        opts = { range: 0..1, seed: nil }.merge(options)
-        srand(opts[:seed]) unless opts[:seed].nil?
+        opts = { range: 0..1, random_seed: nil, seed: nil }.merge(options)
+        seed = opts[:random_seed] || opts[:seed]
+        srand(seed) unless seed.nil?
         range = opts[:range] || (0..1)
         min = range.first.to_f
         max = range.last.to_f

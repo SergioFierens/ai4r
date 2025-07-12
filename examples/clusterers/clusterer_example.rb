@@ -43,7 +43,7 @@ answers = [	[ 1, 2, 3, 2, 2],	# Answers of person 1
 		[ 2, 2, 3, 2, 3],
 		[ 3, 3, 3, 1, 1]]	# Answers of person 16
 
-data_set = DataSet.new(:data_items => answers, :data_labels => questions)
+data_set = DataSet.new(data_items: answers, data_labels: questions)
 
 # Let's group answers in 4 groups
 clusterer = Diana.new.build(data_set, 4)

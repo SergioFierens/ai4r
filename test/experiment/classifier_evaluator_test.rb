@@ -60,7 +60,7 @@ module Ai4r
       def test_test
         evaluator = ClassifierEvaluator.new
         5.times { |x| evaluator << MockClassifier.new(x) }
-        input = Ai4r::Data::DataSet.new :data_items => 
+        input = Ai4r::Data::DataSet.new :data_items =>
           [[0],[0],[0],[1],[2],[3]]
         output = evaluator.test input
         assert_equal 5, output.data_items.length # 5 classifiers, 5 result rows
@@ -69,6 +69,18 @@ module Ai4r
         assert_equal 0.5, output.data_items.first[3] # succes rate
         assert_equal 6, output.data_items.last[2] # 6 errors for the last classifier
         assert_equal 0, output.data_items.last[3] # succes rate
+      end
+
+      def test_cross_validate
+        evaluator = ClassifierEvaluator.new
+        evaluator << MockClassifier.new(0) << MockClassifier.new(1)
+        input = Ai4r::Data::DataSet.new(data_items: [[0], [0], [1], [1]])
+        output = evaluator.cross_validate(input, k: 2)
+        assert_equal 2, output.data_items.length
+        output.data_items.each do |row|
+          assert_in_delta 0.5, row[2], 0.0001
+          assert row[1] >= 0
+        end
       end
       
     end

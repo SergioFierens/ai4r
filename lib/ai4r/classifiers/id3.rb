@@ -94,9 +94,9 @@ module Ai4r
 
       attr_reader :data_set, :majority_class, :validation_set
 
-      parameters_info :max_depth => 'Maximum recursion depth. Default is nil (no limit).',
-        :min_gain => 'Minimum information gain required to split. Default is 0.',
-        :on_unknown => 'Behaviour when evaluating unseen attribute values: :raise (default), :most_frequent or :nil.'
+      parameters_info max_depth: 'Maximum recursion depth. Default is nil (no limit).',
+        min_gain: 'Minimum information gain required to split. Default is 0.',
+        on_unknown: 'Behaviour when evaluating unseen attribute values: :raise (default), :most_frequent or :nil.'
 
       # @return [Object]
       def initialize

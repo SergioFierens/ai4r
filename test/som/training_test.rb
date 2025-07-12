@@ -8,7 +8,7 @@ module Ai4r
 
       def setup
         layer = TwoPhaseLayer.new(4, 0.5, 1, 1, 0.5, 0.2)
-        @som = Som.new(2, 2, 2, layer, { range: 0..1, seed: 1 })
+        @som = Som.new(2, 2, 2, layer, { range: 0..1, random_seed: 1 })
         @som.initiate_map
       end
 
