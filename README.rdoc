@@ -105,7 +105,10 @@ Some hierarchical algorithms cannot classify new items once built.  Use
 
 = Documentation
 
+Tutorials for genetic algorithms, ID3 decision trees and neural networks are available in the +docs/+ directory.
+
 Tutorials for genetic algorithms, ID3 decision trees, Hyperpipes, neural networks and a Naive Bayes classifier are available in the +docs/+ directory.
+Documentation for the PRISM rule induction algorithm is available in [docs/prism.md](docs/prism.md).
 
 = Disclaimer
 
