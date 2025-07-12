@@ -61,7 +61,8 @@ The resulting plot shows how the energy decreases as the network converges.
 * `threshold` – activation threshold used during propagation (default `0`).
 * `weight_scaling` – scale factor applied when computing weights. When left `nil` the factor defaults to `1.0 / patterns_count`.
 * `stop_when_stable` – stop evaluation early if the energy does not change between iterations (default `false`).
-* `update_strategy` – propagation mode: `:async_sequential` (default), `:async_random` or `:synchronous`.
+* `update_strategy` – update mode used during evaluation. `:async_random` (default) updates one randomly chosen neuron each step, while
+  `:async_sequential` and `:synchronous` offer alternative behaviors.
 
 ```ruby
 net.set_parameters(eval_iterations: 1000,
