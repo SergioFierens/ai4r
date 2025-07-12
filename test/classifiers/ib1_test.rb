@@ -42,6 +42,13 @@ class IB1Test < Test::Unit::TestCase
     @data_set = DataSet.new(:data_items => @@data_items, :data_labels => @@data_labels)
     @classifier = IB1.new.build(@data_set)
   end
+
+  def test_default_parameters
+    c = IB1.new
+    assert_equal 1, c.k
+    assert_nil c.distance_function
+    assert_equal :first, c.tie_break
+  end
   
   def test_build
     assert_raise(ArgumentError) { IB1.new.build(DataSet.new) }
@@ -70,7 +77,26 @@ class IB1Test < Test::Unit::TestCase
     assert_equal('N', classifier.eval(['Chicago',  55, 'M']))
     assert_equal('N', classifier.eval(['New York', 35, 'F']))
     assert_equal('Y', classifier.eval(['New York', 25, 'M']))
-    assert_equal('Y', classifier.eval(['Chicago',  85, 'F'])) 
+    assert_equal('Y', classifier.eval(['Chicago',  85, 'F']))
+  end
+
+  def test_k_nearest
+    classifier = IB1.new.set_parameters(:k => 3).build(@data_set)
+    assert_equal('N', classifier.eval(['Chicago', 47, 'M']))
+  end
+
+  def test_tie_break
+    classifier = IB1.new.set_parameters(:k => 2, :tie_break => :first).build(@data_set)
+    assert_equal('Y', classifier.eval(['Chicago', 47, 'M']))
+    srand(1)
+    classifier = IB1.new.set_parameters(:k => 2, :tie_break => :random).build(@data_set)
+    assert_equal('N', classifier.eval(['Chicago', 47, 'M']))
+  end
+
+  def test_custom_distance
+    dist = proc { |a, b| a.first == b.first ? 0 : 1 }
+    classifier = IB1.new.set_parameters(:distance_function => dist).build(@data_set)
+    assert_equal('Y', classifier.eval(['Chicago', 55, 'M']))
   end
 
 end
