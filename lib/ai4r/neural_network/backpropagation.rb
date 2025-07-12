@@ -259,6 +259,21 @@ module Ai4r
           end
           epoch_loss = epoch_error / data_inputs.length.to_f
           losses << epoch_loss
+          if block
+            if block.arity >= 3
+              correct = 0
+              data_inputs.each_index do |i|
+                output = eval(data_inputs[i])
+                predicted = output.index(output.max)
+                expected = data_outputs[i].index(data_outputs[i].max)
+                correct += 1 if predicted == expected
+              end
+              accuracy = correct.to_f / data_inputs.length
+              block.call(epoch, epoch_loss, accuracy)
+            else
+              block.call(epoch, epoch_loss)
+            end
+          end
           if patience
             if best_loss - epoch_loss > min_delta
               best_loss = epoch_loss
