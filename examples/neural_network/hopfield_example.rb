@@ -25,7 +25,7 @@ noisy_patterns = [
 ]
 
 data = Ai4r::Data::DataSet.new(data_items: patterns)
-net = Ai4r::NeuralNetwork::Hopfield.new.train(data)
+net = Ai4r::NeuralNetwork::Hopfield.new(eval_iterations: 1000).train(data)
 
 puts 'Evaluation of noisy patterns:'
 noisy_patterns.each do |p|
