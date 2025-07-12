@@ -30,9 +30,9 @@ module Ai4r
       
       attr_reader :data_set, :min_values, :max_values
 
-      parameters_info :k => 'Number of nearest neighbors to consider. Default is 1.',
-        :distance_function => 'Optional custom distance metric taking two instances.',
-        :tie_break => 'Strategy used when neighbors vote tie. Valid values are :first (default) and :random.'
+      parameters_info k: 'Number of nearest neighbors to consider. Default is 1.',
+        distance_function: 'Optional custom distance metric taking two instances.',
+        tie_break: 'Strategy used when neighbors vote tie. Valid values are :first (default) and :random.'
 
       # @return [Object]
       def initialize
@@ -75,12 +75,20 @@ module Ai4r
       # classifier state unchanged. Use +update_with_instance+ to
       # incorporate new samples.
       def eval(data)
+
         neighbors = @data_set.data_items.map do |train_item|
           [distance(data, train_item), train_item.last]
-
         end
         neighbors.sort_by! { |d, _| d }
-        k_neighbors = neighbors.first([@k, @data_set.data_items.length].min)
+        k_limit = [@k, @data_set.data_items.length].min
+        k_neighbors = neighbors.first(k_limit)
+
+        # Include any other neighbors tied with the last selected distance
+        last_distance = k_neighbors.last[0]
+        neighbors[k_limit..-1].to_a.each do |dist, klass|
+          break if dist > last_distance
+          k_neighbors << [dist, klass]
+        end
 
         counts = Hash.new(0)
         k_neighbors.each { |_, klass| counts[klass] += 1 }

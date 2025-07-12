@@ -36,7 +36,6 @@ module Ai4r
         tie_break: 'Strategy when multiple conditions have equal ratios.'
       )
 
-
       # @return [Object]
       def initialize
         @fallback_class = nil
@@ -166,7 +165,7 @@ module Ai4r
       # @param instances [Object]
       # @return [Object]
       def build_rule(class_value, instances)
-        rule = {:class_value => class_value, :conditions => {}}
+        rule = { class_value: class_value, conditions: {} }
         rule_instances = instances.collect {|data| data }
         attributes = @data_set.data_labels[0...-1].collect {|label| label }
         until(is_perfect(instances, rule) || attributes.empty?)

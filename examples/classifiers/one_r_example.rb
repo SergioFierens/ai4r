@@ -21,7 +21,7 @@ items = [
 ]
 labels = ['city', 'age', 'gender', 'marketing_target']
 
-ds = DataSet.new(:data_items => items, :data_labels => labels)
+ds = DataSet.new(data_items: items, data_labels: labels)
 
 classifier = OneR.new.build(ds)
 puts classifier.get_rules

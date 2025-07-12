@@ -37,20 +37,16 @@ module Ai4r
       # If attributes are measured with different units, 
       # attributes with larger values and variance will 
       # dominate the metric.
-      # @param a [Object]
-      # @param b [Object]
-      # @return [Object]
-      def self.euclidean_distance(a, b)
+
+      def euclidean_distance(a, b)
         Math.sqrt(squared_euclidean_distance(a, b))
       end
       
       
       # city block, Manhattan distance, or L1 norm.
       # Parameters a and b are vectors with continuous attributes.
-      # @param a [Object]
-      # @param b [Object]
-      # @return [Object]
-      def self.manhattan_distance(a, b)
+      def manhattan_distance(a, b)
+
         sum = 0.0
         a.each_with_index do |item_a, i|
           item_b = b[i]
@@ -61,10 +57,9 @@ module Ai4r
       
       # Sup distance, or L-intinity norm
       # Parameters a and b are vectors with continuous attributes.      
-      # @param a [Object]
-      # @param b [Object]
-      # @return [Object]
-      def self.sup_distance(a, b)
+
+      def sup_distance(a, b)
+
         distance = 0.0
         a.each_with_index do |item_a, i|
           item_b = b[i]
@@ -79,10 +74,8 @@ module Ai4r
       # vectors are different
       # This distance function is frequently used with binary attributes,
       # though it can be used with other discrete attributes.
-      # @param a [Object]
-      # @param b [Object]
-      # @return [Object]
-      def self.hamming_distance(a,b)
+
+      def hamming_distance(a,b)
         count = 0
         a.each_index do |i|
           count += 1 if a[i] != b[i]
@@ -101,15 +94,13 @@ module Ai4r
       # * a and b must not include repeated items
       # * all attributes are treated equally
       # * all attributes are treated equally
-      # @param a [Object]
-      # @param b [Object]
-      # @return [Object]
-      def self.simple_matching_distance(a,b)
+
+      def simple_matching_distance(a,b)
         similarity = 0.0
         a.each {|item| similarity += 2 if b.include?(item)}
         similarity /= (a.length + b.length)
         return 1.0/similarity - 1
-      end      
+      end
       
       # Cosine similarity is a measure of similarity between two vectors 
       # of an inner product space that measures the cosine of the 
@@ -118,10 +109,7 @@ module Ai4r
       # Parameters a and b are vectors with continuous attributes.
       #
       # D = sum(a[i] * b[i]) / sqrt(sum(a[i]**2)) * sqrt(sum(b[i]**2))
-      # @param a [Object]
-      # @param b [Object]
-      # @return [Object]
-      def self.cosine_distance(a,b)
+      def cosine_distance(a,b)
         dot_product = 0.0
         norm_a = 0.0
         norm_b = 0.0
@@ -136,6 +124,11 @@ module Ai4r
         magnitude = Math.sqrt(norm_a) * Math.sqrt(norm_b)
         return 1 - (dot_product / magnitude)
       end
+
+      module_function :squared_euclidean_distance, :euclidean_distance,
+                      :manhattan_distance, :sup_distance,
+                      :hamming_distance, :simple_matching_distance,
+                      :cosine_distance
     end
     
   end

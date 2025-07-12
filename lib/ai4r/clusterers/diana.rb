@@ -23,7 +23,7 @@ module Ai4r
       
       attr_reader :data_set, :number_of_clusters, :clusters
       
-      parameters_info :distance_function => 
+      parameters_info distance_function:
           "Custom implementation of distance function. " +
           "It must be a closure receiving two data items and return the " +
           "distance between them. By default, this algorithm uses " + 
