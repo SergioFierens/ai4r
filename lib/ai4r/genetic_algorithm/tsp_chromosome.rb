@@ -4,6 +4,7 @@ module Ai4r
   module GeneticAlgorithm
     # Chromosome implementation for the Travelling Salesman Problem.
     class TspChromosome < ChromosomeBase
+      # @return [Object]
       def fitness
         return @fitness if @fitness
         last_token = @data[0]
@@ -16,16 +17,26 @@ module Ai4r
         @fitness
       end
 
+      # @param chromosome [Object]
+      # @param mutation_rate [Object]
+      # @return [Object]
       def self.mutate(chromosome, mutation_rate = 0.3)
         if chromosome.normalized_fitness && rand < ((1 - chromosome.normalized_fitness) * mutation_rate)
           data = chromosome.data
-          index = (0...data.length - 1).to_a.sample
+          # Swapping the first two cities can sometimes keep the fitness
+          # unchanged depending on the cost matrix. Pick an inner segment
+          # instead to ensure the route actually changes.
+          index = (1...data.length - 1).to_a.sample
           data[index], data[index + 1] = data[index + 1], data[index]
           chromosome.data = data
           chromosome.instance_variable_set(:@fitness, nil)
         end
       end
 
+      # @param a [Object]
+      # @param b [Object]
+      # @param crossover_rate [Object]
+      # @return [Object]
       def self.reproduce(a, b, crossover_rate = 0.4)
         data_size = @@costs[0].length
         available = []
@@ -49,6 +60,7 @@ module Ai4r
         new(spawn)
       end
 
+      # @return [Object]
       def self.seed
         data_size = @@costs[0].length
         available = []
@@ -60,6 +72,8 @@ module Ai4r
         new(seed)
       end
 
+      # @param costs [Object]
+      # @return [Object]
       def self.set_cost_matrix(costs)
         @@costs = costs
       end

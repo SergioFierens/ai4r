@@ -42,6 +42,7 @@ module Ai4r
             "result of the bisecting approach."
       
       
+      # @return [Object]
       def initialize
         super
         @refine = true
@@ -50,6 +51,9 @@ module Ai4r
       # Build a new clusterer, using data examples found in data_set.
       # Items will be clustered in "number_of_clusters" different
       # clusters.
+      # @param data_set [Object]
+      # @param number_of_clusters [Object]
+      # @return [Object]
       def build(data_set, number_of_clusters)
         @data_set = data_set
         @number_of_clusters = number_of_clusters
@@ -73,10 +77,13 @@ module Ai4r
       end      
       
       protected      
+      # @return [Object]
       def calc_initial_centroids
         @centroids # Use existing centroids
       end
       
+      # @param clusters [Object]
+      # @return [Object]
       def find_biggest_cluster_index(clusters)
         max_index = 0
         max_length = 0
