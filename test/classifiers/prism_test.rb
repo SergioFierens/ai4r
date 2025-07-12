@@ -25,6 +25,18 @@ class PrismTest < Test::Unit::TestCase
               ]
 
   @@data_labels = [ 'city', 'age_range', 'gender', 'marketing_target'  ]
+
+  @@numeric_examples = [
+    ['New York', 20, 'M', 'Y'],
+    ['Chicago', 25, 'M', 'Y'],
+    ['New York', 28, 'M', 'Y'],
+    ['New York', 35, 'F', 'N'],
+    ['Chicago', 40, 'F', 'Y'],
+    ['New York', 45, 'F', 'N'],
+    ['Chicago', 55, 'M', 'N']
+  ]
+
+  @@numeric_labels = [ 'city', 'age', 'gender', 'marketing_target' ]
   
   def test_build
     assert_raise(ArgumentError) { Prism.new.build(DataSet.new) } 
@@ -80,6 +92,15 @@ class PrismTest < Test::Unit::TestCase
 
     assert classifier.matches_conditions(['New York', '<30', 'M', 'Y'], {"age_range" => "<30"})
     assert !classifier.matches_conditions(['New York', '<30', 'M', 'Y'], {"age_range" => "[50-80]"})
+  end
+
+  def test_numeric_data
+    classifier = Prism.new.build(DataSet.new(
+      :data_items => @@numeric_examples,
+      :data_labels => @@numeric_labels))
+    assert classifier.rules.any? { |r| r[:conditions].values.any? { |v| v.is_a?(Range) } }
+    assert_equal('Y', classifier.eval(['New York', 20, 'M']))
+    assert_equal('N', classifier.eval(['Chicago', 55, 'M']))
   end
 end
 
