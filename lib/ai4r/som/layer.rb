@@ -33,6 +33,12 @@ module Ai4r
                       :radius => "sets the initial neighborhoud radius",
                       :distance_metric => "metric used to compute node distance"
 
+      # @param nodes [Object]
+      # @param radius [Object]
+      # @param epochs [Object]
+      # @param learning_rate [Object]
+      # @param options [Object]
+      # @return [Object]
       def initialize(nodes, radius, epochs = 100, learning_rate = 0.7, options = {})
         raise("Too few nodes") if nodes < 3
         
@@ -48,18 +54,25 @@ module Ai4r
 
       # calculates the influnce decay for a certain distance and the current radius
       # of the epoch
+      # @param distance [Object]
+      # @param radius [Object]
+      # @return [Object]
       def influence_decay(distance, radius)
         Math.exp(- (distance.to_f**2 / 2.0 / radius.to_f**2))
       end
 
       # calculates the radius decay for the current epoch. Uses @time_for_epoch
       # which has to be higher than the number  of epochs, otherwise the decay will be - Infinity
+      # @param epoch [Object]
+      # @return [Object]
       def radius_decay(epoch)
         (@radius * ( 1 - epoch/ @time_for_epoch)).round
       end
 
       # calculates the learning rate decay. uses @time_for_epoch again and same rule applies:
       # @time_for_epoch has to be higher than the number  of epochs, otherwise the decay will be - Infinity
+      # @param epoch [Object]
+      # @return [Object]
       def learning_rate_decay(epoch)
         @initial_learning_rate * ( 1 - epoch / @time_for_epoch)
       end

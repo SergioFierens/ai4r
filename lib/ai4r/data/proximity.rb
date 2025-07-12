@@ -16,6 +16,9 @@ module Ai4r
       
       # This is a faster computational replacement for eclidean distance.
       # Parameters a and b are vectors with continuous attributes.
+      # @param a [Object]
+      # @param b [Object]
+      # @return [Object]
       def self.squared_euclidean_distance(a, b)
         sum = 0.0
         a.each_with_index do |item_a, i|
@@ -34,6 +37,9 @@ module Ai4r
       # If attributes are measured with different units, 
       # attributes with larger values and variance will 
       # dominate the metric.
+      # @param a [Object]
+      # @param b [Object]
+      # @return [Object]
       def self.euclidean_distance(a, b)
         Math.sqrt(squared_euclidean_distance(a, b))
       end
@@ -41,6 +47,9 @@ module Ai4r
       
       # city block, Manhattan distance, or L1 norm.
       # Parameters a and b are vectors with continuous attributes.
+      # @param a [Object]
+      # @param b [Object]
+      # @return [Object]
       def self.manhattan_distance(a, b)
         sum = 0.0
         a.each_with_index do |item_a, i|
@@ -52,6 +61,9 @@ module Ai4r
       
       # Sup distance, or L-intinity norm
       # Parameters a and b are vectors with continuous attributes.      
+      # @param a [Object]
+      # @param b [Object]
+      # @return [Object]
       def self.sup_distance(a, b)
         distance = 0.0
         a.each_with_index do |item_a, i|
@@ -67,6 +79,9 @@ module Ai4r
       # vectors are different
       # This distance function is frequently used with binary attributes,
       # though it can be used with other discrete attributes.
+      # @param a [Object]
+      # @param b [Object]
+      # @return [Object]
       def self.hamming_distance(a,b)
         count = 0
         a.each_index do |i|
@@ -86,6 +101,9 @@ module Ai4r
       # * a and b must not include repeated items
       # * all attributes are treated equally
       # * all attributes are treated equally
+      # @param a [Object]
+      # @param b [Object]
+      # @return [Object]
       def self.simple_matching_distance(a,b)
         similarity = 0.0
         a.each {|item| similarity += 2 if b.include?(item)}
@@ -100,6 +118,9 @@ module Ai4r
       # Parameters a and b are vectors with continuous attributes.
       #
       # D = sum(a[i] * b[i]) / sqrt(sum(a[i]**2)) * sqrt(sum(b[i]**2))
+      # @param a [Object]
+      # @param b [Object]
+      # @return [Object]
       def self.cosine_distance(a,b)
         dot_product = 0.0
         norm_a = 0.0

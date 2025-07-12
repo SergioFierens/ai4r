@@ -54,6 +54,7 @@ module Ai4r
         :active_node_value => "Default: 1",
         :inactive_node_value => "Default: 0"
     
+      # @return [Object]
       def initialize
         @network_class = Ai4r::NeuralNetwork::Backpropagation
         @hidden_layers = []
@@ -66,6 +67,8 @@ module Ai4r
       # Build a new MultilayerPerceptron classifier. You must provide a DataSet 
       # instance as parameter. The last attribute of each item is considered as 
       # the item class.
+      # @param data_set [Object]
+      # @return [Object]
       def build(data_set)
         data_set.check_not_empty
         @data_set = data_set
@@ -89,6 +92,8 @@ module Ai4r
       # You can evaluate new data, predicting its class.
       # e.g.
       #   classifier.eval(['New York',  '<30', 'F'])  # => 'Y'
+      # @param data [Object]
+      # @return [Object]
       def eval(data)
         input_values = data_to_input(data)
         output_values = @network.eval(input_values)
@@ -97,12 +102,15 @@ module Ai4r
       
       # Multilayer Perceptron Classifiers cannot generate 
       # human-readable rules.
+      # @return [Object]
       def get_rules
         return "raise 'Neural networks classifiers do not generate human-readable rules.'"
       end
 
       protected
       
+      # @param data_item [Object]
+      # @return [Object]
       def data_to_input(data_item)
         input_values = Array.new(@inputs, @inactive_node_value)
         accum_index = 0
@@ -115,12 +123,16 @@ module Ai4r
         return input_values
       end
       
+      # @param data_item [Object]
+      # @return [Object]
       def data_to_output(data_item)
         output_values = Array.new(@outputs, @inactive_node_value)
         output_values[@domains.last.index(data_item)] = @active_node_value
         return output_values
       end
       
+      # @param output_values [Object]
+      # @return [Object]
       def get_max_index(output_values)
         max_value = @inactive_node_value
         max_index = 0

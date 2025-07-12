@@ -1,6 +1,7 @@
 require 'rake'
 require 'rake/testtask'
 require 'rdoc/task'
+require 'rubocop/rake_task'
 
 Rake::TestTask.new do |t|
   t.test_files = FileList["test/**/*_test.rb"]
@@ -12,4 +13,6 @@ Rake::RDocTask.new do |rd|
   rd.rdoc_files.include("README.rdoc", "lib/**/*.rb")
   rd.title = "ar4r - Artificial Intelligence For Ruby - API DOC"
 end
+
+RuboCop::RakeTask.new(:rubocop)
 

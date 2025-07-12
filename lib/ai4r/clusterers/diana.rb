@@ -29,6 +29,7 @@ module Ai4r
           "distance between them. By default, this algorithm uses " + 
           "euclidean distance of numeric attributes to the power of 2."
       
+      # @return [Object]
       def initialize
         @distance_function = lambda do |a,b| 
             Ai4r::Data::Proximity.squared_euclidean_distance(
@@ -38,6 +39,9 @@ module Ai4r
       end
       
       # Build a new clusterer, using divisive analysis (DIANA algorithm)
+      # @param data_set [Object]
+      # @param number_of_clusters [Object]
+      # @return [Object]
       def build(data_set, number_of_clusters)
         @data_set = data_set
         @number_of_clusters = number_of_clusters
@@ -61,6 +65,8 @@ module Ai4r
       
       # Classifies the given data item, returning the cluster index it belongs 
       # to (0-based).
+      # @param data_item [Object]
+      # @return [Object]
       def eval(data_item)
         get_min_index(@clusters.collect do |cluster|
           distance_sum(data_item, cluster) / cluster.data_items.length
@@ -70,6 +76,8 @@ module Ai4r
       protected
       
       # return the cluster with max diameter
+      # @param clusters [Object]
+      # @return [Object]
       def max_diameter_cluster(clusters)
         max_index = 0
         max_diameter = 0
@@ -84,6 +92,8 @@ module Ai4r
       end
       
       # Max distance between 2 items in a cluster
+      # @param cluster [Object]
+      # @return [Object]
       def cluster_diameter(cluster)
         diameter = 0
         cluster.data_items.each_with_index do |item_a, item_a_pos|
@@ -98,6 +108,8 @@ module Ai4r
       # Create a cluster with the item with mx distance
       # to the rest of the cluster's items.
       # That item is removed from the initial cluster.
+      # @param cluster_to_split [Object]
+      # @return [Object]
       def init_splinter_cluster(cluster_to_split)
         max = 0.0
         max_index = 0
@@ -116,8 +128,11 @@ module Ai4r
       # and the index of the item.
       # A positive value means that the items is closer to the
       # splinter group than to its current cluster.
+      # @param cluster_to_split [Object]
+      # @param splinter_cluster [Object]
+      # @return [Object]
       def max_distance_difference(cluster_to_split, splinter_cluster)
-        max_diff = -1.0/0
+        max_diff = -Float::INFINITY
         max_diff_index = 0
         cluster_to_split.data_items.each_with_index do |item, index|
           dist_a = distance_sum(item, cluster_to_split) / (cluster_to_split.data_items.length-1)
@@ -129,6 +144,9 @@ module Ai4r
       end
       
       # Sum up the distance between an item and all the items in a cluster
+      # @param item_a [Object]
+      # @param cluster [Object]
+      # @return [Object]
       def distance_sum(item_a, cluster)
         cluster.data_items.inject(0.0) do |sum, item_b|
           sum + @distance_function.call(item_a, item_b)
