@@ -94,6 +94,17 @@ class PrismTest < Test::Unit::TestCase
     assert !classifier.matches_conditions(['New York', '<30', 'M', 'Y'], {"age_range" => "[50-80]"})
   end
 
+  def test_fallback_class
+    classifier = Prism.new.build(DataSet.new(:data_items => @@data_examples))
+    classifier.rules.pop
+    assert_equal(classifier.majority_class,
+      classifier.eval(['New York', '[50-80]', 'M']))
+
+    classifier = Prism.new.set_parameters(:fallback_class => 'Z').build(
+      DataSet.new(:data_items => @@data_examples))
+    classifier.rules.pop
+    assert_equal('Z', classifier.eval(['New York', '[50-80]', 'M']))
+  end
 
   def test_rules_have_unique_attributes
     classifier = Prism.new.build(DataSet.new(:data_labels => @@data_labels,

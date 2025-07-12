@@ -27,7 +27,13 @@ module Ai4r
     # International Journal of Man-Machine Studies. 27(4):349-370.
     class Prism < Classifier
 
-      attr_reader :data_set, :rules
+      attr_reader :data_set, :rules, :majority_class
+
+      parameters_info :fallback_class => 'Default class returned when no rule matches.'
+
+      def initialize
+        @fallback_class = nil
+      end
 
       parameters_info :bin_count => 'Number of bins used to discretize numeric attributes.'
 
@@ -42,6 +48,12 @@ module Ai4r
       def build(data_set)
         data_set.check_not_empty
         @data_set = data_set
+
+        freqs = Hash.new(0)
+        @data_set.data_items.each { |item| freqs[item.last] += 1 }
+        @majority_class = freqs.max_by { |_, v| v }&.first
+        @fallback_class = @majority_class if @fallback_class.nil?
+
         domains = @data_set.build_domains
         @attr_bins = {}
         domains[0...-1].each_with_index do |domain, i|
@@ -68,7 +80,7 @@ module Ai4r
         @rules.each do |rule|
           return rule[:class_value] if matches_conditions(instace, rule[:conditions])
         end
-        return nil
+        @fallback_class
       end
       
       # This method returns the generated rules in ruby code.
