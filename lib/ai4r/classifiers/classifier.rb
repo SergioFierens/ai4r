@@ -22,6 +22,8 @@ module Ai4r
       # Build a new classifier, using data examples found in data_set.
       # The last attribute of each item is considered as the
       # item class.
+      # @param data_set [Object]
+      # @return [Object]
       def build(data_set)
         raise NotImplementedError
       end
@@ -29,6 +31,8 @@ module Ai4r
       # You can evaluate new data, predicting its class.
       # e.g.
       #   classifier.eval(['New York',  '<30', 'F'])  # => 'Y'
+      # @param data [Object]
+      # @return [Object]
       def eval(data)
         raise NotImplementedError
       end
@@ -54,6 +58,7 @@ module Ai4r
       #
       # Note, however, that not all classifiers are able to produce rules.
       # This method is not implemented in such classifiers.
+      # @return [Object]
       def get_rules
         raise NotImplementedError
       end

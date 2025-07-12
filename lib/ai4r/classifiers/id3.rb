@@ -98,6 +98,7 @@ module Ai4r
         min_gain: 'Minimum information gain required to split. Default is 0.',
         on_unknown: 'Behaviour when evaluating unseen attribute values: :raise (default), :most_frequent or :nil.'
 
+      # @return [Object]
       def initialize
         @max_depth = nil
         @min_gain = 0
@@ -107,6 +108,9 @@ module Ai4r
       # Create a new ID3 classifier. You must provide a DataSet instance
       # as parameter. The last attribute of each item is considered as the
       # item class.
+      # @param data_set [Object]
+      # @param options [Object]
+      # @return [Object]
       def build(data_set, options = {})
         data_set.check_not_empty
         @data_set = data_set
@@ -119,6 +123,8 @@ module Ai4r
       # You can evaluate new data, predicting its category.
       # e.g.
       #   id3.eval(['New York',  '<30', 'F'])  # => 'Y'
+      # @param data [Object]
+      # @return [Object]
       def eval(data)
         @tree.value(data, self) if @tree
       end
@@ -140,6 +146,7 @@ module Ai4r
       #     eval id3.get_rules   
       #     puts marketing_target
       #       # =>  'Y'
+      # @return [Object]
       def get_rules
         #return "Empty ID3 tree" if !@tree
         rules = @tree.get_rules
@@ -153,6 +160,7 @@ module Ai4r
       # structure can easily be converted to JSON or other formats.
       # Leaf nodes are represented by their category value, while internal
       # nodes are hashes keyed by attribute value.
+      # @return [Object]
       def to_h
         @tree.to_h if @tree
       end
@@ -160,6 +168,7 @@ module Ai4r
       # Generate GraphViz DOT syntax describing the decision tree.  Nodes are
       # labeled with attribute names or category values and edges are labeled
       # with attribute values.
+      # @return [Object]
       def to_graphviz
         return "digraph G {}" unless @tree
         lines = ["digraph G {"]
@@ -171,6 +180,7 @@ module Ai4r
       # Prune the decision tree using the validation set provided during build.
       # Subtrees are replaced by a single leaf when this increases the
       # classification accuracy on the validation data.
+      # @return [Object]
       def prune!
         return self unless @validation_set
         @tree = prune_node(@tree, @validation_set.data_items)
@@ -178,12 +188,18 @@ module Ai4r
       end
 
       private
+      # @param data_examples [Object]
+      # @return [Object]
       def preprocess_data(data_examples)
         @majority_class = most_freq(data_examples, domain(data_examples))
         @tree = build_node(data_examples, [], 0)
       end
 
       private
+      # @param data_examples [Object]
+      # @param flag_att [Object]
+      # @param depth [Object]
+      # @return [Object]
       def build_node(data_examples, flag_att = [], depth = 0)
         return ErrorNode.new if data_examples.empty?
         domain = domain(data_examples)
@@ -240,17 +256,24 @@ module Ai4r
       end
 
       private
+      # @param values [Object]
+      # @return [Object]
       def self.sum(values)
         values.sum
       end
 
       private
+      # @param z [Object]
+      # @return [Object]
       def self.log2(z)
         return 0.0 if z == 0
         Math.log(z)/LOG2
       end
 
       private       
+      # @param examples [Object]
+      # @param domain [Object]
+      # @return [Object]
       def most_freq(examples, domain)
         category_domain = domain.last
         freqs = Array.new(category_domain.length, 0)
@@ -265,6 +288,9 @@ module Ai4r
       end
 
       private
+      # @param data_examples [Object]
+      # @param att_index [Object]
+      # @return [Object]
       def split_data_examples_by_value(data_examples, att_index)
         att_value_examples = Hash.new {|hsh,key| hsh[key] = [] }
         data_examples.each do |example|
@@ -275,6 +301,10 @@ module Ai4r
       end
 
       private
+      # @param data_examples [Object]
+      # @param domain [Object]
+      # @param att_index [Object]
+      # @return [Object]
       def split_data_examples(data_examples, domain, att_index)
         att_value_examples = split_data_examples_by_value(data_examples, att_index)
         attribute_domain = domain[att_index]
@@ -287,6 +317,10 @@ module Ai4r
       end
 
       private
+      # @param data_examples [Object]
+      # @param att_index [Object]
+      # @param threshold [Object]
+      # @return [Object]
       def split_data_examples_numeric(data_examples, att_index, threshold)
         lower = []
         higher = []
@@ -301,6 +335,9 @@ module Ai4r
       end
 
       private
+      # @param data_examples [Object]
+      # @param att_index [Object]
+      # @return [Object]
       def candidate_thresholds(data_examples, att_index)
         values = data_examples.collect { |d| d[att_index] }.uniq.sort
         thresholds = []
@@ -309,6 +346,9 @@ module Ai4r
       end
 
       private
+      # @param split_data [Object]
+      # @param domain [Object]
+      # @return [Object]
       def entropy_for_numeric_split(split_data, domain)
         category_domain = domain.last
         grid = split_data.collect do |subset|
@@ -323,6 +363,10 @@ module Ai4r
       end
 
       private
+      # @param data_examples [Object]
+      # @param att_index [Object]
+      # @param domain [Object]
+      # @return [Object]
       def best_numeric_split(data_examples, att_index, domain)
         best_threshold = nil
         best_entropy = nil
@@ -340,6 +384,10 @@ module Ai4r
       end
 
       private 
+      # @param data_examples [Object]
+      # @param domain [Object]
+      # @param flag_att [Object]
+      # @return [Object]
       def min_entropy_index(data_examples, domain, flag_att=[])
         min_entropy = nil
         min_index = 0
@@ -357,6 +405,10 @@ module Ai4r
       end
 
       private
+      # @param data_examples [Object]
+      # @param domain [Object]
+      # @param att_index [Object]
+      # @return [Object]
       def information_gain(data_examples, domain, att_index)
         total_entropy = class_entropy(data_examples, domain)
         freq_grid_att = freq_grid(att_index, data_examples, domain)
@@ -365,6 +417,9 @@ module Ai4r
       end
 
       private
+      # @param data_examples [Object]
+      # @param domain [Object]
+      # @return [Object]
       def class_entropy(data_examples, domain)
         category_domain = domain.last
         freqs = Array.new(category_domain.length, 0)
@@ -377,6 +432,8 @@ module Ai4r
       end
 
       private
+      # @param data_examples [Object]
+      # @return [Object]
       def domain(data_examples)
         #return build_domains(data_examples)
         domain = Array.new( @data_set.data_labels.length ) { [] }
@@ -389,6 +446,10 @@ module Ai4r
       end
        
       private 
+      # @param att_index [Object]
+      # @param data_examples [Object]
+      # @param domain [Object]
+      # @return [Object]
       def freq_grid(att_index, data_examples, domain)
         #Initialize empty grid
         feature_domain = domain[att_index]
@@ -406,6 +467,9 @@ module Ai4r
       end
 
       private 
+      # @param freq_grid [Object]
+      # @param total_examples [Object]
+      # @return [Object]
       def entropy(freq_grid, total_examples)
         #Calc entropy of each element
         entropy = 0
@@ -424,6 +488,9 @@ module Ai4r
       end
 
       private
+      # @param node [Object]
+      # @param examples [Object]
+      # @return [Object]
       def prune_node(node, examples)
         return node if node.is_a?(CategoryNode) || node.is_a?(ErrorNode)
 
@@ -457,6 +524,9 @@ module Ai4r
       end
 
       private
+      # @param node [Object]
+      # @param examples [Object]
+      # @return [Object]
       def accuracy_for_node(node, examples)
         return nil if examples.empty?
         correct = examples.count do |ex|
@@ -473,6 +543,13 @@ module Ai4r
 
       attr_reader :index, :values, :nodes, :numeric, :threshold, :majority
 
+      # @param data_labels [Object]
+      # @param index [Object]
+      # @param values_or_threshold [Object]
+      # @param nodes [Object]
+      # @param numeric [Object]
+      # @param majority [Object]
+      # @return [Object]
       def initialize(data_labels, index, values_or_threshold, nodes, numeric = false, majority = nil)
         @index = index
         @numeric = numeric
@@ -487,6 +564,9 @@ module Ai4r
         @data_labels = data_labels
       end
 
+      # @param data [Object]
+      # @param classifier [Object]
+      # @return [Object]
       def value(data, classifier = nil)
         value = data[@index]
         if @numeric
@@ -502,6 +582,7 @@ module Ai4r
         end
       end
 
+      # @return [Object]
       def get_rules
         rule_set = []
         @nodes.each_with_index do |child_node, child_node_index|
@@ -520,6 +601,7 @@ module Ai4r
         rule_set
       end
 
+      # @return [Object]
       def to_h
         hash = {}
         @nodes.each_with_index do |child, i|
@@ -528,6 +610,11 @@ module Ai4r
         { @data_labels[@index] => hash }
       end
 
+      # @param id [Object]
+      # @param lines [Object]
+      # @param parent [Object]
+      # @param edge_label [Object]
+      # @return [Object]
       def to_graphviz(id, lines, parent=nil, edge_label=nil)
         my_id = id
         lines << "  node#{my_id} [label=\"#{@data_labels[@index]}\"]"
@@ -545,21 +632,34 @@ module Ai4r
     end
 
     class CategoryNode #:nodoc: all
+      # @param label [Object]
+      # @param value [Object]
+      # @return [Object]
       def initialize(label, value)
         @label = label
         @value = value
       end
+      # @param data [Object]
+      # @param classifier [Object]
+      # @return [Object]
       def value(data, classifier=nil)
         return @value
       end
+      # @return [Object]
       def get_rules
         return [["#{@label}='#{@value}'"]]
       end
 
+      # @return [Object]
       def to_h
         @value
       end
 
+      # @param id [Object]
+      # @param lines [Object]
+      # @param parent [Object]
+      # @param edge_label [Object]
+      # @return [Object]
       def to_graphviz(id, lines, parent=nil, edge_label=nil)
         my_id = id
         lines << "  node#{my_id} [label=\"#{@value}\", shape=box]"
@@ -573,17 +673,27 @@ module Ai4r
     end
 
     class ErrorNode #:nodoc: all
+      # @param data [Object]
+      # @param classifier [Object]
+      # @return [Object]
       def value(data, classifier=nil)
         raise ModelFailureError, "There was not enough information during training to do a proper induction for the data element #{data}."
       end
+      # @return [Object]
       def get_rules
         return []
       end
 
+      # @return [Object]
       def to_h
         nil
       end
 
+      # @param id [Object]
+      # @param lines [Object]
+      # @param parent [Object]
+      # @param edge_label [Object]
+      # @return [Object]
       def to_graphviz(id, lines, parent=nil, edge_label=nil)
         my_id = id
         lines << "  node#{my_id} [label=\"?\", shape=box]"

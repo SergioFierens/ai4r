@@ -1,5 +1,5 @@
-require File.dirname(__FILE__) + '/../../lib/ai4r/som/som'
-require File.dirname(__FILE__) + '/som_data'
+require_relative '../../lib/ai4r/som/som'
+require_relative 'som_data'
 require 'benchmark'
 
 # Train a small SOM and stop early when the global error drops below 1000.

@@ -39,18 +39,25 @@ module Ai4r
       # Build a new clusterer, using data examples found in data_set.
       # Items will be clustered in "number_of_clusters" different
       # clusters.
+      # @param data_set [Object]
+      # @param number_of_clusters [Object]
+      # @param *options [Object]
+      # @return [Object]
       def build(data_set, number_of_clusters = 1, **options)
         super
       end
 
       # This algorithms does not allow classification of new data items
       # once it has been built. Rebuild the cluster including you data element.
+      # @param _data_item [Object]
+      # @return [Object]
       def eval(_data_item)
         raise NotImplementedError, 'Eval of new data is not supported by this algorithm.'
       end
 
       # Average linkage builds a dendrogram and cannot classify new data
       # once built.
+      # @return [Object]
       def supports_eval?
         false
       end
@@ -59,6 +66,10 @@ module Ai4r
 
       # return distance between cluster cx and cluster (ci U cj),
       # using average linkage
+      # @param cx [Object]
+      # @param ci [Object]
+      # @param cj [Object]
+      # @return [Object]
       def linkage_distance(cx, ci, cj)
         (read_distance_matrix(cx, ci)+
           read_distance_matrix(cx, cj))/2

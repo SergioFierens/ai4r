@@ -12,18 +12,25 @@ module Ai4r
   module Classifiers
     class Votes
 
+      # @return [Object]
       def initialize
         self.tally_sheet = Hash.new(0)
       end
 
+      # @param category [Object]
+      # @return [Object]
       def increment_category(category)
         tally_sheet[category] += 1
       end
 
+      # @param category [Object]
+      # @return [Object]
       def tally_for(category)
         tally_sheet[category]
       end
 
+      # @param tie_strategy [Object]
+      # @return [Object]
       def get_winner(tie_strategy = :last)
         n = 0 # used to create a stable sort of the tallys
         sorted_sheet = tally_sheet.sort_by { |_, score| n += 1; [score, n] }
