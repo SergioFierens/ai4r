@@ -27,8 +27,18 @@ module Ai4r
     # it normalizes its attributes' ranges, processes instances
     # incrementally, and has a simple policy for tolerating missing values
     class IB1 < Classifier
-      
+
       attr_reader :data_set
+
+      parameters_info :k => 'Number of nearest neighbors to consider. Default is 1.',
+        :distance_function => 'Optional custom distance metric taking two instances.',
+        :tie_break => 'Strategy used when neighbors vote tie. Valid values are :first (default) and :random.'
+
+      def initialize
+        @k = 1
+        @distance_function = nil
+        @tie_break = :first
+      end
 
       # Build a new IB1 classifier. You must provide a DataSet instance
       # as parameter. The last attribute of each item is considered as 
@@ -57,16 +67,26 @@ module Ai4r
       #   classifier.eval(['New York',  '<30', 'F'])  # => 'Y'      
       def eval(data)
         update_min_max(data)
-        min_distance = 1.0/0
-        klass = nil
-        @data_set.data_items.each do |train_item|
-          d = distance(data, train_item)
-          if d < min_distance
-            min_distance = d
-            klass = train_item.last
-          end
+        metric = @distance_function || method(:distance)
+        neighbors = @data_set.data_items.map do |train_item|
+          [metric.call(data, train_item), train_item.last]
         end
-        return klass
+        neighbors.sort_by! { |d, _| d }
+        k_neighbors = neighbors.first([@k, @data_set.data_items.length].min)
+
+        counts = Hash.new(0)
+        k_neighbors.each { |_, klass| counts[klass] += 1 }
+        max_votes = counts.values.max
+        tied = counts.select { |_, v| v == max_votes }.keys
+
+        return tied.first if tied.length == 1
+
+        case @tie_break
+        when :random
+          tied.sample
+        else
+          k_neighbors.each { |_, klass| return klass if tied.include?(klass) }
+        end
       end
       
       protected
