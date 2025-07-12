@@ -40,6 +40,7 @@ module Ai4r
       attr_accessor :fitness_threshold, :max_stagnation, :on_generation
 
 
+      # @return [Object]
       def initialize(initial_population_size, generations, chromosome_class = TspChromosome,
                      mutation_rate = 0.3, crossover_rate = 0.4,
                      fitness_threshold = nil, max_stagnation = nil, on_generation = nil)
@@ -63,6 +64,7 @@ module Ai4r
       #           4. Replace worst ranked part of population with offspring
       #     4. Until termination    
       #     5. Return the best chromosome
+      # @return [Object]
       def run
         generate_initial_population                    #Generate initial population
         best = best_chromosome
@@ -90,6 +92,7 @@ module Ai4r
       end
 
 
+      # @return [Object]
       def generate_initial_population
        @population = []
        @population_size.times do
@@ -113,6 +116,7 @@ module Ai4r
       # 4. A random number R is chosen. R is between 0 and the accumulated normalized value (all the normalized fitness values added togheter).
       # 5. The selected individual is the first one whose accumulated normalized value (its is normalized value plus the normalized values of the chromosomes prior it) greater than R.
       # 6. We repeat steps 4 and 5, 2/3 times the population size.    
+      # @return [Object]
       def selection
         @population.sort! { |a, b| b.fitness <=> a.fitness}
         best_fitness = @population[0].fitness
@@ -141,6 +145,8 @@ module Ai4r
       # to only change (mutate) randomly. E.g. You could effectivly change the
       # chromosome only if 
       #     rand < ((1 - chromosome.normalized_fitness) * 0.4)
+      # @param selected_to_breed [Object]
+      # @return [Object]
       def reproduction(selected_to_breed)
         offsprings = []
         0.upto(selected_to_breed.length/2 - 1) do |i|
@@ -157,12 +163,15 @@ module Ai4r
       end
 
       # Replace worst ranked part of population with offspring
+      # @param offsprings [Object]
+      # @return [Object]
       def replace_worst_ranked(offsprings)
         size = offsprings.length
         @population = @population[0..(-size-1)] + offsprings
       end
 
       # Select the best chromosome in the population
+      # @return [Object]
       def best_chromosome
         the_best = @population[0]
         @population.each do |chromosome|
@@ -172,6 +181,8 @@ module Ai4r
       end
 
       private 
+      # @param acum_fitness [Object]
+      # @return [Object]
       def select_random_individual(acum_fitness)
         select_random_target = acum_fitness * rand
         local_acum = 0

@@ -31,6 +31,7 @@ module Ai4r
           "same maximal frequency. Valid values are :first (default) " +
           "and :random."
 
+      # @return [Object]
       def initialize
         @default_class = nil
         @tie_strategy = :first
@@ -39,6 +40,8 @@ module Ai4r
       # Build a new ZeroR classifier. You must provide a DataSet instance
       # as parameter. The last attribute of each item is considered as 
       # the item class.
+      # @param data_set [Object]
+      # @return [Object]
       def build(data_set)
         @data_set = data_set
         
@@ -80,6 +83,8 @@ module Ai4r
       # You can evaluate new data, predicting its class.
       # e.g.
       #   classifier.eval(['New York',  '<30', 'F'])  # => 'Y'
+      # @param data [Object]
+      # @return [Object]
       def eval(data)
         @class_value
       end
@@ -95,6 +100,7 @@ module Ai4r
       #     eval classifier.get_rules   
       #     puts marketing_target
       #       # =>  'Y'
+      # @return [Object]
       def get_rules
         return "#{@data_set.category_label} = '#{@class_value}'"
       end

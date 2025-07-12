@@ -37,6 +37,7 @@ module Ai4r
           "distance between them. By default, this algorithm uses " +
           "euclidean distance of numeric attributes to the power of 2."
 
+      # @return [Object]
       def initialize
         @distance_function = lambda do |a,b|
             Ai4r::Data::Proximity.squared_euclidean_distance(
@@ -51,6 +52,10 @@ module Ai4r
       #
       # If you specify :distance options, it will stop whether
       # number_of_clusters are reached or no distance among clusters are below :distance
+      # @param data_set [Object]
+      # @param number_of_clusters [Object]
+      # @param *options [Object]
+      # @return [Object]
       def build(data_set, number_of_clusters = 1, **options)
         @data_set = data_set
         distance = options[:distance] || (Float::INFINITY)
@@ -70,6 +75,8 @@ module Ai4r
         return self
       end
 
+      # @param clusters [Object]
+      # @return [Object]
       def draw_map(clusters)
         map = Array.new(11) {Array.new(11, 0)}
         clusters.each_index do |i|
@@ -82,6 +89,8 @@ module Ai4r
 
       # Classifies the given data item, returning the cluster index it belongs
       # to (0-based).
+      # @param data_item [Object]
+      # @return [Object]
       def eval(data_item)
         get_min_index(@clusters.collect {|cluster|
             distance_between_item_and_cluster(data_item, cluster)})
@@ -89,6 +98,9 @@ module Ai4r
 
       protected
 
+      # @param i [Object]
+      # @param j [Object]
+      # @return [Object]
       def distance_between_indexes(i, j)
         @distance_function.call(@data_set.data_items[i], @data_set.data_items[j])
       end
@@ -97,6 +109,7 @@ module Ai4r
 
       # Compute mean silhouette coefficient of the clustering result.
       # Returns a float between -1 and 1. Only valid after build.
+      # @return [Object]
       def silhouette
         return nil unless @index_clusters && @data_set
         total = 0.0
@@ -134,6 +147,7 @@ module Ai4r
 
       # returns [ [0], [1], [2], ... , [n-1] ]
       # where n is the number of data items in the data set
+      # @return [Object]
       def create_initial_index_clusters
         index_clusters = []
         @data_set.data_items.length.times {|i| index_clusters << [i]}
@@ -149,6 +163,8 @@ module Ai4r
       #     [d(n-1,0), d(n-1,1), d(n-1,2), ... , d(n-1,n-2)]
       #   ]
       # where n is the number of data items in the data set
+      # @param data_set [Object]
+      # @return [Object]
       def create_distance_matrix(data_set)
         @distance_matrix = Array.new(data_set.data_items.length-1) {|index| Array.new(index+1)}
         data_set.data_items.each_with_index do |a, i|
@@ -161,6 +177,9 @@ module Ai4r
 
       # Returns the distance between element data_item[index_a] and
       # data_item[index_b] using the distance matrix
+      # @param index_a [Object]
+      # @param index_b [Object]
+      # @return [Object]
       def read_distance_matrix(index_a, index_b)
         return 0 if index_a == index_b
         index_a, index_b = index_b, index_a if index_b > index_a
@@ -170,6 +189,9 @@ module Ai4r
       # ci and cj are the indexes of the clusters that are going to
       # be merged. We need to remove distances from/to ci and cj,
       # and add distances from/to new cluster (ci U cj)
+      # @param ci [Object]
+      # @param cj [Object]
+      # @return [Object]
       def update_distance_matrix(ci, cj)
         ci, cj = cj, ci if cj > ci
         distances_to_new_cluster = Array.new
@@ -197,6 +219,10 @@ module Ai4r
 
       # return distance between cluster cx and new cluster (ci U cj),
       # using single linkage
+      # @param cx [Object]
+      # @param ci [Object]
+      # @param cj [Object]
+      # @return [Object]
       def linkage_distance(cx, ci, cj)
         [read_distance_matrix(cx, ci),
           read_distance_matrix(cx, cj)].min
@@ -206,6 +232,10 @@ module Ai4r
       # and a new cluster with all members of cluster_a and cluster_b
       # is added.
       # It modifies index clusters array.
+      # @param index_a [Object]
+      # @param index_b [Object]
+      # @param index_clusters [Object]
+      # @return [Object]
       def merge_clusters(index_a, index_b, index_clusters)
         index_a, index_b = index_b, index_a if index_b > index_a
         new_index_cluster = index_clusters[index_a] +
@@ -218,6 +248,8 @@ module Ai4r
 
       # Given an array with clusters of data_items indexes,
       # it returns an array of data_items clusters
+      # @param index_clusters [Object]
+      # @return [Object]
       def build_clusters_from_index_clusters(index_clusters)
         return index_clusters.collect do |index_cluster|
           Ai4r::Data::DataSet.new(:data_labels => @data_set.data_labels,
@@ -227,6 +259,8 @@ module Ai4r
 
       # Returns ans array with the indexes of the two closest
       # clusters => [index_cluster_a, index_cluster_b]
+      # @param index_clusters [Object]
+      # @return [Object]
       def get_closest_clusters(index_clusters)
         min_distance = Float::INFINITY
         closest_clusters = [1, 0]
@@ -242,6 +276,9 @@ module Ai4r
         return closest_clusters
       end
 
+      # @param data_item [Object]
+      # @param cluster [Object]
+      # @return [Object]
       def distance_between_item_and_cluster(data_item, cluster)
         min_dist = Float::INFINITY
         cluster.data_items.each do |another_item|

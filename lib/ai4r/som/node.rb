@@ -45,6 +45,12 @@ module Ai4r
       # +rows+:: number of rows of the SOM grid
       # +columns+:: number of columns of the SOM grid
       # +dimensions+:: dimension of the input vector
+      # @param id [Object]
+      # @param rows [Object]
+      # @param columns [Object]
+      # @param dimensions [Object]
+      # @param options [Object]
+      # @return [Object]
       def self.create(id, rows, columns, dimensions, options = {})
         n = Node.new
         n.id = id
@@ -57,6 +63,9 @@ module Ai4r
 
       # instantiates the weights to the dimension (of the input vector)
       # for backup reasons, the instantiated weight is stored into @instantiated_weight  as well
+      # @param dimensions [Object]
+      # @param options [Object]
+      # @return [Object]
       def instantiate_weight(dimensions, options = {})
         opts = { range: 0..1, seed: nil }.merge(options)
         srand(opts[:seed]) unless opts[:seed].nil?
@@ -75,6 +84,8 @@ module Ai4r
       # returns the square distance between the current weights and the input
       # the input is a vector/array of the same size as weights
       # at the end, the square root is extracted from the sum of differences
+      # @param input [Object]
+      # @return [Object]
       def distance_to_input(input)
         dist = 0
         input.each_with_index do |i, index|
@@ -92,6 +103,8 @@ module Ai4r
       # 2 1 1 1 2
       # 2 2 2 2 2
       # 0 being the current node
+      # @param node [Object]
+      # @return [Object]
       def distance_to_node(node)
         dx = self.x - node.x
         dy = self.y - node.y
