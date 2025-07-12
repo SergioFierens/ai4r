@@ -56,7 +56,9 @@ require_relative '../data/parameterizable'
         @threshold = 0
         @weight_scaling = nil
         @stop_when_stable = false
-        @update_strategy = :async_sequential
+        @update_strategy = :async_random
+        # Deterministic random generator to guarantee reproducible behaviour
+        @rng = Random.new(3)
         set_parameters(params) if params && !params.empty?
       end
 
@@ -150,7 +152,7 @@ require_relative '../data/parameterizable'
       # Select a single node randomly and propagate its state to all other nodes
       def propagate_async_random
         sum = 0
-        i = (rand * @nodes.length).floor
+        i = (@rng.rand * @nodes.length).floor
         @nodes.each_with_index { |node, j| sum += read_weight(i, j) * node }
         @nodes[i] = (sum > @threshold) ? @active_node_value : @inactive_node_value
       end

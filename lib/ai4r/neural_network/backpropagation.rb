@@ -135,7 +135,15 @@ module Ai4r
       end
 
       def activation
-        @activation
+        if @activation.is_a?(Array)
+          if @set_by_loss || (@loss_function == :cross_entropy && @activation_overridden)
+            @activation.first
+          else
+            @activation
+          end
+        else
+          @activation
+        end
       end
 
       def weight_init=(symbol)
@@ -233,14 +241,14 @@ module Ai4r
       # Returns an array with the average loss of each epoch.
       def train_epochs(data_inputs, data_outputs, epochs:, batch_size: 1,
                        early_stopping_patience: nil, min_delta: 0.0,
-                       shuffle: true, random_seed: nil)
+                       shuffle: true, random_seed: nil, &block)
         raise ArgumentError, "Inputs and outputs size mismatch" if data_inputs.length != data_outputs.length
         losses = []
         best_loss = Float::INFINITY
         patience = early_stopping_patience
         patience_counter = 0
         rng = random_seed.nil? ? Random.new : Random.new(random_seed)
-        epochs.times do
+        epochs.times do |epoch|
           epoch_error = 0.0
           epoch_inputs = data_inputs
           epoch_outputs = data_outputs
@@ -346,29 +354,18 @@ module Ai4r
           @activation_nodes.first[input_index] = input_values[input_index]
         end
         @weights.each_index do |n|
-          sums = Array.new(@structure[n+1], 0.0)
-          @structure[n+1].times do |j|
+          sums = Array.new(@structure[n + 1], 0.0)
+          @structure[n + 1].times do |j|
             @activation_nodes[n].each_index do |i|
               sums[j] += (@activation_nodes[n][i] * @weights[n][i][j])
             end
           end
-          if n == @weights.length - 1 && @activation == :softmax
-            exps = sums.map { |s| @propagation_function.call(s) }
-            total = exps.inject(0.0) { |a, v| a + v }
-            @activation_nodes[n+1][0...@structure[n+1]] = exps.map { |e| e / total }
-          else
-            @structure[n+1].times do |j|
-              @activation_nodes[n+1][j] = @propagation_function.call(sums[j])
-            end
-          end
-            end
-          end
           if @activation[n] == :softmax
             values = @propagation_functions[n].call(sums)
-            values.each_index { |j| @activation_nodes[n+1][j] = values[j] }
+            values.each_index { |j| @activation_nodes[n + 1][j] = values[j] }
           else
             sums.each_index do |j|
-              @activation_nodes[n+1][j] = @propagation_functions[n].call(sums[j])
+              @activation_nodes[n + 1][j] = @propagation_functions[n].call(sums[j])
             end
           end
         end
@@ -419,8 +416,7 @@ module Ai4r
             output_deltas << (output_values[output_index] - expected_values[output_index])
           else
             error = expected_values[output_index] - output_values[output_index]
-            output_deltas << @derivative_propagation_function.call(
-              output_values[output_index]) * error
+            output_deltas << func.call(output_values[output_index]) * error
           end
         end
         @deltas = [output_deltas]
