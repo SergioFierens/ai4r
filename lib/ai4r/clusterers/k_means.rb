@@ -27,34 +27,35 @@ module Ai4r
       attr_reader :history
       
       parameters_info(
-        :max_iterations => "Maximum number of iterations to " +
+        max_iterations: "Maximum number of iterations to " +
           "build the clusterer. By default it is uncapped.",
-        :distance_function => "Custom implementation of distance function. " +
+        distance_function: "Custom implementation of distance function. " +
           "It must be a closure receiving two data items and return the " +
           "distance between them. By default, this algorithm uses " +
           "euclidean distance of numeric attributes to the power of 2.",
-        :centroid_function => "Custom implementation to calculate the " +
+        centroid_function: "Custom implementation to calculate the " +
           "centroid of a cluster. It must be a closure receiving an array of " +
           "data sets, and return an array of data items, representing the " +
           "centroids of for each data set. " +
           "By default, this algorithm returns a data items using the mode "+
           "or mean of each attribute on each data set.",
-        :centroid_indices => "Indices of data items (indexed from 0) to be " +
+        centroid_indices: "Indices of data items (indexed from 0) to be " +
           "the initial centroids.  Otherwise, the initial centroids will be " +
           "assigned randomly from the data set.",
-        :on_empty => "Action to take if a cluster becomes empty, with values " +
+        on_empty: "Action to take if a cluster becomes empty, with values " +
           "'eliminate' (the default action, eliminate the empty cluster), " +
           "'terminate' (terminate with error), 'random' (relocate the " +
           "empty cluster to a random point), 'outlier' (relocate the " +
           "empty cluster to the point furthest from its centroid).",
-        :random_seed => "Seed value used to initialize Ruby's random number " +
+        random_seed: "Seed value used to initialize Ruby's random number " +
           "generator when selecting random centroids.",
-        :init_method => "Strategy to initialize centroids. Available values: " +
+        init_method: "Strategy to initialize centroids. Available values: " +
           ":random (default) and :kmeans_plus_plus.",
-        :restarts => "Number of random initializations to perform. " +
+        restarts: "Number of random initializations to perform. " +
           "The best run (lowest SSE) will be kept.",
-        :track_history => "Keep centroids and assignments for each iteration " +
-          "when building the clusterer.",
+        track_history: "Keep centroids and assignments for each iteration " +
+          "when building the clusterer."
+
       )
       
       # @return [Object]
@@ -100,8 +101,8 @@ module Ai4r
             calculate_membership_clusters
             if @track_history
               @history << {
-                :centroids => @centroids.collect { |c| c.dup },
-                :assignments => @assignments.dup
+                centroids: @centroids.collect { |c| c.dup },
+                assignments: @assignments.dup
               }
             end
             recompute_centroids
@@ -188,7 +189,7 @@ module Ai4r
       # @return [Object]
       def calculate_membership_clusters
         @clusters = Array.new(@number_of_clusters) do
-          Ai4r::Data::DataSet.new :data_labels => @data_set.data_labels
+          Ai4r::Data::DataSet.new data_labels: @data_set.data_labels
         end
         @cluster_indices = Array.new(@number_of_clusters) {[]}
         @assignments = Array.new(@data_set.data_items.length)

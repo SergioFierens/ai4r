@@ -17,7 +17,7 @@ zero_default = ZeroR.new.build(set)
 puts zero_default.get_rules
 
 puts "\n== ZeroR with :tie_strategy => :random =="
-zero_rand = ZeroR.new.set_parameters(:tie_strategy => :random).build(set)
+zero_rand = ZeroR.new.set_parameters(tie_strategy: :random).build(set)
 puts zero_rand.get_rules
 
 puts "\n== OneR default behaviour =="
@@ -25,6 +25,6 @@ one_default = OneR.new.build(set)
 puts one_default.get_rules
 
 puts "\n== OneR forcing first attribute and :last tie break =="
-one_custom = OneR.new.set_parameters(:selected_attribute => 0, :tie_break => :last).build(set)
+one_custom = OneR.new.set_parameters(selected_attribute: 0, tie_break: :last).build(set)
 puts one_custom.get_rules
 

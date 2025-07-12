@@ -32,12 +32,12 @@ module Ai4r
 
       include Ai4r::Data::Parameterizable
 
-      parameters_info :weights => "holds the current weight",
-                      :instantiated_weight => "holds the very first weight",
-                      :x => "holds the row ID of the unit in the map",
-                      :y => "holds the column ID of the unit in the map",
-                      :id => "id of the node",
-                      :distance_metric => "metric used to compute node distance"
+      parameters_info weights: "holds the current weight",
+                      instantiated_weight: "holds the very first weight",
+                      x: "holds the row ID of the unit in the map",
+                      y: "holds the column ID of the unit in the map",
+                      id: "id of the node",
+                      distance_metric: "metric used to compute node distance"
 
       # creates an instance of Node and instantiates the weights
       #

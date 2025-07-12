@@ -56,24 +56,16 @@ module Ai4r
 
       include Ai4r::Data::Parameterizable
 
-      parameters_info :rows  => "number of rows for the map",
-                      :columns => "number of columns for the map",
-                      :nodes => "array holding all nodes of the map",
-                      :dimension => "sets the dimension of the input",
-                      :layer => "instance of a layer, defines how the training algorithm works",
-                      :epoch => "number of finished epochs",
-                      :init_weight_options => "Hash with :range and :random_seed to initialize node weights (also accepts :seed)"
+      parameters_info rows: "number of rows for the map",
+                      columns: "number of columns for the map",
+                      nodes: "array holding all nodes of the map",
+                      dimension: "sets the dimension of the input",
+                      layer: "instance of a layer, defines how the training algorithm works",
+                      epoch: "number of finished epochs",
+                      init_weight_options: "Hash with :range and :seed to initialize node weights"
 
-      # @param dim [Object]
-      # @param rows [Object]
-      # @param columns [Object]
-      # @param layer [Object]
-      # @param init_weight_options [Object]
-      #   Hash with :range and :random_seed used when initializing node weights.
-      #   The deprecated :seed key is still supported.
-      # @param random_seed [Object]
-      # @return [Object]
-      def initialize(dim, rows, columns, layer, init_weight_options = { range: 0..1, random_seed: nil })
+      def initialize(dim, rows, columns, layer, init_weight_options = { range: 0..1, seed: nil })
+
         @layer = layer
         @dimension = dim
         @rows = rows
