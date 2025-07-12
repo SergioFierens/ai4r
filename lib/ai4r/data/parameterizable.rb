@@ -25,7 +25,7 @@ module Ai4r
         # You must provide a hash with the following format:
         # { :param_name => "Info on the parameter" }        
         def parameters_info(params_info)
-          @_params_info_ = params_info
+          @_params_info_ = get_parameters_info.merge(params_info)
           params_info.keys.each do |param|
             attr_accessor param
           end

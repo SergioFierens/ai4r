@@ -46,6 +46,9 @@ module Ai4r
         :tie_break => 'Strategy when multiple conditions have equal ratios.'
 
       def initialize
+        @fallback_class = nil
+        @bin_count = 10
+        @attr_bins = {}
         @default_class = nil
         @tie_break = :first
       end
@@ -88,7 +91,7 @@ module Ai4r
         @rules.each do |rule|
           return rule[:class_value] if matches_conditions(instace, rule[:conditions])
         end
-        @fallback_class
+        @default_class || @fallback_class
       end
       
       # This method returns the generated rules in ruby code.

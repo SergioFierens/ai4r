@@ -122,6 +122,31 @@ module Ai4r
         assert history[0] > history[1]
       end
 
+      def test_train_batch_differs_from_sequential_training
+        data_in = [[0, 0], [1, 1]]
+        data_out = [[0], [1]]
+        seq_net = Backpropagation.new([2, 1]).init_network
+        batch_net = Marshal.load(Marshal.dump(seq_net))
+
+        seq_net.train(data_in[0], data_out[0])
+        seq_net.train(data_in[1], data_out[1])
+
+        batch_net.train_batch(data_in, data_out)
+
+        diff_found = false
+        seq_net.weights.each_index do |n|
+          seq_net.weights[n].each_index do |i|
+            seq_net.weights[n][i].each_index do |j|
+              if (seq_net.weights[n][i][j] - batch_net.weights[n][i][j]).abs > 1e-6
+                diff_found = true
+                break
+              end
+            end
+          end
+        end
+        assert diff_found, "Batch training should update weights differently"
+      end
+
 
     end
 

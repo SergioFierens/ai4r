@@ -187,11 +187,46 @@ module Ai4r
       # Train a list of input/output pairs and return average loss.
       def train_batch(batch_inputs, batch_outputs)
         raise ArgumentError, "Inputs and outputs size mismatch" if batch_inputs.length != batch_outputs.length
-        sum_error = 0.0
-        batch_inputs.each_index do |i|
-          sum_error += train(batch_inputs[i], batch_outputs[i])
+        batch_size = batch_inputs.length
+        init_network unless @weights
+
+        accumulated_changes = Array.new(@weights.length) do |w|
+          Array.new(@weights[w].length) do |i|
+            Array.new(@weights[w][i].length, 0.0)
+          end
         end
-        sum_error / batch_inputs.length.to_f
+
+        sum_error = 0.0
+        batch_inputs.each_index do |idx|
+          inputs = batch_inputs[idx]
+          outputs = batch_outputs[idx]
+          eval(inputs)
+          calculate_output_deltas(outputs)
+          calculate_internal_deltas
+
+          (@weights.length - 1).downto(0) do |n|
+            @weights[n].each_index do |i|
+              @weights[n][i].each_index do |j|
+                change = @deltas[n][j] * @activation_nodes[n][i]
+                accumulated_changes[n][i][j] += change
+              end
+            end
+          end
+
+          sum_error += calculate_loss(outputs, @activation_nodes.last)
+        end
+
+        (@weights.length - 1).downto(0) do |n|
+          @weights[n].each_index do |i|
+            @weights[n][i].each_index do |j|
+              avg_change = accumulated_changes[n][i][j] / batch_size.to_f
+              @weights[n][i][j] += learning_rate * avg_change + momentum * @last_changes[n][i][j]
+              @last_changes[n][i][j] = avg_change
+            end
+          end
+        end
+
+        sum_error / batch_size.to_f
       end
 
       # Train for a number of epochs over the dataset. Optionally define a batch size.
