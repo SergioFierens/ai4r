@@ -11,7 +11,7 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'ai4r/som/som'
-require 'test/unit'
+require 'minitest/autorun'
 require 'tmpdir'
 require_relative '../test_helper'
 
@@ -19,7 +19,7 @@ module Ai4r
 
   module Som
 
-    class SomTest < Test::Unit::TestCase
+    class SomTest < Minitest::Test
 
       def setup
         @som = Som.new 2, 5, 5, Layer.new(3, 3)
@@ -52,10 +52,10 @@ module Ai4r
       end
 
       def test_access_to_nodes
-        ex = assert_raise(ArgumentError) { @som.get_node(5, 5) }
+        ex = assert_raises(ArgumentError) { @som.get_node(5, 5) }
         assert_equal 'invalid node coordinates (5, 5)', ex.message
 
-        ex = assert_raise(ArgumentError) { @som.get_node(5, -3) }
+        ex = assert_raises(ArgumentError) { @som.get_node(5, -3) }
         assert_equal 'invalid node coordinates (5, -3)', ex.message
 
         assert_equal Node, @som.get_node(0, 0).class

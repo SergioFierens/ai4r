@@ -4,7 +4,7 @@ This document outlines several ways to improve the current AI4R test suite.
 
 ## Use Modern Test Frameworks
 
-The project relies on `Test::Unit`. Migrating to `Minitest` (or to `RSpec` for a behavior-driven approach) would provide a larger ecosystem of plugins and clearer syntax while still running with `rake test`.
+The project now uses `Minitest` instead of the older `Test::Unit`. This brings a larger ecosystem of plugins and clearer syntax while still running with `rake test`.
 
 ## Centralize Mock Data
 

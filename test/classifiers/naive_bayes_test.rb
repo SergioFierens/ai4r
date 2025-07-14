@@ -1,11 +1,11 @@
 require 'ai4r/classifiers/naive_bayes'
 require 'ai4r/data/data_set'
-require 'test/unit'
+require 'minitest/autorun'
 
 include Ai4r::Classifiers
 include Ai4r::Data
 
-class NaiveBayesTest < Test::Unit::TestCase
+class NaiveBayesTest < Minitest::Test
 
   @@data_labels = %w(Color Type Origin Stolen?)
 
@@ -55,7 +55,7 @@ class NaiveBayesTest < Test::Unit::TestCase
   end
 
   def test_unknown_value_error
-    assert_raise RuntimeError do
+    assert_raises RuntimeError do
       NaiveBayes.new.set_parameters(:unknown_value_strategy => :error).build(@data_set).eval(%w(Blue SUV Domestic))
     end
   end

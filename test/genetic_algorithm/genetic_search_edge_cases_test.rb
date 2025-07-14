@@ -1,4 +1,4 @@
-require 'test/unit'
+require 'minitest/autorun'
 require 'ai4r/genetic_algorithm/genetic_algorithm'
 
 module Ai4r
@@ -28,7 +28,7 @@ module Ai4r
       end
     end
 
-    class GeneticSearchEdgeCasesTest < Test::Unit::TestCase
+    class GeneticSearchEdgeCasesTest < Minitest::Test
       def test_selection_with_identical_fitness_sets_normalized_to_one
         search = GeneticSearch.new(4, 1, FixedChromosome)
         search.generate_initial_population
@@ -57,7 +57,7 @@ module Ai4r
       def test_missing_chromosome_methods_raise_not_implemented
         klass = Class.new(ChromosomeBase)
         search = GeneticSearch.new(1, 1, klass)
-        assert_raise(NotImplementedError) { search.generate_initial_population }
+        assert_raises(NotImplementedError) { search.generate_initial_population }
       end
     end
 

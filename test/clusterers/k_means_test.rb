@@ -7,10 +7,10 @@
 # the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require 'test/unit'
+require 'minitest/autorun'
 require 'ai4r/clusterers/k_means'
 
-class KMeansTest < Test::Unit::TestCase
+class KMeansTest < Minitest::Test
 
   include Ai4r::Clusterers
   include Ai4r::Data
@@ -94,7 +94,7 @@ class KMeansTest < Test::Unit::TestCase
       [10, 10, "London", 50])
 
     # Ensure default distance raises error for nil argument
-    exception = assert_raise(TypeError) {clusterer.distance([1, 10], [nil, nil])}
+    exception = assert_raises(TypeError) {clusterer.distance([1, 10], [nil, nil])}
 
     # Test new distance definition
     manhattan_distance = lambda do |a, b|
@@ -127,10 +127,10 @@ class KMeansTest < Test::Unit::TestCase
     # centroid_indices can be specified:
     KMeans.new.set_parameters({:centroid_indices=>[0,1,2,3]}).build(data_set, 4)
     # raises exception if number of clusters differs from length of centroid_indices:
-    exception = assert_raise(ArgumentError) {KMeans.new.set_parameters({:centroid_indices=>[0,1,2,3]}).build(data_set, 2)}
+    exception = assert_raises(ArgumentError) {KMeans.new.set_parameters({:centroid_indices=>[0,1,2,3]}).build(data_set, 2)}
     assert_equal('Length of centroid indices array differs from the specified number of clusters', exception.message)
     # raises exception for bad centroid index:
-    exception = assert_raise(ArgumentError) {KMeans.new.set_parameters({:centroid_indices=>[0,1,2,@@data.size+10]}).build(data_set, 4)}
+    exception = assert_raises(ArgumentError) {KMeans.new.set_parameters({:centroid_indices=>[0,1,2,@@data.size+10]}).build(data_set, 4)}
     assert_equal("Invalid centroid index #{@@data.size+10}", exception.message)
   end
 
@@ -166,10 +166,10 @@ class KMeansTest < Test::Unit::TestCase
     # Verify that eliminate is the on_empty default
     assert_equal 'eliminate', clusterer.on_empty
     # Verify that invalid on_empty option throws an argument error
-    exception = assert_raise(ArgumentError) {KMeans.new.set_parameters({:centroid_indices=>@@empty_centroid_indices, :on_empty=>'ldkfje'}).build(data_set, @@empty_centroid_indices.size)}
+    exception = assert_raises(ArgumentError) {KMeans.new.set_parameters({:centroid_indices=>@@empty_centroid_indices, :on_empty=>'ldkfje'}).build(data_set, @@empty_centroid_indices.size)}
     assert_equal("Invalid value for on_empty", exception.message)
     # Verify that on_empty option 'terminate' raises an error when an empty cluster arises
-    exception = assert_raise(TypeError) {KMeans.new.set_parameters({:centroid_indices=>@@empty_centroid_indices, :on_empty=>'terminate'}).build(data_set, @@empty_centroid_indices.size)}
+    exception = assert_raises(TypeError) {KMeans.new.set_parameters({:centroid_indices=>@@empty_centroid_indices, :on_empty=>'terminate'}).build(data_set, @@empty_centroid_indices.size)}
     clusterer = KMeans.new.set_parameters({:centroid_indices=>@@empty_centroid_indices, :on_empty=>'random'}).build(data_set, @@empty_centroid_indices.size)
     # Verify that cluster was not eliminated
     assert_equal @@empty_centroid_indices.size, clusterer.clusters.length

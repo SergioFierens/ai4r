@@ -1,7 +1,7 @@
-require 'test/unit'
+require 'minitest/autorun'
 require 'ai4r/clusterers/ward_linkage'
 
-class HierarchicalSilhouetteTest < Test::Unit::TestCase
+class HierarchicalSilhouetteTest < Minitest::Test
   include Ai4r::Clusterers
   include Ai4r::Data
 

@@ -9,7 +9,7 @@
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require 'test/unit'
+require 'minitest/autorun'
 require 'ai4r/neural_network/hopfield'
 require 'ai4r/data/data_set'
 
@@ -20,7 +20,7 @@ module Ai4r
   module NeuralNetwork
 
 
-    class HopfieldTest < Test::Unit::TestCase
+    class HopfieldTest < Minitest::Test
       
       def setup
         @data_set = Ai4r::Data::DataSet.new :data_items => [
@@ -152,14 +152,14 @@ module Ai4r
       def test_train_validates_values
         net = Hopfield.new
         invalid = Ai4r::Data::DataSet.new :data_items => [[1, 0, -1]]
-        assert_raise(ArgumentError) { net.train(invalid) }
+        assert_raises(ArgumentError) { net.train(invalid) }
 
         net.active_node_value = 1
         net.inactive_node_value = 0
         valid = Ai4r::Data::DataSet.new :data_items => [[1,0,1,0]]
         net.train(valid)
         invalid2 = Ai4r::Data::DataSet.new :data_items => [[1,2,0]]
-        assert_raise(ArgumentError) { net.train(invalid2) }
+        assert_raises(ArgumentError) { net.train(invalid2) }
       end
 
       def test_weight_scaling_changes_weights
@@ -170,7 +170,7 @@ module Ai4r
         scaled_net.set_parameters(weight_scaling: 0.5)
         scaled_net.train @data_set
 
-        assert_not_equal default_net.weights, scaled_net.weights
+        refute_equal default_net.weights, scaled_net.weights
         assert_in_delta default_net.read_weight(1,0) * 2,
           scaled_net.read_weight(1,0), 0.00001
       end

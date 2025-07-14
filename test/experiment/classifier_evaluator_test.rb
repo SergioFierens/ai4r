@@ -7,7 +7,7 @@
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require 'test/unit'
+require 'minitest/autorun'
 require 'ai4r/experiment/classifier_evaluator'
 require 'ai4r/classifiers/classifier'
 
@@ -32,7 +32,7 @@ end
 
 module Ai4r
   module Experiment
-    class ClassifierEvaluatorTest < Test::Unit::TestCase
+    class ClassifierEvaluatorTest < Minitest::Test
       
       def test_add_classifier
         evaluator = ClassifierEvaluator.new

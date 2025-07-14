@@ -8,11 +8,11 @@ GEM
     json (2.12.2)
     language_server-protocol (3.17.0.5)
     lint_roller (1.1.0)
+    minitest (5.25.5)
     parallel (1.27.0)
     parser (3.3.8.0)
       ast (~> 2.4.1)
       racc
-    power_assert (2.0.5)
     prism (1.4.0)
     psych (5.2.6)
       date
@@ -40,8 +40,6 @@ GEM
       prism (~> 1.4)
     ruby-progressbar (1.13.0)
     stringio (3.1.7)
-    test-unit (3.7.0)
-      power_assert
     unicode-display_width (3.1.4)
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
@@ -52,10 +50,10 @@ PLATFORMS
 
 DEPENDENCIES
   csv (~> 3)
+  minitest (~> 5)
   rake (~> 13)
   rdoc (~> 6)
   rubocop (~> 1.78)
-  test-unit (~> 3)
 
 BUNDLED WITH
    2.6.7

@@ -1,6 +1,6 @@
-require 'test/unit'
+require 'minitest/autorun'
 
-class ExamplesTest < Test::Unit::TestCase
+class ExamplesTest < Minitest::Test
   EXAMPLES_DIR = File.expand_path('../../examples/classifiers', __dir__)
 
   def run_example(name)

@@ -8,7 +8,7 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'ai4r/classifiers/hyperpipes'
-require 'test/unit'
+require 'minitest/autorun'
 require 'set'
 require 'yaml'
 
@@ -19,7 +19,7 @@ end
 include Ai4r::Classifiers
 include Ai4r::Data
 
-class HyperpipesTest < Test::Unit::TestCase
+class HyperpipesTest < Minitest::Test
 
   fixture = YAML.load_file(File.expand_path('../fixtures/marketing_target_numeric.yml', __dir__))
 
@@ -38,7 +38,7 @@ class HyperpipesTest < Test::Unit::TestCase
   end
   
   def test_build
-    assert_raise(ArgumentError) { Hyperpipes.new.build(DataSet.new) }
+    assert_raises(ArgumentError) { Hyperpipes.new.build(DataSet.new) }
     classifier = Hyperpipes.new.build(@data_set)
     assert classifier.pipes.include?("Y")
     assert classifier.pipes.include?("N")

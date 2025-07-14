@@ -14,7 +14,8 @@
 #
 
 
-require 'test/unit'
+require 'minitest/autorun'
+Minitest::Test.i_suck_and_my_tests_are_order_dependent!
 
 
 def assert_approximate_equality(expected, real, delta=0.01)

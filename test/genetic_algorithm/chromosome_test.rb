@@ -10,7 +10,7 @@
 
 require 'ai4r/genetic_algorithm/genetic_algorithm'
 require 'ai4r/genetic_algorithm/tsp_chromosome'
-require 'test/unit'
+require 'minitest/autorun'
 
 module Ai4r
   
@@ -29,7 +29,7 @@ module Ai4r
               [ 11,       11,       22,       9,        28,     26,       27,         19,     22,        0]
   ]
 
-    class ChromosomeTest < Test::Unit::TestCase
+    class ChromosomeTest < Minitest::Test
 
       def test_chromosome_seed
         TspChromosome.set_cost_matrix(COST)
@@ -60,7 +60,7 @@ module Ai4r
         mutated_data = chromosome.data.dup
         expected_fitness = TspChromosome.new(mutated_data).fitness
         assert_equal expected_fitness, chromosome.fitness
-        assert_not_equal original_fitness, chromosome.fitness
+        refute_equal original_fitness, chromosome.fitness
       end
 
     end

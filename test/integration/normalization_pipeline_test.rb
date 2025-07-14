@@ -1,7 +1,7 @@
-require 'test/unit'
+require 'minitest/autorun'
 require 'ai4r'
 
-class NormalizationPipelineTest < Test::Unit::TestCase
+class NormalizationPipelineTest < Minitest::Test
   include Ai4r::Data
   include Ai4r::Clusterers
   include Ai4r::Classifiers

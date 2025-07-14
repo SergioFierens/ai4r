@@ -7,12 +7,12 @@
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require 'test/unit'
+require 'minitest/autorun'
 require 'ai4r/data/data_set'
 
 module Ai4r
   module Data
-    class DataSetTest < Test::Unit::TestCase
+    class DataSetTest < Minitest::Test
       
       def test_load_csv_with_labels
         set = DataSet.new.load_csv_with_labels("#{File.dirname(__FILE__)}/data_set.csv")
@@ -67,7 +67,7 @@ module Ai4r
         set = DataSet.new(:data_labels => labels)
         assert_equal labels, set.data_labels
         set = DataSet.new(:data_items => [[ 1, 2, 3]])
-        assert_raise(ArgumentError) { set.set_data_labels(labels) }
+        assert_raises(ArgumentError) { set.set_data_labels(labels) }
       end
 
       def test_set_data_items
@@ -81,9 +81,9 @@ module Ai4r
         assert_equal items, set.data_items
         assert_equal 3, set.data_labels.length
         items << items.first[0..-2]
-        assert_raise(ArgumentError) { set.set_data_items(items) }
-        assert_raise(ArgumentError) { set.set_data_items(nil) }
-        assert_raise(ArgumentError) { set.set_data_items([1]) }
+        assert_raises(ArgumentError) { set.set_data_items(items) }
+        assert_raises(ArgumentError) { set.set_data_items(nil) }
+        assert_raises(ArgumentError) { set.set_data_items([1]) }
       end
      
       def test_get_mean_or_mode
