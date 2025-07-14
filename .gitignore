@@ -1,4 +1,42 @@
-build/
-rdoc/
-site/build/
+*.gem
+*.rbc
+/.config
+/coverage/
+/InstalledFiles
+/pkg/
+/spec/reports/
+/spec/examples.txt
+/test/tmp/
+/test/version_tmp/
+/tmp/
 
+# Documentation
+/.yardoc/
+/_yardoc/
+/doc/
+/rdoc/
+
+# Bundle
+/.bundle/
+/vendor/bundle
+/lib/bundler/man/
+
+# Gemfile.lock (for libraries)
+Gemfile.lock
+
+# RVM/rbenv
+.ruby-version
+.ruby-gemset
+.rvmrc
+
+# IDE
+/.idea/
+/.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build artifacts
+/build/
+/site/build/

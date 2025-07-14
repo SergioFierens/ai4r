@@ -1,7 +1,4 @@
-require 'rubygems'
-require 'rake'
-
-SPEC = Gem::Specification.new do |s|
+Gem::Specification.new do |s|
   s.name = "ai4r"
   s.version = "1.13"
   s.author = "Sergio Fierens"
@@ -12,9 +9,11 @@ SPEC = Gem::Specification.new do |s|
     Artificial intelligence fields, including Genetic
     algorithms, Neural Networks, machine learning, and clustering.
   DESC
-  s.files = FileList["{examples,lib}/**/*"].to_a
+  s.files = Dir["{examples,lib}/**/*"]
   s.require_path = "lib"
-  s.test_files = FileList["{test}/**/*test.rb"].to_a
-  s.has_rdoc = true
+  s.test_files = Dir["{test}/**/*test.rb"]
   s.extra_rdoc_files = ["README.rdoc"]
+  s.required_ruby_version = ">= 2.7.0"
+  s.license = "MIT"
+  s.add_runtime_dependency "csv", "~> 3.2"
 end
