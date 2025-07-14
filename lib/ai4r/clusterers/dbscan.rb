@@ -5,9 +5,9 @@
 # Project::   ai4r
 # Url::       https://github.com/SergioFierens/ai4r
 
-require "#{File.dirname(__FILE__)}/../data/data_set"
-require "#{File.dirname(__FILE__)}/../data/proximity"
-require "#{File.dirname(__FILE__)}/../clusterers/clusterer"
+require_relative '../data/data_set'
+require_relative '../data/proximity'
+require_relative '../clusterers/clusterer'
 
 module Ai4r
   module Clusterers
@@ -16,14 +16,9 @@ module Ai4r
     class DBSCAN < Clusterer
       attr_reader :data_set, :number_of_clusters, :clusters, :cluster_indices, :labels
 
-      parameters_info epsilon: 'radius around the current point ' \
-                               'within min_points must be in order to build a cluster.',
-                      min_points: 'Minimum number of points within a neighborhood' \
-                                  'in order to build a cluster',
-                      distance_function: 'Custom implementation of distance function. ' \
-                                         'It must be a closure receiving two data items and return the ' \
-                                         'distance between them. By default, this algorithm uses ' \
-                                         'euclidean distance of numeric attributes to the power of 2.'
+      parameters_info epsilon: 'Squared radius used with squared Euclidean distance.',
+                      min_points: 'Minimum neighbours excluding the point itself required to form a cluster.',
+                      distance_function: 'Optional closure computing distance; defaults to squared Euclidean.'
 
       def initialize
         @distance_function = nil
@@ -42,8 +37,6 @@ module Ai4r
 
         raise ArgumentError, 'epsilon must be defined' if @epsilon.nil?
 
-        number_of_clusters = 0
-
         # Detect if the neighborhood of the current item
         # is dense enough
         data_set.data_items.each_with_index do |data_item, data_index|
@@ -53,19 +46,19 @@ module Ai4r
           if neighbors.size < @min_points
             @labels[data_index] = :noise
           else
-            number_of_clusters += 1
-            @labels[data_index] = number_of_clusters
+            @number_of_clusters += 1
+            @labels[data_index] = @number_of_clusters
             @clusters.push([data_item])
             @cluster_indices.push([data_index])
-            extend_cluster(neighbors, number_of_clusters)
+            extend_cluster(neighbors, @number_of_clusters)
           end
         end
-
+        @number_of_clusters = number_of_clusters
         self
       end
 
-      # This algorithms does not allow classification of new data items
-      # once it has been built. Rebuild the cluster including your data element.
+      # This algorithm cannot classify new data items once it has been built.
+      # Rebuild the cluster with your new data item instead.
       # @param _data_item [Object]
       # @return [Object]
       def eval(_data_item)
@@ -88,8 +81,8 @@ module Ai4r
 
       protected
 
-      # scan the data set for every point belonging to the current
-      # item neighborhood
+      # Scan the data set and return the indices of all points
+      # belonging to the neighborhood of the current item
       def range_query(evaluated_data_item)
         neighbors = []
         @data_set.data_items.each_with_index do |data_item, data_index|
@@ -103,7 +96,8 @@ module Ai4r
       # If a neighbour was previously labeled as noise, assign it to the current
       # cluster.
       def extend_cluster(neighbors, current_cluster)
-        neighbors.each do |data_index|
+        while neighbors.any?
+          data_index = neighbors.shift
           if @labels[data_index] == :noise
             @labels[data_index] = current_cluster
             @clusters.last << @data_set.data_items[data_index]
@@ -114,8 +108,7 @@ module Ai4r
             @cluster_indices.last << data_index
             new_neighbors = range_query(@data_set.data_items[data_index]) - [data_index]
             if new_neighbors.size >= @min_points
-              neighbors += new_neighbors
-              neighbors.delete(data_index)
+              neighbors.concat(new_neighbors)
               neighbors.uniq!
             end
           end
