@@ -41,12 +41,10 @@ module Ai4r
       # @param params [Object]
       # @return [Object]
       def set_parameters(params)
-        self.class.get_parameters_info.keys.each do | key |
-          if self.respond_to?("#{key}=".to_sym)
-            send("#{key}=".to_sym, params[key]) if params.has_key? key
-          end
+        params.each do |key, val|
+          public_send("#{key}=", val) if respond_to?("#{key}=")
         end
-        return self
+        self
       end
       
       # Get parameter values on this algorithm instance.
