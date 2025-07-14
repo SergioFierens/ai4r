@@ -16,14 +16,9 @@ module Ai4r
     class DBSCAN < Clusterer
       attr_reader :data_set, :number_of_clusters, :clusters, :cluster_indices, :labels
 
-      parameters_info epsilon: 'radius around the current point ' \
-                               'within min_points must be in order to build a cluster.',
-                      min_points: 'Minimum number of points within a neighborhood' \
-                                  'in order to build a cluster',
-                      distance_function: 'Custom implementation of distance function. ' \
-                                         'It must be a closure receiving two data items and return the ' \
-                                         'distance between them. By default, this algorithm uses ' \
-                                         'euclidean distance of numeric attributes to the power of 2.'
+      parameters_info epsilon: 'Squared radius used with squared Euclidean distance.',
+                      min_points: 'Minimum neighbours excluding the point itself required to form a cluster.',
+                      distance_function: 'Optional closure computing distance; defaults to squared Euclidean.'
 
       def initialize
         @distance_function = nil
