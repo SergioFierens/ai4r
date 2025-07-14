@@ -29,6 +29,7 @@ require 'ai4r'
 * **Neural Networks** – simple OCR recognition of visual patterns.
 * [Hopfield Networks](hopfield_network.md) – memory based recognition of noisy patterns.
 * [Hierarchical Clustering](hierarchical_clustering.md) – build dendrograms from merge steps.
+* [DBSCAN](dbscan.md) – density-based clustering using a squared distance threshold.
 * **Automatic Classifiers** – identify relevant marketing targets using decision trees.
 * [PRISM](prism.md) – rule induction algorithm for discrete attributes.
 * [Naive Bayes Classifier](naive_bayes.md) – probabilistic classification for categorical data.
