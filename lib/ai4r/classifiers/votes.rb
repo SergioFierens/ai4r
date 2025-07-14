@@ -29,9 +29,9 @@ module Ai4r
         tally_sheet[category]
       end
 
-      # @param tie_strategy [Object]
+      # @param tie_break [Object]
       # @return [Object]
-      def get_winner(tie_strategy = :last, rng: Random.new)
+      def get_winner(tie_break = :last, rng: Random.new)
         n = 0 # used to create a stable sort of the tallys
         sorted_sheet = tally_sheet.sort_by do |_, score|
           n += 1
@@ -39,7 +39,7 @@ module Ai4r
         end
         return nil if sorted_sheet.empty?
 
-        if tie_strategy == :random
+        if tie_break == :random
           max_score = sorted_sheet.last[1]
           tied = sorted_sheet.select { |_, score| score == max_score }.map(&:first)
           tied.sample(random: rng)

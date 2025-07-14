@@ -25,14 +25,14 @@ module Ai4r
     class Hyperpipes < Classifier
       attr_reader :data_set, :pipes
 
-      parameters_info tie_strategy: 'Strategy used when more than one class has the same maximal vote. ' \
-                                    'Valid values are :last (default) and :random.',
+      parameters_info tie_break: 'Strategy used when more than one class has the same maximal vote. ' \
+                                 'Valid values are :last (default) and :random.',
                       margin: 'Numeric margin added to the bounds of numeric attributes.',
-                      random_seed: 'Seed for random tie-breaking when tie_strategy is :random.'
+                      random_seed: 'Seed for random tie-breaking when tie_break is :random.'
 
       # @return [Object]
       def initialize
-        @tie_strategy = :last
+        @tie_break = :last
         @margin = 0
         @random_seed = nil
         @rng = nil
@@ -58,7 +58,7 @@ module Ai4r
       # You can evaluate new data, predicting its class.
       # e.g.
       #   classifier.eval(['New York',  '<30', 'F'])  # => 'Y'
-      # Tie resolution is controlled by +tie_strategy+ parameter.
+      # Tie resolution is controlled by +tie_break+ parameter.
       # @param data [Object]
       # @return [Object]
       def eval(data)
@@ -73,7 +73,7 @@ module Ai4r
           end
         end
         rng = @rng || (@random_seed.nil? ? Random.new : Random.new(@random_seed))
-        votes.get_winner(@tie_strategy, rng: rng)
+        votes.get_winner(@tie_break, rng: rng)
       end
 
       # This method returns the generated rules in ruby code.
@@ -107,7 +107,7 @@ module Ai4r
             rules << rule
           end
         end
-        rules << "#{labels.last} = votes.get_winner(:#{@tie_strategy})"
+        rules << "#{labels.last} = votes.get_winner(:#{@tie_break})"
         rules.join("\n")
       end
 
