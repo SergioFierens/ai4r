@@ -7,10 +7,10 @@ class MCTSTest < Minitest::Test
 
   def setup
     @env = {
-      actions: ->(s) { s == :root ? %i[a b] : [] },
-      transition: ->(s, a) { a == :a ? :win : :lose },
-      terminal: ->(s) { %i[win lose].include?(s) },
-      reward: ->(s) { s == :win ? 1.0 : 0.0 }
+      actions_fn: ->(s) { s == :root ? %i[a b] : [] },
+      transition_fn: ->(s, a) { a == :a ? :win : :lose },
+      terminal_fn: ->(s) { %i[win lose].include?(s) },
+      reward_fn: ->(s) { s == :win ? 1.0 : 0.0 }
     }
     @mcts = MCTS.new(**@env)
   end

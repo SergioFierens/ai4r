@@ -8,10 +8,10 @@ reached.
 ```ruby
 require 'ai4r/search'
 
-bfs = Ai4r::Search::BFS.new(->(n) { goal?(n) }, ->(n) { neighbors(n) })
+bfs = Ai4r::Search::BFS.new(goal_test, neighbor_fn)
 path = bfs.search(start)
 
-dfs = Ai4r::Search::DFS.new(->(n) { goal?(n) }, ->(n) { neighbors(n) })
+dfs = Ai4r::Search::DFS.new(goal_test, neighbor_fn)
 path = dfs.search(start)
 ```
 
