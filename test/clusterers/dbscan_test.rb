@@ -24,12 +24,12 @@ class DBSCANTest < Minitest::Test
     assert_equal 3, clusterer.clusters.length
     total_length = 0
     clusterer.clusters.each do |cluster|
-      total_length += cluster.length
+      total_length += cluster.data_items.length
     end
     assert @@data.length >= total_length
     # Data inside clusters must be the same as original data
     clusterer.clusters.each do |cluster|
-      cluster.each do |data_item|
+      cluster.data_items.each do |data_item|
         assert @@data.include?(data_item)
       end
     end
@@ -110,7 +110,7 @@ class DBSCANTest < Minitest::Test
   def draw_map(clusterer)
     map = Array.new(11) { Array.new(11, 0) }
     clusterer.clusters.each_index do |i|
-      clusterer.clusters[i].each do |point|
+      clusterer.clusters[i].data_items.each do |point|
         map[point.first][point.last] = (i + 1)
       end
     end

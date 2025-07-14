@@ -30,6 +30,16 @@ require 'ai4r'
 
 The `docs/` directory contains tutorials on using specific algorithms such as genetic algorithms, neural networks, clustering, and others. Examples under `examples/` showcase how to run several algorithms.
 
+All clustering algorithms expose a uniform interface:
+
+```ruby
+clusterer.build(data_set, number_of_clusters = nil)
+```
+
+`number_of_clusters` is ignored by algorithms such as DBSCAN that determine the
+count from the data.  Clusters are returned as `Ai4r::Data::DataSet` objects for
+consistency across implementations.
+
 See `README.rdoc` for additional usage notes and examples.
 
 ## Running Tests

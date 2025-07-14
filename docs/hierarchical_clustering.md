@@ -21,6 +21,10 @@ The first element of the array contains the final cluster and the last
 captures the initial individual points. You can limit the depth by
 passing a value to the constructor.
 
+Hierarchical clusterers only build a dendrogram and do not support
+evaluating new items afterwards. `supports_eval?` will return `false`
+for these classes.
+
 ## Plotting a dendrogram
 
 The example `examples/clusterers/dendrogram_example.rb` shows how to

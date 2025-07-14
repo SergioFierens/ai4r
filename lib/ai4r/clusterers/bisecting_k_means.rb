@@ -22,7 +22,6 @@ module Ai4r
     # http://en.wikipedia.org/wiki/K-means_algorithm
     class BisectingKMeans < KMeans
       attr_reader :data_set, :number_of_clusters, :clusters, :centroids
-      attr_accessor :max_iterations, :distance_function, :refine
 
       parameters_info max_iterations: 'Maximum number of iterations to ' \
                                       'build the clusterer. By default it is uncapped.',
