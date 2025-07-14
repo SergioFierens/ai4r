@@ -1,11 +1,12 @@
 # frozen_string_literal: true
+
 # Author::    Sergio Fierens (Implementation only)
 # License::   MPL 1.1
 # Project::   ai4r
 # Url::       https://github.com/SergioFierens/ai4r
 #
-# You can redistribute it and/or modify it under the terms of 
-# the Mozilla Public License version 1.1  as published by the 
+# You can redistribute it and/or modify it under the terms of
+# the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'set'
@@ -14,9 +15,8 @@ require_relative '../classifiers/classifier'
 
 module Ai4r
   module Classifiers
-
     # = Introduction
-    # 
+    #
     # IB1 algorithm implementation.
     # IB1 is the simplest instance-based learning (IBL) algorithm.
     #
@@ -27,13 +27,12 @@ module Ai4r
     # it normalizes its attributes' ranges, processes instances
     # incrementally, and has a simple policy for tolerating missing values
     class IB1 < Classifier
-      
       attr_reader :data_set, :min_values, :max_values
 
       parameters_info k: 'Number of nearest neighbors to consider. Default is 1.',
-        distance_function: 'Optional custom distance metric taking two instances.',
-        tie_break: 'Strategy used when neighbors vote tie. Valid values are :first (default) and :random.',
-        random_seed: 'Seed for random tie-breaking when :tie_break is :random.'
+                      distance_function: 'Optional custom distance metric taking two instances.',
+                      tie_break: 'Strategy used when neighbors vote tie. Valid values are :first (default) and :random.',
+                      random_seed: 'Seed for random tie-breaking when :tie_break is :random.'
 
       # @return [Object]
       def initialize
@@ -45,7 +44,7 @@ module Ai4r
       end
 
       # Build a new IB1 classifier. You must provide a DataSet instance
-      # as parameter. The last attribute of each item is considered as 
+      # as parameter. The last attribute of each item is considered as
       # the item class.
       # @param data_set [Object]
       # @return [Object]
@@ -55,7 +54,7 @@ module Ai4r
         @min_values = Array.new(data_set.data_labels.length)
         @max_values = Array.new(data_set.data_labels.length)
         data_set.data_items.each { |data_item| update_min_max(data_item[0...-1]) }
-        return self
+        self
       end
 
       # Append a new instance to the internal dataset. The last element is
@@ -69,7 +68,7 @@ module Ai4r
         update_min_max(data_item[0...-1])
         self
       end
-      
+
       # You can evaluate new data, predicting its class.
       # e.g.
       #   classifier.eval(['New York',  '<30', 'F'])  # => 'Y'
@@ -78,7 +77,6 @@ module Ai4r
       # classifier state unchanged. Use +update_with_instance+ to
       # incorporate new samples.
       def eval(data)
-
         neighbors = @data_set.data_items.map do |train_item|
           [distance(data, train_item), train_item.last]
         end
@@ -88,8 +86,9 @@ module Ai4r
 
         # Include any other neighbors tied with the last selected distance
         last_distance = k_neighbors.last[0]
-        neighbors[k_limit..-1].to_a.each do |dist, klass|
+        neighbors[k_limit..].to_a.each do |dist, klass|
           break if dist > last_distance
+
           k_neighbors << [dist, klass]
         end
 
@@ -119,10 +118,10 @@ module Ai4r
       def neighbors_for(data, k)
         update_min_max(data)
         @data_set.data_items
-          .map { |train_item| [train_item, distance(data, train_item)] }
-          .sort_by { |pair| pair.last }
-          .first(k)
-          .map(&:first)
+                 .map { |train_item| [train_item, distance(data, train_item)] }
+                 .sort_by(&:last)
+                 .first(k)
+                 .map(&:first)
       end
 
       # Update min/max values with the provided instance attributes. If
@@ -133,7 +132,7 @@ module Ai4r
         @data_set << data_item if learn
         self
       end
-      
+
       protected
 
       # We keep in the state the min and max value of each attribute,
@@ -142,7 +141,7 @@ module Ai4r
       # @return [Object]
       def update_min_max(atts)
         atts.each_with_index do |att, i|
-          if att && att.is_a?(Numeric)
+          if att.is_a?(Numeric)
             @min_values[i] = att if @min_values[i].nil? || @min_values[i] > att
             @max_values[i] = att if @max_values[i].nil? || @max_values[i] < att
           end
@@ -163,6 +162,7 @@ module Ai4r
       # @return [Object]
       def distance(a, b)
         return @distance_function.call(a, b) if @distance_function
+
         d = 0
         a.each_with_index do |att_a, i|
           att_b = b[i]
@@ -198,9 +198,9 @@ module Ai4r
       # @return [Object]
       def norm(att, index)
         return 0 if @min_values[index].nil?
-        return 1.0*(att - @min_values[index]) / (@max_values[index] -@min_values[index]);
+
+        1.0 * (att - @min_values[index]) / (@max_values[index] - @min_values[index])
       end
-      
     end
   end
 end

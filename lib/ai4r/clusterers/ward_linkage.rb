@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Author::    Sergio Fierens (implementation)
 # License::   MPL 1.1
 # Project::   ai4r
@@ -14,7 +15,6 @@ require_relative '../clusterers/cluster_tree'
 
 module Ai4r
   module Clusterers
-
     # Implementation of an Agglomerative Hierarchical clusterer with
     # Ward's method linkage algorithm, aka the minimum variance method (Everitt
     # et al., 2001 ; Jain and Dubes, 1988 ; Ward, 1963 ).
@@ -27,14 +27,13 @@ module Ai4r
     #                       (nj/(ni+nj+nx))*D(cx, cj) -
     #                       (nx/(ni+nj)^2)*D(ci, cj)
     class WardLinkage < SingleLinkage
-
       include ClusterTree
 
-    parameters_info distance_function:
-          "Custom implementation of distance function. " +
-          "It must be a closure receiving two data items and return the " +
-          "distance between them. By default, this algorithm uses " +
-          "euclidean distance of numeric attributes to the power of 2."
+      parameters_info distance_function:
+            'Custom implementation of distance function. ' \
+            'It must be a closure receiving two data items and return the ' \
+            'distance between them. By default, this algorithm uses ' \
+            'euclidean distance of numeric attributes to the power of 2.'
 
       # Build a new clusterer, using data examples found in data_set.
       # Items will be clustered in "number_of_clusters" different
@@ -72,11 +71,10 @@ module Ai4r
         ni = @index_clusters[ci].length
         nj = @index_clusters[cj].length
         nx = @index_clusters[cx].length
-        ( ( ( 1.0* (ni+nx) * read_distance_matrix(cx, ci) ) +
-            ( 1.0* (nj+nx) * read_distance_matrix(cx, cj) ) ) / (ni + nj + nx)  -
-            ( 1.0 * nx * read_distance_matrix(ci, cj) / (ni+nj)**2 ) )
+        ((((1.0 * (ni + nx) * read_distance_matrix(cx, ci)) +
+            (1.0 * (nj + nx) * read_distance_matrix(cx, cj))) / (ni + nj + nx)) -
+            (1.0 * nx * read_distance_matrix(ci, cj) / ((ni + nj)**2)))
       end
-
     end
   end
 end

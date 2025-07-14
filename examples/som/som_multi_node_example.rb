@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Demonstrates how map size impacts error and uses early stopping.
 require_relative '../../lib/ai4r/som/som'
 require_relative 'som_data'

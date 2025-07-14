@@ -36,7 +36,9 @@ require 'ai4r'
 * [Hyperpipes](hyperpipes.md) – baseline classifier using value ranges.
 * [IB1 Classifier](ib1.md) – instance-based nearest neighbour algorithm.
 * [Logistic Regression](logistic_regression.md) – binary classifier trained with gradient descent.
+* [Reinforcement Learning](reinforcement_learning.md) – Q-learning and policy iteration.
 * [Transformer](transformer.md) – minimal self-attention encoder.
+
 
 ## Contributing
 

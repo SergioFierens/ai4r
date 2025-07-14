@@ -1,17 +1,17 @@
 # frozen_string_literal: true
+
 # Author::    Will Warner
 # License::   MPL 1.1
 # Project::   ai4r
 # Url::       https://github.com/SergioFierens/ai4r
 #
-# You can redistribute it and/or modify it under the terms of 
-# the Mozilla Public License version 1.1  as published by the 
+# You can redistribute it and/or modify it under the terms of
+# the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 module Ai4r
   module Classifiers
     class Votes
-
       # @return [Object]
       def initialize
         self.tally_sheet = Hash.new(0)
@@ -33,8 +33,12 @@ module Ai4r
       # @return [Object]
       def get_winner(tie_strategy = :last, rng: Random.new)
         n = 0 # used to create a stable sort of the tallys
-        sorted_sheet = tally_sheet.sort_by { |_, score| n += 1; [score, n] }
+        sorted_sheet = tally_sheet.sort_by do |_, score|
+          n += 1
+          [score, n]
+        end
         return nil if sorted_sheet.empty?
+
         if tie_strategy == :random
           max_score = sorted_sheet.last[1]
           tied = sorted_sheet.select { |_, score| score == max_score }.map(&:first)
@@ -50,4 +54,3 @@ module Ai4r
     end
   end
 end
-

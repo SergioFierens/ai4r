@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Author::    Sergio Fierens (implementation)
 # License::   MPL 1.1
 # Project::   ai4r
@@ -14,7 +15,6 @@ require_relative '../clusterers/cluster_tree'
 
 module Ai4r
   module Clusterers
-
     # Implementation of a Hierarchical clusterer with complete linkage (Everitt
     # et al., 2001 ; Jain and Dubes, 1988 ; Sorensen, 1948 ).
     # Hierarchical clusterer create one cluster per element, and then
@@ -25,15 +25,13 @@ module Ai4r
     #
     #   D(cx, (ci U cj) = max(D(cx, ci), D(cx, cj))
     class CompleteLinkage < SingleLinkage
-
       include ClusterTree
 
       parameters_info distance_function:
-          "Custom implementation of distance function. " +
-          "It must be a closure receiving two data items and return the " +
-          "distance between them. By default, this algorithm uses " +
-          "euclidean distance of numeric attributes to the power of 2."
-
+          'Custom implementation of distance function. ' \
+          'It must be a closure receiving two data items and return the ' \
+          'distance between them. By default, this algorithm uses ' \
+          'euclidean distance of numeric attributes to the power of 2.'
 
       # Build a new clusterer, using data examples found in data_set.
       # Items will be clustered in "number_of_clusters" different
@@ -50,9 +48,6 @@ module Ai4r
       # to (0-based).
       # @param data_item [Object]
       # @return [Object]
-      def eval(data_item)
-        super
-      end
 
       protected
 
@@ -64,7 +59,7 @@ module Ai4r
       # @return [Object]
       def linkage_distance(cx, ci, cj)
         [read_distance_matrix(cx, ci),
-          read_distance_matrix(cx, cj)].max
+         read_distance_matrix(cx, cj)].max
       end
 
       # @param data_item [Object]
@@ -76,9 +71,8 @@ module Ai4r
           dist = @distance_function.call(data_item, another_item)
           max_dist = dist if dist > max_dist
         end
-        return max_dist
+        max_dist
       end
-
     end
   end
 end

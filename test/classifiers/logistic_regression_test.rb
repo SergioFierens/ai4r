@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'ai4r/classifiers/logistic_regression'
 require 'ai4r/data/data_set'
 require 'minitest/autorun'
@@ -6,13 +8,13 @@ include Ai4r::Classifiers
 include Ai4r::Data
 
 class LogisticRegressionTest < Minitest::Test
-  DATA_LABELS = %w(x1 x2 class)
+  DATA_LABELS = %w[x1 x2 class].freeze
   DATA_ITEMS = [
     [0, 0, 0],
     [0, 1, 1],
     [1, 0, 1],
     [1, 1, 1]
-  ]
+  ].freeze
 
   def setup
     @data_set = DataSet.new(data_items: DATA_ITEMS, data_labels: DATA_LABELS)

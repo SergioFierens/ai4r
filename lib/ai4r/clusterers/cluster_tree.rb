@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Ai4r
   module Clusterers
     # Mixin to capture merge steps during agglomerative clustering.
@@ -23,7 +25,7 @@ module Ai4r
       def build(data_set, number_of_clusters = 1, **options)
         @total_merges = data_set.data_items.length - number_of_clusters
         super
-        @cluster_tree << self.clusters
+        @cluster_tree << clusters
         @cluster_tree.reverse!
         self
       end

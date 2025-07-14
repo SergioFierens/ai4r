@@ -1,11 +1,12 @@
+# frozen_string_literal: true
+
 module Ai4r
   module GeneticAlgorithm
     # Base interface for chromosomes used by GeneticSearch.
     # Implementations must define class methods `seed`, `mutate`,
     # `reproduce` and the instance method `fitness`.
     class ChromosomeBase
-      attr_accessor :data
-      attr_accessor :normalized_fitness
+      attr_accessor :data, :normalized_fitness
 
       # @param data [Object]
       # @return [Object]

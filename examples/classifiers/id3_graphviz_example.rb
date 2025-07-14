@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../lib/ai4r/classifiers/id3'
 
 # Load the training data
@@ -13,4 +15,3 @@ puts 'Decision tree saved to id3_tree.dot'
 
 # You can also inspect the tree as nested hashes
 p id3.to_h
-

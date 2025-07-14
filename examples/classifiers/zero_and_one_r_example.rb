@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../lib/ai4r/classifiers/zero_r'
 require_relative '../../lib/ai4r/classifiers/one_r'
 require_relative '../../lib/ai4r/data/data_set'
@@ -6,7 +8,7 @@ include Ai4r::Classifiers
 include Ai4r::Data
 
 # Load tutorial data
-data_file = File.dirname(__FILE__) + '/zero_one_r_data.csv'
+data_file = "#{File.dirname(__FILE__)}/zero_one_r_data.csv"
 data = DataSet.new.load_csv_with_labels data_file
 
 puts "Data labels: #{data.data_labels.inspect}"
@@ -32,4 +34,3 @@ puts "OneR rules:\n#{one_default.get_rules}"
 one_custom = OneR.new.set_parameters(selected_attribute: 0, tie_break: :last).build(data)
 puts "OneR forced attribute: #{one_custom.rule[:attr_index]}"
 puts "Custom rules:\n#{one_custom.get_rules}"
-

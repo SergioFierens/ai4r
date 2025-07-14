@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Author::    Sergio Fierens
 # License::   MPL 1.1
 # Project::   ai4r
@@ -15,7 +16,7 @@ module Ai4r
       FUNCTIONS = {
         sigmoid: ->(x) { 1.0 / (1.0 + Math.exp(-x)) },
         tanh: ->(x) { Math.tanh(x) },
-        relu: ->(x) { x > 0 ? x : 0 },
+        relu: ->(x) { [x, 0].max },
 
         softmax: lambda do |arr|
           max = arr.max
@@ -27,13 +28,10 @@ module Ai4r
 
       DERIVATIVES = {
         sigmoid: ->(y) { y * (1 - y) },
-        tanh: ->(y) { 1.0 - y**2 },
-        relu: ->(y) { y > 0 ? 1.0 : 0.0 },
+        tanh: ->(y) { 1.0 - (y**2) },
+        relu: ->(y) { y.positive? ? 1.0 : 0.0 },
         softmax: ->(y) { y * (1 - y) }
       }.freeze
-
-      module_function
     end
   end
 end
-
