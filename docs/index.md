@@ -1,6 +1,12 @@
-# AI4R Documentation
+= AI4R — Artificial Intelligence for Ruby
 
-AI4R provides a collection of machine learning algorithms implemented in Ruby. Algorithms include genetic algorithms, self-organizing maps, neural networks, automatic classifiers and clustering methods.
+A Ruby library of AI algorithms for learning and experimentation.
+
+---
+
+This project is an educational Ruby library for machine learning and artificial intelligence, featuring clean, minimal implementations of classical algorithms such as decision trees, neural networks, k-means, and genetic algorithms. It’s intentionally lightweight—no GPU support, no external dependencies, no production overhead—just a practical way to experiment, compare, and learn the fundamental building blocks of AI. Ideal for small-scale explorations, course demos, or simply understanding how these algorithms actually work, line by line.
+
+Maintained over the years mostly for the joy of it (and perhaps a misplaced sense of duty to Ruby), this open-source library supports developers, students, and educators who want to understand machine learning in Ruby without drowning in complexity.
 
 ## Getting Started
 
