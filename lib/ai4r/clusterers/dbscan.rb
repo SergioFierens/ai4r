@@ -61,6 +61,7 @@ module Ai4r
           end
         end
 
+        @number_of_clusters = number_of_clusters
         self
       end
 
