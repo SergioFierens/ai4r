@@ -42,8 +42,6 @@ module Ai4r
 
         raise ArgumentError, 'epsilon must be defined' if @epsilon.nil?
 
-        number_of_clusters = 0
-
         # Detect if the neighborhood of the current item
         # is dense enough
         data_set.data_items.each_with_index do |data_item, data_index|
@@ -53,11 +51,11 @@ module Ai4r
           if neighbors.size < @min_points
             @labels[data_index] = :noise
           else
-            number_of_clusters += 1
-            @labels[data_index] = number_of_clusters
+            @number_of_clusters += 1
+            @labels[data_index] = @number_of_clusters
             @clusters.push([data_item])
             @cluster_indices.push([data_index])
-            extend_cluster(neighbors, number_of_clusters)
+            extend_cluster(neighbors, @number_of_clusters)
           end
         end
         @number_of_clusters = number_of_clusters
@@ -99,10 +97,11 @@ module Ai4r
         neighbors
       end
 
-      # Propagate the cluster through a dense neighborhood.
-      # Unassigned points join the current cluster, and any
-      # neighbor previously labeled as noise is reassigned
-      # to this cluster.
+      # If the neighborhood is dense enough, it propagates.
+      # This applies only to items that don't belong to an
+      # existing cluster.
+      # If any neighbor was previously classified as noise,
+      # it becomes part of the current cluster.
       def extend_cluster(neighbors, current_cluster)
         neighbors.each do |data_index|
           if @labels[data_index] == :noise
