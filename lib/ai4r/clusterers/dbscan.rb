@@ -35,7 +35,10 @@ module Ai4r
 
       def build(data_set)
         @data_set = data_set
+        @clusters = []
+        @cluster_indices = []
         @labels = Array.new(data_set.data_items.size)
+        @number_of_clusters = 0
 
         raise ArgumentError, 'epsilon must be defined' if @epsilon.nil?
 
@@ -62,9 +65,16 @@ module Ai4r
       end
 
       # This algorithms does not allow classification of new data items
-      # once it has been built. Rebuild the cluster including you data element.
+      # once it has been built. Rebuild the cluster including your data element.
+      # @param _data_item [Object]
+      # @return [Object]
       def eval(_data_item)
-        Raise 'Eval of new data is not supported by this algorithm.'
+        raise NotImplementedError, 'Eval of new data is not supported by this algorithm.'
+      end
+
+      # @return [Object]
+      def supports_eval?
+        false
       end
 
       def distance(a, b)
