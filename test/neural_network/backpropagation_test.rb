@@ -19,8 +19,7 @@ require 'ai4r/neural_network/backpropagation'
 require 'minitest/autorun'
 require_relative '../test_helper.rb'
 
-Ai4r::NeuralNetwork::Backpropagation.send(:public, *Ai4r::NeuralNetwork::Backpropagation.protected_instance_methods)
-Ai4r::NeuralNetwork::Backpropagation.send(:public, *Ai4r::NeuralNetwork::Backpropagation.private_instance_methods)
+
 
 module Ai4r
 
@@ -92,7 +91,7 @@ module Ai4r
           [[1.0, -1.0], [1.0, -1.0]],
           [[1.0, 0.0], [0.0, 1.0]]
         ]
-        net.feedforward([1, 1])
+        net.send(:feedforward, [1, 1])
         assert_equal [2.0, 0.0], net.activation_nodes[1]
         exp2 = Math.exp(2)
         soft = [exp2 / (exp2 + 1), 1.0 / (exp2 + 1)]
@@ -113,17 +112,17 @@ module Ai4r
 
       def test_loss_function_and_train_return
         net = Backpropagation.new([1, 1])
-        assert_in_delta 0.125, net.calculate_loss([0], [0.5]), 0.0001
+        assert_in_delta 0.125, net.send(:calculate_loss, [0], [0.5]), 0.0001
         net.loss_function = :cross_entropy
-        assert_in_delta 0.6931, net.calculate_loss([1], [0.5]), 0.0001
+        assert_in_delta 0.6931, net.send(:calculate_loss, [1], [0.5]), 0.0001
 
         net = Backpropagation.new([2, 1])
         net.set_parameters(loss_function: :cross_entropy)
         loss = net.train([0, 0], [0])
-        assert_in_delta net.calculate_loss([0], net.activation_nodes.last), loss, 0.0000001
+        assert_in_delta net.send(:calculate_loss, [0], net.activation_nodes.last), loss, 0.0000001
         net.set_parameters(loss_function: :mse)
         loss = net.train([1, 1], [1])
-        assert_in_delta net.calculate_loss([1], net.activation_nodes.last), loss, 0.0000001
+        assert_in_delta net.send(:calculate_loss, [1], net.activation_nodes.last), loss, 0.0000001
       end
 
       def test_cross_entropy_auto_softmax

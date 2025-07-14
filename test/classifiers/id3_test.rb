@@ -115,8 +115,7 @@ include Ai4r::Data
 class ID3Test < Minitest::Test
 
   def test_build
-    Ai4r::Classifiers::ID3.send(:public, *Ai4r::Classifiers::ID3.protected_instance_methods)
-    Ai4r::Classifiers::ID3.send(:public, *Ai4r::Classifiers::ID3.private_instance_methods)
+    # no-op: visibility hacks removed
   end
 
   def test_log2
@@ -141,63 +140,64 @@ class ID3Test < Minitest::Test
   def test_domain
     id3 = ID3.new.build(DataSet.new(:data_items =>DATA_ITEMS, :data_labels => DATA_LABELS))
     expected_domain = [["New York", "Chicago"], ["<30", "[30-50)", "[50-80]", ">80"], ["M", "F"], ["Y", "N"]]
-    assert_equal expected_domain, id3.domain(DATA_ITEMS)
+    assert_equal expected_domain,
+      id3.send(:domain, DATA_ITEMS)
   end
 
   def test_grid
     id3 = ID3.new.build(DataSet.new(:data_items =>DATA_ITEMS, :data_labels => DATA_LABELS))
     expected_grid = [[3, 5], [5, 2]]
-    domain = id3.domain(DATA_ITEMS)
-    assert_equal expected_grid, id3.freq_grid(0, DATA_ITEMS, domain)
+    domain = id3.send(:domain, DATA_ITEMS)
+    assert_equal expected_grid, id3.send(:freq_grid, 0, DATA_ITEMS, domain)
     expected_grid = [[5, 0], [2, 2], [0, 5], [1, 0]]
-    assert_equal expected_grid, id3.freq_grid(1, DATA_ITEMS, domain)
+    assert_equal expected_grid, id3.send(:freq_grid, 1, DATA_ITEMS, domain)
   end
 
   def test_entropy
     id3 = ID3.new.build(DataSet.new(:data_items =>DATA_ITEMS, :data_labels => DATA_LABELS))
     expected_entropy = 0.9118
-    domain = id3.domain(DATA_ITEMS)
-    freq_grid = id3.freq_grid(0, DATA_ITEMS, domain)
-    assert expected_entropy - id3.entropy(freq_grid, DATA_ITEMS.length) < 0.0001
+    domain = id3.send(:domain, DATA_ITEMS)
+    freq_grid = id3.send(:freq_grid, 0, DATA_ITEMS, domain)
+    assert expected_entropy - id3.send(:entropy, freq_grid, DATA_ITEMS.length) < 0.0001
     expected_entropy = 0.2667
-    freq_grid = id3.freq_grid(1, DATA_ITEMS, domain)
-    assert expected_entropy - id3.entropy(freq_grid, DATA_ITEMS.length) < 0.0001
+    freq_grid = id3.send(:freq_grid, 1, DATA_ITEMS, domain)
+    assert expected_entropy - id3.send(:entropy, freq_grid, DATA_ITEMS.length) < 0.0001
     expected_entropy = 0.9688
-    freq_grid = id3.freq_grid(2, DATA_ITEMS, domain)
-    assert expected_entropy - id3.entropy(freq_grid, DATA_ITEMS.length) < 0.0001
+    freq_grid = id3.send(:freq_grid, 2, DATA_ITEMS, domain)
+    assert expected_entropy - id3.send(:entropy, freq_grid, DATA_ITEMS.length) < 0.0001
   end
 
   def test_min_entropy_index
     id3 = ID3.new.build(DataSet.new(:data_items =>DATA_ITEMS, :data_labels => DATA_LABELS))
-    domain = id3.domain(DATA_ITEMS)
-    assert_equal 1, id3.min_entropy_index(DATA_ITEMS, domain)
-    assert_equal 0, id3.min_entropy_index(DATA_ITEMS, domain, [1])
-    assert_equal 2, id3.min_entropy_index(DATA_ITEMS, domain, [1, 0])
+    domain = id3.send(:domain, DATA_ITEMS)
+    assert_equal 1, id3.send(:min_entropy_index, DATA_ITEMS, domain)
+    assert_equal 0, id3.send(:min_entropy_index, DATA_ITEMS, domain, [1])
+    assert_equal 2, id3.send(:min_entropy_index, DATA_ITEMS, domain, [1, 0])
   end
 
   def test_split_data_examples_by_value
     id3 = ID3.new.build(DataSet.new(:data_items =>DATA_ITEMS, :data_labels => DATA_LABELS))
-    res = id3.split_data_examples_by_value(DATA_ITEMS, 0)
+    res = id3.send(:split_data_examples_by_value, DATA_ITEMS, 0)
     assert_equal(SPLIT_DATA_ITEMS_BY_CITY_HASH, res)
-    res = id3.split_data_examples_by_value(DATA_ITEMS, 1)
+    res = id3.send(:split_data_examples_by_value, DATA_ITEMS, 1)
     assert_equal(SPLIT_DATA_ITEMS_BY_AGE_HASH, res)
   end
 
   def test_split_data_examples
     id3 = ID3.new.build(DataSet.new(:data_items =>DATA_ITEMS, :data_labels => DATA_LABELS))
-    domain = id3.domain(DATA_ITEMS)
-    res = id3.split_data_examples(DATA_ITEMS, domain, 0)
+    domain = id3.send(:domain, DATA_ITEMS)
+    res = id3.send(:split_data_examples, DATA_ITEMS, domain, 0)
     assert_equal(SPLIT_DATA_ITEMS_BY_CITY, res)
-    res = id3.split_data_examples(DATA_ITEMS, domain, 1)
+    res = id3.send(:split_data_examples, DATA_ITEMS, domain, 1)
     assert_equal(SPLIT_DATA_ITEMS_BY_AGE, res)
   end
 
   def test_most_freq
     id3 = ID3.new.build(DataSet.new(:data_items =>DATA_ITEMS, :data_labels => DATA_LABELS))
-    domain = id3.domain(DATA_ITEMS)
-    assert_equal 'Y', id3.most_freq(DATA_ITEMS, domain)
-    assert_equal 'Y', id3.most_freq(SPLIT_DATA_ITEMS_BY_AGE[3], domain)
-    assert_equal 'N', id3.most_freq(SPLIT_DATA_ITEMS_BY_AGE[2], domain)
+    domain = id3.send(:domain, DATA_ITEMS)
+    assert_equal 'Y', id3.send(:most_freq, DATA_ITEMS, domain)
+    assert_equal 'Y', id3.send(:most_freq, SPLIT_DATA_ITEMS_BY_AGE[3], domain)
+    assert_equal 'N', id3.send(:most_freq, SPLIT_DATA_ITEMS_BY_AGE[2], domain)
   end
 
   def test_get_rules

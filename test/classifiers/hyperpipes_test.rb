@@ -12,9 +12,7 @@ require 'minitest/autorun'
 require 'set'
 require 'yaml'
 
-class Ai4r::Classifiers::Hyperpipes
-  attr_accessor :data_set, :pipes
-end
+
 
 include Ai4r::Classifiers
 include Ai4r::Data
@@ -28,13 +26,13 @@ class HyperpipesTest < Minitest::Test
   
   
   def setup
-    Hyperpipes.send(:public, *Hyperpipes.protected_instance_methods)
     @data_set = DataSet.new(:data_items => @@data_items, :data_labels => @@data_labels)
   end
   
   def test_build_pipe
     classifier = Hyperpipes.new
-    assert_equal [{}, {:max=>-1.0/0, :min=>1.0/0}, {}], classifier.build_pipe(@data_set)
+    assert_equal [{}, {:max=>-1.0/0, :min=>1.0/0}, {}],
+      classifier.send(:build_pipe, @data_set)
   end
   
   def test_build

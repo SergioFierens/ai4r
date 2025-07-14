@@ -10,9 +10,6 @@
 require 'minitest/autorun'
 require 'ai4r/clusterers/single_linkage'
 
-class Ai4r::Clusterers::SingleLinkage
-  attr_accessor :data_set, :number_of_clusters, :clusters, :distance_matrix
-end
 
 class SingleLinkageTest < Minitest::Test
 
@@ -36,7 +33,6 @@ class SingleLinkageTest < Minitest::Test
         [2.0, 72.0, 65.0, 50.0, 52.0, 2.0, 65.0, 10.0, 74.0, 50.0, 37.0]]
 
   def setup
-    SingleLinkage.send(:public, *SingleLinkage.protected_instance_methods)
   end
 
   def test_build
@@ -62,40 +58,40 @@ class SingleLinkageTest < Minitest::Test
 
   def test_create_distance_matrix
     clusterer = Ai4r::Clusterers::SingleLinkage.new
-    clusterer.create_distance_matrix(DataSet.new(:data_items => @@data))
-    assert clusterer.distance_matrix
-    clusterer.distance_matrix.each_with_index do |row, row_index|
+    clusterer.send(:create_distance_matrix, DataSet.new(:data_items => @@data))
+    assert clusterer.instance_variable_get(:@distance_matrix)
+    clusterer.instance_variable_get(:@distance_matrix).each_with_index do |row, row_index|
       assert_equal row_index+1, row.length
     end
-    assert_equal @@expected_distance_matrix, clusterer.distance_matrix
+    assert_equal @@expected_distance_matrix, clusterer.instance_variable_get(:@distance_matrix)
   end
 
   def test_read_distance_matrix
     clusterer = Ai4r::Clusterers::SingleLinkage.new
-    clusterer.distance_matrix = @@expected_distance_matrix
-    assert_equal 9.0, clusterer.read_distance_matrix(3, 2)
-    assert_equal 9.0, clusterer.read_distance_matrix(2, 3)
-    assert_equal 0, clusterer.read_distance_matrix(5, 5)
+    clusterer.instance_variable_set(:@distance_matrix, @@expected_distance_matrix)
+    assert_equal 9.0, clusterer.send(:read_distance_matrix, 3, 2)
+    assert_equal 9.0, clusterer.send(:read_distance_matrix, 2, 3)
+    assert_equal 0, clusterer.send(:read_distance_matrix, 5, 5)
   end
 
   def test_linkage_distance
     clusterer = Ai4r::Clusterers::SingleLinkage.new
-    clusterer.distance_matrix = @@expected_distance_matrix
-    assert_equal 89, clusterer.linkage_distance(0,1,2)
-    assert_equal 1, clusterer.linkage_distance(4,2,5)
+    clusterer.instance_variable_set(:@distance_matrix, @@expected_distance_matrix)
+    assert_equal 89, clusterer.send(:linkage_distance, 0,1,2)
+    assert_equal 1, clusterer.send(:linkage_distance, 4,2,5)
   end
 
   def test_get_closest_clusters
     clusterer = Ai4r::Clusterers::SingleLinkage.new
-    clusterer.distance_matrix = @@expected_distance_matrix
-    assert_equal [1,0], clusterer.get_closest_clusters([[0,1], [3,4]])
-    assert_equal [2,1], clusterer.get_closest_clusters([[3,4], [0,1], [5,6]])
+    clusterer.instance_variable_set(:@distance_matrix, @@expected_distance_matrix)
+    assert_equal [1,0], clusterer.send(:get_closest_clusters, [[0,1], [3,4]])
+    assert_equal [2,1], clusterer.send(:get_closest_clusters, [[3,4], [0,1], [5,6]])
   end
 
   def test_create_initial_index_clusters
     clusterer = Ai4r::Clusterers::SingleLinkage.new
-    clusterer.data_set = DataSet.new :data_items => @@data
-    index_clusters = clusterer.create_initial_index_clusters
+    clusterer.instance_variable_set(:@data_set, DataSet.new(:data_items => @@data))
+    index_clusters = clusterer.send(:create_initial_index_clusters)
     assert_equal @@data.length, index_clusters.length
     assert_equal 0, index_clusters.first.first
     assert_equal @@data.length-1, index_clusters.last.first
@@ -103,15 +99,15 @@ class SingleLinkageTest < Minitest::Test
 
   def test_merge_clusters
     clusterer = Ai4r::Clusterers::SingleLinkage.new
-    clusters = clusterer.merge_clusters(1,2, [[1,2],[3,4],[5,6]])
+    clusters = clusterer.send(:merge_clusters, 1,2, [[1,2],[3,4],[5,6]])
     assert_equal [[1,2], [3,4,5,6]], clusters.collect {|x| x.sort}
-    clusters = clusterer.merge_clusters(2,1, [[1,2],[3,4],[5,6]])
+    clusters = clusterer.send(:merge_clusters, 2,1, [[1,2],[3,4],[5,6]])
     assert_equal [[1,2], [3,4,5,6]], clusters.collect {|x| x.sort}
   end
 
   def test_distance_between_item_and_cluster
     clusterer = Ai4r::Clusterers::SingleLinkage.new
-    assert_equal 8.0, clusterer.distance_between_item_and_cluster([1,2],
+    assert_equal 8.0, clusterer.send(:distance_between_item_and_cluster, [1,2],
       DataSet.new(:data_items => [[3,4],[5,6]]))
   end
 

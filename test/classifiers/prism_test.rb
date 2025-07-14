@@ -33,8 +33,6 @@ class PrismTest < Minitest::Test
     assert_equal("marketing_target", classifier.data_set.category_label)
     assert !classifier.rules.empty?
 
-    Prism.send(:public, *Prism.protected_instance_methods)
-    Prism.send(:public, *Prism.private_instance_methods)
   end
   
   def test_eval
@@ -70,8 +68,10 @@ class PrismTest < Minitest::Test
     classifier = Prism.new.build(DataSet.new(:data_labels => @@data_labels,
       :data_items => @@data_examples))
 
-    assert classifier.matches_conditions(['New York', '<30', 'M', 'Y'], {"age_range" => "<30"})
-    assert !classifier.matches_conditions(['New York', '<30', 'M', 'Y'], {"age_range" => "[50-80]"})
+    assert classifier.send(:matches_conditions,
+      ['New York', '<30', 'M', 'Y'], {"age_range" => "<30"})
+    assert !classifier.send(:matches_conditions,
+      ['New York', '<30', 'M', 'Y'], {"age_range" => "[50-80]"})
   end
 
   def test_default_class
