@@ -13,8 +13,7 @@ jobs:
         with:
           ruby-version: '3.2'
           bundler-cache: true
-      - run: bundle exec rake test:nn
-      - run: bundle exec rake e2e
+      - run: bundle exec rake test
       - run: |
           echo "Coverage $(grep -A1 '^COVERAGE' coverage/.last_run.json)"
 
