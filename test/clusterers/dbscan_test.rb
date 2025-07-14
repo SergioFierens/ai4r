@@ -3,10 +3,10 @@
 # Project::   ai4r
 # Url::       https://github.com/SergioFierens/ai4r
 
-require 'test/unit'
+require 'minitest/autorun'
 require 'ai4r/clusterers/dbscan'
 
-class DBSCANTest < Test::Unit::TestCase
+class DBSCANTest < Minitest::Test
 
   include Ai4r::Clusterers
   include Ai4r::Data
@@ -42,7 +42,7 @@ class DBSCANTest < Test::Unit::TestCase
       [10, 10, "London", 50])
 
     # Ensure default distance raises error for nil argument
-    exception = assert_raise(TypeError) {clusterer.distance([1, 10], [nil, nil])}
+    assert_raises(TypeError) {clusterer.distance([1, 10], [nil, nil])}
 
     # Test new distance definition
     manhattan_distance = lambda do |a, b|
@@ -71,7 +71,7 @@ class DBSCANTest < Test::Unit::TestCase
 
   def test_undefined_epsilon
     data_set = DataSet.new(:data_items => @@data, :data_labels => ["X", "Y"])
-    exception = assert_raise(ArgumentError) {DBSCAN.new.build(data_set)}
+    assert_raises(ArgumentError) {DBSCAN.new.build(data_set)}
   end
 
   private
