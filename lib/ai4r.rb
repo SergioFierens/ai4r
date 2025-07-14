@@ -40,6 +40,10 @@ require_relative 'ai4r/neural_network/hopfield'
 # Genetic Algorithms
 require_relative 'ai4r/genetic_algorithm/genetic_algorithm'
 
+# Reinforcement Learning
+require_relative 'ai4r/reinforcement/q_learning'
+require_relative 'ai4r/reinforcement/policy_iteration'
+
 # SOM
 require_relative 'ai4r/som/som'
 
