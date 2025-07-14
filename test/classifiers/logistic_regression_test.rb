@@ -19,7 +19,7 @@ class LogisticRegressionTest < Minitest::Test
   def setup
     @data_set = DataSet.new(data_items: DATA_ITEMS, data_labels: DATA_LABELS)
     @classifier = LogisticRegression.new
-    @classifier.set_parameters(lr: 0.5, iterations: 2000)
+    @classifier.set_parameters(learning_rate: 0.5, iterations: 2000)
     @classifier.build(@data_set)
   end
 

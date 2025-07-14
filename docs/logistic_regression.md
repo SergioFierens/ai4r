@@ -4,7 +4,7 @@
 
 ## Parameters
 
-* `lr` – Learning rate used during gradient descent. Default is `0.1`.
+* `learning_rate` – Learning rate used during gradient descent. Default is `0.1`.
 * `iterations` – Number of training iterations. Default is `1000`.
 
 ## Example
@@ -18,7 +18,7 @@ labels = %w(x1 x2 class)
 set = Ai4r::Data::DataSet.new(data_items: items, data_labels: labels)
 
 reg = Ai4r::Classifiers::LogisticRegression.new
-reg.set_parameters(lr: 0.5, iterations: 2000).build(set)
+reg.set_parameters(learning_rate: 0.5, iterations: 2000).build(set)
 
 reg.eval([1, 0]) # => 1
 ```

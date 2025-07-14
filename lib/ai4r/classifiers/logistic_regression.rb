@@ -27,11 +27,11 @@ module Ai4r
     class LogisticRegression < Classifier
       attr_reader :weights
 
-      parameters_info lr: 'Learning rate for gradient descent.',
+      parameters_info learning_rate: 'Learning rate for gradient descent.',
                       iterations: 'Number of iterations to train.'
 
       def initialize
-        @lr = 0.1
+        @learning_rate = 0.1
         @iterations = 1000
         @weights = nil
       end
@@ -57,10 +57,10 @@ module Ai4r
 
           n.times do |j|
             grad = (0...m).inject(0.0) { |sum, i| sum + (errors[i] * x[i][j]) } / m
-            @weights[j] -= @lr * grad
+            @weights[j] -= @learning_rate * grad
           end
           bias_grad = errors.sum / m
-          @weights[n] -= @lr * bias_grad
+          @weights[n] -= @learning_rate * bias_grad
         end
         self
       end
