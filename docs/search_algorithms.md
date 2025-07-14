@@ -6,8 +6,7 @@ traverse a state space defined by a successor function until a goal is
 reached.
 
 ```ruby
-require 'ai4r/search/bfs'
-require 'ai4r/search/dfs'
+require 'ai4r/search'
 
 bfs = Ai4r::Search::BFS.new
 path = bfs.search(start, ->(n) { goal?(n) }, ->(n) { neighbors(n) })
