@@ -10,20 +10,32 @@ module Ai4r
   module Search
     # Explore nodes in depth-first order until a goal is found.
     class DFS
-      # Find a path from the start node to a goal.
+      # Create a new DFS searcher.
       #
-      # start::      initial node
       # goal_test::  lambda returning true for a goal node
       # neighbors::  lambda returning adjacent nodes for a given node
+      # start::      optional starting node
+      def initialize(goal_test, neighbors, start = nil)
+        @goal_test = goal_test
+        @neighbors = neighbors
+        @start = start
+      end
+
+      # Find a path from the start node to a goal.
+      #
+      # start:: initial node if not provided on initialization
       #
       # Returns an array of nodes representing the path, or nil if no goal was found.
-      def search(start, goal_test, neighbors)
+      def search(start = nil)
+        start ||= @start
+        raise ArgumentError, 'start node required' unless start
+
         stack = [[start, [start]]]
         visited = { start => true }
         until stack.empty?
           node, path = stack.pop
-          return path if goal_test.call(node)
-          neighbors.call(node).each do |n|
+          return path if @goal_test.call(node)
+          @neighbors.call(node).each do |n|
             next if visited[n]
             visited[n] = true
             stack << [n, path + [n]]

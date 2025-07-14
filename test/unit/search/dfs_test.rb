@@ -16,8 +16,8 @@ class DFSTest < Minitest::Test
   end
 
   def test_explores_depth_first
-    dfs = DFS.new
-    path = dfs.search(:a, ->(n) { n == :e }, ->(n) { @graph[n] })
+    dfs = DFS.new(->(n) { n == :e }, ->(n) { @graph[n] })
+    path = dfs.search(:a)
     assert_equal %i[a c e], path
   end
 end

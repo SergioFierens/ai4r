@@ -8,11 +8,11 @@ reached.
 ```ruby
 require 'ai4r/search'
 
-bfs = Ai4r::Search::BFS.new
-path = bfs.search(start, ->(n) { goal?(n) }, ->(n) { neighbors(n) })
+bfs = Ai4r::Search::BFS.new(->(n) { goal?(n) }, ->(n) { neighbors(n) })
+path = bfs.search(start)
 
-dfs = Ai4r::Search::DFS.new
-path = dfs.search(start, ->(n) { goal?(n) }, ->(n) { neighbors(n) })
+dfs = Ai4r::Search::DFS.new(->(n) { goal?(n) }, ->(n) { neighbors(n) })
+path = dfs.search(start)
 ```
 
 Both methods return the path from the start node to the first goal or
