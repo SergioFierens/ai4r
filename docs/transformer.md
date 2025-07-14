@@ -35,3 +35,19 @@ seq2seq = Ai4r::NeuralNetwork::Transformer.new(
 
 seq2seq_output = seq2seq.eval([1, 2, 3], [4, 5])
 ```
+
+## Toy Text Classification Example
+
+The example script `examples/neural_network/transformer_text_classification.rb`
+shows how to pair the encoder with logistic regression for a tiny
+sentence classifier. A handful of short greetings and farewells are
+converted into token ids, passed through the Transformer encoder and the
+resulting vectors averaged. Logistic regression then learns to classify
+those mean vectors.
+
+Run the script with:
+
+```bash
+ruby examples/neural_network/transformer_text_classification.rb
+```
+
