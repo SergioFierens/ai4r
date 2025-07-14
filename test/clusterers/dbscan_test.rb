@@ -37,6 +37,7 @@ class DBSCANTest < Minitest::Test
   def test_number_of_clusters_attribute
     data_set = DataSet.new(:data_items => @@data, :data_labels => ["X", "Y"])
     clusterer = DBSCAN.new.set_parameters(:epsilon => 8, :min_points => 3).build(data_set)
+    assert_equal 3, clusterer.number_of_clusters
     assert_equal clusterer.clusters.length, clusterer.number_of_clusters
   end
 
