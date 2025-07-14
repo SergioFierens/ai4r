@@ -35,3 +35,5 @@ seq2seq = Ai4r::NeuralNetwork::Transformer.new(
 
 seq2seq_output = seq2seq.eval([1, 2, 3], [4, 5])
 ```
+
+For a full toy classification demo using the decode-only configuration, see `examples/transformer/decode_classifier_example.rb`.
