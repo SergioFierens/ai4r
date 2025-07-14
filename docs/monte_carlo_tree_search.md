@@ -3,7 +3,7 @@
 `Ai4r::Search::MCTS` provides a generic implementation of the popular Monte Carlo Tree Search algorithm. It can be used for game playing or any domain where the available actions, state transitions and rewards can be described programmatically.
 
 ```ruby
-require 'ai4r/search/mcts'
+require 'ai4r/search'
 
 env = {
   actions: ->(s) { s == :root ? %i[a b] : [] },
