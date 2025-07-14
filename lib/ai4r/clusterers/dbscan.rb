@@ -16,10 +16,11 @@ module Ai4r
       attr_reader :data_set, :number_of_clusters
       attr_reader :clusters, :cluster_indices, :labels
 
-      parameters_info :epsilon => "radius around the current point " +
-        "within min_points must be in order to build a cluster.",
-        :min_points => "Minimum number of points within a neigborhood" +
-          "in order to build a cluster",
+      parameters_info :epsilon => "Squared radius defining the neighborhood. " +
+        "The squared distance between two points must be <= epsilon "+
+        "to be considered neighbors.",
+        :min_points => "Minimum number of neighboring points (excluding " +
+          "the point itself) required to create or expand a cluster.",
         :distance_function => "Custom implementation of distance function. " +
           "It must be a closure receiving two data items and return the " +
           "distance between them. By default, this algorithm uses " +
