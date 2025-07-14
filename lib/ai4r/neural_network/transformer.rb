@@ -10,9 +10,11 @@ require_relative 'activation_functions'
 
 module Ai4r
   module NeuralNetwork
-    # A tiny Transformer encoder with embeddings, positional encoding,
-    # multi-head self-attention and a feed-forward layer.
-    # Weights are initialized randomly and the model is not trainable.
+    # A tiny Transformer with embeddings, positional encoding,
+    # multi-head attention and a feed-forward layer. Depending on the
+    # architecture configuration it can operate as an encoder, decoder or
+    # encoder-decoder model. Weights are initialized randomly and the model is
+    # not trainable.
     class Transformer
       include Ai4r::Data::Parameterizable
 
@@ -20,32 +22,70 @@ module Ai4r
                       num_heads: 'Number of attention heads.',
                       ff_dim: 'Feed-forward hidden size.',
                       vocab_size: 'Vocabulary size.',
-                      max_len: 'Maximum sequence length.'
+                      max_len: 'Maximum sequence length.',
+                      architecture: 'Architecture (:encoder, :decoder or :seq2seq).'
 
-      attr_accessor :embed_dim, :num_heads, :ff_dim, :vocab_size, :max_len
+      attr_accessor :embed_dim, :num_heads, :ff_dim, :vocab_size, :max_len,
+                    :architecture
 
       # Initialize the Transformer with given hyperparameters.
-      def initialize(vocab_size:, max_len:, embed_dim: 8, num_heads: 2, ff_dim: 32)
+      def initialize(vocab_size:, max_len:, embed_dim: 8, num_heads: 2, ff_dim: 32,
+                     architecture: :encoder)
         @vocab_size = vocab_size
         @max_len = max_len
         @embed_dim = embed_dim
         @num_heads = num_heads
         @ff_dim = ff_dim
+        @architecture = architecture
         raise ArgumentError, 'embed_dim must be divisible by num_heads' if embed_dim % num_heads != 0
+        unless [:encoder, :decoder, :seq2seq].include?(@architecture)
+          raise ArgumentError, 'invalid architecture'
+        end
         init_weights
         build_positional_encoding
       end
 
       # Evaluate a sequence of integer token ids. Returns an array of
       # length seq_len with embed_dim sized vectors.
-      def eval(tokens)
-        raise ArgumentError, 'sequence too long' if tokens.length > @max_len
+      def eval(*args)
+        case @architecture
+        when :encoder
+          tokens = args.first
+          raise ArgumentError, 'sequence too long' if tokens.length > @max_len
+          encode(tokens)
+        when :decoder
+          tokens = args.first
+          raise ArgumentError, 'sequence too long' if tokens.length > @max_len
+          decode(tokens)
+        when :seq2seq
+          src, tgt = args
+          raise ArgumentError, 'sequence too long' if src.length > @max_len || tgt.length > @max_len
+          memory = encode(src)
+          decode(tgt, memory)
+        else
+          raise ArgumentError, 'invalid architecture'
+        end
+      end
+
+      private
+
+      def encode(tokens)
         x = tokens.map.with_index { |t, i| add(@token_embeddings[t], @positional[i]) }
         x = multi_head_attention(x)
         feed_forward(x)
       end
 
-      private
+      def decode(tokens, memory = nil)
+        x = tokens.map.with_index { |t, i| add(@token_embeddings[t], @positional[i]) }
+        mask = causal_mask(x.length)
+        x = multi_head_attention(x, x, x, mask)
+        x = multi_head_attention(x, memory, memory) if memory
+        feed_forward(x)
+      end
+
+      def causal_mask(len)
+        Array.new(len) { |i| Array.new(len) { |j| j <= i } }
+      end
 
       def head_dim
         @embed_dim / @num_heads
@@ -100,18 +140,26 @@ module Ai4r
         exps.map { |e| e / sum }
       end
 
-      def multi_head_attention(x)
+      def multi_head_attention(q_in, k_in = nil, v_in = nil, mask = nil)
+        k_in ||= q_in
+        v_in ||= k_in
         hd = head_dim
         heads_out = @heads.map do |h|
-          q = matmul(x, h[:q])
-          k = matmul(x, h[:k])
-          v = matmul(x, h[:v])
+          q = matmul(q_in, h[:q])
+          k = matmul(k_in, h[:k])
+          v = matmul(v_in, h[:v])
           scores = matmul(q, k.transpose)
           scale = Math.sqrt(hd.to_f)
-          scores.map! { |row| softmax(row.map { |v| v / scale }) }
+          scores.each_index do |i|
+            scores[i].each_index do |j|
+              scores[i][j] /= scale
+              scores[i][j] = -1e9 if mask && !mask[i][j]
+            end
+          end
+          scores.map! { |row| softmax(row) }
           matmul(scores, v)
         end
-        concat = Array.new(x.length) { [] }
+        concat = Array.new(q_in.length) { [] }
         heads_out.each do |head|
           head.each_index do |i|
             concat[i].concat(head[i])
