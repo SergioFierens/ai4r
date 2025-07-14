@@ -10,9 +10,6 @@
 require 'minitest/autorun'
 require 'ai4r/clusterers/complete_linkage'
 
-class Ai4r::Clusterers::CompleteLinkage
-  attr_accessor :data_set, :number_of_clusters, :clusters, :distance_matrix
-end
 
 class CompleteLinkageTest < Minitest::Test
 
@@ -36,8 +33,6 @@ class CompleteLinkageTest < Minitest::Test
         [2.0, 72.0, 65.0, 50.0, 52.0, 2.0, 65.0, 10.0, 74.0, 50.0, 37.0]]
 
   def setup
-    Ai4r::Clusterers::CompleteLinkage.send(:public,
-     *Ai4r::Clusterers::CompleteLinkage.protected_instance_methods)
   end
 
   def test_build_with_distance
@@ -49,14 +44,14 @@ class CompleteLinkageTest < Minitest::Test
 
   def test_linkage_distance
     clusterer = Ai4r::Clusterers::CompleteLinkage.new
-    clusterer.distance_matrix = @@expected_distance_matrix
-    assert_equal 98, clusterer.linkage_distance(0,1,2)
-    assert_equal 74, clusterer.linkage_distance(4,2,5)
+    clusterer.instance_variable_set(:@distance_matrix, @@expected_distance_matrix)
+    assert_equal 98, clusterer.send(:linkage_distance, 0,1,2)
+    assert_equal 74, clusterer.send(:linkage_distance, 4,2,5)
   end
 
   def test_distance_between_item_and_cluster
     clusterer = CompleteLinkage.new
-    assert_equal 32.0, clusterer.distance_between_item_and_cluster([1,2],
+    assert_equal 32.0, clusterer.send(:distance_between_item_and_cluster, [1,2],
       DataSet.new(:data_items => [[3,4],[5,6]]))
   end
 

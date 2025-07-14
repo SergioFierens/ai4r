@@ -2,13 +2,6 @@ require 'minitest/autorun'
 require 'ai4r/classifiers/multilayer_perceptron'
 require 'ai4r/data/data_set'
 
-# Make all accessors and methods public
-class Ai4r::Classifiers::MultilayerPerceptron
-  attr_accessor :data_set, :class_value, :network, :domains, :outputs
-  public :get_max_index
-  public :data_to_output
-end
-
 class MultilayerPerceptronTest < Minitest::Test
   
   include Ai4r::Classifiers
@@ -61,19 +54,20 @@ class MultilayerPerceptronTest < Minitest::Test
   
   def test_get_max_index
     classifier = MultilayerPerceptron.new
-    assert_equal(0, classifier.get_max_index([3, 1, 0.2, -9, 0, 2.99]))
-    assert_equal(2, classifier.get_max_index([3, 1, 5, -9, 0, 2.99]))
-    assert_equal(5, classifier.get_max_index([3, 1, 5, -9, 0, 6]))
+    assert_equal(0, classifier.send(:get_max_index, [3, 1, 0.2, -9, 0, 2.99]))
+    assert_equal(2, classifier.send(:get_max_index, [3, 1, 5, -9, 0, 2.99]))
+    assert_equal(5, classifier.send(:get_max_index, [3, 1, 5, -9, 0, 6]))
   end
   
   def test_data_to_output
     classifier = MultilayerPerceptron.new
-    classifier.outputs = 4
-    classifier.outputs = 4
-    classifier.domains = [nil, nil, nil, ["A", "B", "C", "D"]]
-    assert_equal([1,0,0,0], classifier.data_to_output("A"))
-    assert_equal([0,0,1,0], classifier.data_to_output("C"))
-    assert_equal([0,0,0,1], classifier.data_to_output("D"))
+    classifier.instance_variable_set(:@outputs, 4)
+    classifier.instance_variable_set(:@outputs, 4)
+    classifier.instance_variable_set(:@domains,
+      [nil, nil, nil, ["A", "B", "C", "D"]])
+    assert_equal([1,0,0,0], classifier.send(:data_to_output, "A"))
+    assert_equal([0,0,1,0], classifier.send(:data_to_output, "C"))
+    assert_equal([0,0,0,1], classifier.send(:data_to_output, "D"))
   end
   
 end

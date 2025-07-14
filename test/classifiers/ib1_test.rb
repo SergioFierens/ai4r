@@ -36,7 +36,6 @@ class IB1Test < Minitest::Test
   
   
   def setup
-    IB1.send(:public, *IB1.protected_instance_methods)
     @data_set = DataSet.new(:data_items => @@data_items, :data_labels => @@data_labels)
     @classifier = IB1.new.build(@data_set)
   end
@@ -56,17 +55,17 @@ class IB1Test < Minitest::Test
   end
 
   def test_norm
-    assert_equal(0,@classifier.norm('Chicago', 0))
-    assert_in_delta(0.5522,@classifier.norm(55, 1),0.0001)
-    assert_equal(0,@classifier.norm('F', 0))
+    assert_equal(0, @classifier.send(:norm, 'Chicago', 0))
+    assert_in_delta(0.5522, @classifier.send(:norm, 55, 1), 0.0001)
+    assert_equal(0, @classifier.send(:norm, 'F', 0))
   end
 
   def test_distance
     item = ['Chicago',   55, 'M', 'N']
-    assert_equal(0, @classifier.distance(['Chicago',  55, 'M'], item))
-    assert_equal(1, @classifier.distance([nil,  55, 'M'], item))
-    assert_equal(1, @classifier.distance(['New York',  55, 'M'], item))
-    assert_in_delta(0.2728, @classifier.distance(['Chicago',  20, 'M'], item), 0.0001)
+    assert_equal(0, @classifier.send(:distance, ['Chicago', 55, 'M'], item))
+    assert_equal(1, @classifier.send(:distance, [nil, 55, 'M'], item))
+    assert_equal(1, @classifier.send(:distance, ['New York', 55, 'M'], item))
+    assert_in_delta(0.2728, @classifier.send(:distance, ['Chicago', 20, 'M'], item), 0.0001)
   end
 
   def test_eval

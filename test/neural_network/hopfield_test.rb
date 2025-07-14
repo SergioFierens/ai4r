@@ -15,7 +15,7 @@ require 'rspec/parameterized'
 require 'ai4r/neural_network/hopfield'
 require 'ai4r/data/data_set'
 
-Ai4r::NeuralNetwork::Hopfield.send(:public, *Ai4r::NeuralNetwork::Hopfield.protected_instance_methods)  
+
 
 module Ai4r
   
@@ -36,7 +36,8 @@ module Ai4r
       def test_initialize_nodes
         net = Hopfield.new
         data_set = Ai4r::Data::DataSet.new :data_items => [[1,1,0,0,1,1,0,0]]
-        assert_equal [-1,-1,-1,-1,-1,-1,-1,-1], net.initialize_nodes(data_set)
+        assert_equal [-1,-1,-1,-1,-1,-1,-1,-1],
+          net.send(:initialize_nodes, data_set)
       end
 
       def test_default_update_strategy
@@ -46,11 +47,11 @@ module Ai4r
       
       def test_initialize_weights
         net = Hopfield.new
-        net.initialize_nodes @data_set
-        net.initialize_weights(@data_set)
+        net.send(:initialize_nodes, @data_set)
+        net.send(:initialize_weights, @data_set)
         assert_equal 15, net.weights.length
         net.weights.each_with_index {|w_row, i| assert_equal i+1, w_row.length}
-        assert_in_delta 1.0, net.read_weight(1,0), 0.00001
+        assert_in_delta 1.0, net.send(:read_weight, 1,0), 0.00001
       end
 
       def test_initialize_with_params
@@ -77,7 +78,7 @@ module Ai4r
         net = Hopfield.new
         data_set = Ai4r::Data::DataSet.new :data_items => [[1,-1]]
         net.train data_set
-        net.set_input([1,-1])
+        net.send(:set_input, [1,-1])
         assert_equal(-1.0, net.energy)
       end
 
@@ -142,8 +143,8 @@ module Ai4r
         scaled_net.train @data_set
 
         refute_equal default_net.weights, scaled_net.weights
-        assert_in_delta default_net.read_weight(1,0) * 2,
-          scaled_net.read_weight(1,0), 0.00001
+        assert_in_delta default_net.send(:read_weight, 1,0) * 2,
+          scaled_net.send(:read_weight, 1,0), 0.00001
       end
 
     end

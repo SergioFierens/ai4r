@@ -10,9 +10,6 @@
 require 'minitest/autorun'
 require 'ai4r/clusterers/average_linkage'
 
-class Ai4r::Clusterers::AverageLinkage < Ai4r::Clusterers::SingleLinkage
-  attr_accessor :data_set, :number_of_clusters, :clusters, :distance_matrix
-end
 
 class AverageLinkageTest < Minitest::Test
 
@@ -36,15 +33,13 @@ class AverageLinkageTest < Minitest::Test
         [2.0, 72.0, 65.0, 50.0, 52.0, 2.0, 65.0, 10.0, 74.0, 50.0, 37.0]]
 
   def setup
-    Ai4r::Clusterers::AverageLinkage.send(:public,
-      *Ai4r::Clusterers::AverageLinkage.protected_instance_methods)
   end
 
   def test_linkage_distance
     clusterer = Ai4r::Clusterers::AverageLinkage.new
-    clusterer.distance_matrix = @@expected_distance_matrix
-    assert_equal 93.5, clusterer.linkage_distance(0,1,2)
-    assert_equal 37.5, clusterer.linkage_distance(4,2,5)
+    clusterer.instance_variable_set(:@distance_matrix, @@expected_distance_matrix)
+    assert_equal 93.5, clusterer.send(:linkage_distance, 0,1,2)
+    assert_equal 37.5, clusterer.send(:linkage_distance, 4,2,5)
   end
 
   def test_eval_unsupported

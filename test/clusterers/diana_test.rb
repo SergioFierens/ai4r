@@ -10,9 +10,6 @@
 require 'minitest/autorun'
 require 'ai4r/clusterers/diana'
 
-class Ai4r::Clusterers::Diana
-  attr_accessor :data_set, :number_of_clusters, :clusters
-end
 
 class DianaTest < Minitest::Test
 
@@ -23,7 +20,6 @@ class DianaTest < Minitest::Test
   include Ai4r::Data
 
   def setup
-    Diana.send(:public, *Diana.protected_instance_methods)
     @data_set = DataSet.new(:data_items => @@data.clone)
   end
           
@@ -42,28 +38,30 @@ class DianaTest < Minitest::Test
   
   def test_cluster_diameter
     clusterer = Diana.new
-    assert_equal 106, clusterer.cluster_diameter(@data_set)
-    assert_equal 98, clusterer.cluster_diameter(@data_set[0..2])
+    assert_equal 106, clusterer.send(:cluster_diameter, @data_set)
+    assert_equal 98, clusterer.send(:cluster_diameter, @data_set[0..2])
   end
   
   def test_max_diameter_cluster
     clusterer = Diana.new
-    assert_equal 0, clusterer.max_diameter_cluster([@data_set, @data_set[0..2]])
-    assert_equal 1, clusterer.max_diameter_cluster([@data_set[0..2], @data_set])
-  end 
+    assert_equal 0,
+      clusterer.send(:max_diameter_cluster, [@data_set, @data_set[0..2]])
+    assert_equal 1,
+      clusterer.send(:max_diameter_cluster, [@data_set[0..2], @data_set])
+  end
 
   def test_init_splinter_cluster
-    clusterer = Diana.new 
-    assert_equal [10,3], clusterer.
-      init_splinter_cluster(@data_set).data_items[0]
+    clusterer = Diana.new
+    assert_equal [10,3],
+      clusterer.send(:init_splinter_cluster, @data_set).data_items[0]
   end
   
   def test_max_distance_difference
-    clusterer = Diana.new 
+    clusterer = Diana.new
     data_set_a = @data_set[1..-1]
     data_set_b = @data_set[0]
-    assert_equal [63.7, 4], clusterer.
-      max_distance_difference(data_set_a, data_set_b)
+    assert_equal [63.7, 4],
+      clusterer.send(:max_distance_difference, data_set_a, data_set_b)
   end
   
 end

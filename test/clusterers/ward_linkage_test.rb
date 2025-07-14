@@ -10,9 +10,6 @@
 require 'minitest/autorun'
 require 'ai4r/clusterers/ward_linkage'
 
-class Ai4r::Clusterers::WardLinkage
-  attr_accessor :data_set, :number_of_clusters, :clusters, :distance_matrix, :index_clusters
-end
 
 class Ai4r::Clusterers::WardLinkageTest < Minitest::Test
 
@@ -36,17 +33,17 @@ class Ai4r::Clusterers::WardLinkageTest < Minitest::Test
         [2.0, 72.0, 65.0, 50.0, 52.0, 2.0, 65.0, 10.0, 74.0, 50.0, 37.0]]
 
   def setup
-    Ai4r::Clusterers::WardLinkage.send(:public,
-     *Ai4r::Clusterers::WardLinkage.protected_instance_methods)
   end
 
   def test_linkage_distance
     clusterer = Ai4r::Clusterers::WardLinkage.new
-    clusterer.data_set = DataSet.new :data_items => @@data
-    clusterer.index_clusters = clusterer.create_initial_index_clusters
-    clusterer.distance_matrix = @@expected_distance_matrix
-    assert_in_delta 123.4166, clusterer.linkage_distance(0,1,2), 0.0001
-    assert_equal 27.75, clusterer.linkage_distance(4,2,5)
+    clusterer.instance_variable_set(:@data_set, DataSet.new(:data_items => @@data))
+    clusterer.instance_variable_set(:@index_clusters,
+      clusterer.send(:create_initial_index_clusters))
+    clusterer.instance_variable_set(:@distance_matrix, @@expected_distance_matrix)
+    assert_in_delta 123.4166,
+      clusterer.send(:linkage_distance, 0,1,2), 0.0001
+    assert_equal 27.75, clusterer.send(:linkage_distance, 4,2,5)
   end
 
   def test_eval_unsupported

@@ -12,7 +12,16 @@ Many test files define the same marketing or clustering data using constants or 
 
 ## Avoid Modifying Classes Under Test
 
-Several tests call `send(:public, *Class.protected_instance_methods)` to expose internals. Instead, invoke protected methods with `send` or design public APIs that expose the necessary behavior. This prevents warnings about method redefinition and keeps class visibility unchanged.
+Several tests used to call `send(:public, *Class.protected_instance_methods)` to
+expose internals. A cleaner approach keeps the classes untouched and invokes
+protected helpers directly with Ruby's `send`:
+
+```ruby
+classifier.send(:neighbors_for, data, k)
+```
+
+This avoids warnings about method redefinition and keeps class visibility
+unchanged.
 
 ## Deterministic Randomness
 
