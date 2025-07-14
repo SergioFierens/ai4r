@@ -38,6 +38,7 @@ require_relative 'ai4r/classifiers/support_vector_machine'
 # Neural networks
 require_relative 'ai4r/neural_network/backpropagation'
 require_relative 'ai4r/neural_network/hopfield'
+require_relative 'ai4r/neural_network/transformer'
 
 # Genetic Algorithms
 require_relative 'ai4r/genetic_algorithm/genetic_algorithm'
