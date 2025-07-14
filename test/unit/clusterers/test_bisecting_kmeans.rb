@@ -7,7 +7,7 @@ class TestBisectingKMeans < Minitest::Test
   include Ai4r::Data
   include Ai4r::Clusterers
 
-  DATA = [[1,1],[1,2],[2,1],[2,2],[8,8],[8,9],[9,8],[9,9]]
+  DATA = [[1,1],[1,2],[2,1],[2,2],[8,8],[8,9],[9,8],[9,9]].freeze
 
   def test_final_cluster_count
     ds = DataSet.new(data_items: DATA)

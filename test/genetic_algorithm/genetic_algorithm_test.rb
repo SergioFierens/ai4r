@@ -15,7 +15,7 @@ module Ai4r
   
   module GeneticAlgorithm
 
-  COUNTRY = %w"Belgium France Germany Ireland Italy Poland Portugal Spain Sweden UK"
+  COUNTRY = %w"Belgium France Germany Ireland Italy Poland Portugal Spain Sweden UK".freeze
 
    #         Belgium,  France,   Germany,  Ireland,  Italy,  Poland,   Portugal,   Spain,  Sweden,   UK
   COSTS = [
@@ -29,7 +29,7 @@ module Ai4r
               [ 25,       13,       28,       25,       25,     34,        9,          0,     33,       19],
               [ 30,       23,       18,       29,       31,     18,       38,         34,      0,       23],
               [ 11,       11,       22,       9,        28,     26,       27,         19,     22,        0]
-  ]
+  ].freeze
 
 
     class GeneticAlgorithmTest < Minitest::Test

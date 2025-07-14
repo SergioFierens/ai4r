@@ -6,7 +6,7 @@ class TestDiana < Minitest::Test
   include Ai4r::Data
   include Ai4r::Clusterers
 
-  DATA = [[1],[2],[3],[4]]
+  DATA = [[1],[2],[3],[4]].freeze
 
   class CountingDiana < Diana
     attr_reader :splits, :first_cluster

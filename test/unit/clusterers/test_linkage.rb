@@ -11,11 +11,11 @@ class TestLinkage < Minitest::Test
   include Ai4r::Data
   include Ai4r::Clusterers
 
-  DATA4 = [[0,0],[0,1],[5,0],[5,1]]
-  DATA_N = [[0],[1],[2],[3],[4]]
+  DATA4 = [[0,0],[0,1],[5,0],[5,1]].freeze
+  DATA_N = [[0],[1],[2],[3],[4]].freeze
 
   LINKAGE_CLASSES = [SingleLinkage, CompleteLinkage, AverageLinkage,
-                     MedianLinkage, CentroidLinkage, WeightedAverageLinkage]
+                     MedianLinkage, CentroidLinkage, WeightedAverageLinkage].freeze
 
   def test_first_merge_shortest_pair
     ds = DataSet.new(data_items: DATA4)
