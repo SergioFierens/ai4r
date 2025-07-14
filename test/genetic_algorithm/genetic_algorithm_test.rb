@@ -8,7 +8,8 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
  
 require 'ai4r/genetic_algorithm/genetic_algorithm'
-require 'test/unit'
+require 'ai4r/genetic_algorithm/tsp_chromosome'
+require 'minitest/autorun'
 
 module Ai4r
   
@@ -31,22 +32,22 @@ module Ai4r
   ]
 
 
-    class GeneticAlgorithmTest < Test::Unit::TestCase
+    class GeneticAlgorithmTest < Minitest::Test
 
       def test_chromosome_seed
-        Chromosome.set_cost_matrix(COSTS)
-        chromosome = Chromosome.seed
+        TspChromosome.set_cost_matrix(COSTS)
+        chromosome = TspChromosome.seed
         assert_equal [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], chromosome.data.sort
       end
 
       def test_fitness
-        Chromosome.set_cost_matrix(COSTS)
-        chromosome = Chromosome.new([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+        TspChromosome.set_cost_matrix(COSTS)
+        chromosome = TspChromosome.new([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         assert_equal( -206, chromosome.fitness)
       end
 
       def test_selection
-        search = GeneticSearch.new(10, 5)
+        search = GeneticSearch.new(10, 5, TspChromosome)
         search.generate_initial_population
         selected =  search.selection
         selected.each { |c| assert c!=nil }
@@ -57,7 +58,7 @@ module Ai4r
       end
 
       def test_reproduction
-        search = GeneticSearch.new(10, 5)
+        search = GeneticSearch.new(10, 5, TspChromosome)
         search.generate_initial_population
         selected =  search.selection
         offsprings = search.reproduction selected
@@ -65,14 +66,38 @@ module Ai4r
       end    
 
       def test_replace_worst_ranked
-        search = GeneticSearch.new(10, 5)
+        search = GeneticSearch.new(10, 5, TspChromosome)
         search.generate_initial_population
         selected =  search.selection
         offsprings = search.reproduction selected
         search.replace_worst_ranked offsprings
         assert_equal 10, search.population.length
         offsprings.each { |c| assert search.population.include?(c)}
-      end 
+      end
+
+      def test_on_generation_callback
+        TspChromosome.set_cost_matrix(COSTS)
+        gens = []
+        search = GeneticSearch.new(10, 2, TspChromosome, 0.3, 0.4, nil, nil,
+                                   lambda { |g, f| gens << g })
+        search.run
+        assert gens.include?(0)
+        assert gens.max <= 2
+      end
+
+      def test_fitness_threshold
+        TspChromosome.set_cost_matrix(COSTS)
+        search = GeneticSearch.new(10, 5, TspChromosome, 0.3, 0.4, -1_000_000)
+        search.run
+        assert_equal 1, search.instance_variable_get(:@generation)
+      end
+
+      def test_max_stagnation
+        TspChromosome.set_cost_matrix(COSTS)
+        search = GeneticSearch.new(10, 5, TspChromosome, 0.3, 0.4, nil, 0)
+        search.run
+        assert_equal 1, search.instance_variable_get(:@generation)
+      end
 
     end
 

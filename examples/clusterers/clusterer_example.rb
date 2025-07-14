@@ -12,7 +12,6 @@
 # the word "Diana" by "KMeans", "AverageLinkage", or any other cluster implementation.
 # The cluster API is the same, so you can play around and observe different results.
 
-require 'rubygems'
 require 'ai4r'
 include Ai4r::Data
 include Ai4r::Clusterers
@@ -44,13 +43,20 @@ answers = [	[ 1, 2, 3, 2, 2],	# Answers of person 1
 		[ 2, 2, 3, 2, 3],
 		[ 3, 3, 3, 1, 1]]	# Answers of person 16
 
-data_set = DataSet.new(:data_items => answers, :data_labels => questions)
+data_set = DataSet.new(data_items: answers, data_labels: questions)
 
 # Let's group answers in 4 groups
 clusterer = Diana.new.build(data_set, 4)
 
-clusterer.clusters.each_with_index do |cluster, index| 
-	puts "Group #{index+1}"
-	p cluster.data_items
+clusterer.clusters.each_with_index do |cluster, index|
+        puts "Group #{index+1}"
+        p cluster.data_items
+end
+
+# Check if this algorithm supports evaluating new data items
+if clusterer.supports_eval?
+  puts "First survey belongs to group #{clusterer.eval(answers.first)}"
+else
+  puts 'This algorithm does not support eval on unseen data.'
 end
 

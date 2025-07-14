@@ -11,16 +11,18 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'ai4r/som/som'
-require 'test/unit'
+require 'minitest/autorun'
+require 'tmpdir'
+require_relative '../test_helper'
 
 module Ai4r
 
   module Som
 
-    class SomTest < Test::Unit::TestCase
+    class SomTest < Minitest::Test
 
       def setup
-        @som = Som.new 2, 5, Layer.new(3, 3)
+        @som = Som.new 2, 5, 5, Layer.new(3, 3)
         @som.initiate_map
       end
 
@@ -50,13 +52,11 @@ module Ai4r
       end
 
       def test_access_to_nodes
-        assert_raise Exception do
-          @som.get_node(5, 5)
-        end
+        ex = assert_raises(ArgumentError) { @som.get_node(5, 5) }
+        assert_equal 'invalid node coordinates (5, 5)', ex.message
 
-        assert_raise Exception do
-          @som.get_node(5, -3)
-        end
+        ex = assert_raises(ArgumentError) { @som.get_node(5, -3) }
+        assert_equal 'invalid node coordinates (5, -3)', ex.message
 
         assert_equal Node, @som.get_node(0, 0).class
       end
@@ -82,6 +82,74 @@ module Ai4r
         assert_equal 2, distancer(0, 0, 2, 1)
         assert_equal 4, distancer(3, 4, 1, 0)
         assert_equal 2, distancer(3, 2, 1, 3)
+      end
+
+      def test_weight_options
+        som = Som.new 2, 2, 2, Layer.new(3, 3), { range: -1..0, random_seed: 1 }
+        som.initiate_map
+        som.nodes.each do |node|
+          node.weights.each do |w|
+            assert w <= 0
+            assert w >= -1
+          end
+        end
+
+        other = Som.new 2, 2, 2, Layer.new(3, 3)
+        other.set_parameters({ :init_weight_options => { range: -1..0, random_seed: 1 } })
+        other.initiate_map
+        assert_equal som.nodes.map(&:weights), other.nodes.map(&:weights)
+      end
+
+      def test_seed_alias
+        som = Som.new 2, 2, 2, Layer.new(3, 3), { range: -1..0, seed: 2 }
+        som.initiate_map
+        other = Som.new 2, 2, 2, Layer.new(3, 3), { range: -1..0, random_seed: 2 }
+        other.initiate_map
+        assert_equal som.nodes.map(&:weights), other.nodes.map(&:weights)
+      end
+
+      def test_rectangular_node_positions
+        som = Som.new 1, 2, 3, Layer.new(3, 3)
+        som.initiate_map
+        assert_equal 6, som.nodes.length
+        assert_equal [0, 0], [som.get_node(0, 0).x, som.get_node(0, 0).y]
+        assert_equal [2, 0], [som.get_node(0, 2).x, som.get_node(0, 2).y]
+        assert_equal [1, 1], [som.get_node(1, 1).x, som.get_node(1, 1).y]
+      end
+
+      def test_save_and_load
+        input = [0.4, 0.7]
+        original_bmu = @som.find_bmu(input)[0].id
+
+        Dir.mktmpdir do |dir|
+          path = File.join(dir, 'som.yml')
+          @som.save_yaml(path)
+          loaded = Som.load_yaml(path)
+          assert_equal original_bmu, loaded.find_bmu(input)[0].id
+          assert_equal @som.nodes.map(&:weights), loaded.nodes.map(&:weights)
+        end
+      end
+
+      def test_train_with_error_threshold
+        som = Som.new 2, 3, 3, Layer.new(3, 3, 10)
+        som.initiate_map
+        errors = som.train([[0, 0], [1, 1]], error_threshold: 0.01)
+        assert errors.length < som.layer.epochs
+        assert_operator errors.last, :<=, 0.01
+      end
+
+      def test_euclidean_distance_metric
+        layer = Layer.new(3, 3, 100, 0.7, distance_metric: :euclidean)
+        som = Som.new 1, 2, 2, layer
+        som.initiate_map
+        assert_approximate_equality Math.sqrt(2), som.get_node(0,0).distance_to_node(som.get_node(1,1))
+      end
+
+      def test_manhattan_distance_metric
+        layer = Layer.new(3, 3, 100, 0.7, distance_metric: :manhattan)
+        som = Som.new 1, 2, 2, layer
+        som.initiate_map
+        assert_equal 2, som.get_node(0,0).distance_to_node(som.get_node(1,1))
       end
 
       private

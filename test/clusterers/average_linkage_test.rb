@@ -7,14 +7,14 @@
 # the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require 'test/unit'
+require 'minitest/autorun'
 require 'ai4r/clusterers/average_linkage'
 
 class Ai4r::Clusterers::AverageLinkage < Ai4r::Clusterers::SingleLinkage
   attr_accessor :data_set, :number_of_clusters, :clusters, :distance_matrix
 end
 
-class AverageLinkageTest < Test::Unit::TestCase
+class AverageLinkageTest < Minitest::Test
 
   include Ai4r::Clusterers
   include Ai4r::Data
@@ -45,6 +45,15 @@ class AverageLinkageTest < Test::Unit::TestCase
     clusterer.distance_matrix = @@expected_distance_matrix
     assert_equal 93.5, clusterer.linkage_distance(0,1,2)
     assert_equal 37.5, clusterer.linkage_distance(4,2,5)
+  end
+
+  def test_eval_unsupported
+    clusterer = Ai4r::Clusterers::AverageLinkage.new
+    assert_raises(NotImplementedError) { clusterer.eval([0, 0]) }
+  end
+
+  def test_supports_eval
+    assert_equal false, Ai4r::Clusterers::AverageLinkage.new.supports_eval?
   end
 
 end

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Author::    Sergio Fierens
 # License::   MPL 1.1
 # Project::   ai4r
@@ -15,6 +16,9 @@ module Ai4r
     module Statistics
 
       # Get the sample mean
+      # @param data_set [Object]
+      # @param attribute [Object]
+      # @return [Object]
       def self.mean(data_set, attribute)
         index = data_set.get_index(attribute)
         sum = 0.0
@@ -24,9 +28,13 @@ module Ai4r
 
       # Get the variance.
       # You can provide the mean if you have it already, to speed up things.
+      # @param data_set [Object]
+      # @param attribute [Object]
+      # @param mean [Object]
+      # @return [Object]
       def self.variance(data_set, attribute, mean = nil)
         index = data_set.get_index(attribute)
-        mean = mean(data_set, attribute)
+        mean ||= mean(data_set, attribute)
         sum = 0.0
         data_set.data_items.each { |item| sum += (item[index]-mean)**2 }
         return sum / (data_set.data_items.length-1)
@@ -34,15 +42,22 @@ module Ai4r
 
       # Get the standard deviation.
       # You can provide the variance if you have it already, to speed up things.
+      # @param data_set [Object]
+      # @param attribute [Object]
+      # @param variance [Object]
+      # @return [Object]
       def self.standard_deviation(data_set, attribute, variance = nil)
         variance ||= variance(data_set, attribute)
         Math.sqrt(variance)
       end
 
       # Get the sample mode.
+      # @param data_set [Object]
+      # @param attribute [Object]
+      # @return [Object]
       def self.mode(data_set, attribute)
         index = data_set.get_index(attribute)
-        count = Hash.new {0}
+        count = Hash.new(0)
         max_count = 0
         mode = nil
         data_set.data_items.each do |data_item|
@@ -57,17 +72,23 @@ module Ai4r
       end
 
       # Get the maximum value of an attribute in the data set
+      # @param data_set [Object]
+      # @param attribute [Object]
+      # @return [Object]
       def self.max(data_set, attribute)
         index = data_set.get_index(attribute)
-        item = data_set.data_items.max {|x,y| x[index] <=> y[index]}
-        return (item) ? item[index] : (-1.0/0)
+        item = data_set.data_items.max_by { |item| item[index] }
+        return (item) ? item[index] : (-Float::INFINITY)
       end
 
       # Get the minimum value of an attribute in the data set
+      # @param data_set [Object]
+      # @param attribute [Object]
+      # @return [Object]
       def self.min(data_set, attribute)
         index = data_set.get_index(attribute)
-        item = data_set.data_items.min {|x,y| x[index] <=> y[index]}
-        return (item) ? item[index] : (1.0/0)
+        item = data_set.data_items.min_by { |item| item[index] }
+        return (item) ? item[index] : (Float::INFINITY)
       end
 
     end

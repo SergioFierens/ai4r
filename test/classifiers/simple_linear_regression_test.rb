@@ -1,11 +1,11 @@
 require 'ai4r/classifiers/simple_linear_regression'
 require 'ai4r/data/data_set'
-require 'test/unit'
+require 'minitest/autorun'
 
 include Ai4r::Classifiers
 include Ai4r::Data
 
-class SimpleLinearRegressionTest < Test::Unit::TestCase
+class SimpleLinearRegressionTest < Minitest::Test
 
   @@data_labels = ["symboling", "normalized-losses", "wheel-base", "length", "width", "height", "curb-weight",
                    "engine-size", "bore" , "stroke", "compression-ratio", "horsepower", "peak-rpm", "city-mpg",
@@ -31,7 +31,17 @@ class SimpleLinearRegressionTest < Test::Unit::TestCase
 
   def test_eval
     result = @c.eval([-1,95,109.1,188.8,68.9,55.5,3062,141,3.78,3.15,9.5,114,5400,19,25])
-    assert_equal 17218.444444444445, result
+    assert_equal 18607.025513298104, result
+  end
+
+  def test_selected_attribute
+    classifier = SimpleLinearRegression.new
+      .set_parameters(selected_attribute: 0)
+      .build(@data_set)
+    assert_equal 0, classifier.attribute_index
+    expected = 14084.580645161293
+    result = classifier.eval(@data_set.data_items.first[0...-1])
+    assert_in_delta expected, result, 0.0001
   end
 
 end

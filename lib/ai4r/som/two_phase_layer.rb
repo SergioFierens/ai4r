@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Author::    Thomas Kern
 # License::   MPL 1.1
 # Project::   ai4r
@@ -7,8 +8,8 @@
 # the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../data/parameterizable'
-require File.dirname(__FILE__) + '/layer'
+require_relative '../data/parameterizable'
+require_relative 'layer'
 
 module Ai4r
 
@@ -33,9 +34,10 @@ module Ai4r
 
     class TwoPhaseLayer < Layer
 
+      # @return [Object]
       def initialize(nodes, learning_rate = 0.9, phase_one = 150, phase_two = 100,
-              phase_one_learning_rate = 0.1, phase_two_learning_rate = 0)
-        super nodes, nodes, phase_one + phase_two, learning_rate
+              phase_one_learning_rate = 0.1, phase_two_learning_rate = 0, options = {})
+        super nodes, nodes, phase_one + phase_two, learning_rate, options
         @phase_one = phase_one
         @phase_two = phase_two
         @lr = @initial_learning_rate
@@ -51,6 +53,8 @@ module Ai4r
       # two different values will be returned, depending on the phase
       # in phase one, the radius will incrementially reduced by 1 every @radius_reduction time
       # in phase two, the radius is fixed to 1
+      # @param epoch [Object]
+      # @return [Object]
       def radius_decay(epoch)
         if epoch > @phase_one
           return 1
@@ -69,6 +73,8 @@ module Ai4r
       # the decay value of the learning rate) is reset as well
       # in  phase two, the newly reset delta_lr rate will be used to incrementially reduce the
       # learning rate
+      # @param epoch [Object]
+      # @return [Object]
       def learning_rate_decay(epoch)
         if epoch < @phase_one
           @lr -= @delta_lr

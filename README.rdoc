@@ -13,18 +13,102 @@ This project aims to produce ruby implementations of algorithms covering several
 
 2. Include require statements in your code:
 
-  require "rubygems"
   require "ai4r"
 
-= Contact
+OneR and Prism now support numeric attributes by discretizing them into a fixed
+number of bins. The amount of bins can be controlled with the
+`bin_count` parameter.
 
-If you have questions or constructive comments about this project send it to me:
-{Sergio Fierens}[https://github.com/SergioFierens], email address: (sergio (at) gmail (dot) com).
+= Examples
 
-= Contributors
+== Using OneR and ZeroR
 
-This project was created and is maintained by {Sergio Fierens}[https://github.com/SergioFierens].
-There are other (great and absolutely cool) people who have donated time and code to make this project better. You can check out the complete AI4R contributors list: http://github.com/SergioFierens/ai4r/graphs/contributors.
+OneR and ZeroR now expose parameters that let you experiment with different
+strategies.  You can list available parameters by calling
+`get_parameters_info` on the class.  Parameters can be set with
+`set_parameters` before building the model.
+
+  data = Ai4r::Data::DataSet.new.load_csv_with_labels 'examples/classifiers/zero_one_r_data.csv'
+
+  # ZeroR will return the most frequent class.  The ``tie_strategy'' parameter
+  # controls what happens when more than one class has the same frequency.
+  zero_r = Ai4r::Classifiers::ZeroR.new
+  zero_r.set_parameters(:tie_strategy => :random)
+  zero_r.build(data)
+
+  # OneR selects the single attribute with the lowest prediction error.  You
+  # may force the attribute with ``selected_attribute'' or change the tie break
+  # behaviour with ``tie_break''.
+  one_r = Ai4r::Classifiers::OneR.new
+  one_r.set_parameters(:selected_attribute => 0, :tie_break => :last)
+  one_r.build(data)
+
+== SimpleLinearRegression
+
+The regression classifier was renamed ``SimpleLinearRegression''.  It selects
+the attribute that minimises mean squared error and derives a slope and
+intercept using standard linear regression.  After building the model you can
+inspect these coefficients:
+
+  r = Ai4r::Classifiers::SimpleLinearRegression.new.build(data)
+  puts r.attribute      # attribute name used for the regression
+  puts r.slope          # regression slope
+  puts r.intercept      # regression intercept
+
+== DataSet normalization
+
+Numeric attributes can be normalized with `normalize!`. By default it applies
+z-score normalization, but you can also use `:minmax` to scale values to the
+`[0,1]` range.
+
+  data = Ai4r::Data::DataSet.new(:data_items => [[1, 10], [2, 20]])
+  Ai4r::Data::DataSet.normalized(data, method: :minmax)
+  data.normalize!  # in place using z-score
+
+== KMeans random seed
+
+The ``random_seed'' parameter makes KMeans deterministic by seeding Ruby's
+RNG before choosing initial centroids. It's often a good idea to normalize
+numeric attributes before clustering.
+
+  data = Ai4r::Data::DataSet.new(:data_items => [[1, 2], [3, 4], [5, 6]])
+  data.normalize!
+  kmeans = Ai4r::Clusterers::KMeans.new
+  kmeans.set_parameters(:random_seed => 1).build(data, 2)
+
+== SOM distance metric
+
+Layers and nodes accept an optional ``distance_metric'' parameter.  It controls
+how neighbourhood distances are computed.  Supported metrics are
+``:chebyshev'' (default), ``:euclidean'' and ``:manhattan''.
+
+  layer = Ai4r::Som::TwoPhaseLayer.new(10, distance_metric: :euclidean)
+  som = Ai4r::Som::Som.new(4, 8, 8, layer)
+  som.initiate_map
+
+== Clusterer examples
+
+Scripts under `examples/clusterers` showcase additional features:
+
+* `kmeans_custom_example.rb` runs KMeans with a custom distance function and a
+  fixed seed.  It prints the final SSE and how many iterations were needed.
+* `hierarchical_dendrogram_example.rb` builds a hierarchical clusterer and
+  outputs a simple dendrogram using the recorded tree.
+
+== Checking eval availability
+
+Some hierarchical algorithms cannot classify new items once built.  Use
+`supports_eval?` to verify before calling `eval`:
+
+  clusterer = Ai4r::Clusterers::AverageLinkage.new.build(data, 2)
+  clusterer.supports_eval? # => false
+
+= Documentation
+
+Tutorials for genetic algorithms, ID3 decision trees and neural networks are available in the +docs/+ directory.
+
+Tutorials for genetic algorithms, ID3 decision trees, Hyperpipes, neural networks, a Naive Bayes classifier and the IB1 classifier are available in the +docs/+ directory.
+Documentation for the PRISM rule induction algorithm is available in [docs/prism.md](docs/prism.md).
 
 = Disclaimer
 

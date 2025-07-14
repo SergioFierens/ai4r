@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Author::    Sergio Fierens (implementation)
 # License::   MPL 1.1
 # Project::   ai4r
@@ -7,8 +8,8 @@
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../data/data_set'
-require File.dirname(__FILE__) + '/../clusterers/k_means'
+require_relative '../data/data_set'
+require_relative '../clusterers/k_means'
 
 module Ai4r
   module Clusterers
@@ -24,30 +25,35 @@ module Ai4r
       attr_reader :data_set, :number_of_clusters, :clusters, :centroids
       attr_accessor :max_iterations, :distance_function, :refine
       
-      parameters_info :max_iterations => "Maximum number of iterations to " + 
+      parameters_info max_iterations: "Maximum number of iterations to " +
         "build the clusterer. By default it is uncapped.",
-        :distance_function => "Custom implementation of distance function. " +
+        distance_function: "Custom implementation of distance function. " +
           "It must be a closure receiving two data items and return the " +
-          "distance between them. By default, this algorithm uses " + 
+          "distance between them. By default, this algorithm uses " +
           "euclidean distance of numeric attributes to the power of 2.",
-        :centroid_function => "Custom implementation to calculate the " +
+        centroid_function: "Custom implementation to calculate the " +
           "centroid of a cluster. It must be a closure receiving an array of " +
-          "data sets, and return an array of data items, representing the " + 
+          "data sets, and return an array of data items, representing the " +
           "centroids of for each data set. " +
           "By default, this algorithm returns a data items using the mode "+
           "or mean of each attribute on each data set.",
-        :refine => "Boolean value. True by default. It will run the " +
+        refine: "Boolean value. True by default. It will run the " +
             "classic K Means algorithm, using as initial centroids the " +
             "result of the bisecting approach."
       
       
-      def intialize
+      # @return [Object]
+      def initialize
+        super
         @refine = true
       end
       
       # Build a new clusterer, using data examples found in data_set.
       # Items will be clustered in "number_of_clusters" different
       # clusters.
+      # @param data_set [Object]
+      # @param number_of_clusters [Object]
+      # @return [Object]
       def build(data_set, number_of_clusters)
         @data_set = data_set
         @number_of_clusters = number_of_clusters
@@ -71,10 +77,13 @@ module Ai4r
       end      
       
       protected      
+      # @return [Object]
       def calc_initial_centroids
         @centroids # Use existing centroids
       end
       
+      # @param clusters [Object]
+      # @return [Object]
       def find_biggest_cluster_index(clusters)
         max_index = 0
         max_length = 0

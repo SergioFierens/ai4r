@@ -9,7 +9,8 @@
  
 
 require 'ai4r/genetic_algorithm/genetic_algorithm'
-require 'test/unit'
+require 'ai4r/genetic_algorithm/tsp_chromosome'
+require 'minitest/autorun'
 
 module Ai4r
   
@@ -28,26 +29,38 @@ module Ai4r
               [ 11,       11,       22,       9,        28,     26,       27,         19,     22,        0]
   ]
 
-    class ChromosomeTest < Test::Unit::TestCase
+    class ChromosomeTest < Minitest::Test
 
       def test_chromosome_seed
-        Chromosome.set_cost_matrix(COST)
-        chromosome = Chromosome.seed
+        TspChromosome.set_cost_matrix(COST)
+        chromosome = TspChromosome.seed
         assert_equal [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], chromosome.data.sort
       end
 
       def test_fitness
-        Chromosome.set_cost_matrix(COST)
-        chromosome = Chromosome.new([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+        TspChromosome.set_cost_matrix(COST)
+        chromosome = TspChromosome.new([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         assert_equal( -206, chromosome.fitness)
       end
 
       def test_reproduce
-        Chromosome.set_cost_matrix(COST)
-        c1 = Chromosome.new([2, 8, 5, 3, 6, 7, 1, 9, 0, 4])
-        c2 = Chromosome.new([3, 2, 0, 1, 5, 4, 6, 7, 9, 8])
-        c3 = Chromosome.reproduce(c1, c2)
+        TspChromosome.set_cost_matrix(COST)
+        c1 = TspChromosome.new([2, 8, 5, 3, 6, 7, 1, 9, 0, 4])
+        c2 = TspChromosome.new([3, 2, 0, 1, 5, 4, 6, 7, 9, 8])
+        c3 = TspChromosome.reproduce(c1, c2)
         assert_equal([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], c3.data.sort)
+      end
+
+      def test_mutate_recalculates_fitness
+        TspChromosome.set_cost_matrix(COST)
+        chromosome = TspChromosome.new([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+        original_fitness = chromosome.fitness
+        chromosome.normalized_fitness = 0.0
+        TspChromosome.mutate(chromosome, 1.0)
+        mutated_data = chromosome.data.dup
+        expected_fitness = TspChromosome.new(mutated_data).fitness
+        assert_equal expected_fitness, chromosome.fitness
+        refute_equal original_fitness, chromosome.fitness
       end
 
     end

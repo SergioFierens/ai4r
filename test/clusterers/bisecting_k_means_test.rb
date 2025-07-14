@@ -7,10 +7,10 @@
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require 'test/unit'
+require 'minitest/autorun'
 require 'ai4r/clusterers/bisecting_k_means'
 
-class BisectingKMeansTest < Test::Unit::TestCase
+class BisectingKMeansTest < Minitest::Test
   
   include Ai4r::Clusterers
   include Ai4r::Data
@@ -21,9 +21,13 @@ class BisectingKMeansTest < Test::Unit::TestCase
   def test_build_without_refine
     build(false)
   end
-  
+
   def test_build_with_refine
     build(true)
+  end
+
+  def test_refine_defaults_to_true
+    assert_equal true, BisectingKMeans.new.refine
   end
   
   protected

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Author::    Thomas Kern
 # License::   MPL 1.1
 # Project::   ai4r
@@ -7,8 +8,9 @@
 # the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../data/parameterizable'
-require File.dirname(__FILE__) + '/layer'
+require_relative '../data/parameterizable'
+require_relative 'layer'
+require_relative 'distance_metrics'
 
 module Ai4r
 
@@ -30,31 +32,61 @@ module Ai4r
 
       include Ai4r::Data::Parameterizable
 
-      parameters_info :weights => "holds the current weight",
-                      :instantiated_weight => "holds the very first weight",
-                      :x => "holds the row ID of the unit in the map",
-                      :y => "holds the column ID of the unit in the map",
-                      :id => "id of the node"      
+      parameters_info weights: "holds the current weight",
+                      instantiated_weight: "holds the very first weight",
+                      x: "holds the row ID of the unit in the map",
+                      y: "holds the column ID of the unit in the map",
+                      id: "id of the node",
+                      distance_metric: "metric used to compute node distance"
 
       # creates an instance of Node and instantiates the weights
-      # the parameters is a uniq and sequential ID as well as the number of total nodes
-      # dimensions signals the dimension of the input vector
-      def self.create(id, total, dimensions)
+      #
+      # +id+:: unique identifier for this node
+      # +rows+:: number of rows of the SOM grid
+      # +columns+:: number of columns of the SOM grid
+      # +dimensions+:: dimension of the input vector
+      # @param id [Object]
+      # @param rows [Object]
+      # @param columns [Object]
+      # @param dimensions [Object]
+      # @param options [Object]
+      # @option options [Range] :range (0..1) range used to initialize weights
+      # @option options [Integer] :random_seed Seed for Ruby's RNG. The
+      #   deprecated :seed key is supported for backward compatibility.
+      # @return [Object]
+      def self.create(id, rows, columns, dimensions, options = {})
         n = Node.new
         n.id = id
-        n.instantiate_weight dimensions
-        n.x = id % total
-        n.y = (id / total.to_f).to_i
+        n.distance_metric = options[:distance_metric] || :chebyshev
+        n.instantiate_weight dimensions, options
+        n.x = id % columns
+        n.y = (id / columns.to_f).to_i
         n
       end
 
       # instantiates the weights to the dimension (of the input vector)
       # for backup reasons, the instantiated weight is stored into @instantiated_weight  as well
-      def instantiate_weight(dimensions)
+      # @param dimensions [Object]
+      # @param options [Object]
+      # @option options [Range] :range (0..1) range used to initialize weights
+      # @option options [Integer] :random_seed Seed for Ruby's RNG. The
+      #   deprecated :seed key is supported for backward compatibility.
+      # @return [Object]
+      def instantiate_weight(dimensions, options = {})
+        opts = { range: 0..1, random_seed: nil, seed: nil, rng: nil }.merge(options)
+        rng = opts[:rng]
+        unless rng
+          seed = opts[:random_seed] || opts[:seed]
+          rng = seed.nil? ? Random.new : Random.new(seed)
+        end
+        range = opts[:range] || (0..1)
+        min = range.first.to_f
+        max = range.last.to_f
+        span = max - min
         @weights = Array.new dimensions
         @instantiated_weight = Array.new dimensions
-        @weights.each_with_index do |weight, index|
-          @weights[index] = rand
+        @weights.each_index do |index|
+          @weights[index] = min + rng.rand * span
           @instantiated_weight[index] = @weights[index]
         end
       end
@@ -62,6 +94,8 @@ module Ai4r
       # returns the square distance between the current weights and the input
       # the input is a vector/array of the same size as weights
       # at the end, the square root is extracted from the sum of differences
+      # @param input [Object]
+      # @return [Object]
       def distance_to_input(input)
         dist = 0
         input.each_with_index do |i, index|
@@ -79,14 +113,13 @@ module Ai4r
       # 2 1 1 1 2
       # 2 2 2 2 2
       # 0 being the current node
+      # @param node [Object]
+      # @return [Object]
       def distance_to_node(node)
-        max((self.x - node.x).abs, (self.y - node.y).abs)
-      end
-
-      private
-
-      def max(a, b)
-        a > b ? a : b
+        dx = self.x - node.x
+        dy = self.y - node.y
+        metric = (@distance_metric || :chebyshev)
+        DistanceMetrics.send(metric, dx, dy)
       end
 
     end

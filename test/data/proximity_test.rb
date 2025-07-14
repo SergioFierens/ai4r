@@ -7,12 +7,12 @@
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require 'test/unit'
+require 'minitest/autorun'
 require 'ai4r/data/proximity'
 
 module Ai4r
   module Data
-    class ProximityTest < Test::Unit::TestCase
+    class ProximityTest < Minitest::Test
           
       @@delta = 0.0000001    
       @@data1 = [rand*10, rand*10, rand*-10]

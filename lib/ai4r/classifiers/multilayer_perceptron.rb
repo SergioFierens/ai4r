@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Author::    Sergio Fierens (Implementation only)
 # License::   MPL 1.1
 # Project::   ai4r
@@ -7,9 +8,9 @@
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../data/data_set.rb'
-require File.dirname(__FILE__) + '/../classifiers/classifier'
-require File.dirname(__FILE__) + '/../neural_network/backpropagation'
+require_relative '../data/data_set.rb'
+require_relative '../classifiers/classifier'
+require_relative '../neural_network/backpropagation'
 
 module Ai4r
   module Classifiers
@@ -42,17 +43,18 @@ module Ai4r
 
       TRAINING_ITERATIONS = 500
       
-      parameters_info :network_class => "Neural network implementation class."+
+      parameters_info network_class: "Neural network implementation class."+
           "By default: Ai4r::NeuralNetwork::Backpropagation.",
-        :network_parameters => "parameters to be forwarded to the back end " +
-          "neural network.", 
-        :hidden_layers => "Hidden layer structure. E.g. [8, 6] will generate " +
+        network_parameters: "parameters to be forwarded to the back end " +
+          "neural network.",
+        hidden_layers: "Hidden layer structure. E.g. [8, 6] will generate " +
           "2 hidden layers with 8 and 6 neurons each. By default []",
-        :training_iterations => "How many times the training should be " +
+        training_iterations: "How many times the training should be " +
           "repeated. By default: #{TRAINING_ITERATIONS}",
-        :active_node_value => "Default: 1",
-        :inactive_node_value => "Default: 0"
+        active_node_value: "Default: 1",
+        inactive_node_value: "Default: 0"
     
+      # @return [Object]
       def initialize
         @network_class = Ai4r::NeuralNetwork::Backpropagation
         @hidden_layers = []
@@ -65,6 +67,8 @@ module Ai4r
       # Build a new MultilayerPerceptron classifier. You must provide a DataSet 
       # instance as parameter. The last attribute of each item is considered as 
       # the item class.
+      # @param data_set [Object]
+      # @return [Object]
       def build(data_set)
         data_set.check_not_empty
         @data_set = data_set
@@ -74,19 +78,22 @@ module Ai4r
         @domains[0...-1].each {|domain| @inputs += domain.length}
         @structure = [@inputs] + @hidden_layers + [@outputs]
         @network = @network_class.new @structure
-        @training_iterations.times do
-          data_set.data_items.each do |data_item|
-            input_values = data_to_input(data_item[0...-1])
-            output_values = data_to_output(data_item.last)
-            @network.train(input_values, output_values)
-          end
+        inputs = []
+        outputs = []
+        data_set.data_items.each do |data_item|
+          inputs << data_to_input(data_item[0...-1])
+          outputs << data_to_output(data_item.last)
         end
+        @network.train_epochs(inputs, outputs,
+                              epochs: @training_iterations, batch_size: 1)
         return self
       end
       
       # You can evaluate new data, predicting its class.
       # e.g.
       #   classifier.eval(['New York',  '<30', 'F'])  # => 'Y'
+      # @param data [Object]
+      # @return [Object]
       def eval(data)
         input_values = data_to_input(data)
         output_values = @network.eval(input_values)
@@ -95,12 +102,15 @@ module Ai4r
       
       # Multilayer Perceptron Classifiers cannot generate 
       # human-readable rules.
+      # @return [Object]
       def get_rules
         return "raise 'Neural networks classifiers do not generate human-readable rules.'"
       end
 
       protected
       
+      # @param data_item [Object]
+      # @return [Object]
       def data_to_input(data_item)
         input_values = Array.new(@inputs, @inactive_node_value)
         accum_index = 0
@@ -113,12 +123,16 @@ module Ai4r
         return input_values
       end
       
+      # @param data_item [Object]
+      # @return [Object]
       def data_to_output(data_item)
         output_values = Array.new(@outputs, @inactive_node_value)
         output_values[@domains.last.index(data_item)] = @active_node_value
         return output_values
       end
       
+      # @param output_values [Object]
+      # @return [Object]
       def get_max_index(output_values)
         max_value = @inactive_node_value
         max_index = 0

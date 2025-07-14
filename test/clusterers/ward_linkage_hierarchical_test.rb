@@ -7,14 +7,14 @@
 # the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require 'test/unit'
+require 'minitest/autorun'
 require File.dirname(__FILE__) + '/../../lib/ai4r/clusterers/ward_linkage_hierarchical'
 
 class Ai4r::Clusterers::WardLinkageHierarchical
   attr_accessor :data_set, :number_of_clusters, :clusters, :distance_matrix, :index_clusters
 end
 
-class Ai4r::Clusterers::WardLinkageHierarchicalTest < Test::Unit::TestCase
+class Ai4r::Clusterers::WardLinkageHierarchicalTest < Minitest::Test
 
   include Ai4r::Clusterers
   include Ai4r::Data
@@ -74,6 +74,10 @@ class Ai4r::Clusterers::WardLinkageHierarchicalTest < Test::Unit::TestCase
     clusterer = Ai4r::Clusterers::WardLinkageHierarchical.new(5)
     clusterer.build(DataSet.new(:data_items => @@data), 1)
     assert_equal 5, clusterer.cluster_tree.last.length
+  end
+
+  def test_supports_eval
+    assert_equal false, Ai4r::Clusterers::WardLinkageHierarchical.new.supports_eval?
   end
 
 

@@ -7,18 +7,21 @@
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require 'test/unit'
+require 'minitest/autorun'
 require 'ai4r/data/data_set'
 
 module Ai4r
   module Data
-    class DataSetTest < Test::Unit::TestCase
+    class DataSetTest < Minitest::Test
       
       def test_load_csv_with_labels
         set = DataSet.new.load_csv_with_labels("#{File.dirname(__FILE__)}/data_set.csv")
         assert_equal 120, set.data_items.length
         assert_equal ["zone", "rooms", "size", "price"], set.data_labels
         assert_equal ["Moron Sur (GBA)","2","[28 m2 - 39 m2]","[29K-35K]"], set.data_items.first
+
+        set = DataSet.new.load_csv_with_labels("#{File.dirname(__FILE__)}/data_set.csv", parse_numeric: true)
+        assert_equal ["Moron Sur (GBA)",2.0,"[28 m2 - 39 m2]","[29K-35K]"], set.data_items.first
       end
 
       def test_parse_csv_with_labels
@@ -26,6 +29,15 @@ module Ai4r
         assert_equal 120, set.data_items.length
         assert_equal ["zone", "rooms", "size", "price"], set.data_labels
         assert_equal ["Moron Sur (GBA)",2.0,"[28 m2 - 39 m2]","[29K-35K]"], set.data_items.first
+      end
+
+      def test_open_csv_file
+        rows = []
+        DataSet.new.open_csv_file("#{File.dirname(__FILE__)}/data_set.csv") do |row|
+          rows << row
+        end
+        assert_equal 121, rows.length
+        assert_equal ["zone", "rooms", "size", "price"], rows.first
       end
       
       def test_build_domains
@@ -55,7 +67,7 @@ module Ai4r
         set = DataSet.new(:data_labels => labels)
         assert_equal labels, set.data_labels
         set = DataSet.new(:data_items => [[ 1, 2, 3]])
-        assert_raise(ArgumentError) { set.set_data_labels(labels) }
+        assert_raises(ArgumentError) { set.set_data_labels(labels) }
       end
 
       def test_set_data_items
@@ -69,9 +81,9 @@ module Ai4r
         assert_equal items, set.data_items
         assert_equal 3, set.data_labels.length
         items << items.first[0..-2]
-        assert_raise(ArgumentError) { set.set_data_items(items) }
-        assert_raise(ArgumentError) { set.set_data_items(nil) }
-        assert_raise(ArgumentError) { set.set_data_items([1]) }
+        assert_raises(ArgumentError) { set.set_data_items(items) }
+        assert_raises(ArgumentError) { set.set_data_items(nil) }
+        assert_raises(ArgumentError) { set.set_data_items([1]) }
       end
      
       def test_get_mean_or_mode
@@ -103,6 +115,44 @@ module Ai4r
         labels = ["Feature_1", "Feature_2", "Category Label"]
         set = DataSet.new(:data_labels => labels)
         assert_equal "Category Label", set.category_label
+      end
+
+      def test_normalize_inplace
+        items = [["A", 10], ["B", 20], ["C", 30]]
+        labels = ["name", "value"]
+        set = DataSet.new(:data_items => items, :data_labels => labels)
+        set.normalize!(:zscore)
+        assert_equal [["A", -1.0], ["B", 0.0], ["C", 1.0]], set.data_items
+      end
+
+      def test_normalized_returns_new_dataset
+        items = [["A", 10, "x"], ["B", 20, "y"], ["A", 30, "z"]]
+        labels = ["city", "num", "class"]
+        set = DataSet.new(:data_items => items, :data_labels => labels)
+        copy = DataSet.normalized(set, method: :minmax)
+        assert_equal items, set.data_items
+        assert_equal [["A", 0.0, "x"], ["B", 0.5, "y"], ["A", 1.0, "z"]], copy.data_items
+      end
+
+      def test_shuffle_deterministic
+        items = [[1], [2], [3], [4]]
+        set = DataSet.new(data_items: items, data_labels: ['val'])
+        expected = items.shuffle(random: Random.new(5))
+        result = set.shuffle!(seed: 5)
+        assert_equal set, result
+        assert_equal expected, set.data_items
+      end
+
+      def test_split_ratio
+        items = (1..5).map { |i| [i] }
+        labels = ['v']
+        set = DataSet.new(data_items: items, data_labels: labels)
+        first, second = set.split(ratio: 0.6)
+        assert_equal items, set.data_items
+        assert_equal [[1], [2], [3]], first.data_items
+        assert_equal [[4], [5]], second.data_items
+        assert_equal labels, first.data_labels
+        assert_equal labels, second.data_labels
       end
      
     end

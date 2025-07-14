@@ -7,10 +7,10 @@
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/training_patterns'
-require File.dirname(__FILE__) + '/patterns_with_noise'
-require File.dirname(__FILE__) + '/patterns_with_base_noise'
-require File.dirname(__FILE__) + '/../../lib/ai4r/neural_network/backpropagation'
+require_relative 'training_patterns'
+require_relative 'patterns_with_noise'
+require_relative 'patterns_with_base_noise'
+require_relative '../../lib/ai4r/neural_network/backpropagation'
 require 'benchmark'
 
 times = Benchmark.measure do

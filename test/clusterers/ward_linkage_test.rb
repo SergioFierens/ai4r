@@ -7,14 +7,14 @@
 # the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require 'test/unit'
+require 'minitest/autorun'
 require 'ai4r/clusterers/ward_linkage'
 
 class Ai4r::Clusterers::WardLinkage
   attr_accessor :data_set, :number_of_clusters, :clusters, :distance_matrix, :index_clusters
 end
 
-class Ai4r::Clusterers::WardLinkageTest < Test::Unit::TestCase
+class Ai4r::Clusterers::WardLinkageTest < Minitest::Test
 
   include Ai4r::Clusterers
   include Ai4r::Data
@@ -47,6 +47,15 @@ class Ai4r::Clusterers::WardLinkageTest < Test::Unit::TestCase
     clusterer.distance_matrix = @@expected_distance_matrix
     assert_in_delta 123.4166, clusterer.linkage_distance(0,1,2), 0.0001
     assert_equal 27.75, clusterer.linkage_distance(4,2,5)
+  end
+
+  def test_eval_unsupported
+    clusterer = Ai4r::Clusterers::WardLinkage.new
+    assert_raises(NotImplementedError) { clusterer.eval([0, 0]) }
+  end
+
+  def test_supports_eval
+    assert_equal false, Ai4r::Clusterers::WardLinkage.new.supports_eval?
   end
 
 end

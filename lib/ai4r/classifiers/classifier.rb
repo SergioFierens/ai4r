@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Author::    Sergio Fierens
 # License::   MPL 1.1
 # Project::   ai4r
@@ -7,7 +8,7 @@
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
  
-require File.dirname(__FILE__) + '/../data/parameterizable' 
+require_relative '../data/parameterizable' 
  
 module Ai4r
   module Classifiers
@@ -21,6 +22,8 @@ module Ai4r
       # Build a new classifier, using data examples found in data_set.
       # The last attribute of each item is considered as the
       # item class.
+      # @param data_set [Object]
+      # @return [Object]
       def build(data_set)
         raise NotImplementedError
       end
@@ -28,6 +31,8 @@ module Ai4r
       # You can evaluate new data, predicting its class.
       # e.g.
       #   classifier.eval(['New York',  '<30', 'F'])  # => 'Y'
+      # @param data [Object]
+      # @return [Object]
       def eval(data)
         raise NotImplementedError
       end
@@ -53,6 +58,7 @@ module Ai4r
       #
       # Note, however, that not all classifiers are able to produce rules.
       # This method is not implemented in such classifiers.
+      # @return [Object]
       def get_rules
         raise NotImplementedError
       end

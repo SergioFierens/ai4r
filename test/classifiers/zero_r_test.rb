@@ -1,8 +1,8 @@
-require 'test/unit'
+require 'minitest/autorun'
 require 'ai4r/classifiers/zero_r'
 require 'ai4r/data/data_set'
 
-class ZeroRTest < Test::Unit::TestCase
+class ZeroRTest < Minitest::Test
   
   include Ai4r::Classifiers
   include Ai4r::Data
@@ -20,7 +20,8 @@ class ZeroRTest < Test::Unit::TestCase
   @@data_labels = [ 'city', 'age_range', 'gender', 'marketing_target'  ]
   
   def test_build
-    assert_raise(ArgumentError) { ZeroR.new.build(DataSet.new) } 
+    classifier = ZeroR.new.build(DataSet.new)
+    assert_nil(classifier.class_value)
     classifier = ZeroR.new.build(DataSet.new(:data_items => @@data_examples))
     assert_equal("Y", classifier.class_value)
     assert_equal("attribute_1", classifier.data_set.data_labels.first)
@@ -42,8 +43,22 @@ class ZeroRTest < Test::Unit::TestCase
     classifier = ZeroR.new.build(DataSet.new(:data_items => @@data_examples,
       :data_labels => @@data_labels))
     marketing_target = nil
-    eval(classifier.get_rules) 
+    eval(classifier.get_rules)
     assert_equal('Y', marketing_target)
+  end
+
+  def test_default_class
+    classifier = ZeroR.new.set_parameters({:default_class => 'N'}).build(DataSet.new)
+    assert_equal('N', classifier.class_value)
+  end
+
+  def test_tie_strategy
+    data = [['a','Y'],['b','N'],['c','Y'],['d','N']]
+    data_set = DataSet.new(:data_items => data)
+    classifier = ZeroR.new.set_parameters({:tie_strategy => :first}).build(data_set)
+    assert_equal('Y', classifier.class_value)
+    classifier = ZeroR.new.set_parameters(tie_strategy: :random, random_seed: 1).build(data_set)
+    assert_equal('N', classifier.class_value)
   end
   
 end

@@ -1,11 +1,11 @@
 require 'ai4r/classifiers/naive_bayes'
 require 'ai4r/data/data_set'
-require 'test/unit'
+require 'minitest/autorun'
 
 include Ai4r::Classifiers
 include Ai4r::Data
 
-class NaiveBayesTest < Test::Unit::TestCase
+class NaiveBayesTest < Minitest::Test
 
   @@data_labels = %w(Color Type Origin Stolen?)
 
@@ -38,6 +38,26 @@ class NaiveBayesTest < Test::Unit::TestCase
     assert_equal 2, map.keys.length
     assert_in_delta 0.42, map['Yes'], 0.1
     assert_in_delta 0.58, map['No'], 0.1
+  end
+
+  def test_unknown_value_ignore
+    result = @b.eval(%w(Blue SUV Domestic))
+    assert_equal 'No', result
+  end
+
+  def test_unknown_value_uniform
+    labels = ['Color', 'Class']
+    items = [['Red','A'], ['Red','A'], ['Blue','B'], ['Green','B']]
+    ds = DataSet.new(:data_items => items, :data_labels => labels)
+    classifier = NaiveBayes.new.set_parameters(:unknown_value_strategy => :uniform).build(ds)
+    result = classifier.eval(['Yellow'])
+    assert_equal 'A', result
+  end
+
+  def test_unknown_value_error
+    assert_raises RuntimeError do
+      NaiveBayes.new.set_parameters(:unknown_value_strategy => :error).build(@data_set).eval(%w(Blue SUV Domestic))
+    end
   end
 
 end

@@ -7,14 +7,14 @@
 # the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require 'test/unit'
+require 'minitest/autorun'
 require 'ai4r/clusterers/complete_linkage'
 
 class Ai4r::Clusterers::CompleteLinkage
   attr_accessor :data_set, :number_of_clusters, :clusters, :distance_matrix
 end
 
-class CompleteLinkageTest < Test::Unit::TestCase
+class CompleteLinkageTest < Minitest::Test
 
   include Ai4r::Clusterers
   include Ai4r::Data
