@@ -6,8 +6,7 @@ This document describes how to run the neural network test suite.
 
 ```
 bundle install
-bundle exec rake test:nn
-bundle exec rake e2e
+bundle exec rake test
 ```
 
 ## Fixtures
