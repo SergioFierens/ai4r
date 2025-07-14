@@ -7,14 +7,14 @@
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require 'test/unit'
+require 'minitest/autorun'
 require 'ai4r/clusterers/diana'
 
 class Ai4r::Clusterers::Diana
   attr_accessor :data_set, :number_of_clusters, :clusters
 end
 
-class DianaTest < Test::Unit::TestCase
+class DianaTest < Minitest::Test
 
   @@data = [  [10, 3], [3, 10], [2, 8], [2, 5], [3, 8], [10, 3],
               [1, 3], [8, 1], [2, 9], [2, 5], [3, 3], [9, 4]]

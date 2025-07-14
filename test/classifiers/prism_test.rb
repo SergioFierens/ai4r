@@ -1,9 +1,9 @@
-require 'test/unit'
+require 'minitest/autorun'
 require 'ai4r/classifiers/prism'
 require 'yaml'
 
 
-class PrismTest < Test::Unit::TestCase
+class PrismTest < Minitest::Test
 
   include Ai4r::Classifiers
   include Ai4r::Data
@@ -19,16 +19,16 @@ class PrismTest < Test::Unit::TestCase
   @@numeric_labels   = numeric_fixture['data_labels']
   
   def test_build
-    assert_raise(ArgumentError) { Prism.new.build(DataSet.new) } 
+    assert_raises(ArgumentError) { Prism.new.build(DataSet.new) } 
     classifier = Prism.new.build(DataSet.new(:data_items=>@@data_examples))
-    assert_not_nil(classifier.data_set.data_labels)
-    assert_not_nil(classifier.rules)
+    refute_nil(classifier.data_set.data_labels)
+    refute_nil(classifier.rules)
     assert_equal("attribute_1", classifier.data_set.data_labels.first)
     assert_equal("class_value", classifier.data_set.category_label)
     classifier = Prism.new.build(DataSet.new(:data_items => @@data_examples, 
         :data_labels => @@data_labels))
-    assert_not_nil(classifier.data_set.data_labels)
-    assert_not_nil(classifier.rules)
+    refute_nil(classifier.data_set.data_labels)
+    refute_nil(classifier.rules)
     assert_equal("city", classifier.data_set.data_labels.first)
     assert_equal("marketing_target", classifier.data_set.category_label)
     assert !classifier.rules.empty?
@@ -126,7 +126,7 @@ class PrismTest < Test::Unit::TestCase
     labels = ['color', 'kind']
     classifier = Prism.new.build(DataSet.new(:data_items => examples,
                                              :data_labels => labels))
-    assert_not_nil classifier.rules
+    refute_nil classifier.rules
     assert !classifier.rules.empty?
     classifier.rules.each do |rule|
       assert rule[:conditions].keys.size <= 1

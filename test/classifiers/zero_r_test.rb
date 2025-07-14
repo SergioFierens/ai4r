@@ -1,8 +1,8 @@
-require 'test/unit'
+require 'minitest/autorun'
 require 'ai4r/classifiers/zero_r'
 require 'ai4r/data/data_set'
 
-class ZeroRTest < Test::Unit::TestCase
+class ZeroRTest < Minitest::Test
   
   include Ai4r::Classifiers
   include Ai4r::Data

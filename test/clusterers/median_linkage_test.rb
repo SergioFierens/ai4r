@@ -7,14 +7,14 @@
 # the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require 'test/unit'
+require 'minitest/autorun'
 require 'ai4r/clusterers/median_linkage'
 
 class Ai4r::Clusterers::MedianLinkage
   attr_accessor :data_set, :number_of_clusters, :clusters, :distance_matrix, :index_clusters
 end
 
-class Ai4r::Clusterers::MedianLinkageTest < Test::Unit::TestCase
+class Ai4r::Clusterers::MedianLinkageTest < Minitest::Test
 
   include Ai4r::Clusterers
   include Ai4r::Data
@@ -51,7 +51,7 @@ class Ai4r::Clusterers::MedianLinkageTest < Test::Unit::TestCase
 
   def test_eval_unsupported
     clusterer = Ai4r::Clusterers::MedianLinkage.new
-    assert_raise(NotImplementedError) { clusterer.eval([0, 0]) }
+    assert_raises(NotImplementedError) { clusterer.eval([0, 0]) }
   end
 
   def test_supports_eval

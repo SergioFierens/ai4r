@@ -13,7 +13,7 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'ai4r/classifiers/id3'
-require 'test/unit'
+require 'minitest/autorun'
 
 DATA_LABELS = [ 'city', 'age_range', 'gender', 'marketing_target'  ]
 
@@ -112,7 +112,7 @@ EXPECTED_NUMERIC_RULES_STRING =
 include Ai4r::Classifiers
 include Ai4r::Data
 
-class ID3Test < Test::Unit::TestCase
+class ID3Test < Minitest::Test
 
   def test_build
     Ai4r::Classifiers::ID3.send(:public, *Ai4r::Classifiers::ID3.protected_instance_methods)
@@ -252,7 +252,7 @@ class ID3Test < Test::Unit::TestCase
             ]
     bad_data_labels = ['bogus', 'target']
     id3 = ID3.new.build(DataSet.new(:data_items =>bad_data_items, :data_labels => bad_data_labels))
-    assert_raise ModelFailureError do
+    assert_raises ModelFailureError do
       id3.eval(['c'])
     end
     assert_equal true, true

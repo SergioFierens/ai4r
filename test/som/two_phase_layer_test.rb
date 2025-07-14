@@ -1,9 +1,9 @@
-require 'test/unit'
+require 'minitest/autorun'
 require 'ai4r/som/two_phase_layer'
 
 module Ai4r
   module Som
-    class TwoPhaseLayerTest < Test::Unit::TestCase
+    class TwoPhaseLayerTest < Minitest::Test
       def setup
         # Use small phase sizes to make schedule deterministic
         @layer = TwoPhaseLayer.new(6, 0.9, 2, 3, 0.5, 0.1)

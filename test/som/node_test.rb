@@ -1,9 +1,9 @@
-require 'test/unit'
+require 'minitest/autorun'
 require 'ai4r/som/node'
 
 module Ai4r
   module Som
-    class NodeTest < Test::Unit::TestCase
+    class NodeTest < Minitest::Test
       def test_distance_to_input
         node = Node.new
         node.weights = [0.0, 0.0]

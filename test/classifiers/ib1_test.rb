@@ -8,14 +8,14 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'ai4r/classifiers/ib1'
-require 'test/unit'
+require 'minitest/autorun'
 
 
 
 include Ai4r::Classifiers
 include Ai4r::Data
 
-class IB1Test < Test::Unit::TestCase
+class IB1Test < Minitest::Test
 
   @@data_labels = [ 'city', 'age', 'gender', 'marketing_target'  ]
 
@@ -49,7 +49,7 @@ class IB1Test < Test::Unit::TestCase
   end
   
   def test_build
-    assert_raise(ArgumentError) { IB1.new.build(DataSet.new) }
+    assert_raises(ArgumentError) { IB1.new.build(DataSet.new) }
     assert @classifier.data_set
     assert_equal [nil, 18, nil, nil], @classifier.min_values
     assert_equal [nil, 85, nil, nil], @classifier.max_values

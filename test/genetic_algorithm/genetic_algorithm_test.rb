@@ -9,7 +9,7 @@
  
 require 'ai4r/genetic_algorithm/genetic_algorithm'
 require 'ai4r/genetic_algorithm/tsp_chromosome'
-require 'test/unit'
+require 'minitest/autorun'
 
 module Ai4r
   
@@ -32,7 +32,7 @@ module Ai4r
   ]
 
 
-    class GeneticAlgorithmTest < Test::Unit::TestCase
+    class GeneticAlgorithmTest < Minitest::Test
 
       def test_chromosome_seed
         TspChromosome.set_cost_matrix(COSTS)

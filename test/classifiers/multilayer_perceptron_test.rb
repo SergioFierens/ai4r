@@ -1,4 +1,4 @@
-require 'test/unit'
+require 'minitest/autorun'
 require 'ai4r/classifiers/multilayer_perceptron'
 require 'ai4r/data/data_set'
 
@@ -9,7 +9,7 @@ class Ai4r::Classifiers::MultilayerPerceptron
   public :data_to_output
 end
 
-class MultilayerPerceptronTest < Test::Unit::TestCase
+class MultilayerPerceptronTest < Minitest::Test
   
   include Ai4r::Classifiers
   include Ai4r::Data
@@ -36,7 +36,7 @@ class MultilayerPerceptronTest < Test::Unit::TestCase
   end
   
   def test_build
-    assert_raise(ArgumentError) { MultilayerPerceptron.new.build(DataSet.new) }
+    assert_raises(ArgumentError) { MultilayerPerceptron.new.build(DataSet.new) }
     classifier = MultilayerPerceptron.new
     classifier.training_iterations = 1
     classifier.build(@@data_set)

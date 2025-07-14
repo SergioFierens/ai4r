@@ -16,7 +16,7 @@
 
 
 require 'ai4r/neural_network/backpropagation'
-require 'test/unit'
+require 'minitest/autorun'
 require_relative '../test_helper.rb'
 
 Ai4r::NeuralNetwork::Backpropagation.send(:public, *Ai4r::NeuralNetwork::Backpropagation.protected_instance_methods)
@@ -27,7 +27,7 @@ module Ai4r
   module NeuralNetwork
 
 
-    class BackpropagationTest < Test::Unit::TestCase
+    class BackpropagationTest < Minitest::Test
 
 
       def test_init_network

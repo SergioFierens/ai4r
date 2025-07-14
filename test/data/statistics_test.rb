@@ -7,12 +7,12 @@
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require 'test/unit'
+require 'minitest/autorun'
 require 'ai4r/data/statistics'
 
 module Ai4r
   module Data
-    class StatisticsTest < Test::Unit::TestCase
+    class StatisticsTest < Minitest::Test
       
       DELTA = 0.00001
       

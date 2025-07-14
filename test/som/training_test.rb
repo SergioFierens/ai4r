@@ -1,9 +1,9 @@
-require 'test/unit'
+require 'minitest/autorun'
 require 'ai4r/som/som'
 
 module Ai4r
   module Som
-    class TrainingTest < Test::Unit::TestCase
+    class TrainingTest < Minitest::Test
       DATA = [[0.0, 0.0], [1.0, 1.0]]
 
       def setup

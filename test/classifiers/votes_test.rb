@@ -8,9 +8,9 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'ai4r/classifiers/votes'
-require 'test/unit'
+require 'minitest/autorun'
 
-class VotesTest < Test::Unit::TestCase
+class VotesTest < Minitest::Test
   def setup
     @votes = Votes.new
   end

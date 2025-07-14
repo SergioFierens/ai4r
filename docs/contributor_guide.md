@@ -12,7 +12,7 @@ AI4R welcomes contributions of all sizes. This document explains how to get star
 
 ## Development Environment
 
-AI4R works with modern versions of Ruby. The `Gemfile` lists all development dependencies. After cloning the project, run `bundle install` to set up your environment. Bundler will install `rake`, `test-unit`, `rubocop` and other gems needed to build and test the project.
+AI4R works with modern versions of Ruby. The `Gemfile` lists all development dependencies. After cloning the project, run `bundle install` to set up your environment. Bundler will install `rake`, `minitest`, `rubocop` and other gems needed to build and test the project.
 
 Use the provided `Rakefile.rb` to run tasks:
 
