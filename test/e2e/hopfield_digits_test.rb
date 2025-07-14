@@ -1,9 +1,10 @@
 # frozen_string_literal: true
+
 require_relative '../test_helper'
 require 'ai4r/neural_network/hopfield'
 
 class HopfieldDigitsTest < Minitest::Test
-  DIGITS = Array.new(10) { |i| Array.new(15) { ((i >> (_1/3)) & 1) * 2 - 1 } }
+  DIGITS = Array.new(10) { |i| Array.new(15) { (((i >> (_1 / 3)) & 1) * 2) - 1 } }
 
   def test_recall_from_noise
     data = Ai4r::Data::DataSet.new(data_items: DIGITS)

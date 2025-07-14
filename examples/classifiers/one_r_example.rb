@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Author::    Example contributor
 # License::   MPL 1.1
 # Project::   ai4r
@@ -19,7 +21,7 @@ items = [
   ['New York', 45, 'F', 'N'],
   ['Chicago', 55, 'M', 'N']
 ]
-labels = ['city', 'age', 'gender', 'marketing_target']
+labels = %w[city age gender marketing_target]
 
 ds = DataSet.new(data_items: items, data_labels: labels)
 

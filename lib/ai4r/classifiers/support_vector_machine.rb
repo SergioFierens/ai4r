@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Author::    OpenAI Assistant
 # License::   MPL 1.1
 # Project::   ai4r
@@ -54,11 +55,11 @@ module Ai4r
             prediction = dot(@weights, features) + @bias
             if y * prediction < 1
               @weights.map!.with_index do |w, i|
-                w + @learning_rate * (@c * y * features[i] - 2 * w)
+                w + (@learning_rate * ((@c * y * features[i]) - (2 * w)))
               end
               @bias += @learning_rate * @c * y
             else
-              @weights.map!.with_index { |w, _i| w - @learning_rate * 2 * w }
+              @weights.map!.with_index { |w, _i| w - (@learning_rate * 2 * w) }
             end
           end
         end

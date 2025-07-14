@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'chromosome_base'
 
 module Ai4r
@@ -7,9 +9,10 @@ module Ai4r
       # @return [Object]
       def fitness
         return @fitness if @fitness
+
         last_token = @data[0]
         cost = 0
-        @data[1..-1].each do |token|
+        @data[1..].each do |token|
           cost += @@costs[last_token][token]
           last_token = token
         end
@@ -21,16 +24,18 @@ module Ai4r
       # @param mutation_rate [Object]
       # @return [Object]
       def self.mutate(chromosome, mutation_rate = 0.3)
-        if chromosome.normalized_fitness && rand < ((1 - chromosome.normalized_fitness) * mutation_rate)
-          data = chromosome.data
-          # Swapping the first two cities can sometimes keep the fitness
-          # unchanged depending on the cost matrix. Pick an inner segment
-          # instead to ensure the route actually changes.
-          index = (1...data.length - 1).to_a.sample
-          data[index], data[index + 1] = data[index + 1], data[index]
-          chromosome.data = data
-          chromosome.instance_variable_set(:@fitness, nil)
+        unless chromosome.normalized_fitness && rand < ((1 - chromosome.normalized_fitness) * mutation_rate)
+          return
         end
+
+        data = chromosome.data
+        # Swapping the first two cities can sometimes keep the fitness
+        # unchanged depending on the cost matrix. Pick an inner segment
+        # instead to ensure the route actually changes.
+        index = (1...(data.length - 1)).to_a.sample
+        data[index], data[index + 1] = data[index + 1], data[index]
+        chromosome.data = data
+        chromosome.instance_variable_set(:@fitness, nil)
       end
 
       # @param a [Object]
@@ -44,7 +49,7 @@ module Ai4r
         token = a.data[0]
         spawn = [token]
         available.delete(token)
-        while available.length > 0
+        while available.length.positive?
           if token != b.data.last && available.include?(b.data[b.data.index(token) + 1])
             next_token = b.data[b.data.index(token) + 1]
           elsif token != a.data.last && available.include?(a.data[a.data.index(token) + 1])
@@ -66,9 +71,7 @@ module Ai4r
         available = []
         0.upto(data_size - 1) { |n| available << n }
         seed = []
-        while available.length > 0
-          seed << available.delete(available.sample)
-        end
+        seed << available.delete(available.sample) while available.length.positive?
         new(seed)
       end
 

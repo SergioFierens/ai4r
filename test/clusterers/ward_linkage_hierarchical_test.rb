@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Author::    Sergio Fierens (implementation)
 # License::   MPL 1.1
 # Project::   ai4r
@@ -8,18 +10,18 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'minitest/autorun'
-require File.dirname(__FILE__) + '/../../lib/ai4r/clusterers/ward_linkage_hierarchical'
+require "#{File.dirname(__FILE__)}/../../lib/ai4r/clusterers/ward_linkage_hierarchical"
 
+module Ai4r
+  module Clusterers
+    class WardLinkageHierarchicalTest < Minitest::Test
+      include Ai4r::Clusterers
+      include Ai4r::Data
 
-class Ai4r::Clusterers::WardLinkageHierarchicalTest < Minitest::Test
+      @@data = [[10, 3], [3, 10], [2, 8], [2, 5], [3, 8], [10, 3],
+                [1, 3], [8, 1], [2, 9], [2, 5], [3, 3], [9, 4]]
 
-  include Ai4r::Clusterers
-  include Ai4r::Data
-
-  @@data = [  [10, 3], [3, 10], [2, 8], [2, 5], [3, 8], [10, 3],
-              [1, 3], [8, 1], [2, 9], [2, 5], [3, 3], [9, 4]]
-
-  @@expected_distance_matrix = [
+      @@expected_distance_matrix = [
         [98.0],
         [89.0, 5.0],
         [68.0, 26.0, 9.0],
@@ -30,52 +32,49 @@ class Ai4r::Clusterers::WardLinkageHierarchicalTest < Minitest::Test
         [100.0, 2.0, 1.0, 16.0, 2.0, 100.0, 37.0, 100.0],
         [68.0, 26.0, 9.0, 0.0, 10.0, 68.0, 5.0, 52.0, 16.0],
         [49.0, 49.0, 26.0, 5.0, 25.0, 49.0, 4.0, 29.0, 37.0, 5.0],
-        [2.0, 72.0, 65.0, 50.0, 52.0, 2.0, 65.0, 10.0, 74.0, 50.0, 37.0]]
+        [2.0, 72.0, 65.0, 50.0, 52.0, 2.0, 65.0, 10.0, 74.0, 50.0, 37.0]
+      ]
 
-  def setup
+      def setup; end
+
+      def test_linkage_distance
+        clusterer = Ai4r::Clusterers::WardLinkageHierarchical.new
+        clusterer.instance_variable_set(:@data_set, DataSet.new(data_items: @@data))
+        clusterer.instance_variable_set(:@index_clusters,
+                                        clusterer.send(:create_initial_index_clusters))
+        clusterer.instance_variable_set(:@distance_matrix, @@expected_distance_matrix)
+        assert_in_delta 123.4166,
+                        clusterer.send(:linkage_distance, 0, 1, 2), 0.0001
+        assert_equal 27.75, clusterer.send(:linkage_distance, 4, 2, 5)
+      end
+
+      def test_cluster_tree
+        clusterer = Ai4r::Clusterers::WardLinkageHierarchical.new
+        clusterer.build(DataSet.new(data_items: @@data), 1)
+        assert_equal @@data.length, clusterer.cluster_tree.length
+      end
+
+      def test_cluster_tree_limit
+        clusterer = Ai4r::Clusterers::WardLinkageHierarchical.new(5)
+        clusterer.build(DataSet.new(data_items: @@data), 1)
+        assert_equal 5, clusterer.cluster_tree.length
+      end
+
+      def test_cluster_tree_first_length
+        clusterer = Ai4r::Clusterers::WardLinkageHierarchical.new(5)
+        clusterer.build(DataSet.new(data_items: @@data), 1)
+        assert_equal 1, clusterer.cluster_tree.first.length
+      end
+
+      def test_cluster_tree_last_length
+        clusterer = Ai4r::Clusterers::WardLinkageHierarchical.new(5)
+        clusterer.build(DataSet.new(data_items: @@data), 1)
+        assert_equal 5, clusterer.cluster_tree.last.length
+      end
+
+      def test_supports_eval
+        assert_equal false, Ai4r::Clusterers::WardLinkageHierarchical.new.supports_eval?
+      end
+    end
   end
-
-  def test_linkage_distance
-    clusterer = Ai4r::Clusterers::WardLinkageHierarchical.new
-    clusterer.instance_variable_set(:@data_set, DataSet.new(:data_items => @@data))
-    clusterer.instance_variable_set(:@index_clusters,
-      clusterer.send(:create_initial_index_clusters))
-    clusterer.instance_variable_set(:@distance_matrix, @@expected_distance_matrix)
-    assert_in_delta 123.4166,
-      clusterer.send(:linkage_distance, 0,1,2), 0.0001
-    assert_equal 27.75, clusterer.send(:linkage_distance, 4,2,5)
-  end
-
-  def test_cluster_tree
-    clusterer = Ai4r::Clusterers::WardLinkageHierarchical.new
-    clusterer.build(DataSet.new(:data_items => @@data), 1)
-    assert_equal @@data.length, clusterer.cluster_tree.length
-  end
-
-  def test_cluster_tree_limit
-    depth = 5
-    clusterer = Ai4r::Clusterers::WardLinkageHierarchical.new(5)
-    clusterer.build(DataSet.new(:data_items => @@data), 1)
-    assert_equal 5, clusterer.cluster_tree.length
-  end
-
-  def test_cluster_tree_first_length
-    depth = 5
-    clusterer = Ai4r::Clusterers::WardLinkageHierarchical.new(5)
-    clusterer.build(DataSet.new(:data_items => @@data), 1)
-    assert_equal 1, clusterer.cluster_tree.first.length
-  end
-
-  def test_cluster_tree_last_length
-    depth = 5
-    clusterer = Ai4r::Clusterers::WardLinkageHierarchical.new(5)
-    clusterer.build(DataSet.new(:data_items => @@data), 1)
-    assert_equal 5, clusterer.cluster_tree.last.length
-  end
-
-  def test_supports_eval
-    assert_equal false, Ai4r::Clusterers::WardLinkageHierarchical.new.supports_eval?
-  end
-
-
 end

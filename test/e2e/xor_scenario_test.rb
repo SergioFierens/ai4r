@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../test_helper'
 require 'ai4r/neural_network/backpropagation'
 

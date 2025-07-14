@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Author::    Thomas Kern
 # License::   MPL 1.1
 # Project::   ai4r
@@ -15,7 +16,6 @@ require_relative 'two_phase_layer'
 require_relative 'node'
 
 module Ai4r
-
   # A self-organizing map (SOM) or self-organizing feature map (SOFM) is a type
   # of artificial neural network that is trained using unsupervised learning to
   # produce a low-dimensional (typically two-dimensional), discretized
@@ -26,7 +26,6 @@ module Ai4r
   # 'Neural Networks for Applied Sciences and Engineering'
 
   module Som
-
     # = Introduction
     #
     # This is an implementation of a Kohonen Self-Organizing Maps
@@ -53,19 +52,17 @@ module Ai4r
     # Url::       https://github.com/SergioFierens/ai4r
 
     class Som
-
       include Ai4r::Data::Parameterizable
 
-      parameters_info rows: "number of rows for the map",
-                      columns: "number of columns for the map",
-                      nodes: "array holding all nodes of the map",
-                      dimension: "sets the dimension of the input",
-                      layer: "instance of a layer, defines how the training algorithm works",
-                      epoch: "number of finished epochs",
-                      init_weight_options: "Hash with :range and :seed to initialize node weights"
+      parameters_info rows: 'number of rows for the map',
+                      columns: 'number of columns for the map',
+                      nodes: 'array holding all nodes of the map',
+                      dimension: 'sets the dimension of the input',
+                      layer: 'instance of a layer, defines how the training algorithm works',
+                      epoch: 'number of finished epochs',
+                      init_weight_options: 'Hash with :range and :seed to initialize node weights'
 
       def initialize(dim, rows, columns, layer, init_weight_options = { range: 0..1, seed: nil })
-
         @layer = layer
         @dimension = dim
         @rows = rows
@@ -86,7 +83,7 @@ module Ai4r
       def find_bmu(input)
         bmu = @nodes.first
         dist = bmu.distance_to_input input
-        @nodes[1..-1].each do |node|
+        @nodes[1..].each do |node|
           tmp_dist = node.distance_to_input(input)
           if tmp_dist <= dist
             dist = tmp_dist
@@ -109,7 +106,7 @@ module Ai4r
 
           influence = @layer.influence_decay dist, radius
           node.weights.each_with_index do |weight, index|
-            node.weights[index] +=  influence * learning_rate * (input[index] - weight)
+            node.weights[index] += influence * learning_rate * (input[index] - weight)
           end
         end
       end
@@ -133,8 +130,8 @@ module Ai4r
       # @param data [Object]
       # @return [Object]
       def global_error(data)
-        data.inject(0) {|sum,entry| sum + find_bmu(entry)[1]**2 }
-       end
+        data.inject(0) { |sum, entry| sum + (find_bmu(entry)[1]**2) }
+      end
 
       # Train the map for one epoch using +data+.
       # Returns the computed +global_error+ for that epoch. If a block is
@@ -166,10 +163,9 @@ module Ai4r
       # @param y [Object]
       # @return [Object]
       def get_node(x, y)
-        if check_param_for_som(x, y)
-          raise ArgumentError, "invalid node coordinates (#{x}, #{y})"
-        end
-        @nodes[y + x * @columns]
+        raise ArgumentError, "invalid node coordinates (#{x}, #{y})" if check_param_for_som(x, y)
+
+        @nodes[y + (x * @columns)]
       end
 
       # intitiates the map by creating (@rows * @columns) nodes
@@ -214,22 +210,22 @@ module Ai4r
         ilr = hash['layer']['initial_learning_rate']
 
         layer = if layer_class == TwoPhaseLayer
-                   layer_class.new(
-                     params['nodes'],
-                     ilr || 0.9,
-                     params['epochs'],
-                     0,
-                     0.1,
-                     0
-                   )
-                 else
-                   layer_class.new(
-                     params['nodes'],
-                     params['radius'],
-                     params['epochs'],
-                     ilr || 0.7
-                   )
-                 end
+                  layer_class.new(
+                    params['nodes'],
+                    ilr || 0.9,
+                    params['epochs'],
+                    0,
+                    0.1,
+                    0
+                  )
+                else
+                  layer_class.new(
+                    params['nodes'],
+                    params['radius'],
+                    params['epochs'],
+                    ilr || 0.7
+                  )
+                end
         layer.set_parameters(params) if layer.respond_to?(:set_parameters)
 
         som = Som.new(hash['dimension'], hash['rows'], hash['columns'], layer)
@@ -250,7 +246,7 @@ module Ai4r
       # @param path [Object]
       # @return [Object]
       def save_yaml(path)
-        File.open(path, 'w') { |f| f.write(YAML.dump(to_h)) }
+        File.write(path, YAML.dump(to_h))
       end
 
       # Load a SOM from a YAML file created by +save_yaml+.
@@ -268,11 +264,8 @@ module Ai4r
       # @param y [Object]
       # @return [Object]
       def check_param_for_som(x, y)
-        y > @columns - 1 || x > @rows - 1  || x < 0 || y < 0
+        y > @columns - 1 || x > @rows - 1 || x.negative? || y.negative?
       end
-
     end
-
   end
-
 end

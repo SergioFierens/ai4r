@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../../test_helper'
 require 'ai4r/genetic_algorithm/genetic_algorithm'
 require_relative '../../helpers/genetic/bit_chromosome'
@@ -14,7 +15,7 @@ module Ai4r
         new([0])
       end
 
-      def self.reproduce(a, b, _rate = 0.4)
+      def self.reproduce(a, _b, _rate = 0.4)
         new(a.data.dup)
       end
 

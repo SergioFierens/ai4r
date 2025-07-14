@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../lib/ai4r/som/som'
 require_relative 'som_data'
 require 'benchmark'

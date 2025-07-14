@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../lib/ai4r/classifiers/hyperpipes'
 require_relative '../../lib/ai4r/data/data_set'
 
@@ -5,7 +7,7 @@ include Ai4r::Classifiers
 include Ai4r::Data
 
 # Load the training data
-file = File.dirname(__FILE__) + '/hyperpipes_data.csv'
+file = "#{File.dirname(__FILE__)}/hyperpipes_data.csv"
 data = DataSet.new.parse_csv_with_labels(file)
 
 # Build the classifier using custom parameters

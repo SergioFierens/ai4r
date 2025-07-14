@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../../test_helper'
 require 'ai4r/genetic_algorithm/genetic_algorithm'
 require_relative '../../helpers/genetic/bit_chromosome'
@@ -21,7 +22,7 @@ class GeneticAlgorithmUnitTest < Minitest::Test
     search = GeneticSearch.new(6, 1, BitChromosome)
     search.generate_initial_population
     selected = search.selection
-    assert selected.all? { |c| search.population.include?(c) }
+    assert(selected.all? { |c| search.population.include?(c) })
   end
 
   def test_crossover_zero_no_change

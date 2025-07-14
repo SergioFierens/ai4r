@@ -1,9 +1,10 @@
+# frozen_string_literal: true
+
 require 'minitest/autorun'
 require 'ai4r/genetic_algorithm/genetic_algorithm'
 
 module Ai4r
   module GeneticAlgorithm
-
     # Simple chromosome with fixed fitness value used for edge case testing
     class FixedChromosome < ChromosomeBase
       def initialize(data = nil, fitness_value = 1)
@@ -51,7 +52,7 @@ module Ai4r
         search = GeneticSearch.new(3, 1, FixedChromosome)
         search.generate_initial_population
         assert_equal 3, search.population.length
-        assert search.population.all? { |c| c.is_a?(FixedChromosome) }
+        assert(search.population.all? { |c| c.is_a?(FixedChromosome) })
       end
 
       def test_missing_chromosome_methods_raise_not_implemented
@@ -60,6 +61,5 @@ module Ai4r
         assert_raises(NotImplementedError) { search.generate_initial_population }
       end
     end
-
   end
 end

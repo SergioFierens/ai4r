@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Author::    OpenAI ChatGPT
 # License::   MPL 1.1
 # Project::   ai4r
@@ -14,7 +15,7 @@ module Ai4r
   module Classifiers
     class GradientBoosting < Classifier
       parameters_info n_estimators: 'Number of boosting iterations. Default 10.',
-        learning_rate: 'Shrinkage parameter for each learner. Default 0.1.'
+                      learning_rate: 'Shrinkage parameter for each learner. Default 0.1.'
 
       attr_reader :initial_value, :learners
 
@@ -38,7 +39,7 @@ module Ai4r
           learner = SimpleLinearRegression.new.build(ds)
           @learners << learner
           pred = items.map { |it| learner.eval(it[0...-1]) }
-          predictions = predictions.zip(pred).map { |f, p| f + @learning_rate * p }
+          predictions = predictions.zip(pred).map { |f, p| f + (@learning_rate * p) }
         end
         self
       end

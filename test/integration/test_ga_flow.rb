@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../test_helper'
 require 'ai4r/genetic_algorithm/genetic_algorithm'
 require 'ai4r/clusterers/k_means'
@@ -13,7 +15,8 @@ class GaFlowIntegrationTest < Minitest::Test
   include Ai4r::Data
 
   SOM_SUBSET = SOM_DATA.first(30)
-  SLR_FILE = File.expand_path('../../examples/classifiers/simple_linear_regression_example.csv', __dir__)
+  SLR_FILE = File.expand_path('../../examples/classifiers/simple_linear_regression_example.csv',
+                              __dir__)
 
   class SeedChromosome < ChromosomeBase
     RANGE = (0..10)
@@ -21,6 +24,7 @@ class GaFlowIntegrationTest < Minitest::Test
 
     def fitness
       return @fitness if @fitness
+
       kmeans = KMeans.new.set_parameters(random_seed: @data).build(DATA, 3)
       @fitness = -kmeans.sse
     end
@@ -34,10 +38,10 @@ class GaFlowIntegrationTest < Minitest::Test
     end
 
     def self.mutate(chrom, rate = 0.3)
-      if rand < rate
-        chrom.data = RANGE.to_a.sample
-        chrom.instance_variable_set(:@fitness, nil)
-      end
+      return unless rand < rate
+
+      chrom.data = RANGE.to_a.sample
+      chrom.instance_variable_set(:@fitness, nil)
     end
   end
 
@@ -50,7 +54,7 @@ class GaFlowIntegrationTest < Minitest::Test
       mean = ys.sum.to_f / ys.length
       ss_tot = ys.sum { |y| (y - mean)**2 }
       sse = DATA.data_items.sum { |row| (row[-1] - reg.eval(row))**2 }
-      1 - sse / ss_tot
+      1 - (sse / ss_tot)
     end
 
     def self.seed
@@ -87,7 +91,7 @@ class GaFlowIntegrationTest < Minitest::Test
   def test_yaml_params_override_defaults
     yml = { 'mutation_rate' => 0.05, 'crossover_rate' => 0.9, 'population' => 4 }
     File.write('tmp_ga.yml', yml.to_yaml)
-    params = YAML.safe_load(File.read('tmp_ga.yml'))
+    params = YAML.safe_load_file('tmp_ga.yml')
     search = GeneticSearch.new(
       params['population'],
       1,

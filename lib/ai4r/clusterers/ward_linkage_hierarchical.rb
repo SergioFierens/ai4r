@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Author::    Peter Lubell-Doughtie
 # License::   BSD 3 Clause
 # Project::   ai4r
@@ -9,10 +10,8 @@ require_relative '../clusterers/cluster_tree'
 
 module Ai4r
   module Clusterers
-
     # Hierarchical version to store classes as merges occur.
     class WardLinkageHierarchical < WardLinkage
-
       include ClusterTree
 
       # @param depth [Object]
@@ -32,9 +31,9 @@ module Ai4r
         data_len = data_set.data_items.length
         @total_merges = data_len - number_of_clusters
         super
-        @cluster_tree << self.clusters
+        @cluster_tree << clusters
         @cluster_tree.reverse!
-        return self
+        self
       end
 
       # @return [Object]
@@ -50,7 +49,7 @@ module Ai4r
       # @return [Object]
       def merge_clusters(index_a, index_b, index_clusters)
         # only store if no or above depth
-        if @depth.nil? or @merges_so_far > @total_merges - @depth
+        if @depth.nil? || (@merges_so_far > @total_merges - @depth)
           # store current clusters
           stored_distance_matrix = @distance_matrix.dup
           @cluster_tree << build_clusters_from_index_clusters(index_clusters)
