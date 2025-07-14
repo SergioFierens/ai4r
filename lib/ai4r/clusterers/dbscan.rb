@@ -61,6 +61,13 @@ module Ai4r
           end
         end
 
+        @number_of_clusters = number_of_clusters
+        raise 'number_of_clusters must be positive' if !@clusters.empty? && @number_of_clusters <= 0
+        valid_labels = (1..@number_of_clusters).to_a << :noise
+        unless @labels.all? { |l| valid_labels.include?(l) }
+          raise 'labels must be cluster ids or :noise'
+        end
+
         self
       end
 

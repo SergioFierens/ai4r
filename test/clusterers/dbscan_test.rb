@@ -38,6 +38,7 @@ class DBSCANTest < Minitest::Test
     data_set = DataSet.new(:data_items => @@data, :data_labels => ["X", "Y"])
     clusterer = DBSCAN.new.set_parameters(:epsilon => 8, :min_points => 3).build(data_set)
     assert_equal clusterer.clusters.length, clusterer.number_of_clusters
+    assert clusterer.number_of_clusters.positive?
   end
 
   def test_build_resets_state
@@ -83,6 +84,7 @@ class DBSCANTest < Minitest::Test
     assert clusterer.labels.all?{ |label| label == :noise}
     # Verify that none cluster has been created
     assert_equal 0, clusterer.clusters.length
+    assert_equal 0, clusterer.number_of_clusters
   end
 
   def test_undefined_epsilon
@@ -93,6 +95,13 @@ class DBSCANTest < Minitest::Test
   def test_eval_unsupported
     clusterer = DBSCAN.new
     assert_raises(NotImplementedError) { clusterer.eval([0, 0]) }
+  end
+
+  def test_labels_are_valid
+    data_set = DataSet.new(:data_items => @@data, :data_labels => ["X", "Y"])
+    clusterer = DBSCAN.new.set_parameters(:epsilon => 8, :min_points => 3).build(data_set)
+    valid = (1..clusterer.number_of_clusters).to_a + [:noise]
+    assert clusterer.labels.all? { |label| valid.include?(label) }
   end
 
   private
