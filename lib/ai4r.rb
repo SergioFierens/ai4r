@@ -31,6 +31,8 @@ require_relative 'ai4r/classifiers/zero_r'
 require_relative 'ai4r/classifiers/hyperpipes'
 require_relative 'ai4r/classifiers/naive_bayes'
 require_relative 'ai4r/classifiers/ib1'
+require_relative 'ai4r/classifiers/random_forest'
+require_relative 'ai4r/classifiers/gradient_boosting'
 require_relative 'ai4r/classifiers/support_vector_machine'
 
 # Neural networks
@@ -43,6 +45,9 @@ require_relative 'ai4r/genetic_algorithm/genetic_algorithm'
 # Reinforcement Learning
 require_relative 'ai4r/reinforcement/q_learning'
 require_relative 'ai4r/reinforcement/policy_iteration'
+
+# Hidden Markov Models
+require_relative 'ai4r/hmm/hidden_markov_model'
 
 # SOM
 require_relative 'ai4r/som/som'
