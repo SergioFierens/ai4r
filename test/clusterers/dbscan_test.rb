@@ -74,6 +74,11 @@ class DBSCANTest < Minitest::Test
     assert_raises(ArgumentError) {DBSCAN.new.build(data_set)}
   end
 
+  def test_eval_unsupported
+    clusterer = DBSCAN.new
+    assert_raises(NotImplementedError) { clusterer.eval([0, 0]) }
+  end
+
   private
   def draw_map(clusterer)
     map = Array.new(11) {Array.new(11, 0)}
