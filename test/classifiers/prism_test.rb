@@ -19,13 +19,13 @@ class PrismTest < Minitest::Test
   @@numeric_labels   = numeric_fixture['data_labels']
   
   def test_build
-    assert_raises(ArgumentError) { Prism.new.build(DataSet.new) } 
-    classifier = Prism.new.build(DataSet.new(:data_items=>@@data_examples))
+    assert_raises(ArgumentError) { Ai4r::Classifiers::Prism.new.build(DataSet.new) } 
+    classifier = Ai4r::Classifiers::Prism.new.build(DataSet.new(:data_items=>@@data_examples))
     refute_nil(classifier.data_set.data_labels)
     refute_nil(classifier.rules)
     assert_equal("attribute_1", classifier.data_set.data_labels.first)
     assert_equal("class_value", classifier.data_set.category_label)
-    classifier = Prism.new.build(DataSet.new(:data_items => @@data_examples, 
+    classifier = Ai4r::Classifiers::Prism.new.build(DataSet.new(:data_items => @@data_examples, 
         :data_labels => @@data_labels))
     refute_nil(classifier.data_set.data_labels)
     refute_nil(classifier.rules)
@@ -33,19 +33,19 @@ class PrismTest < Minitest::Test
     assert_equal("marketing_target", classifier.data_set.category_label)
     assert !classifier.rules.empty?
 
-    Prism.send(:public, *Prism.protected_instance_methods)
-    Prism.send(:public, *Prism.private_instance_methods)
+    Ai4r::Classifiers::Prism.send(:public, *Ai4r::Classifiers::Prism.protected_instance_methods)
+    Ai4r::Classifiers::Prism.send(:public, *Ai4r::Classifiers::Prism.private_instance_methods)
   end
   
   def test_eval
-    classifier = Prism.new.build(DataSet.new(:data_items=>@@data_examples))
+    classifier = Ai4r::Classifiers::Prism.new.build(DataSet.new(:data_items=>@@data_examples))
     @@data_examples.each do |data|
       assert_equal(data.last, classifier.eval(data[0...-1]))
     end
   end
   
   def test_get_rules
-    classifier = Prism.new.build(DataSet.new(:data_items => @@data_examples, 
+    classifier = Ai4r::Classifiers::Prism.new.build(DataSet.new(:data_items => @@data_examples, 
         :data_labels => @@data_labels))
     marketing_target = nil
     age_range = nil
@@ -67,7 +67,7 @@ class PrismTest < Minitest::Test
   end
     
   def test_matches_conditions
-    classifier = Prism.new.build(DataSet.new(:data_labels => @@data_labels,
+    classifier = Ai4r::Classifiers::Prism.new.build(DataSet.new(:data_labels => @@data_labels,
       :data_items => @@data_examples))
 
     assert classifier.matches_conditions(['New York', '<30', 'M', 'Y'], {"age_range" => "<30"})
@@ -75,7 +75,7 @@ class PrismTest < Minitest::Test
   end
 
   def test_default_class
-    classifier = Prism.new.set_parameters(:default_class => 'Z').build(
+    classifier = Ai4r::Classifiers::Prism.new.set_parameters(:default_class => 'Z').build(
       DataSet.new(:data_items => @@data_examples, :data_labels => @@data_labels))
     classifier.instance_variable_set(:@rules, [])
     assert_equal('Z', classifier.eval(['Paris', '<30', 'M']))
@@ -90,26 +90,26 @@ class PrismTest < Minitest::Test
     ]
     labels = ['att0', 'att1', 'att2', 'class']
     ds = DataSet.new(:data_items => tie_examples, :data_labels => labels)
-    c_first = Prism.new.build(ds)
+    c_first = Ai4r::Classifiers::Prism.new.build(ds)
     assert_equal({'att0' => 'A'}, c_first.rules.first[:conditions])
-    c_last = Prism.new.set_parameters(:tie_break => :last).build(ds)
+    c_last = Ai4r::Classifiers::Prism.new.set_parameters(:tie_break => :last).build(ds)
     assert_equal({'att1' => 'X'}, c_last.rules.first[:conditions])
   end
 
   def test_fallback_class
-    classifier = Prism.new.build(DataSet.new(:data_items => @@data_examples))
+    classifier = Ai4r::Classifiers::Prism.new.build(DataSet.new(:data_items => @@data_examples))
     classifier.rules.pop
     assert_equal(classifier.majority_class,
       classifier.eval(['New York', '[50-80]', 'M']))
 
-    classifier = Prism.new.set_parameters(:fallback_class => 'Z').build(
+    classifier = Ai4r::Classifiers::Prism.new.set_parameters(:fallback_class => 'Z').build(
       DataSet.new(:data_items => @@data_examples))
     classifier.rules.pop
     assert_equal('Z', classifier.eval(['New York', '[50-80]', 'M']))
   end
 
   def test_rules_have_unique_attributes
-    classifier = Prism.new.build(DataSet.new(:data_labels => @@data_labels,
+    classifier = Ai4r::Classifiers::Prism.new.build(DataSet.new(:data_labels => @@data_labels,
       :data_items => @@data_examples))
     classifier.rules.each do |rule|
       keys = rule[:conditions].keys
@@ -124,7 +124,7 @@ class PrismTest < Minitest::Test
       ['blue', 'berry']
     ]
     labels = ['color', 'kind']
-    classifier = Prism.new.build(DataSet.new(:data_items => examples,
+    classifier = Ai4r::Classifiers::Prism.new.build(DataSet.new(:data_items => examples,
                                              :data_labels => labels))
     refute_nil classifier.rules
     assert !classifier.rules.empty?
@@ -134,7 +134,7 @@ class PrismTest < Minitest::Test
   end
 
   def test_numeric_data
-    classifier = Prism.new.build(DataSet.new(
+    classifier = Ai4r::Classifiers::Prism.new.build(DataSet.new(
       :data_items => @@numeric_examples,
       :data_labels => @@numeric_labels))
     assert classifier.rules.any? { |r| r[:conditions].values.any? { |v| v.is_a?(Range) } }
