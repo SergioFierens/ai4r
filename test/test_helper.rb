@@ -53,3 +53,13 @@ def assert_equality_of_nested_list(expected, real)
     assert_equal expected, real
   end
 end
+
+def assert_sse_decreases(series)
+  series.each_cons(2) { |a, b| assert b <= a, 'SSE should not increase' }
+end
+
+def assert_purity(actual, truth, min)
+  correct = actual.zip(truth).count { |a, t| a == t }
+  purity = correct.to_f / actual.length
+  assert purity >= min, "Purity #{purity} below #{min}"
+end
