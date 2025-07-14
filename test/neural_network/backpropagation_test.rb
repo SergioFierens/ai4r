@@ -18,8 +18,6 @@
 
 require 'ai4r/neural_network/backpropagation'
 require 'minitest/autorun'
-require 'rspec/autorun'
-require 'rspec/parameterized'
 require_relative '../test_helper'
 
 module Ai4r
@@ -219,25 +217,16 @@ module Ai4r
       end
     end
   end
-end
-
-RSpec.describe Ai4r::NeuralNetwork::Backpropagation do
-  include RSpec::Parameterized::TableSyntax
-
-  where(:structure, :expected_nodes, :disable_bias) do
+  def test_initializes_networks_with_given_structure
     [
       [[4, 2], [[1.0, 1.0, 1.0, 1.0, 1.0], [1.0, 1.0]], false],
       [[2, 2, 1], [[1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [1.0]], false],
       [[2, 2, 1], [[1.0, 1.0], [1.0, 1.0], [1.0]], true]
-    ]
-  end
-
-  with_them do
-    it 'initializes networks with given structure' do
-      net = described_class.new(structure)
+    ].each do |structure, expected_nodes, disable_bias|
+      net = Backpropagation.new(structure)
       net.disable_bias = true if disable_bias
       net.init_network
-      expect(net.activation_nodes).to eq(expected_nodes)
+      assert_equal expected_nodes, net.activation_nodes
     end
   end
 end
