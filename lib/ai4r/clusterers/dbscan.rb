@@ -28,7 +28,14 @@ module Ai4r
         @cluster_indices = []
       end
 
-      def build(data_set)
+      # Build a new clusterer using data from +data_set+.
+      # An optional +number_of_clusters+ argument is ignored and present only to
+      # keep a consistent interface with other clusterers.
+      #
+      # @param data_set [Ai4r::Data::DataSet]
+      # @param number_of_clusters [Integer, nil]
+      # @return [DBSCAN]
+      def build(data_set, number_of_clusters = nil)
         @data_set = data_set
         @clusters = []
         @cluster_indices = []
@@ -48,13 +55,14 @@ module Ai4r
           else
             @number_of_clusters += 1
             @labels[data_index] = @number_of_clusters
-            @clusters.push([data_item])
+            ds = Ai4r::Data::DataSet.new(data_labels: @data_set.data_labels)
+            ds << data_item
+            @clusters.push(ds)
             @cluster_indices.push([data_index])
             extend_cluster(neighbors, @number_of_clusters)
           end
         end
 
-        @number_of_clusters = number_of_clusters
         raise 'number_of_clusters must be positive' if !@clusters.empty? && @number_of_clusters <= 0
 
         valid_labels = (1..@number_of_clusters).to_a << :noise

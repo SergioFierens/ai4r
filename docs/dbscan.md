@@ -12,6 +12,10 @@ DBSCAN groups together densely packed points and labels isolated points as noise
 
 For example, a radius of `3` units corresponds to `epsilon: 9`.
 
+Unlike KMeans, DBSCAN cannot classify new items once built.  Calling
+`supports_eval?` returns `false` and attempting to use `eval` will raise
+`NotImplementedError`.
+
 ## Example
 
 ```ruby
@@ -23,7 +27,8 @@ points = [[1,1], [1,2], [8,8], [9,8]]
 set = DataSet.new(data_items: points)
 clusterer = DBSCAN.new
 clusterer.set_parameters(epsilon: 4, min_points: 1).build(set)
-pp clusterer.clusters
+# Clusters are returned as DataSet objects
+pp clusterer.clusters.map(&:data_items)
 ```
 
 ## Illustrative Example
@@ -46,7 +51,8 @@ set = DataSet.new(data_items: points)
 clusterer = DBSCAN.new
 clusterer.set_parameters(epsilon: 10, min_points: 2).build(set)
 pp clusterer.labels
-pp clusterer.clusters
+# Convert resulting DataSet clusters to plain arrays for printing
+pp clusterer.clusters.map(&:data_items)
 ```
 
 The output shows two clusters and three points labelled as noise:
