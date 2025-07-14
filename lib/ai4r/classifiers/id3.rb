@@ -274,17 +274,8 @@ module Ai4r
       # @param examples [Object]
       # @param domain [Object]
       # @return [Object]
-      def most_freq(examples, domain)
-        category_domain = domain.last
-        freqs = Array.new(category_domain.length, 0)
-        examples.each do |example|
-          example_category = example.last
-          cat_index = category_domain.index(example_category)
-          freqs[cat_index] += 1
-        end
-        max_freq = freqs.max
-        max_freq_index = freqs.index(max_freq)
-        category_domain[max_freq_index]
+      def most_freq(examples, _domain)
+        examples.map(&:last).tally.max_by { _2 }&.first
       end
 
       private
