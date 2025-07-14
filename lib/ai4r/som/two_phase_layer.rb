@@ -43,8 +43,9 @@ module Ai4r
         @phase_one_learning_rate = phase_one_learning_rate
         @phase_two_learning_rate = phase_two_learning_rate
 
-        @radius_reduction = @phase_one / (nodes/2.0 - 1) + 1
-        @delta_lr = (@lr - @phase_one_learning_rate)/ @phase_one
+        denominator = nodes/2.0 - 1
+        @radius_reduction = denominator == 0 ? 1 : @phase_one / denominator + 1
+        @delta_lr = @phase_one == 0 ? 0 : (@lr - @phase_one_learning_rate)/ @phase_one
         @radius = (nodes / 2.0).to_i
       end
 
@@ -55,10 +56,10 @@ module Ai4r
         if epoch > @phase_one
           return 1
         else
-          if (epoch % @radius_reduction) == 0
+          if @radius_reduction > 0 && (epoch % @radius_reduction) == 0
             @radius -= 1
           end
-          @radius
+          @radius < 0 ? 0 : @radius
         end
 
       end
@@ -75,7 +76,7 @@ module Ai4r
           return @lr
         elsif epoch == @phase_one
           @lr = @phase_one_learning_rate
-          @delta_lr = (@phase_one_learning_rate - @phase_two_learning_rate)/@phase_two
+          @delta_lr = @phase_two == 0 ? 0 : (@phase_one_learning_rate - @phase_two_learning_rate)/@phase_two
           return @lr
         else
           @lr -= @delta_lr

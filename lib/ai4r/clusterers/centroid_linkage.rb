@@ -55,9 +55,11 @@ module Ai4r
       def linkage_distance(cx, ci, cj)
         ni = @index_clusters[ci].length
         nj = @index_clusters[cj].length
+        denominator = ni + nj
+        return 0.0 if denominator == 0
         ( ni * read_distance_matrix(cx, ci) +
           nj * read_distance_matrix(cx, cj) -
-         1.0 * ni * nj * read_distance_matrix(ci, cj) / (ni+nj)) / (ni+nj)
+         1.0 * ni * nj * read_distance_matrix(ci, cj) / denominator) / denominator
       end
 
     end

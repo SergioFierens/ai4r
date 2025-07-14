@@ -136,7 +136,7 @@ module Ai4r
         freq_table = Hash.new()
         rule_instances.each do |data|
           attributes.each do |attr_label|
-            attr_freqs = freq_table[attr_label] || Hash.new([0, 0])
+            attr_freqs = freq_table[attr_label] || Hash.new { |h, k| h[k] = [0, 0] }
             pt = attr_freqs[get_attr_value(data, attr_label)]
             pt = [(data.last == class_value) ? pt[0]+1 : pt[0], pt[1]+1]
             attr_freqs[get_attr_value(data, attr_label)] = pt

@@ -42,17 +42,23 @@ module Ai4r
         @number_of_clusters = number_of_clusters
         @clusters = [@data_set[0..-1]]
         
-        while(@clusters.length < @number_of_clusters)
+        outer_iterations = 0
+        max_outer_iterations = @number_of_clusters * 10  # Safety limit
+        while(@clusters.length < @number_of_clusters && outer_iterations < max_outer_iterations)
           cluster_index_to_split = max_diameter_cluster(@clusters)
           cluster_to_split = @clusters[cluster_index_to_split]
           splinter_cluster = init_splinter_cluster(cluster_to_split)
-          while true
+          inner_iterations = 0
+          max_inner_iterations = cluster_to_split.data_items.length * 2  # Safety limit
+          while inner_iterations < max_inner_iterations
             dist_diff, index = max_distance_difference(cluster_to_split, splinter_cluster)
             break if dist_diff < 0
             splinter_cluster << cluster_to_split.data_items[index]
             cluster_to_split.data_items.delete_at(index)
+            inner_iterations += 1
           end
           @clusters << splinter_cluster
+          outer_iterations += 1
         end
        
         return self
@@ -119,8 +125,10 @@ module Ai4r
         max_diff = -1.0/0
         max_diff_index = 0
         cluster_to_split.data_items.each_with_index do |item, index|
-          dist_a = distance_sum(item, cluster_to_split) / (cluster_to_split.data_items.length-1)
-          dist_b = distance_sum(item, splinter_cluster) / (splinter_cluster.data_items.length)
+          cluster_size = cluster_to_split.data_items.length-1
+          splinter_size = splinter_cluster.data_items.length
+          dist_a = cluster_size == 0 ? 0.0 : distance_sum(item, cluster_to_split) / cluster_size
+          dist_b = splinter_size == 0 ? 0.0 : distance_sum(item, splinter_cluster) / splinter_size
           dist_diff = dist_a - dist_b
           max_diff, max_diff_index = dist_diff, index if dist_diff > max_diff
         end

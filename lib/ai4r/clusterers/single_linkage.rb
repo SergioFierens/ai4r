@@ -132,18 +132,18 @@ module Ai4r
           end
         end
         if cj==0 && ci==1
-          @distance_matrix.delete_at(1)
-          @distance_matrix.delete_at(0)
+          @distance_matrix.delete_at(1) if @distance_matrix.length > 1
+          @distance_matrix.delete_at(0) if @distance_matrix.length > 0
         elsif cj==0
-          @distance_matrix.delete_at(ci-1)
-          @distance_matrix.delete_at(0)
+          @distance_matrix.delete_at(ci-1) if @distance_matrix.length > ci-1
+          @distance_matrix.delete_at(0) if @distance_matrix.length > 0
         else
-          @distance_matrix.delete_at(ci-1)
-          @distance_matrix.delete_at(cj-1)
+          @distance_matrix.delete_at(ci-1) if @distance_matrix.length > ci-1
+          @distance_matrix.delete_at(cj-1) if @distance_matrix.length > cj-1
         end
         @distance_matrix.each do |d|
-          d.delete_at(ci)
-          d.delete_at(cj)
+          d.delete_at(ci) if d.length > ci
+          d.delete_at(cj) if d.length > cj
         end
         @distance_matrix << distances_to_new_cluster
       end

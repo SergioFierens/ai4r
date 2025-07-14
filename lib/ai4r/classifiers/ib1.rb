@@ -113,7 +113,8 @@ module Ai4r
       # index is the index of the attribute in the instance.
       def norm(att, index)
         return 0 if @min_values[index].nil?
-        return 1.0*(att - @min_values[index]) / (@max_values[index] -@min_values[index]);
+        range = @max_values[index] - @min_values[index]
+        return range == 0 ? 0.0 : 1.0*(att - @min_values[index]) / range
       end
       
     end

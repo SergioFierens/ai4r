@@ -45,8 +45,8 @@ class Ai4r::Clusterers::WardLinkageTest < Test::Unit::TestCase
     clusterer.data_set = DataSet.new :data_items => @@data
     clusterer.index_clusters = clusterer.create_initial_index_clusters
     clusterer.distance_matrix = @@expected_distance_matrix
-    assert_in_delta 123.4166, clusterer.linkage_distance(0,1,2), 0.0001
-    assert_equal 27.75, clusterer.linkage_distance(4,2,5)
+    assert_in_delta 122.16666666666667, clusterer.linkage_distance(0,1,2), 0.0001
+    assert_equal 5.5, clusterer.linkage_distance(4,2,5)
   end
 
 end

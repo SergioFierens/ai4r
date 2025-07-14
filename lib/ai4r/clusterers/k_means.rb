@@ -47,7 +47,7 @@ module Ai4r
       
       def initialize
         @distance_function = nil
-        @max_iterations = nil
+        @max_iterations = 1000
         @centroid_function = lambda do |data_sets| 
           data_sets.collect{ |data_set| data_set.get_mean_or_mode}
         end

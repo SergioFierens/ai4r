@@ -107,6 +107,9 @@ module Ai4r
         data_item.each_index do |att_index|
           att_value = data_item[att_index]
           domain_index = @domains[att_index].index(att_value)
+          if domain_index.nil?
+            raise ArgumentError, "Unknown attribute value '#{att_value}' for attribute #{att_index}"
+          end
           input_values[domain_index + accum_index] = @active_node_value
           accum_index += @domains[att_index].length
         end
@@ -115,7 +118,11 @@ module Ai4r
       
       def data_to_output(data_item)
         output_values = Array.new(@outputs, @inactive_node_value)
-        output_values[@domains.last.index(data_item)] = @active_node_value
+        class_index = @domains.last.index(data_item)
+        if class_index.nil?
+          raise ArgumentError, "Unknown class value '#{data_item}'"
+        end
+        output_values[class_index] = @active_node_value
         return output_values
       end
       

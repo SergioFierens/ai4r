@@ -35,13 +35,40 @@ module Ai4r
       # You must provide a hash with the folowing format:
       # { :param_name => parameter_value }
       def set_parameters(params)
+        raise ArgumentError, "Parameters must be a Hash" unless params.is_a?(Hash)
+        
         self.class.get_parameters_info.keys.each do | key |
           if self.respond_to?("#{key}=".to_sym)
-            send("#{key}=".to_sym, params[key]) if params.has_key? key
+            if params.has_key? key
+              value = params[key]
+              # Basic type validation
+              validate_parameter(key, value)
+              send("#{key}=".to_sym, value)
+            end
           end
         end
         return self
       end
+      
+      private
+      
+      # Basic parameter validation
+      def validate_parameter(key, value)
+        case key
+        when :max_iterations
+          raise ArgumentError, "max_iterations must be a positive integer or nil" unless value.nil? || (value.is_a?(Integer) && value > 0)
+        when :learning_rate
+          raise ArgumentError, "learning_rate must be a positive number" unless value.is_a?(Numeric) && value > 0
+        when :momentum
+          raise ArgumentError, "momentum must be a number between 0 and 1" unless value.is_a?(Numeric) && value >= 0 && value <= 1
+        when :distance_function
+          raise ArgumentError, "distance_function must be callable" unless value.nil? || value.respond_to?(:call)
+        when :propagation_function, :derivative_propagation_function, :initial_weight_function
+          raise ArgumentError, "#{key} must be callable" unless value.nil? || value.respond_to?(:call)
+        end
+      end
+      
+      public
       
       # Get parameter values on this algorithm instance.
       # Returns a hash with the folowing format:

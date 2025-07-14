@@ -88,6 +88,7 @@ module Ai4r
       # 5. The selected individual is the first one whose accumulated normalized value (its is normalized value plus the normalized values of the chromosomes prior it) greater than R.
       # 6. We repeat steps 4 and 5, 2/3 times the population size.    
       def selection
+        raise RuntimeError, "Population is empty" if @population.empty?
         @population.sort! { |a, b| b.fitness <=> a.fitness}
         best_fitness = @population[0].fitness
         worst_fitness = @population.last.fitness
@@ -128,12 +129,21 @@ module Ai4r
 
       # Replace worst ranked part of population with offspring
       def replace_worst_ranked(offsprings)
+        return if offsprings.empty?
         size = offsprings.length
-        @population = @population [0..((-1*size)-1)] + offsprings
+        
+        # Ensure we don't exceed population size
+        if size >= @population.length
+          @population = offsprings[0...@population.length]
+        else
+          end_index = @population.length - size - 1
+          @population = @population[0..end_index] + offsprings
+        end
       end
 
       # Select the best chromosome in the population
       def best_chromosome
+        raise RuntimeError, "Population is empty" if @population.empty?
         the_best = @population[0]
         @population.each do |chromosome|
           the_best = chromosome if chromosome.fitness > the_best.fitness
@@ -175,9 +185,16 @@ module Ai4r
       # producing a new generation that will (hopefully) be even better.
       def fitness
         return @fitness if @fitness
+        return @fitness = 0 if @data.nil? || @data.empty?
+        return @fitness = 0 if @data.length < 2
+        
         last_token = @data[0]
         cost = 0
         @data[1..-1].each do |token|
+          # Check if costs matrix contains the required entries
+          unless @@costs[last_token] && @@costs[last_token][token]
+            return @fitness = -Float::INFINITY  # Invalid path
+          end
           cost += @@costs[last_token][token]
           last_token = token
         end
@@ -220,6 +237,9 @@ module Ai4r
       # In this case, we have implemented edge recombination, wich is the 
       # most used reproduction algorithm for the Travelling salesman problem.
       def self.reproduce(a, b)
+        return nil if a.nil? || b.nil? || a.data.nil? || b.data.nil?
+        return nil if a.data.empty? || b.data.empty?
+        
         data_size = @@costs[0].length
         available = []
         0.upto(data_size-1) { |n| available << n }
@@ -228,13 +248,31 @@ module Ai4r
         available.delete(token)
         while available.length > 0 do 
           #Select next
-          if token != b.data.last && available.include?(b.data[b.data.index(token)+1])
-            next_token = b.data[b.data.index(token)+1]
-          elsif token != a.data.last && available.include?(a.data[a.data.index(token)+1])
-            next_token = a.data[a.data.index(token)+1] 
-          else
+          next_token = nil
+          
+          # Safe index lookup for b.data
+          if token != b.data.last
+            token_index_b = b.data.index(token)
+            if token_index_b && token_index_b + 1 < b.data.length
+              candidate = b.data[token_index_b + 1]
+              next_token = candidate if available.include?(candidate)
+            end
+          end
+          
+          # Safe index lookup for a.data if b.data didn't provide a candidate
+          if next_token.nil? && token != a.data.last
+            token_index_a = a.data.index(token)
+            if token_index_a && token_index_a + 1 < a.data.length
+              candidate = a.data[token_index_a + 1]
+              next_token = candidate if available.include?(candidate)
+            end
+          end
+          
+          # Random selection if no valid candidate found
+          if next_token.nil?
             next_token = available[rand(available.length)]
           end
+          
           #Add to spawn
           token = next_token
           available.delete(token)

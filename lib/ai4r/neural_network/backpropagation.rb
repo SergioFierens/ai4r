@@ -133,6 +133,7 @@ module Ai4r
         check_input_dimension(input_values.length)
         init_network if !@weights
         feedforward(input_values)
+        raise RuntimeError, "Activation nodes array is empty" if @activation_nodes.empty?
         return @activation_nodes.last.clone
       end
       
@@ -215,13 +216,19 @@ module Ai4r
       
       # Propagate values forward
       def feedforward(input_values)
+        raise RuntimeError, "Activation nodes array is empty" if @activation_nodes.empty?
+        raise RuntimeError, "Input layer is empty" if @activation_nodes.first.nil?
+        
         input_values.each_index do |input_index| 
+          raise ArgumentError, "Input index #{input_index} out of bounds" if input_index >= @activation_nodes.first.length
           @activation_nodes.first[input_index] = input_values[input_index]
         end
         @weights.each_index do |n|
+          raise ArgumentError, "Network layer #{n+1} out of bounds" if n+1 >= @activation_nodes.length
           @structure[n+1].times do |j|
             sum = 0.0
             @activation_nodes[n].each_index do |i|
+              raise ArgumentError, "Weight access out of bounds" if i >= @weights[n].length || j >= @weights[n][i].length
               sum += (@activation_nodes[n][i] * @weights[n][i][j])
             end
             @activation_nodes[n+1][j] = @propagation_function.call(sum)

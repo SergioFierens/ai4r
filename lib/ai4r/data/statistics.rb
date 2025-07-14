@@ -16,20 +16,45 @@ module Ai4r
 
       # Get the sample mean
       def self.mean(data_set, attribute)
+        raise ArgumentError, "Data set cannot be nil" if data_set.nil?
+        return 0.0 if data_set.data_items.empty?
+        
         index = data_set.get_index(attribute)
+        raise ArgumentError, "Invalid attribute index" if index.nil?
+        
         sum = 0.0
-        data_set.data_items.each { |item| sum += item[index] }
-        return sum / data_set.data_items.length
+        valid_items = 0
+        data_set.data_items.each do |item|
+          next if item.nil? || item.length <= index
+          if item[index].is_a?(Numeric)
+            sum += item[index]
+            valid_items += 1
+          end
+        end
+        return valid_items == 0 ? 0.0 : sum / valid_items
       end
 
       # Get the variance.
       # You can provide the mean if you have it already, to speed up things.
       def self.variance(data_set, attribute, mean = nil)
+        raise ArgumentError, "Data set cannot be nil" if data_set.nil?
+        return 0.0 if data_set.data_items.empty?
+        return 0.0 if data_set.data_items.length <= 1
+        
         index = data_set.get_index(attribute)
-        mean = mean(data_set, attribute)
+        raise ArgumentError, "Invalid attribute index" if index.nil?
+        
+        mean = mean.nil? ? mean(data_set, attribute) : mean
         sum = 0.0
-        data_set.data_items.each { |item| sum += (item[index]-mean)**2 }
-        return sum / (data_set.data_items.length-1)
+        valid_items = 0
+        data_set.data_items.each do |item|
+          next if item.nil? || item.length <= index
+          if item[index].is_a?(Numeric)
+            sum += (item[index]-mean)**2
+            valid_items += 1
+          end
+        end
+        return valid_items <= 1 ? 0.0 : sum / (valid_items-1)
       end
 
       # Get the standard deviation.
@@ -41,11 +66,17 @@ module Ai4r
 
       # Get the sample mode.
       def self.mode(data_set, attribute)
+        raise ArgumentError, "Data set cannot be nil" if data_set.nil?
+        return nil if data_set.data_items.empty?
+        
         index = data_set.get_index(attribute)
+        raise ArgumentError, "Invalid attribute index" if index.nil?
+        
         count = Hash.new {0}
         max_count = 0
         mode = nil
         data_set.data_items.each do |data_item|
+          next if data_item.nil? || data_item.length <= index
           attr_value = data_item[index]
           attr_count = (count[attr_value] += 1)
           if attr_count > max_count
@@ -58,16 +89,32 @@ module Ai4r
 
       # Get the maximum value of an attribute in the data set
       def self.max(data_set, attribute)
+        raise ArgumentError, "Data set cannot be nil" if data_set.nil?
+        return -Float::INFINITY if data_set.data_items.empty?
+        
         index = data_set.get_index(attribute)
-        item = data_set.data_items.max {|x,y| x[index] <=> y[index]}
-        return (item) ? item[index] : (-1.0/0)
+        raise ArgumentError, "Invalid attribute index" if index.nil?
+        
+        valid_items = data_set.data_items.select { |item| item && item.length > index && item[index].is_a?(Numeric) }
+        return -Float::INFINITY if valid_items.empty?
+        
+        item = valid_items.max {|x,y| x[index] <=> y[index]}
+        return item[index]
       end
 
       # Get the minimum value of an attribute in the data set
       def self.min(data_set, attribute)
+        raise ArgumentError, "Data set cannot be nil" if data_set.nil?
+        return Float::INFINITY if data_set.data_items.empty?
+        
         index = data_set.get_index(attribute)
-        item = data_set.data_items.min {|x,y| x[index] <=> y[index]}
-        return (item) ? item[index] : (1.0/0)
+        raise ArgumentError, "Invalid attribute index" if index.nil?
+        
+        valid_items = data_set.data_items.select { |item| item && item.length > index && item[index].is_a?(Numeric) }
+        return Float::INFINITY if valid_items.empty?
+        
+        item = valid_items.min {|x,y| x[index] <=> y[index]}
+        return item[index]
       end
 
     end

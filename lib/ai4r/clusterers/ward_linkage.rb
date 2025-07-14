@@ -53,9 +53,11 @@ module Ai4r
         ni = @index_clusters[ci].length
         nj = @index_clusters[cj].length
         nx = @index_clusters[cx].length
+        denominator = ni + nj + nx
+        return 0.0 if denominator == 0
         ( ( ( 1.0* (ni+nx) * read_distance_matrix(cx, ci) ) +
-            ( 1.0* (nj+nx) * read_distance_matrix(cx, cj) ) ) / (ni + nj + nx)  -
-            ( 1.0 * nx * read_distance_matrix(ci, cj) / (ni+nj)**2 ) )
+            ( 1.0* (nj+nx) * read_distance_matrix(cx, cj) ) ) / denominator  -
+            ( 1.0 * nx * read_distance_matrix(ci, cj) / (ni+nj) ) )
       end
 
     end

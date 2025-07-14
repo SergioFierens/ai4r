@@ -50,11 +50,11 @@ module Ai4r
       end
 
       def test_access_to_nodes
-        assert_raise Exception do
+        assert_raise ArgumentError do
           @som.get_node(5, 5)
         end
 
-        assert_raise Exception do
+        assert_raise ArgumentError do
           @som.get_node(5, -3)
         end
 

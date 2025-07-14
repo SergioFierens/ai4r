@@ -33,6 +33,7 @@ module Ai4r
       
       protected    
       def get_min_index(array)
+        raise ArgumentError, "Array cannot be empty" if array.nil? || array.empty?
         min = array.first
         index = 0
         array.each_index do |i|

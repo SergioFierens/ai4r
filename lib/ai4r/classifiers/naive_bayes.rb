@@ -234,7 +234,8 @@ module Ai4r
         @pcc.each_with_index do |attributes, a_index|
           attributes.each_with_index do |values, v_index|
             values.each_with_index do |klass, k_index|
-              @pcp[a_index][v_index][k_index] = (klass.to_f + @m * @class_prob[k_index]) / (@class_counts[k_index] + @m)
+              denominator = @class_counts[k_index] + @m
+              @pcp[a_index][v_index][k_index] = denominator == 0 ? 0.0 : (klass.to_f + @m * @class_prob[k_index]) / denominator
             end
           end
         end

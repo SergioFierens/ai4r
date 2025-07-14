@@ -55,7 +55,9 @@ module Ai4r
         
         @clusters = [@data_set]
         @centroids = [@data_set.get_mean_or_mode]
-        while @clusters.length < @number_of_clusters
+        iteration_count = 0
+        max_iterations = @number_of_clusters * 10  # Safety limit
+        while @clusters.length < @number_of_clusters && iteration_count < max_iterations
           biggest_cluster_index = find_biggest_cluster_index(@clusters)
           clusterer = KMeans.new.
             set_parameters(get_parameters).
@@ -64,6 +66,7 @@ module Ai4r
           @centroids.delete_at(biggest_cluster_index)
           @clusters.concat(clusterer.clusters)
           @centroids.concat(clusterer.centroids)
+          iteration_count += 1
         end
         
         super if @refine

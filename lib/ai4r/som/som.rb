@@ -71,13 +71,18 @@ module Ai4r
       # returns an array of length 2 => [node, distance] (distance is of eucledian type, not
       # a neighborhood distance)
       def find_bmu(input)
+        raise ArgumentError, "Nodes array is empty" if @nodes.empty?
         bmu = @nodes.first
         dist = bmu.distance_to_input input
-        @nodes[1..-1].each do |node|
-          tmp_dist = node.distance_to_input(input)
-          if tmp_dist <= dist
-            dist = tmp_dist
-            bmu = node
+        
+        # Only process remaining nodes if there are more than 1
+        if @nodes.length > 1
+          @nodes[1..-1].each do |node|
+            tmp_dist = node.distance_to_input(input)
+            if tmp_dist <= dist
+              dist = tmp_dist
+              bmu = node
+            end
           end
         end
         [bmu, dist]
@@ -129,8 +134,10 @@ module Ai4r
 
       # returns the node at position (x,y) in the square map
       def get_node(x, y)
-        raise(Exception.new) if check_param_for_som(x,y)
-        @nodes[y + x * @number_of_nodes]
+        raise(ArgumentError, "Invalid node coordinates: x=#{x}, y=#{y}") if check_param_for_som(x,y)
+        index = y + x * @number_of_nodes
+        raise(ArgumentError, "Calculated index #{index} is out of bounds for nodes array") if index >= @nodes.length
+        @nodes[index]
       end
 
       # intitiates the map by creating (@number_of_nodes * @number_of_nodes) nodes

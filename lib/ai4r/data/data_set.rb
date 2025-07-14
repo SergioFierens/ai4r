@@ -39,8 +39,16 @@ module Ai4r
       # Retrieve a new DataSet, with the item(s) selected by the provided 
       # index. You can specify an index range, too.
       def [](index)
-        selected_items = (index.is_a?(Integer)) ?
-                [@data_items[index]] : @data_items[index]
+        raise ArgumentError, "Index cannot be nil" if index.nil?
+        raise ArgumentError, "Data set is empty" if @data_items.empty?
+        
+        if index.is_a?(Integer)
+          raise ArgumentError, "Index #{index} out of bounds" if index < 0 || index >= @data_items.length
+          selected_items = [@data_items[index]]
+        else
+          selected_items = @data_items[index]
+        end
+        
         return DataSet.new(:data_items => selected_items,
                            :data_labels =>@data_labels)
       end
@@ -169,17 +177,35 @@ module Ai4r
       #   build_domain(2) # In this example, the third attribute is gender
       #   => #<Set: {"M", "F"}>
       def build_domain(attr)
+        check_not_empty
         index = get_index(attr)
-        if @data_items.first[index].is_a?(Numeric)
+        return Set.new if @data_items.empty?
+        
+        first_item = @data_items.first
+        return Set.new if first_item.nil?
+        
+        if index.is_a?(Integer)
+          raise ArgumentError, "Index #{index} out of bounds" if index < 0 || index >= first_item.length
+        end
+        
+        if first_item[index].is_a?(Numeric)
           return [Statistics.min(self, index), Statistics.max(self, index)]
         else
-          return @data_items.inject(Set.new){|domain, x| domain << x[index]}
+          domain = Set.new
+          @data_items.each do |item|
+            next if item.nil? || item.length <= index
+            domain << item[index] if item[index]
+          end
+          return domain
         end
       end
 
       # Returns attributes number, including class attribute
       def num_attributes
-        return (@data_items.empty?) ? 0 : @data_items.first.size
+        return 0 if @data_items.empty?
+        first_item = @data_items.first
+        return 0 if first_item.nil?
+        return first_item.size
       end
 
       # Returns the index of a given attribute (0-based).
@@ -187,7 +213,11 @@ module Ai4r
       #   get_index("gender") 
       #   => 2
       def get_index(attr)
-        return (attr.is_a?(Integer) || attr.is_a?(Range)) ? attr : @data_labels.index(attr)
+        return attr if attr.is_a?(Integer) || attr.is_a?(Range)
+        
+        index = @data_labels.index(attr)
+        raise ArgumentError, "Attribute '#{attr}' not found in data labels" if index.nil?
+        return index
       end
 
       # Raise an exception if there is no data item.
@@ -215,10 +245,15 @@ module Ai4r
       # Returns an array with the mean value of numeric attributes, and 
       # the most frequent value of non numeric attributes
       def get_mean_or_mode
+        return [] if @data_items.empty?
+        
+        first_item = @data_items.first
+        return [] if first_item.nil?
+        
         mean = []
         num_attributes.times do |i|
           mean[i] =
-                  if @data_items.first[i].is_a?(Numeric)
+                  if first_item[i].is_a?(Numeric)
                     Statistics.mean(self, i)
                   else
                     Statistics.mode(self, i)
