@@ -55,6 +55,16 @@ inspect these coefficients:
   puts r.slope          # regression slope
   puts r.intercept      # regression intercept
 
+== LogisticRegression
+
+Binary logistic regression is available as ``LogisticRegression''.  Training
+data must have numeric attributes with the last column containing ``0'' or ``1''
+labels.  Parameters ``lr'' and ``iterations'' control gradient descent.
+
+  reg = Ai4r::Classifiers::LogisticRegression.new
+  reg.set_parameters(lr: 0.5, iterations: 2000).build(data)
+  reg.eval([1, 0])  # => 1
+
 == DataSet normalization
 
 Numeric attributes can be normalized with `normalize!`. By default it applies
