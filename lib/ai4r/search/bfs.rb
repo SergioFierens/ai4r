@@ -13,17 +13,17 @@ module Ai4r
       # Find a path from the start node to a goal.
       #
       # start::      initial node
-      # goal_test::  lambda returning true for a goal node
-      # neighbors::  lambda returning adjacent nodes for a given node
+      # goal_test::   lambda returning true for a goal node
+      # neighbor_fn:: lambda returning adjacent nodes for a given node
       #
       # Returns an array of nodes representing the path, or nil if no goal was found.
-      def search(start, goal_test, neighbors)
+      def search(start, goal_test, neighbor_fn)
         queue = [[start, [start]]]
         visited = { start => true }
         until queue.empty?
           node, path = queue.shift
           return path if goal_test.call(node)
-          neighbors.call(node).each do |n|
+          neighbor_fn.call(node).each do |n|
             next if visited[n]
             visited[n] = true
             queue << [n, path + [n]]

@@ -10,10 +10,10 @@ require 'ai4r/search/bfs'
 require 'ai4r/search/dfs'
 
 bfs = Ai4r::Search::BFS.new
-path = bfs.search(start, ->(n) { goal?(n) }, ->(n) { neighbors(n) })
+path = bfs.search(start, ->(n) { goal?(n) }, ->(n) { neighbor_fn(n) })
 
 dfs = Ai4r::Search::DFS.new
-path = dfs.search(start, ->(n) { goal?(n) }, ->(n) { neighbors(n) })
+path = dfs.search(start, ->(n) { goal?(n) }, ->(n) { neighbor_fn(n) })
 ```
 
 Both methods return the path from the start node to the first goal or
