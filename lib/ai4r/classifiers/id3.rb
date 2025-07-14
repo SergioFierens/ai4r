@@ -137,11 +137,11 @@ module Ai4r
       end
 
       private
+      
       def preprocess_data(data_examples)
         @tree = build_node(data_examples)
       end
 
-      private
       def build_node(data_examples, flag_att = [])
         return ErrorNode.new if data_examples.length == 0
         domain = domain(data_examples)   
@@ -155,18 +155,15 @@ module Ai4r
         return EvaluationNode.new(@data_set.data_labels, min_entropy_index, domain[min_entropy_index], nodes)
       end
 
-      private 
       def self.sum(values)
         values.inject( 0 ) { |sum,x| sum+x }
       end
 
-      private
       def self.log2(z)
         return 0.0 if z == 0
         Math.log(z)/LOG2
       end
 
-      private       
       def most_freq(examples, domain)
         category_domain = domain.last
         freqs = Array.new(category_domain.length, 0)
@@ -180,7 +177,6 @@ module Ai4r
         category_domain[max_freq_index]
       end
 
-      private
       def split_data_examples_by_value(data_examples, att_index)
         att_value_examples = Hash.new {|hsh,key| hsh[key] = [] }
         data_examples.each do |example|
@@ -190,7 +186,6 @@ module Ai4r
         att_value_examples
       end
 
-      private
       def split_data_examples(data_examples, domain, att_index)
         att_value_examples = split_data_examples_by_value(data_examples, att_index)
         attribute_domain = domain[att_index]
@@ -202,7 +197,6 @@ module Ai4r
         return data_examples_array
       end
 
-      private 
       def min_entropy_index(data_examples, domain, flag_att=[])
         min_entropy = nil
         min_index = 0
@@ -219,7 +213,6 @@ module Ai4r
         return min_index
       end
 
-      private
       def domain(data_examples)
         #return build_domains(data_examples)
         domain = Array.new( @data_set.data_labels.length ) { [] }
@@ -231,7 +224,6 @@ module Ai4r
         return domain
       end
        
-      private 
       def freq_grid(att_index, data_examples, domain)
         #Initialize empty grid
         feature_domain = domain[att_index]
@@ -248,7 +240,6 @@ module Ai4r
         return grid
       end
 
-      private 
       def entropy(freq_grid, total_examples)
         #Calc entropy of each element
         entropy = 0
@@ -266,7 +257,6 @@ module Ai4r
         return entropy
       end
 
-      private
       LOG2 = Math.log(2)
     end
 
@@ -316,7 +306,6 @@ module Ai4r
     end
 
     class ModelFailureError < StandardError
-      default_message = "There was not enough information during training to do a proper induction for this data element."
     end
 
     class ErrorNode #:nodoc: all

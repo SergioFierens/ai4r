@@ -84,7 +84,6 @@ module Ai4r
       # Some considerations: 
       # * a and b must not include repeated items
       # * all attributes are treated equally
-      # * all attributes are treated equally
       def self.simple_matching_distance(a,b)
         similarity = 0.0
         a.each {|item| similarity += 2 if b.include?(item)}

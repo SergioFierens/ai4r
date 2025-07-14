@@ -13,6 +13,11 @@ module Ai4r
 
       attr_reader :cluster_tree
 
+      # Creates a new WardLinkageHierarchical clusterer
+      # 
+      # == Parameters
+      # * depth: optional maximum depth of the hierarchy (number of merges to perform)
+      #          if nil, performs all merges until only one cluster remains
       def initialize(depth = nil)
         @cluster_tree = []
         @depth = depth

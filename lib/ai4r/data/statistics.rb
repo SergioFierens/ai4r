@@ -72,7 +72,7 @@ module Ai4r
         index = data_set.get_index(attribute)
         raise ArgumentError, "Invalid attribute index" if index.nil?
         
-        count = Hash.new {0}
+        count = Hash.new(0)
         max_count = 0
         mode = nil
         data_set.data_items.each do |data_item|

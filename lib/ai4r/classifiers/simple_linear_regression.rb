@@ -62,8 +62,8 @@ module Ai4r
         min_msq = Float::MAX
         attribute = nil
         chosen = -1
-        chosen_slope = 0.0 / 0.0 # Float::NAN 
-        chosen_intercept = 0.0 / 0.0 # Float::NAN 
+        chosen_slope = Float::NAN
+        chosen_intercept = Float::NAN 
 
         data.data_labels.each do |attr_name|
           attr_index = data.get_index attr_name
@@ -101,10 +101,6 @@ module Ai4r
 
         if chosen == -1
           raise "no useful attribute found"
-          @attribute = nil
-          @attribute_index = 0
-          @slope = 0
-          @intercept = y_mean
         else
           @attribute = data.data_labels[chosen]
           @attribute_index = chosen

@@ -9,7 +9,7 @@
 
 require 'csv'
 require 'set'
-require File.dirname(__FILE__) + '/statistics'
+require_relative 'statistics'
 
 module Ai4r
   module Data
@@ -64,16 +64,9 @@ module Ai4r
 
       # opens a csv-file and reads it line by line
       # for each line, a block is called and the row is passed to the block
-      # ruby1.8 and 1.9 safe
       def open_csv_file(filepath, &block)
-        if CSV.const_defined? :Reader
-          CSV::Reader.parse(File.open(filepath, 'r')) do |row|
-            block.call row
-          end
-        else
-          CSV.parse(File.open(filepath, 'r')) do |row|
-            block.call row
-          end
+        CSV.parse(File.open(filepath, 'r')) do |row|
+          block.call row
         end
       end
 

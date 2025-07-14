@@ -3,15 +3,15 @@
 # Project::   ai4r
 # Url::       https://github.com/SergioFierens/ai4r
 #
-# You can redistribute it and/or modify it under the terms of 
-# the Mozilla Public License version 1.1  as published by the 
+# You can redistribute it and/or modify it under the terms of
+# the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
- 
-require File.dirname(__FILE__) + '/../data/parameterizable' 
- 
+
+require_relative '../data/parameterizable'
+
 module Ai4r
   module Classifiers
-  
+
     # This class defines a common API for classifiers.
     # All methods in this class must be implemented in subclasses.
     class Classifier
