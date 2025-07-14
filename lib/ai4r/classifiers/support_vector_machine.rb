@@ -72,6 +72,13 @@ module Ai4r
         score >= 0 ? @classes[0] : @classes[1]
       end
 
+      # Linear SVMs are represented by a hyperplane rather than discrete rules.
+      # This method returns an explanatory string for consistency with the
+      # classifier API.
+      def get_rules
+        'SupportVectorMachine does not support rule extraction.'
+      end
+
       private
 
       def dot(a, b)

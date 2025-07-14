@@ -125,6 +125,12 @@ module Ai4r
         self
       end
 
+      # Naive Bayes uses probabilistic models that cannot be easily represented
+      # as deterministic rules. Provide a descriptive message instead.
+      def get_rules
+        'NaiveBayes does not support rule extraction.'
+      end
+
       private
 
       # @param data [Object]

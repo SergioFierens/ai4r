@@ -55,6 +55,13 @@ module Ai4r
         @intercept + (@slope * data[@attribute_index])
       end
 
+      # This regression algorithm only produces numeric coefficients. Returning
+      # them as rules would be misleading, so a descriptive string is provided
+      # instead.
+      def get_rules
+        'SimpleLinearRegression does not support rule extraction.'
+      end
+
       # Gets the best attribute and does Linear Regression using it to find out the
       # slope and intercept.
       # Parameter data has to be an instance of DataSet

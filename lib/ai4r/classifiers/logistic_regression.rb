@@ -73,6 +73,13 @@ module Ai4r
         prob = 1.0 / (1.0 + Math.exp(-z))
         prob >= 0.5 ? 1 : 0
       end
+
+      # Logistic regression models do not easily translate to rule based
+      # representations. This method provides a short explanation instead of
+      # raising a `NotImplementedError` like the base class.
+      def get_rules
+        'LogisticRegression does not support rule extraction.'
+      end
     end
   end
 end

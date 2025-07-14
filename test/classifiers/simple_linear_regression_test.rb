@@ -45,4 +45,9 @@ class SimpleLinearRegressionTest < Minitest::Test
     result = classifier.eval(@data_set.data_items.first[0...-1])
     assert_in_delta expected, result, 0.0001
   end
+
+  def test_get_rules
+    assert_equal 'SimpleLinearRegression does not support rule extraction.',
+                 SimpleLinearRegression.new.get_rules
+  end
 end

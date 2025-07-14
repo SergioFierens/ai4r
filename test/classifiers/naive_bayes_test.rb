@@ -62,4 +62,8 @@ class NaiveBayesTest < Minitest::Test
                                                                                           ])
     end
   end
+  def test_get_rules
+    assert_equal 'NaiveBayes does not support rule extraction.',
+                 NaiveBayes.new.get_rules
+  end
 end

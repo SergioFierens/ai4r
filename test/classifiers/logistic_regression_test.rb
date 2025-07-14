@@ -33,4 +33,9 @@ class LogisticRegressionTest < Minitest::Test
   def test_weights_present
     assert_equal 3, @classifier.weights.length
   end
+
+  def test_get_rules
+    assert_equal 'LogisticRegression does not support rule extraction.',
+                 LogisticRegression.new.get_rules
+  end
 end
