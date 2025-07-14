@@ -55,3 +55,6 @@ require_relative 'ai4r/hmm/hidden_markov_model'
 
 # SOM
 require_relative 'ai4r/som/som'
+
+# Search Algorithms
+require_relative 'ai4r/search'
