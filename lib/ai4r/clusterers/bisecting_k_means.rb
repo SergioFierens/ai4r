@@ -7,8 +7,8 @@
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../data/data_set'
-require File.dirname(__FILE__) + '/../clusterers/k_means'
+require_relative '../data/data_set'
+require_relative 'k_means'
 
 module Ai4r
   module Clusterers

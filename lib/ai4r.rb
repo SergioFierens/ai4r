@@ -18,6 +18,11 @@ require_relative "ai4r/clusterers/median_linkage"
 require_relative "ai4r/clusterers/ward_linkage"
 require_relative "ai4r/clusterers/ward_linkage_hierarchical"
 require_relative "ai4r/clusterers/diana"
+# Educational Clustering Framework
+require_relative "ai4r/clusterers/educational_clustering"
+require_relative "ai4r/clusterers/educational_algorithms"
+require_relative "ai4r/clusterers/educational_examples"
+require_relative "ai4r/clusterers/distance_metrics"
 # Classifiers
 require_relative "ai4r/classifiers/classifier"
 require_relative "ai4r/classifiers/id3"
