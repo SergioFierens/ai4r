@@ -35,10 +35,12 @@ module Ai4r
 
       def build(data_set)
         @data_set = data_set
+        @clusters = []
+        @cluster_indices = []
         @labels = Array.new(data_set.data_items.size)
+        @number_of_clusters = 0
 
         raise ArgumentError, 'epsilon must be defined' unless !@epsilon.nil?
-        number_of_clusters = 0
 
         # Detect if the neighborhood of the current item
         # is dense enough
@@ -48,11 +50,11 @@ module Ai4r
             if neighbors.size < @min_points
               @labels[data_index] = :noise
             else
-              number_of_clusters += 1
-              @labels[data_index] = number_of_clusters
+              @number_of_clusters += 1
+              @labels[data_index] = @number_of_clusters
               @clusters.push([data_item])
               @cluster_indices.push([data_index])
-              extend_cluster(neighbors, number_of_clusters)
+              extend_cluster(neighbors, @number_of_clusters)
             end
           end
         }
