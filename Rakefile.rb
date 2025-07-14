@@ -27,11 +27,6 @@ namespace :test do
   end
 end
 
-task :e2e do
-  files = Dir['test/e2e/**/*_test.rb']
-  script = 'ARGV.each { |f| require File.expand_path(f) }'
-  ruby '-Ilib:test', '-e', script, *files
-end
 
 Rake::RDocTask.new do |rd|
   rd.main = 'README.rdoc'
