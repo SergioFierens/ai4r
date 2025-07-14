@@ -85,9 +85,7 @@ module Ai4r
       # @param block [Object]
       # @return [Object]
       def open_csv_file(filepath, &block)
-        CSV.foreach(filepath) do |row|
-          block.call row
-        end
+        CSV.foreach(filepath, &block)
       end
 
       # Load data items from csv file. The first row is used as data labels.
