@@ -91,11 +91,10 @@ module Ai4r
         neighbors
       end
 
-      # If the neighborhood is dense enough, it propagates.
-      # This applies only to items that don't belong to an
-      # existing cluster.
-      # If any neighbor was previously classified as noise,
-      # it becomes part of the current cluster.
+      # Expand the cluster by visiting neighbours of the current point.
+      # Skip neighbours already assigned to another cluster.
+      # If a neighbour was previously labeled as noise, assign it to the current
+      # cluster.
       def extend_cluster(neighbors, current_cluster)
         while neighbors.any?
           data_index = neighbors.shift
