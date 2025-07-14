@@ -31,14 +31,14 @@ module Ai4r
 
       # @param tie_strategy [Object]
       # @return [Object]
-      def get_winner(tie_strategy = :last)
+      def get_winner(tie_strategy = :last, rng: Random.new)
         n = 0 # used to create a stable sort of the tallys
         sorted_sheet = tally_sheet.sort_by { |_, score| n += 1; [score, n] }
         return nil if sorted_sheet.empty?
         if tie_strategy == :random
           max_score = sorted_sheet.last[1]
           tied = sorted_sheet.select { |_, score| score == max_score }.map(&:first)
-          tied.sample
+          tied.sample(random: rng)
         else
           sorted_sheet.last.first
         end

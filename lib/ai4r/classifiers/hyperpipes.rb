@@ -28,12 +28,15 @@ module Ai4r
 
       parameters_info tie_strategy: 'Strategy used when more than one class has the same maximal vote. ' +
         'Valid values are :last (default) and :random.',
-        margin: 'Numeric margin added to the bounds of numeric attributes.'
+        margin: 'Numeric margin added to the bounds of numeric attributes.',
+        random_seed: 'Seed for random tie-breaking when tie_strategy is :random.'
 
       # @return [Object]
       def initialize
         @tie_strategy = :last
         @margin = 0
+        @random_seed = nil
+        @rng = nil
       end
 
       # Build a new Hyperpipes classifier. You must provide a DataSet instance
@@ -70,7 +73,8 @@ module Ai4r
             end
           end
         end
-        return votes.get_winner(@tie_strategy)
+        rng = @rng || (@random_seed.nil? ? Random.new : Random.new(@random_seed))
+        return votes.get_winner(@tie_strategy, rng: rng)
       end
 
       # This method returns the generated rules in ruby code.

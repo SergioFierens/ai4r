@@ -32,13 +32,16 @@ module Ai4r
 
       parameters_info k: 'Number of nearest neighbors to consider. Default is 1.',
         distance_function: 'Optional custom distance metric taking two instances.',
-        tie_break: 'Strategy used when neighbors vote tie. Valid values are :first (default) and :random.'
+        tie_break: 'Strategy used when neighbors vote tie. Valid values are :first (default) and :random.',
+        random_seed: 'Seed for random tie-breaking when :tie_break is :random.'
 
       # @return [Object]
       def initialize
         @k = 1
         @distance_function = nil
         @tie_break = :first
+        @random_seed = nil
+        @rng = nil
       end
 
       # Build a new IB1 classifier. You must provide a DataSet instance
@@ -97,9 +100,11 @@ module Ai4r
 
         return tied.first if tied.length == 1
 
+        rng = @rng || (@random_seed.nil? ? Random.new : Random.new(@random_seed))
+
         case @tie_break
         when :random
-          tied.sample
+          tied.sample(random: rng)
         else
           k_neighbors.each { |_, klass| return klass if tied.include?(klass) }
         end

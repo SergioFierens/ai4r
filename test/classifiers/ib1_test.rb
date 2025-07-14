@@ -96,8 +96,7 @@ class IB1Test < Test::Unit::TestCase
   def test_tie_break
     classifier = IB1.new.set_parameters(:k => 2, :tie_break => :first).build(@data_set)
     assert_equal('Y', classifier.eval(['Chicago', 47, 'M']))
-    srand(1)
-    classifier = IB1.new.set_parameters(:k => 2, :tie_break => :random).build(@data_set)
+    classifier = IB1.new.set_parameters(k: 2, tie_break: :random, random_seed: 1).build(@data_set)
     assert_equal('N', classifier.eval(['Chicago', 47, 'M']))
   end
 

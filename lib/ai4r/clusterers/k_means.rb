@@ -66,6 +66,7 @@ module Ai4r
         @centroid_indices = []
         @on_empty = 'eliminate' # default if none specified
         @random_seed = nil
+        @rng = nil
         @init_method = :random
         @restarts = 1
         @track_history = false
@@ -92,6 +93,7 @@ module Ai4r
 
         (@restarts || 1).times do |i|
           @random_seed = seed_base.nil? ? nil : seed_base + i
+          @rng = @random_seed.nil? ? Random.new : Random.new(@random_seed)
           @iterations = 0
           @history = [] if @track_history
           calc_initial_centroids
@@ -115,6 +117,7 @@ module Ai4r
         end
 
         @random_seed = seed_base
+        @rng = @random_seed.nil? ? Random.new : Random.new(@random_seed)
         @centroids = best_centroids
         @clusters = best_clusters
         @iterations = best_iterations
@@ -210,9 +213,8 @@ module Ai4r
 
       # @return [Object]
       def kmeans_plus_plus_init
-        srand(@random_seed) if @random_seed
         chosen_indices = []
-        first_index = (0...@data_set.data_items.length).to_a.sample
+        first_index = (0...@data_set.data_items.length).to_a.sample(random: @rng)
         return if first_index.nil?
         @centroids << @data_set.data_items[first_index]
         chosen_indices << first_index
@@ -227,7 +229,7 @@ module Ai4r
             total += min_dist
           end
           break if distances.empty?
-          r = rand * total
+          r = @rng.rand * total
           cumulative = 0.0
           chosen = distances.find do |idx, dist|
             cumulative += dist
@@ -246,10 +248,9 @@ module Ai4r
         tried_indexes = []
         case populate_method
         when 'random' # for initial assignment (without the :centroid_indices option) and for reassignment of empty cluster centroids (with :on_empty option 'random')
-          srand(@random_seed) if @random_seed
           while @centroids.length < number_of_clusters &&
               tried_indexes.length < @data_set.data_items.length
-            random_index = (0...@data_set.data_items.length).to_a.sample
+            random_index = (0...@data_set.data_items.length).to_a.sample(random: @rng)
             if !tried_indexes.include?(random_index)
               tried_indexes << random_index
               if !@centroids.include? @data_set.data_items[random_index]

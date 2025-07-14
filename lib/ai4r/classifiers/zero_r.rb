@@ -29,12 +29,15 @@ module Ai4r
         "dataset is empty.",
         tie_strategy: "Strategy used when more than one class has the " +
           "same maximal frequency. Valid values are :first (default) " +
-          "and :random."
+          "and :random.",
+        random_seed: "Seed for tie resolution when using :random strategy."
 
       # @return [Object]
       def initialize
         @default_class = nil
         @tie_strategy = :first
+        @random_seed = nil
+        @rng = nil
       end
     
       # Build a new ZeroR classifier. You must provide a DataSet instance
@@ -66,12 +69,14 @@ module Ai4r
           end
         end
 
+        rng = @rng || (@random_seed.nil? ? Random.new : Random.new(@random_seed))
+
         if tied_classes.length == 1
           @class_value = tied_classes.first
         else
           @class_value = case @tie_strategy
                          when :random
-                           tied_classes.sample
+                           tied_classes.sample(random: rng)
                          else
                            tied_classes.first
                          end
