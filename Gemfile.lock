@@ -2,8 +2,13 @@ GEM
   remote: https://rubygems.org/
   specs:
     ast (2.4.3)
+    binding_of_caller (1.0.1)
+      debug_inspector (>= 1.2.0)
     csv (3.3.5)
     date (3.4.1)
+    debug_inspector (1.2.0)
+    diff-lcs (1.6.2)
+    docile (1.4.1)
     erb (5.0.1)
     json (2.12.2)
     language_server-protocol (3.17.0.5)
@@ -14,6 +19,10 @@ GEM
       ast (~> 2.4.1)
       racc
     prism (1.4.0)
+    proc_to_ast (0.2.0)
+      parser
+      rouge
+      unparser
     psych (5.2.6)
       date
       stringio
@@ -24,6 +33,31 @@ GEM
       erb
       psych (>= 4.0.0)
     regexp_parser (2.10.0)
+    rouge (4.5.2)
+    rspec (3.13.1)
+      rspec-core (~> 3.13.0)
+      rspec-expectations (~> 3.13.0)
+      rspec-mocks (~> 3.13.0)
+    rspec-core (3.13.5)
+      rspec-support (~> 3.13.0)
+    rspec-expectations (3.13.5)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.13.0)
+    rspec-mocks (3.13.5)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.13.0)
+    rspec-parameterized (1.0.2)
+      rspec-parameterized-core (< 2)
+      rspec-parameterized-table_syntax (< 2)
+    rspec-parameterized-core (1.0.1)
+      parser
+      proc_to_ast (>= 0.2.0)
+      rspec (>= 2.13, < 4)
+      unparser
+    rspec-parameterized-table_syntax (1.0.1)
+      binding_of_caller
+      rspec-parameterized-core (< 2)
+    rspec-support (3.13.4)
     rubocop (1.78.0)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
@@ -39,10 +73,20 @@ GEM
       parser (>= 3.3.7.2)
       prism (~> 1.4)
     ruby-progressbar (1.13.0)
+    simplecov (0.22.0)
+      docile (~> 1.1)
+      simplecov-html (~> 0.11)
+      simplecov_json_formatter (~> 0.1)
+    simplecov-html (0.13.1)
+    simplecov_json_formatter (0.1.4)
     stringio (3.1.7)
     unicode-display_width (3.1.4)
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
+    unparser (0.8.0)
+      diff-lcs (~> 1.6)
+      parser (>= 3.3.0)
+      prism (>= 1.4)
 
 PLATFORMS
   ruby
@@ -50,10 +94,12 @@ PLATFORMS
 
 DEPENDENCIES
   csv (~> 3)
-  minitest (~> 5)
+  minitest (~> 5.22)
   rake (~> 13)
   rdoc (~> 6)
+  rspec-parameterized (~> 1.0)
   rubocop (~> 1.78)
+  simplecov (~> 0.22)
 
 BUNDLED WITH
    2.6.7

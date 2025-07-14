@@ -14,8 +14,20 @@
 #
 
 
+require 'simplecov'
+SimpleCov.start do
+  enable_coverage :branch
+  add_filter '/test/'
+end
+
 require 'minitest/autorun'
 Minitest::Test.i_suck_and_my_tests_are_order_dependent!
+
+require_relative 'helpers/numeric_assertions'
+require_relative 'helpers/fixture_loader'
+
+Minitest::Test.include NumericAssertions
+Minitest::Test.include FixtureLoader
 
 
 def assert_approximate_equality(expected, real, delta=0.01)

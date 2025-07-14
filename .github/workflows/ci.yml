@@ -1,0 +1,19 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  neural-network-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+      - run: bundle exec rake test:nn
+      - run: bundle exec rake e2e
+      - run: |
+          echo "Coverage $(grep -A1 '^COVERAGE' coverage/.last_run.json)"
