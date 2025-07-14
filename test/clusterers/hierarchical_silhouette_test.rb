@@ -5,7 +5,7 @@ class HierarchicalSilhouetteTest < Minitest::Test
   include Ai4r::Clusterers
   include Ai4r::Data
 
-  DATA = [[1,1],[1,2],[2,1],[2,2],[8,8],[8,9],[9,8],[9,9]]
+  DATA = [[1,1],[1,2],[2,1],[2,2],[8,8],[8,9],[9,8],[9,9]].freeze
 
   def test_silhouette
     clusterer = WardLinkage.new.build(DataSet.new(:data_items => DATA), 2)

@@ -6,7 +6,7 @@ class TestKMeans < Minitest::Test
   include Ai4r::Data
   include Ai4r::Clusterers
 
-  DATA = [[1,1],[1,2],[2,1],[2,2]]
+  DATA = [[1,1],[1,2],[2,1],[2,2]].freeze
 
   def dataset(items = DATA)
     DataSet.new(data_items: items)
