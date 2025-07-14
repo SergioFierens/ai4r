@@ -5,9 +5,9 @@
 # Project::   ai4r
 # Url::       https://github.com/SergioFierens/ai4r
 
-require "#{File.dirname(__FILE__)}/../data/data_set"
-require "#{File.dirname(__FILE__)}/../data/proximity"
-require "#{File.dirname(__FILE__)}/../clusterers/clusterer"
+require_relative '../data/data_set'
+require_relative '../data/proximity'
+require_relative '../clusterers/clusterer'
 
 module Ai4r
   module Clusterers
@@ -60,6 +60,8 @@ module Ai4r
             extend_cluster(neighbors, number_of_clusters)
           end
         end
+
+        @number_of_clusters = number_of_clusters
 
         self
       end
