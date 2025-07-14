@@ -61,9 +61,16 @@ module Ai4r
       end
 
       # This algorithms does not allow classification of new data items
-      # once it has been built. Rebuild the cluster including you data element.
-      def eval(data_item)
-        Raise "Eval of new data is not supported by this algorithm."
+      # once it has been built. Rebuild the cluster including your data element.
+      # @param _data_item [Object]
+      # @return [Object]
+      def eval(_data_item)
+        raise NotImplementedError, 'Eval of new data is not supported by this algorithm.'
+      end
+
+      # @return [Object]
+      def supports_eval?
+        false
       end
 
       def distance(a, b)
