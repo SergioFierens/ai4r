@@ -21,4 +21,14 @@ module NumericAssertions
       last = val
     end
   end
+
+  def assert_pct_between(expected_pct, actual_pct, tolerance = 0.05)
+    delta = expected_pct * tolerance
+    assert_in_delta expected_pct, actual_pct, delta,
+                    "Expected #{actual_pct} within #{delta} of #{expected_pct}"
+  end
+
+  def assert_improves(before, after)
+    assert after > before, "Expected #{after} to improve over #{before}"
+  end
 end
