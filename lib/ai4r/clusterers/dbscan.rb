@@ -60,12 +60,13 @@ module Ai4r
             extend_cluster(neighbors, number_of_clusters)
           end
         end
+        @number_of_clusters = number_of_clusters
 
         self
       end
 
-      # This algorithms does not allow classification of new data items
-      # once it has been built. Rebuild the cluster including your data element.
+      # This algorithm cannot classify new data items once it has been built.
+      # Rebuild the cluster with your new data item instead.
       # @param _data_item [Object]
       # @return [Object]
       def eval(_data_item)
@@ -88,8 +89,8 @@ module Ai4r
 
       protected
 
-      # scan the data set for every point belonging to the current
-      # item neighborhood
+      # Scan the data set and return the indices of all points
+      # belonging to the neighborhood of the current item
       def range_query(evaluated_data_item)
         neighbors = []
         @data_set.data_items.each_with_index do |data_item, data_index|
@@ -98,11 +99,10 @@ module Ai4r
         neighbors
       end
 
-      # If the neighborhood is dense enough, it propagate.
-      # At least if items doesn't belong to an already
-      # existing cluster.
-      # If one point one of the neighbor is classified as
-      # noise it is set as part of the current cluster.
+      # Propagate the cluster through a dense neighborhood.
+      # Unassigned points join the current cluster, and any
+      # neighbor previously labeled as noise is reassigned
+      # to this cluster.
       def extend_cluster(neighbors, current_cluster)
         neighbors.each do |data_index|
           if @labels[data_index] == :noise
