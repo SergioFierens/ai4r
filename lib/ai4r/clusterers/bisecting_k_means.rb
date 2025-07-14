@@ -41,7 +41,8 @@ module Ai4r
             "result of the bisecting approach."
       
       
-      def intialize
+      def initialize
+        super
         @refine = true
       end
       

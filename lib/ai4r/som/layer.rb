@@ -37,7 +37,8 @@ module Ai4r
         @nodes = nodes
         @epochs = epochs
         @radius = radius
-        @time_for_epoch = @epochs / Math.log(nodes / 4.0)
+        log_val = Math.log(nodes / 4.0)
+        @time_for_epoch = log_val > 0 ? @epochs / log_val : @epochs * 2.0
         @time_for_epoch = @epochs + 1.0 if @time_for_epoch < @epochs
 
         @initial_learning_rate = learning_rate
@@ -46,18 +47,22 @@ module Ai4r
       # calculates the influnce decay for a certain distance and the current radius
       # of the epoch
       def influence_decay(distance, radius)
-        Math.exp(- (distance.to_f**2 / 2.0 / radius.to_f**2))
+        radius_squared = radius.to_f**2
+        return 0.0 if radius_squared == 0.0
+        Math.exp(- (distance.to_f**2 / 2.0 / radius_squared))
       end
 
       # calculates the radius decay for the current epoch. Uses @time_for_epoch
       # which has to be higher than the number  of epochs, otherwise the decay will be - Infinity
       def radius_decay(epoch)
+        return 0 if @time_for_epoch == 0.0
         (@radius * ( 1 - epoch/ @time_for_epoch)).round
       end
 
       # calculates the learning rate decay. uses @time_for_epoch again and same rule applies:
       # @time_for_epoch has to be higher than the number  of epochs, otherwise the decay will be - Infinity
       def learning_rate_decay(epoch)
+        return 0.0 if @time_for_epoch == 0.0
         @initial_learning_rate * ( 1 - epoch / @time_for_epoch)
       end
 

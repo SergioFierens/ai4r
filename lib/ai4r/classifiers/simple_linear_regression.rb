@@ -75,7 +75,7 @@ module Ai4r
             slope = 0
             data.data_items.map do |instance|
               x_diff = instance[attr_index] - x_mean
-              y_diff = instance[attr_index] - y_mean
+              y_diff = instance[data.num_attributes-1] - y_mean
               slope += x_diff * y_diff
               sum_x_diff_squared += x_diff * x_diff
               sum_y_diff_squared += y_diff * y_diff
