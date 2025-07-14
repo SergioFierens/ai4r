@@ -42,6 +42,9 @@ require_relative 'ai4r/neural_network/hopfield'
 # Genetic Algorithms
 require_relative 'ai4r/genetic_algorithm/genetic_algorithm'
 
+# Hidden Markov Models
+require_relative 'ai4r/hmm/hidden_markov_model'
+
 # SOM
 require_relative 'ai4r/som/som'
 
