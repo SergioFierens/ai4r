@@ -12,8 +12,6 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'minitest/autorun'
-require 'rspec/autorun'
-require 'rspec/parameterized'
 require 'ai4r/neural_network/hopfield'
 require 'ai4r/data/data_set'
 
@@ -142,40 +140,26 @@ module Ai4r
         assert_in_delta default_net.send(:read_weight, 1, 0) * 2,
                         scaled_net.send(:read_weight, 1, 0), 0.00001
       end
-    end
-  end
-end
 
-RSpec.describe Ai4r::NeuralNetwork::Hopfield do
-  include RSpec::Parameterized::TableSyntax
+      def test_converges_to_stored_pattern_regardless_of_strategy
+        data_set = Ai4r::Data::DataSet.new(data_items: [
+          [1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1],
+          [-1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1],
+          [-1, -1, -1, -1, -1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1]
+        ])
 
-  let(:data_set) do
-    Ai4r::Data::DataSet.new(data_items: [
-                              [1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1],
-                              [-1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1],
-                              [-1, -1, -1, -1, -1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, 1],
-                              [1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1]
-                            ])
-  end
+        [nil, :async_sequential, :synchronous].each do |strategy|
+          net = Hopfield.new
+          net.update_strategy = strategy if strategy
+          net.train(data_set)
 
-  where(:strategy) do
-    [
-      [nil],
-      [:async_sequential],
-      [:synchronous]
-    ]
-  end
+          pattern = [1, 1, -1, 1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, 1, -1]
+          100.times { pattern = net.run(pattern) }
 
-  with_them do
-    it 'converges to the stored pattern regardless of strategy' do
-      net = Ai4r::NeuralNetwork::Hopfield.new
-      net.update_strategy = strategy if strategy
-      net.train(data_set)
-
-      pattern = [1, 1, -1, 1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, 1, -1]
-      100.times { pattern = net.run(pattern) }
-
-      expect(pattern).to eq([1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1])
+          assert_equal [1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1], pattern
+        end
+      end
     end
   end
 end
