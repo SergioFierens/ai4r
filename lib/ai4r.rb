@@ -31,6 +31,8 @@ require_relative 'ai4r/classifiers/zero_r'
 require_relative 'ai4r/classifiers/hyperpipes'
 require_relative 'ai4r/classifiers/naive_bayes'
 require_relative 'ai4r/classifiers/ib1'
+require_relative 'ai4r/classifiers/random_forest'
+require_relative 'ai4r/classifiers/gradient_boosting'
 require_relative 'ai4r/classifiers/support_vector_machine'
 
 # Neural networks
