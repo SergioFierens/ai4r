@@ -111,6 +111,7 @@ module Ai4r
         end
         
         magnitude = Math.sqrt(norm_a) * Math.sqrt(norm_b)
+        return 1.0 if magnitude == 0  # Handle zero magnitude case
         return 1 - (dot_product / magnitude)
       end
     end

@@ -231,6 +231,7 @@ module Ai4r
               raise ArgumentError, "Weight access out of bounds" if i >= @weights[n].length || j >= @weights[n][i].length
               sum += (@activation_nodes[n][i] * @weights[n][i][j])
             end
+            raise ArgumentError, "Output layer access out of bounds" if j >= @activation_nodes[n+1].length
             @activation_nodes[n+1][j] = @propagation_function.call(sum)
           end
         end        

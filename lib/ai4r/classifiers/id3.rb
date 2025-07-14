@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Author::    Sergio Fierens (Implementation, Quinlan is 
 # the creator of the algorithm)
 # License::   MPL 1.1
@@ -143,7 +145,7 @@ module Ai4r
       end
 
       def build_node(data_examples, flag_att = [])
-        return ErrorNode.new if data_examples.length == 0
+        return ErrorNode.new if data_examples.nil? || data_examples.length == 0
         domain = domain(data_examples)   
         return CategoryNode.new(@data_set.category_label, domain.last[0]) if domain.last.length == 1
         min_entropy_index = min_entropy_index(data_examples, domain, flag_att)
@@ -156,7 +158,7 @@ module Ai4r
       end
 
       def self.sum(values)
-        values.inject( 0 ) { |sum,x| sum+x }
+        values.sum
       end
 
       def self.log2(z)

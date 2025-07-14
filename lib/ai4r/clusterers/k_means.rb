@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Author::    Sergio Fierens (implementation)
 # License::   MPL 1.1
 # Project::   ai4r
@@ -19,6 +21,10 @@ module Ai4r
     # 
     # More about K Means algorithm:
     # http://en.wikipedia.org/wiki/K-means_algorithm   
+    #
+    # Thread Safety Warning:
+    # This class is NOT thread-safe. Instance variables are modified during
+    # clustering operations. Use separate instances for concurrent operations.
     class KMeans < Clusterer
       
       attr_reader :data_set, :number_of_clusters
@@ -49,7 +55,7 @@ module Ai4r
         @distance_function = nil
         @max_iterations = 1000
         @centroid_function = lambda do |data_sets| 
-          data_sets.collect{ |data_set| data_set.get_mean_or_mode}
+          data_sets.map(&:get_mean_or_mode)
         end
         @centroid_indices = []
         @on_empty = 'eliminate' # default if none specified
@@ -63,7 +69,7 @@ module Ai4r
         @data_set = data_set
         @number_of_clusters = number_of_clusters
         raise ArgumentError, 'Length of centroid indices array differs from the specified number of clusters' unless @centroid_indices.empty? || @centroid_indices.length == @number_of_clusters
-        raise ArgumentError, 'Invalid value for on_empty' unless @on_empty == 'eliminate' || @on_empty == 'terminate' || @on_empty == 'random' || @on_empty == 'outlier'
+        raise ArgumentError, 'Invalid value for on_empty' unless %w[eliminate terminate random outlier].include?(@on_empty)
         @iterations = 0
         
         calc_initial_centroids

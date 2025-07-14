@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Author::    Sergio Fierens
 # License::   MPL 1.1
 # Project::   ai4r
@@ -50,7 +52,7 @@ module Ai4r
         end
         
         return DataSet.new(:data_items => selected_items,
-                           :data_labels =>@data_labels)
+                           :data_labels => @data_labels)
       end
 
       # Load data items from csv file
@@ -256,9 +258,7 @@ module Ai4r
       end
 
       # Returns label of category
-      def category_label
-        data_labels.last
-      end
+      def category_label = data_labels.last
 
       protected
 
@@ -295,8 +295,13 @@ module Ai4r
       end
 
       def default_data_labels(data_items)
+        return [] if data_items.nil? || data_items.empty?
+        
+        first_item = data_items[0]
+        return [] if first_item.nil? || first_item.empty?
+        
         data_labels = []
-        data_items[0][0..-2].each_index do |i|
+        first_item[0..-2].each_index do |i|
           data_labels[i] = "attribute_#{i+1}"
         end
         data_labels[data_labels.length]="class_value"

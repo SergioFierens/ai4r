@@ -37,9 +37,11 @@ module Ai4r
       protected
 
       def merge_clusters(index_a, index_b, index_clusters)
-        # only store if no or above depth
+        # Store clusters when:
+        # 1. No depth limit specified (@depth.nil?), OR
+        # 2. We're within @depth steps of the final merge (stores the last @depth levels)
         if @depth.nil? or @merges_so_far > @total_merges - @depth
-          # store current clusters
+          # Store current clusters before performing the merge
           stored_distance_matrix = @distance_matrix.dup
           @cluster_tree << build_clusters_from_index_clusters(index_clusters)
           @distance_matrix = stored_distance_matrix

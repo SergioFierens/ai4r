@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Author::    Sergio Fierens
 # License::   MPL 1.1
 # Project::   ai4r
@@ -6,6 +8,9 @@
 # You can redistribute it and/or modify it under the terms of 
 # the Mozilla Public License version 1.1  as published by the 
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
+
+require 'set'
+
 module Ai4r
   
   # The GeneticAlgorithm module implements the GeneticSearch and Chromosome 
@@ -241,12 +246,11 @@ module Ai4r
         return nil if a.data.empty? || b.data.empty?
         
         data_size = @@costs[0].length
-        available = []
-        0.upto(data_size-1) { |n| available << n }
+        available = Set.new(0...data_size)
         token = a.data[0]
         spawn = [token]
         available.delete(token)
-        while available.length > 0 do 
+        while !available.empty? do 
           #Select next
           next_token = nil
           
@@ -270,7 +274,7 @@ module Ai4r
           
           # Random selection if no valid candidate found
           if next_token.nil?
-            next_token = available[rand(available.length)]
+            next_token = available.to_a.sample
           end
           
           #Add to spawn

@@ -59,7 +59,7 @@ module Ai4r
         y_mean = data.get_mean_or_mode[data.num_attributes - 1]
 
         # Choose best attribute
-        min_msq = Float::MAX
+        min_msq = Float::INFINITY
         attribute = nil
         chosen = -1
         chosen_slope = Float::NAN

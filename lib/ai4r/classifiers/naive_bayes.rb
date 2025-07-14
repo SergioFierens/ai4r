@@ -149,7 +149,7 @@ module Ai4r
 
       # sums an array up; returns a number of type Float
       def sum(array)
-        array.inject(0.0) { |b, i| b + i }
+        array.sum(0.0)
       end
 
       # returns the name of the class when the index is found
