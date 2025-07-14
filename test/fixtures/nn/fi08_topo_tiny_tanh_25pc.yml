@@ -1,0 +1,22 @@
+---
+topology:
+- 2
+- 2
+- 1
+activation: tanh
+weight_init: zero
+learning_rate: 5.0
+corruption_pct: 25
+dataset:
+- - 0
+  - 0
+  - 0
+- - 0
+  - 1
+  - 1
+- - 1
+  - 0
+  - 1
+- - 1
+  - 1
+  - 1
