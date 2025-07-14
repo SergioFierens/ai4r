@@ -37,6 +37,7 @@ require 'ai4r'
 * [IB1 Classifier](ib1.md) – instance-based nearest neighbour algorithm.
 * [Logistic Regression](logistic_regression.md) – binary classifier trained with gradient descent.
 * [Reinforcement Learning](reinforcement_learning.md) – Q-learning and policy iteration.
+* [Search Algorithms](search_algorithms.md) – breadth-first and depth-first search implementations.
 * [Transformer](transformer.md) – tiny encoder, decoder and seq2seq models.
 
 
