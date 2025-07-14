@@ -1,42 +1,39 @@
+# frozen_string_literal: true
+
 # Author::    Sergio Fierens
 # License::   MPL 1.1
 # Project::   ai4r
 # Url::       https://github.com/SergioFierens/ai4r
 #
-# You can redistribute it and/or modify it under the terms of 
-# the Mozilla Public License version 1.1  as published by the 
+# You can redistribute it and/or modify it under the terms of
+# the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'ai4r/classifiers/ib1'
 require 'minitest/autorun'
 
-
-
 include Ai4r::Classifiers
 include Ai4r::Data
 
 class IB1Test < Minitest::Test
-
-  @@data_labels = [ 'city', 'age', 'gender', 'marketing_target'  ]
+  @@data_labels = %w[city age gender marketing_target]
 
   @@data_items = [['New York',  25, 'M', 'Y'],
-              ['New York',  23, 'M', 'Y'],
-              ['New York',  18, 'M', 'Y'],
-              ['Chicago',   43, 'M', 'Y'],
-              ['New York',  34, 'F', 'N'],
-              ['Chicago',   33, 'F', 'Y'],
-              ['New York',  31, 'F', 'N'],
-              ['Chicago',   55, 'M', 'N'],
-              ['New York',  58, 'F', 'N'],
-              ['New York',  59, 'M', 'N'],
-              ['Chicago',   71, 'M', 'N'],
-              ['New York',  60, 'F', 'N'],
-              ['Chicago',   85, 'F', 'Y']
-            ]
-  
-  
+                  ['New York',  23, 'M', 'Y'],
+                  ['New York',  18, 'M', 'Y'],
+                  ['Chicago',   43, 'M', 'Y'],
+                  ['New York',  34, 'F', 'N'],
+                  ['Chicago',   33, 'F', 'Y'],
+                  ['New York',  31, 'F', 'N'],
+                  ['Chicago',   55, 'M', 'N'],
+                  ['New York',  58, 'F', 'N'],
+                  ['New York',  59, 'M', 'N'],
+                  ['Chicago',   71, 'M', 'N'],
+                  ['New York',  60, 'F', 'N'],
+                  ['Chicago',   85, 'F', 'Y']]
+
   def setup
-    @data_set = DataSet.new(:data_items => @@data_items, :data_labels => @@data_labels)
+    @data_set = DataSet.new(data_items: @@data_items, data_labels: @@data_labels)
     @classifier = IB1.new.build(@data_set)
   end
 
@@ -46,7 +43,7 @@ class IB1Test < Minitest::Test
     assert_nil c.distance_function
     assert_equal :first, c.tie_break
   end
-  
+
   def test_build
     assert_raises(ArgumentError) { IB1.new.build(DataSet.new) }
     assert @classifier.data_set
@@ -61,7 +58,7 @@ class IB1Test < Minitest::Test
   end
 
   def test_distance
-    item = ['Chicago',   55, 'M', 'N']
+    item = ['Chicago', 55, 'M', 'N']
     assert_equal(0, @classifier.send(:distance, ['Chicago', 55, 'M'], item))
     assert_equal(1, @classifier.send(:distance, [nil, 55, 'M'], item))
     assert_equal(1, @classifier.send(:distance, ['New York', 55, 'M'], item))
@@ -77,7 +74,6 @@ class IB1Test < Minitest::Test
     assert_equal('Y', classifier.eval(['Chicago',  85, 'F']))
   end
 
-
   def test_neighbors_for
     expected = [
       ['Chicago', 55, 'M', 'N'],
@@ -88,12 +84,12 @@ class IB1Test < Minitest::Test
   end
 
   def test_k_nearest
-    classifier = IB1.new.set_parameters(:k => 3).build(@data_set)
+    classifier = IB1.new.set_parameters(k: 3).build(@data_set)
     assert_equal('N', classifier.eval(['Chicago', 47, 'M']))
   end
 
   def test_tie_break
-    classifier = IB1.new.set_parameters(:k => 2, :tie_break => :first).build(@data_set)
+    classifier = IB1.new.set_parameters(k: 2, tie_break: :first).build(@data_set)
     assert_equal('Y', classifier.eval(['Chicago', 47, 'M']))
     classifier = IB1.new.set_parameters(k: 2, tie_break: :random, random_seed: 1).build(@data_set)
     assert_equal('N', classifier.eval(['Chicago', 47, 'M']))
@@ -101,10 +97,10 @@ class IB1Test < Minitest::Test
 
   def test_custom_distance
     dist = proc { |a, b| a.first == b.first ? 0 : 1 }
-    classifier = IB1.new.set_parameters(:distance_function => dist).build(@data_set)
+    classifier = IB1.new.set_parameters(distance_function: dist).build(@data_set)
     assert_equal('Y', classifier.eval(['Chicago', 55, 'M']))
-  end    
-   
+  end
+
   def test_add_instance
     items = @@data_items[0...7]
     data_set = DataSet.new(data_items: items, data_labels: @@data_labels)
@@ -133,7 +129,4 @@ class IB1Test < Minitest::Test
     classifier.update_with_instance(['Chicago', 90, 'M', 'N'], learn: true)
     assert_equal size + 1, classifier.data_set.data_items.length
   end
-
 end
-
-  

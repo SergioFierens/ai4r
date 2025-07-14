@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Author::    OpenAI ChatGPT
 # License::   MPL 1.1
 # Project::   ai4r
@@ -31,7 +32,7 @@ module Ai4r
         data_set.check_not_empty
         rng = @random_seed ? Random.new(@random_seed) : Random.new
         num_attributes = data_set.data_labels.length - 1
-        frac = @feature_fraction || Math.sqrt(num_attributes) / num_attributes
+        frac = @feature_fraction || (Math.sqrt(num_attributes) / num_attributes)
         feature_count = [1, (num_attributes * frac).round].max
         @sample_size ||= data_set.data_items.length
         @trees = []

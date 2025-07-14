@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # neural_network_test.rb
 #
@@ -14,30 +16,21 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 #
 
-
 require 'ai4r/neural_network/backpropagation'
 require 'minitest/autorun'
 require 'rspec/autorun'
 require 'rspec/parameterized'
-require_relative '../test_helper.rb'
-
-
+require_relative '../test_helper'
 
 module Ai4r
-
   module NeuralNetwork
-
-
     class BackpropagationTest < Minitest::Test
-
-
-
       def test_eval
-        #Test set 1
+        # Test set 1
         net = Backpropagation.new([3, 2])
         y = net.eval([3, 2, 3])
         assert y.length == 2
-        #Test set 2
+        # Test set 2
         net = Backpropagation.new([2, 4, 8, 10, 7])
         y = net.eval([2, 3])
         assert y.length == 7
@@ -55,17 +48,19 @@ module Ai4r
         assert_approximate_equality_of_nested_list net.last_changes, x.last_changes
         assert_approximate_equality_of_nested_list net.activation_nodes, x.activation_nodes
       end
+
       def test_activation_parameter
         net = Backpropagation.new([2, 1], :tanh)
         assert_equal [:tanh], net.activation
-        assert_in_delta Math.tanh(0.5), net.instance_variable_get(:@propagation_functions).first.call(0.5), 0.0001
+        assert_in_delta Math.tanh(0.5),
+                        net.instance_variable_get(:@propagation_functions).first.call(0.5), 0.0001
         net.set_parameters(activation: :relu)
         assert_equal [:relu], net.activation
         assert_equal 0.0, net.instance_variable_get(:@derivative_functions).first.call(-1.0)
       end
 
       def test_layer_specific_activation
-        net = Backpropagation.new([2, 2, 2], [:relu, :softmax])
+        net = Backpropagation.new([2, 2, 2], %i[relu softmax])
         net.disable_bias = true
         net.init_network
         net.weights = [
@@ -158,9 +153,8 @@ module Ai4r
             end
           end
         end
-        assert diff_found, "Batch training should update weights differently"
+        assert diff_found, 'Batch training should update weights differently'
       end
-
 
       def test_train_epochs_yields_epoch_and_loss
         net = Backpropagation.new([1, 1])
@@ -193,7 +187,7 @@ module Ai4r
         order.clear
         seed = 42
         net.train_epochs(inputs, outputs, epochs: 1, batch_size: 1,
-                         shuffle: true, random_seed: seed)
+                                          shuffle: true, random_seed: seed)
         expected = (0...4).to_a.shuffle(random: Random.new(seed))
         assert_equal expected, order
       end
@@ -210,7 +204,7 @@ module Ai4r
           0.0
         end
         net1.train_epochs(inputs, outputs, epochs: 1, batch_size: 1,
-                          shuffle: true, random_seed: seed)
+                                           shuffle: true, random_seed: seed)
 
         order2 = []
         net2 = Backpropagation.new([1, 1])
@@ -219,16 +213,12 @@ module Ai4r
           0.0
         end
         net2.train_epochs(inputs, outputs, epochs: 1, batch_size: 1,
-                          shuffle: true, random_seed: seed)
+                                           shuffle: true, random_seed: seed)
 
         assert_equal order1, order2
       end
-
-
     end
-
   end
-
 end
 
 RSpec.describe Ai4r::NeuralNetwork::Backpropagation do

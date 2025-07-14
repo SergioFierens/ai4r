@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Author::    Sergio Fierens (implementation)
 # License::   MPL 1.1
 # Project::   ai4r
@@ -14,7 +15,6 @@ require_relative '../clusterers/cluster_tree'
 
 module Ai4r
   module Clusterers
-
     # Implementation of an Agglomerative Hierarchical clusterer with
     # centroid linkage algorithm, aka unweighted pair group method
     # centroid (UPGMC) (Everitt et al., 2001 ; Jain and Dubes, 1988 ;
@@ -30,14 +30,13 @@ module Ai4r
     #                       (nj/(ni+nj))*D(cx, cj) -
     #                       (ni*nj/(ni+nj)^2)*D(ci, cj)
     class CentroidLinkage < SingleLinkage
-
       include ClusterTree
 
-    parameters_info distance_function:
-          "Custom implementation of distance function. " +
-          "It must be a closure receiving two data items and return the " +
-          "distance between them. By default, this algorithm uses " +
-          "euclidean distance of numeric attributes to the power of 2."
+      parameters_info distance_function:
+            'Custom implementation of distance function. ' \
+            'It must be a closure receiving two data items and return the ' \
+            'distance between them. By default, this algorithm uses ' \
+            'euclidean distance of numeric attributes to the power of 2.'
 
       # Build a new clusterer, using data examples found in data_set.
       # Items will be clustered in "number_of_clusters" different
@@ -74,11 +73,10 @@ module Ai4r
       def linkage_distance(cx, ci, cj)
         ni = @index_clusters[ci].length
         nj = @index_clusters[cj].length
-        ( ni * read_distance_matrix(cx, ci) +
-          nj * read_distance_matrix(cx, cj) -
-         1.0 * ni * nj * read_distance_matrix(ci, cj) / (ni+nj)) / (ni+nj)
+        ((ni * read_distance_matrix(cx, ci)) +
+          (nj * read_distance_matrix(cx, cj)) -
+         (1.0 * ni * nj * read_distance_matrix(ci, cj) / (ni + nj))) / (ni + nj)
       end
-
     end
   end
 end

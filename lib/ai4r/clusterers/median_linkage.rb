@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Author::    Sergio Fierens (implementation)
 # License::   MPL 1.1
 # Project::   ai4r
@@ -14,7 +15,6 @@ require_relative '../clusterers/cluster_tree'
 
 module Ai4r
   module Clusterers
-
     # Implementation of an Agglomerative Hierarchical clusterer with
     # median linkage algorithm, aka weighted pair group method centroid
     # or WPGMC (Everitt et al., 2001 ; Gower, 1967 ; Jain and Dubes, 1988 ).
@@ -27,14 +27,13 @@ module Ai4r
     #                       (1/2)*D(cx, cj) -
     #                       (1/4)*D(ci, cj)
     class MedianLinkage < SingleLinkage
-
       include ClusterTree
 
-    parameters_info distance_function:
-          "Custom implementation of distance function. " +
-          "It must be a closure receiving two data items and return the " +
-          "distance between them. By default, this algorithm uses " +
-          "euclidean distance of numeric attributes to the power of 2."
+      parameters_info distance_function:
+            'Custom implementation of distance function. ' \
+            'It must be a closure receiving two data items and return the ' \
+            'distance between them. By default, this algorithm uses ' \
+            'euclidean distance of numeric attributes to the power of 2.'
 
       # Build a new clusterer, using data examples found in data_set.
       # Items will be clustered in "number_of_clusters" different
@@ -69,11 +68,10 @@ module Ai4r
       # @param cj [Object]
       # @return [Object]
       def linkage_distance(cx, ci, cj)
-        ( 0.5  * read_distance_matrix(cx, ci) +
-          0.5  * read_distance_matrix(cx, cj) -
-          0.25 * read_distance_matrix(ci, cj))
+        ((0.5 * read_distance_matrix(cx, ci)) +
+          (0.5  * read_distance_matrix(cx, cj)) -
+          (0.25 * read_distance_matrix(ci, cj)))
       end
-
     end
   end
 end

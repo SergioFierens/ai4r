@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'ai4r/classifiers/random_forest'
 require 'ai4r/data/data_set'
 require 'minitest/autorun'
@@ -6,7 +8,7 @@ include Ai4r::Classifiers
 include Ai4r::Data
 
 class RandomForestTest < Minitest::Test
-  DATA_LABELS = ['city', 'age_range', 'gender', 'marketing_target']
+  DATA_LABELS = %w[city age_range gender marketing_target].freeze
   DATA_ITEMS = [
     ['New York', '<30', 'M', 'Y'],
     ['Chicago', '<30', 'M', 'Y'],
@@ -23,7 +25,7 @@ class RandomForestTest < Minitest::Test
     ['Chicago', '[50-80]', 'M', 'N'],
     ['New York', '[50-80]', 'F', 'N'],
     ['Chicago', '>80', 'F', 'Y']
-  ]
+  ].freeze
 
   def setup
     ds = DataSet.new(data_items: DATA_ITEMS, data_labels: DATA_LABELS)

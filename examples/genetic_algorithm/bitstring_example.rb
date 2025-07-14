@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Example using a custom chromosome to maximise ones in a bit string
 require_relative '../../lib/ai4r/genetic_algorithm/genetic_algorithm'
 
@@ -14,8 +16,8 @@ class BitStringChromosome < Ai4r::GeneticAlgorithm::ChromosomeBase
 
   def self.reproduce(a, b, crossover_rate = 0.4)
     point = rand(LENGTH)
-    data = a.data[0...point] + b.data[point..-1]
-    data = b.data[0...point] + a.data[point..-1] if rand < crossover_rate
+    data = a.data[0...point] + b.data[point..]
+    data = b.data[0...point] + a.data[point..] if rand < crossover_rate
     new(data)
   end
 

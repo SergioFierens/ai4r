@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'minitest/autorun'
 require 'ai4r/som/som'
 
@@ -16,7 +18,7 @@ module Ai4r
         before = @som.global_error(DATA)
         @som.train(DATA)
         after = @som.global_error(DATA)
-        assert after < before, "expected error to decrease"
+        assert after < before, 'expected error to decrease'
       end
     end
   end

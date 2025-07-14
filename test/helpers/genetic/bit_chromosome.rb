@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Ai4r
   module GeneticAlgorithm
     class BitChromosome < ChromosomeBase
@@ -16,7 +18,7 @@ module Ai4r
 
         cut = LENGTH / 2
         if crossover_rate >= 1 || rand < crossover_rate
-          new(a.data[0...cut] + b.data[cut..-1])
+          new(a.data[0...cut] + b.data[cut..])
         else
           new(a.data.dup)
         end

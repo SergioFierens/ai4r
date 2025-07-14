@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Author::    OpenAI Assistant
 # License::   MPL 1.1
 # Project::   ai4r
@@ -24,7 +25,6 @@ module Ai4r
     #   classifier = LogisticRegression.new.build(data)
     #   classifier.eval([0.3])
     class LogisticRegression < Classifier
-
       attr_reader :weights
 
       parameters_info lr: 'Learning rate for gradient descent.',
@@ -39,6 +39,7 @@ module Ai4r
       # Train the logistic regression classifier using the provided dataset.
       def build(data_set)
         raise 'Error instance must be passed' unless data_set.is_a?(Ai4r::Data::DataSet)
+
         data_set.check_not_empty
 
         x = data_set.data_items.map { |item| item[0...-1].map(&:to_f) }
@@ -49,13 +50,13 @@ module Ai4r
 
         @iterations.times do
           predictions = x.map do |row|
-            z = row.each_with_index.inject(@weights.last) { |s, (v, j)| s + v * @weights[j] }
+            z = row.each_with_index.inject(@weights.last) { |s, (v, j)| s + (v * @weights[j]) }
             1.0 / (1.0 + Math.exp(-z))
           end
           errors = predictions.zip(y).map { |p, label| p - label }
 
           n.times do |j|
-            grad = (0...m).inject(0.0) { |sum, i| sum + errors[i] * x[i][j] } / m
+            grad = (0...m).inject(0.0) { |sum, i| sum + (errors[i] * x[i][j]) } / m
             @weights[j] -= @lr * grad
           end
           bias_grad = errors.sum / m
@@ -68,7 +69,7 @@ module Ai4r
       def eval(data)
         raise 'Model not trained' unless @weights
 
-        z = data.each_with_index.inject(@weights.last) { |s, (v, j)| s + v.to_f * @weights[j] }
+        z = data.each_with_index.inject(@weights.last) { |s, (v, j)| s + (v.to_f * @weights[j]) }
         prob = 1.0 / (1.0 + Math.exp(-z))
         prob >= 0.5 ? 1 : 0
       end

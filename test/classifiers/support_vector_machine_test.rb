@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'ai4r/classifiers/support_vector_machine'
 require 'ai4r/data/data_set'
 require 'minitest/autorun'
@@ -7,7 +9,7 @@ include Ai4r::Data
 
 class SupportVectorMachineTest < Minitest::Test
   def setup
-    labels = %w(x1 x2 class)
+    labels = %w[x1 x2 class]
     items = [
       [1.0, 2.0, 'pos'],
       [2.0, 3.0, 'pos'],
@@ -27,7 +29,7 @@ class SupportVectorMachineTest < Minitest::Test
   end
 
   def test_invalid_class_count
-    labels = %w(x1 x2 class)
+    labels = %w[x1 x2 class]
     items = [[0, 0, 'a'], [1, 1, 'b'], [2, 2, 'c']]
     ds = DataSet.new(data_items: items, data_labels: labels)
     assert_raises(ArgumentError) { SupportVectorMachine.new.build(ds) }

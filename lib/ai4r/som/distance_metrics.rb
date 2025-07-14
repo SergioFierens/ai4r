@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Ai4r
   module Som
     # Helper module with distance metrics for node coordinates
@@ -13,7 +15,7 @@ module Ai4r
       # @param dy [Object]
       # @return [Object]
       def self.euclidean(dx, dy)
-        Math.sqrt(dx**2 + dy**2)
+        Math.sqrt((dx**2) + (dy**2))
       end
 
       # @param dx [Object]

@@ -17,7 +17,7 @@ module NumericAssertions
   def assert_monotonic_decrease(enum)
     last = enum.first
     enum.each do |val|
-      assert val <= last, "Sequence not monotonically decreasing"
+      assert val <= last, 'Sequence not monotonically decreasing'
       last = val
     end
   end

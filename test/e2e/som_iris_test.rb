@@ -1,11 +1,12 @@
 # frozen_string_literal: true
+
 require_relative '../test_helper'
 require 'ai4r/som/two_phase_layer'
 require 'ai4r/som/som'
 
 class SomIrisTest < Minitest::Test
   DATA = File.readlines('examples/som/som_data.rb').grep(/\[.*\]/).first(30).map do |line|
-    line.strip.sub(/[\[\],]/,'').split(',').map(&:to_f)
+    line.strip.sub(/[\[\],]/, '').split(',').map(&:to_f)
   end
 
   def test_purity
