@@ -10,10 +10,10 @@ require 'ai4r/search'
 
 start = 'A'
 goal_test = ->(n) { n == 'G' }
-neighbors = ->(n) { { 'G' => 1 } }
-heuristic = ->(n) { 0 }
+neighbor_fn = ->(n) { { 'G' => 1 } }
+heuristic_fn = ->(n) { 0 }
 
-path = Ai4r::Search::AStar.new(start, goal_test, neighbors, heuristic).search
+path = Ai4r::Search::AStar.new(start, goal_test, neighbor_fn, heuristic_fn).search
 ```
 
 The call returns the path as an array of nodes or `nil` when the goal cannot be

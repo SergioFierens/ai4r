@@ -13,11 +13,11 @@ module Ai4r
       # Create a new BFS searcher.
       #
       # goal_test::  lambda returning true for a goal node
-      # neighbors::  lambda returning adjacent nodes for a given node
-      # start::      optional starting node
-      def initialize(goal_test, neighbors, start = nil)
+      # neighbor_fn:: lambda returning adjacent nodes for a given node
+      # start::       optional starting node
+      def initialize(goal_test, neighbor_fn, start = nil)
         @goal_test = goal_test
-        @neighbors = neighbors
+        @neighbor_fn = neighbor_fn
         @start = start
       end
 
@@ -35,7 +35,7 @@ module Ai4r
         until queue.empty?
           node, path = queue.shift
           return path if @goal_test.call(node)
-          @neighbors.call(node).each do |n|
+          @neighbor_fn.call(node).each do |n|
             next if visited[n]
             visited[n] = true
             queue << [n, path + [n]]

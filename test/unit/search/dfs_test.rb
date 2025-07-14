@@ -15,8 +15,16 @@ class DFSTest < Minitest::Test
     }
   end
 
+  def goal_test(node)
+    node == :e
+  end
+
+  def neighbor_fn(node)
+    @graph[node]
+  end
+
   def test_explores_depth_first
-    dfs = DFS.new(->(n) { n == :e }, ->(n) { @graph[n] })
+    dfs = DFS.new(method(:goal_test), method(:neighbor_fn))
     path = dfs.search(:a)
     assert_equal %i[a c e], path
   end

@@ -13,17 +13,17 @@ module Ai4r
     # Basic UCT-style Monte Carlo Tree Search.
     #
     # This generic implementation expects four callbacks:
-    # - +actions.call(state)+ returns available actions for a state.
-    # - +transition.call(state, action)+ computes the next state.
-    # - +terminal.call(state)+ returns true if the state has no children.
-    # - +reward.call(state)+ yields a numeric payoff for terminal states.
+    # - +actions_fn.call(state)+ returns available actions for a state.
+    # - +transition_fn.call(state, action)+ computes the next state.
+    # - +terminal_fn.call(state)+ returns true if the state has no children.
+    # - +reward_fn.call(state)+ yields a numeric payoff for terminal states.
     #
     # Example:
     #   env = {
-    #     actions: ->(s) { s == :root ? %i[a b] : [] },
-    #     transition: ->(s, a) { a == :a ? :win : :lose },
-    #     terminal: ->(s) { %i[win lose].include?(s) },
-    #     reward: ->(s) { s == :win ? 1.0 : 0.0 }
+    #     actions_fn: ->(s) { s == :root ? %i[a b] : [] },
+    #     transition_fn: ->(s, a) { a == :a ? :win : :lose },
+    #     terminal_fn: ->(s) { %i[win lose].include?(s) },
+    #     reward_fn: ->(s) { s == :win ? 1.0 : 0.0 }
     #   }
     #   mcts = Ai4r::Search::MCTS.new(**env)
     #   best = mcts.search(:root, 50)
@@ -40,11 +40,16 @@ module Ai4r
       parameters_info exploration: 'UCT exploration constant'
 
       # Create a new search object.
-      def initialize(actions:, transition:, terminal:, reward:, exploration: Math.sqrt(2))
-        @actions = actions
-        @transition = transition
-        @terminal = terminal
-        @reward = reward
+      #
+      # actions_fn::     returns available actions for a state
+      # transition_fn::  computes the next state given a state and action
+      # terminal_fn::    predicate to detect terminal states
+      # reward_fn::      numeric payoff for terminal states
+      def initialize(actions_fn:, transition_fn:, terminal_fn:, reward_fn:, exploration: Math.sqrt(2))
+        @actions_fn = actions_fn
+        @transition_fn = transition_fn
+        @terminal_fn = terminal_fn
+        @reward_fn = reward_fn
         @exploration = exploration
       end
 
@@ -63,8 +68,8 @@ module Ai4r
       private
 
       def tree_policy(node)
-        until @terminal.call(node.state)
-          actions = @actions.call(node.state)
+        until @terminal_fn.call(node.state)
+          actions = @actions_fn.call(node.state)
           if node.children.length < actions.length
             return expand(node, actions)
           else
@@ -78,7 +83,7 @@ module Ai4r
         tried = node.children.map(&:action)
         untried = actions - tried
         action = untried.sample
-        state = @transition.call(node.state, action)
+        state = @transition_fn.call(node.state, action)
         child = Node.new(state, node, action)
         node.children << child
         child
@@ -94,11 +99,11 @@ module Ai4r
 
       def default_policy(state)
         current = state
-        until @terminal.call(current)
-          action = @actions.call(current).sample
-          current = @transition.call(current, action)
+        until @terminal_fn.call(current)
+          action = @actions_fn.call(current).sample
+          current = @transition_fn.call(current, action)
         end
-        @reward.call(current)
+        @reward_fn.call(current)
       end
 
       def backup(node, reward)
