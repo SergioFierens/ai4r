@@ -47,8 +47,11 @@ require_relative 'ai4r/genetic_algorithm/genetic_algorithm'
 require_relative 'ai4r/reinforcement/q_learning'
 require_relative 'ai4r/reinforcement/policy_iteration'
 
-# Search algorithms
+# Search
+require_relative 'ai4r/search/bfs'
+require_relative 'ai4r/search/dfs'
 require_relative 'ai4r/search/mcts'
+require_relative 'ai4r/search'
 
 # Hidden Markov Models
 require_relative 'ai4r/hmm/hidden_markov_model'
@@ -57,4 +60,4 @@ require_relative 'ai4r/hmm/hidden_markov_model'
 require_relative 'ai4r/som/som'
 
 # Search Algorithms
-require_relative 'ai4r/search'
+
