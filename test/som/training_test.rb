@@ -4,7 +4,7 @@ require 'ai4r/som/som'
 module Ai4r
   module Som
     class TrainingTest < Minitest::Test
-      DATA = [[0.0, 0.0], [1.0, 1.0]]
+      DATA = [[0.0, 0.0], [1.0, 1.0]].freeze
 
       def setup
         layer = TwoPhaseLayer.new(4, 0.5, 1, 1, 0.5, 0.2)

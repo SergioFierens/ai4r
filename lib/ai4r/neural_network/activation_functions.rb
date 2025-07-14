@@ -23,14 +23,14 @@ module Ai4r
           sum = exps.inject(:+)
           exps.map { |e| e / sum }
         end
-      }
+      }.freeze
 
       DERIVATIVES = {
         sigmoid: ->(y) { y * (1 - y) },
         tanh: ->(y) { 1.0 - y**2 },
         relu: ->(y) { y > 0 ? 1.0 : 0.0 },
         softmax: ->(y) { y * (1 - y) }
-      }
+      }.freeze
 
       module_function
     end

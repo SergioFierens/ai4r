@@ -6,7 +6,7 @@ class TestWard < Minitest::Test
   include Ai4r::Data
   include Ai4r::Clusterers
 
-  DATA = [[1,1],[1,2],[2,1],[2,2],[8,8],[8,9],[9,8],[9,9]]
+  DATA = [[1,1],[1,2],[2,1],[2,2],[8,8],[8,9],[9,8],[9,9]].freeze
 
   class WardMonitor < WardLinkage
     attr_reader :merge_count, :sse_history

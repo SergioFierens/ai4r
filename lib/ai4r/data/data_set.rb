@@ -32,7 +32,7 @@ module Ai4r
       # @return [Object]
       def self.normalized(data_set, method: :zscore)
         new_set = DataSet.new(
-          data_items: data_set.data_items.map { |row| row.dup },
+          data_items: data_set.data_items.map(&:dup),
           data_labels: data_set.data_labels.dup
         )
         new_set.normalize!(method)
@@ -85,9 +85,7 @@ module Ai4r
       # @param block [Object]
       # @return [Object]
       def open_csv_file(filepath, &block)
-        CSV.foreach(filepath) do |row|
-          block.call row
-        end
+        CSV.foreach(filepath, &block)
       end
 
       # Load data items from csv file. The first row is used as data labels.
@@ -327,8 +325,8 @@ module Ai4r
         raise ArgumentError, 'ratio must be between 0 and 1' unless ratio.positive? && ratio < 1
 
         pivot = (ratio * @data_items.length).round
-        first_items = @data_items[0...pivot].map { |row| row.dup }
-        second_items = @data_items[pivot..-1].map { |row| row.dup }
+        first_items = @data_items[0...pivot].map(&:dup)
+        second_items = @data_items[pivot..-1].map(&:dup)
 
         [
           DataSet.new(data_items: first_items, data_labels: @data_labels.dup),

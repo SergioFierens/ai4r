@@ -15,7 +15,7 @@
 require 'ai4r/classifiers/id3'
 require 'minitest/autorun'
 
-DATA_LABELS = [ 'city', 'age_range', 'gender', 'marketing_target'  ]
+DATA_LABELS = [ 'city', 'age_range', 'gender', 'marketing_target'  ].freeze
 
 DATA_ITEMS = [  ['New York',  '<30',      'M', 'Y'],
               ['Chicago',     '<30',      'M', 'Y'],
@@ -32,7 +32,7 @@ DATA_ITEMS = [  ['New York',  '<30',      'M', 'Y'],
               ['Chicago',     '[50-80]', 'M', 'N'],
               ['New York',  '[50-80]', 'F', 'N'],
               ['Chicago',     '>80',      'F', 'Y']
-            ]
+            ].freeze
 
 NEW_YORK_DATA_ITEMS = [
                       ["New York", "<30", "M", "Y"],
@@ -42,7 +42,7 @@ NEW_YORK_DATA_ITEMS = [
                       ["New York", "[30-50)", "F", "N"],
                       ["New York", "[50-80]", "F", "N"],
                       ["New York", "[50-80]", "M", "N"],
-                      ["New York", "[50-80]", "F", "N"]]
+                      ["New York", "[50-80]", "F", "N"]].freeze
 
 CHICAGO_DATA_ITEMS =  [
                       ["Chicago", "<30", "M", "Y"],
@@ -51,43 +51,43 @@ CHICAGO_DATA_ITEMS =  [
                       ["Chicago", "[30-50)", "F", "Y"],
                       ["Chicago", "[50-80]", "M", "N"],
                       ["Chicago", "[50-80]", "M", "N"],
-                      ["Chicago", ">80", "F", "Y"]]
+                      ["Chicago", ">80", "F", "Y"]].freeze
 
 YOUNG_DATA_ITEMS =  [
                     ["New York", "<30", "M", "Y"],
                     ["Chicago", "<30", "M", "Y"],
                     ["Chicago", "<30", "F", "Y"],
                     ["New York", "<30", "M", "Y"],
-                    ["New York", "<30", "M", "Y"]]
+                    ["New York", "<30", "M", "Y"]].freeze
 
 MIDDLE_AGE_DATA_ITEMS = [
                         ["Chicago", "[30-50)", "M", "Y"],
                         ["New York", "[30-50)", "F", "N"],
                         ["Chicago", "[30-50)", "F", "Y"],
-                        ["New York", "[30-50)", "F", "N"]]
+                        ["New York", "[30-50)", "F", "N"]].freeze
 
 OLD_DATA_ITEMS =  [
                   ["Chicago", "[50-80]", "M", "N"],
                   ["New York", "[50-80]", "F", "N"],
                   ["New York", "[50-80]", "M", "N"],
                   ["Chicago", "[50-80]", "M", "N"],
-                  ["New York", "[50-80]", "F", "N"]]
+                  ["New York", "[50-80]", "F", "N"]].freeze
 
 ELDER_DATA_ITEMS =  [
-                    ["Chicago", ">80", "F", "Y"]]
+                    ["Chicago", ">80", "F", "Y"]].freeze
 
-SPLIT_DATA_ITEMS_BY_CITY = [ NEW_YORK_DATA_ITEMS, CHICAGO_DATA_ITEMS ]
-SPLIT_DATA_ITEMS_BY_AGE = [ YOUNG_DATA_ITEMS, MIDDLE_AGE_DATA_ITEMS, OLD_DATA_ITEMS, ELDER_DATA_ITEMS ]
+SPLIT_DATA_ITEMS_BY_CITY = [ NEW_YORK_DATA_ITEMS, CHICAGO_DATA_ITEMS ].freeze
+SPLIT_DATA_ITEMS_BY_AGE = [ YOUNG_DATA_ITEMS, MIDDLE_AGE_DATA_ITEMS, OLD_DATA_ITEMS, ELDER_DATA_ITEMS ].freeze
 SPLIT_DATA_ITEMS_BY_CITY_HASH = {
                                 'New York' => NEW_YORK_DATA_ITEMS,
-                                'Chicago' => CHICAGO_DATA_ITEMS }
+                                'Chicago' => CHICAGO_DATA_ITEMS }.freeze
 SPLIT_DATA_ITEMS_BY_AGE_HASH = {
                               '<30' => YOUNG_DATA_ITEMS,
                               '[30-50)' => MIDDLE_AGE_DATA_ITEMS,
                               '[50-80]' => OLD_DATA_ITEMS,
-                              '>80' => ELDER_DATA_ITEMS }
+                              '>80' => ELDER_DATA_ITEMS }.freeze
 
-NUM_LABELS = ['age', 'marketing_target']
+NUM_LABELS = ['age', 'marketing_target'].freeze
 NUM_DATA_ITEMS = [
   [18, 'Y'],
   [22, 'Y'],
@@ -95,7 +95,7 @@ NUM_DATA_ITEMS = [
   [35, 'N'],
   [40, 'N'],
   [45, 'N']
-]
+].freeze
 EXPECTED_NUMERIC_RULES_STRING =
   "if age <= 31.0 then marketing_target='Y'\n"+
   "elsif age > 31.0 then marketing_target='N'\n"+

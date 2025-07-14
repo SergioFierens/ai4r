@@ -57,18 +57,12 @@ module Ai4r
       # @return [Object]
       def self.mode(data_set, attribute)
         index = data_set.get_index(attribute)
-        count = Hash.new(0)
-        max_count = 0
-        mode = nil
-        data_set.data_items.each do |data_item|
-          attr_value = data_item[index]
-          attr_count = (count[attr_value] += 1)
-          if attr_count > max_count
-            mode = attr_value
-            max_count = attr_count
-          end
-        end
-        return mode
+        data_set
+          .data_items
+          .map { |item| item[index] }
+          .tally
+          .max_by { _2 }
+          &.first
       end
 
       # Get the maximum value of an attribute in the data set

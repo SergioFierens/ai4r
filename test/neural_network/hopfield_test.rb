@@ -10,6 +10,8 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'minitest/autorun'
+require 'rspec/autorun'
+require 'rspec/parameterized'
 require 'ai4r/neural_network/hopfield'
 require 'ai4r/data/data_set'
 
@@ -58,37 +60,6 @@ module Ai4r
         assert_in_delta 0.5, net.threshold, 0.00001
       end
       
-      def test_run
-        net = Hopfield.new
-        net.train @data_set
-        pattern = [1,1,-1,1,1,1,-1,-1,1,1,-1,-1,1,1,1,-1]
-        100.times do
-          pattern = net.run(pattern)
-        end
-        assert_equal [1,1,-1,-1,1,1,-1,-1,1,1,-1,-1,1,1,-1,-1], pattern
-      end
-
-      def test_run_async_sequential
-        net = Hopfield.new
-        net.update_strategy = :async_sequential
-        net.train @data_set
-        pattern = [1,1,-1,1,1,1,-1,-1,1,1,-1,-1,1,1,1,-1]
-        100.times do
-          pattern = net.run(pattern)
-        end
-        assert_equal [1,1,-1,-1,1,1,-1,-1,1,1,-1,-1,1,1,-1,-1], pattern
-      end
-
-      def test_run_synchronous
-        net = Hopfield.new
-        net.update_strategy = :synchronous
-        net.train @data_set
-        pattern = [1,1,-1,1,1,1,-1,-1,1,1,-1,-1,1,1,1,-1]
-        100.times do
-          pattern = net.run(pattern)
-        end
-        assert_equal [1,1,-1,-1,1,1,-1,-1,1,1,-1,-1,1,1,-1,-1], pattern
-      end
       
       def test_eval
         net = Hopfield.new
@@ -176,6 +147,40 @@ module Ai4r
           scaled_net.send(:read_weight, 1,0), 0.00001
       end
 
+    end
+  end
+end
+
+RSpec.describe Ai4r::NeuralNetwork::Hopfield do
+  include RSpec::Parameterized::TableSyntax
+
+  let(:data_set) do
+    Ai4r::Data::DataSet.new(data_items: [
+      [1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1],
+      [-1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1],
+      [-1, -1, -1, -1, -1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1]
+    ])
+  end
+
+  where(:strategy) do
+    [
+      [nil],
+      [:async_sequential],
+      [:synchronous]
+    ]
+  end
+
+  with_them do
+    it 'converges to the stored pattern regardless of strategy' do
+      net = Ai4r::NeuralNetwork::Hopfield.new
+      net.update_strategy = strategy if strategy
+      net.train(data_set)
+
+      pattern = [1,1,-1,1,1,1,-1,-1,1,1,-1,-1,1,1,1,-1]
+      100.times { pattern = net.run(pattern) }
+
+      expect(pattern).to eq([1,1,-1,-1,1,1,-1,-1,1,1,-1,-1,1,1,-1,-1])
     end
   end
 end
