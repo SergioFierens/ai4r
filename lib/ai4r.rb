@@ -41,6 +41,11 @@ require_relative "ai4r/classifiers/feature_engineering"
 # Neural networks
 require_relative "ai4r/neural_network/backpropagation"
 require_relative "ai4r/neural_network/hopfield"
+# Educational Neural Network Framework
+require_relative "ai4r/neural_network/educational_neural_network"
+require_relative "ai4r/neural_network/educational_examples"
+require_relative "ai4r/neural_network/activation_functions"
+require_relative "ai4r/neural_network/learning_algorithms"
 # Genetic Algorithms
 require_relative "ai4r/genetic_algorithm/genetic_algorithm"
 require_relative "ai4r/genetic_algorithm/operators"
@@ -51,4 +56,6 @@ require_relative "ai4r/genetic_algorithm/modern_genetic_search"
 require_relative "ai4r/genetic_algorithm/examples"
 # SOM
 require_relative "ai4r/som/som"
+# Educational SOM Framework
+require_relative "ai4r/som/educational_som"
 
