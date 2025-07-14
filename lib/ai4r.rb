@@ -33,6 +33,12 @@ require_relative "ai4r/neural_network/backpropagation"
 require_relative "ai4r/neural_network/hopfield"
 # Genetic Algorithms
 require_relative "ai4r/genetic_algorithm/genetic_algorithm"
+require_relative "ai4r/genetic_algorithm/operators"
+require_relative "ai4r/genetic_algorithm/chromosome"
+require_relative "ai4r/genetic_algorithm/configuration"
+require_relative "ai4r/genetic_algorithm/evolution_monitor"
+require_relative "ai4r/genetic_algorithm/modern_genetic_search"
+require_relative "ai4r/genetic_algorithm/examples"
 # SOM
 require_relative "ai4r/som/som"
 

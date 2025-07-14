@@ -10,6 +10,12 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'set'
+require_relative 'modern_genetic_search'
+require_relative 'operators'
+require_relative 'chromosome'
+require_relative 'configuration'
+require_relative 'evolution_monitor'
+require_relative 'examples'
 
 module Ai4r
   
