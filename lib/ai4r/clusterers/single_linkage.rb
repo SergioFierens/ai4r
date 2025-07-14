@@ -78,13 +78,13 @@ module Ai4r
       # @param clusters [Object]
       # @return [Object]
       def draw_map(clusters)
-        map = Array.new(11) {Array.new(11, 0)}
+        map = Array.new(11) { Array.new(11, 0) }
         clusters.each_index do |i|
           clusters[i].data_items.each do |point|
-            map[point.first][point.last]=(i+1)
+            map[point.first][point.last] = (i + 1)
           end
         end
-        map.each { |row| puts row.inspect}
+        map
       end
 
       # Classifies the given data item, returning the cluster index it belongs
