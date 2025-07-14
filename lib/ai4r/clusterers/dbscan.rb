@@ -64,7 +64,7 @@ module Ai4r
         self
       end
 
-      # This algorithms does not allow classification of new data items
+      # This algorithm does not allow classification of new data items
       # once it has been built. Rebuild the cluster including your data element.
       # @param _data_item [Object]
       # @return [Object]
@@ -98,11 +98,11 @@ module Ai4r
         neighbors
       end
 
-      # If the neighborhood is dense enough, it propagate.
-      # At least if items doesn't belong to an already
+      # If the neighborhood is dense enough, it propagates.
+      # This applies only to items that don't belong to an
       # existing cluster.
-      # If one point one of the neighbor is classified as
-      # noise it is set as part of the current cluster.
+      # If any neighbor was previously classified as noise,
+      # it becomes part of the current cluster.
       def extend_cluster(neighbors, current_cluster)
         neighbors.each do |data_index|
           if @labels[data_index] == :noise
