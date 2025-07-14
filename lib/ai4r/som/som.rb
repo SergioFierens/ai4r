@@ -176,9 +176,9 @@ module Ai4r
       # @return [Object]
       def initiate_map
         seed = @init_weight_options[:random_seed]
-        srand(seed) unless seed.nil?
-        @nodes.each_with_index do |node, i|
-          options = @init_weight_options.merge(distance_metric: @layer.distance_metric)
+        rng = seed.nil? ? Random.new : Random.new(seed)
+        @nodes.each_index do |i|
+          options = @init_weight_options.merge(distance_metric: @layer.distance_metric, rng: rng)
           @nodes[i] = Node.create i, @rows, @columns, @dimension, options
         end
       end

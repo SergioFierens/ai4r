@@ -73,17 +73,20 @@ module Ai4r
       #   deprecated :seed key is supported for backward compatibility.
       # @return [Object]
       def instantiate_weight(dimensions, options = {})
-        opts = { range: 0..1, random_seed: nil, seed: nil }.merge(options)
-        seed = opts[:random_seed] || opts[:seed]
-        srand(seed) unless seed.nil?
+        opts = { range: 0..1, random_seed: nil, seed: nil, rng: nil }.merge(options)
+        rng = opts[:rng]
+        unless rng
+          seed = opts[:random_seed] || opts[:seed]
+          rng = seed.nil? ? Random.new : Random.new(seed)
+        end
         range = opts[:range] || (0..1)
         min = range.first.to_f
         max = range.last.to_f
         span = max - min
         @weights = Array.new dimensions
         @instantiated_weight = Array.new dimensions
-        @weights.each_with_index do |weight, index|
-          @weights[index] = min + rand * span
+        @weights.each_index do |index|
+          @weights[index] = min + rng.rand * span
           @instantiated_weight[index] = @weights[index]
         end
       end

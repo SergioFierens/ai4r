@@ -57,8 +57,7 @@ class ZeroRTest < Test::Unit::TestCase
     data_set = DataSet.new(:data_items => data)
     classifier = ZeroR.new.set_parameters({:tie_strategy => :first}).build(data_set)
     assert_equal('Y', classifier.class_value)
-    srand(1)
-    classifier = ZeroR.new.set_parameters({:tie_strategy => :random}).build(data_set)
+    classifier = ZeroR.new.set_parameters(tie_strategy: :random, random_seed: 1).build(data_set)
     assert_equal('N', classifier.class_value)
   end
   
