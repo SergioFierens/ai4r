@@ -1,11 +1,12 @@
 # frozen_string_literal: true
+
 # Author::    Sergio Fierens
 # License::   MPL 1.1
 # Project::   ai4r
 # Url::       https://github.com/SergioFierens/ai4r
 #
-# You can redistribute it and/or modify it under the terms of 
-# the Mozilla Public License version 1.1  as published by the 
+# You can redistribute it and/or modify it under the terms of
+# the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require_relative '../data/parameterizable'
@@ -13,46 +14,44 @@ require_relative 'activation_functions'
 require_relative 'weight_initializations'
 
 module Ai4r
-  
-  # Artificial Neural Networks are mathematical or computational models based on 
-  # biological neural networks. 
-  # 
+  # Artificial Neural Networks are mathematical or computational models based on
+  # biological neural networks.
+  #
   # More about neural networks:
-  # 
+  #
   # * http://en.wikipedia.org/wiki/Artificial_neural_network
   #
   module NeuralNetwork
-    
     # = Introduction
-    # 
+    #
     # This is an implementation of a multilayer perceptron network, using
     # the backpropagation algorithm for learning.
-    # 
-    # Backpropagation is a supervised learning technique (described 
-    # by Paul Werbos in 1974, and further developed by David E. 
+    #
+    # Backpropagation is a supervised learning technique (described
+    # by Paul Werbos in 1974, and further developed by David E.
     # Rumelhart, Geoffrey E. Hinton and Ronald J. Williams in 1986)
-    # 
+    #
     # = Features
-    # 
+    #
     # * Support for any network architecture (number of layers and neurons)
     # * Configurable propagation function
-    # * Optional usage of bias 
+    # * Optional usage of bias
     # * Configurable momentum
     # * Configurable learning rate
     # * Configurable initial weight function
     # * 100% ruby code, no external dependency
-    # 
+    #
     # = Parameters
-    # 
+    #
     # Use class method get_parameters_info to obtain details on the algorithm
     # parameters. Use set_parameters to set values for this parameters.
-    # 
+    #
     # * :disable_bias => If true, the algorithm will not use bias nodes.
     #   False by default.
-    # * :initial_weight_function => f(n, i, j) must return the initial 
-    #   weight for the conection between the node i in layer n, and node j in 
+    # * :initial_weight_function => f(n, i, j) must return the initial
+    #   weight for the conection between the node i in layer n, and node j in
     #   layer n+1. By default a random number in [-1, 1) range.
-    # * :propagation_function => By default: 
+    # * :propagation_function => By default:
     #   lambda { |x| 1/(1+Math.exp(-1*(x))) }
     # * :derivative_propagation_function => Derivative of the propagation
     #   function, based on propagation function output.
@@ -63,53 +62,52 @@ module Ai4r
     # * :learning_rate => By default 0.25
     # * :momentum => By default 0.1. Set this parameter to 0 to disable
     #   momentum
-    # 
+    #
     # = How to use it
-    # 
+    #
     #   # Create the network with 4 inputs, 1 hidden layer with 3 neurons,
     #   # and 2 outputs
-    #   net = Ai4r::NeuralNetwork::Backpropagation.new([4, 3, 2])  
+    #   net = Ai4r::NeuralNetwork::Backpropagation.new([4, 3, 2])
     #
-    #   # Train the network 
+    #   # Train the network
     #   1000.times do |i|
     #     net.train(example[i], result[i])
     #   end
-    #   
+    #
     #   # Use it: Evaluate data with the trained network
-    #   net.eval([12, 48, 12, 25])  
-    #     =>  [0.86, 0.01]   
-    #     
+    #   net.eval([12, 48, 12, 25])
+    #     =>  [0.86, 0.01]
+    #
     # More about multilayer perceptron neural networks and backpropagation:
-    # 
+    #
     # * http://en.wikipedia.org/wiki/Backpropagation
     # * http://en.wikipedia.org/wiki/Multilayer_perceptron
-    # 
+    #
     # = About the project
     # Author::    Sergio Fierens
     # License::   MPL 1.1
     # Url::       https://github.com/SergioFierens/ai4r
     class Backpropagation
-      
       include Ai4r::Data::Parameterizable
-      
-      parameters_info disable_bias: "If true, the algorithm will not use "+
-            "bias nodes. False by default.",
-        initial_weight_function: "f(n, i, j) must return the initial "+
-            "weight for the conection between the node i in layer n, and "+
-            "node j in layer n+1. By default a random number in [-1, 1) range.",
-        weight_init: "Built-in weight initialization strategy (:uniform, :xavier or :he). Default: :uniform",
-        propagation_function: "By default: " +
-            "lambda { |x| 1/(1+Math.exp(-1*(x))) }",
-        derivative_propagation_function: "Derivative of the propagation "+
-            "function, based on propagation function output. By default: " +
-            "lambda { |y| y*(1-y) }, where y=propagation_function(x)",
-        activation: "Activation function per layer. Provide a symbol or an array of symbols (:sigmoid, :tanh, :relu or :softmax). Default: :sigmoid",
-        learning_rate: "By default 0.25",
-        momentum: "By default 0.1. Set this parameter to 0 to disable "+
-            "momentum.",
-        loss_function: "Loss function used when training (:mse or " +
-            ":cross_entropy). Default: :mse"
-          
+
+      parameters_info disable_bias: 'If true, the algorithm will not use ' \
+                                    'bias nodes. False by default.',
+                      initial_weight_function: 'f(n, i, j) must return the initial ' \
+                                               'weight for the conection between the node i in layer n, and ' \
+                                               'node j in layer n+1. By default a random number in [-1, 1) range.',
+                      weight_init: 'Built-in weight initialization strategy (:uniform, :xavier or :he). Default: :uniform',
+                      propagation_function: 'By default: ' \
+                                            'lambda { |x| 1/(1+Math.exp(-1*(x))) }',
+                      derivative_propagation_function: 'Derivative of the propagation ' \
+                                                       'function, based on propagation function output. By default: ' \
+                                                       'lambda { |y| y*(1-y) }, where y=propagation_function(x)',
+                      activation: 'Activation function per layer. Provide a symbol or an array of symbols (:sigmoid, :tanh, :relu or :softmax). Default: :sigmoid',
+                      learning_rate: 'By default 0.25',
+                      momentum: 'By default 0.1. Set this parameter to 0 to disable ' \
+                                'momentum.',
+                      loss_function: 'Loss function used when training (:mse or ' \
+                                     ':cross_entropy). Default: :mse'
+
       attr_accessor :structure, :weights, :activation_nodes, :last_changes
 
       # When the activation parameter changes, update internal lambdas for each
@@ -154,38 +152,38 @@ module Ai4r
       def weight_init=(symbol)
         @weight_init = symbol
         @initial_weight_function = case symbol
-          when :xavier
-            Ai4r::NeuralNetwork::WeightInitializations.xavier(@structure)
-          when :he
-            Ai4r::NeuralNetwork::WeightInitializations.he(@structure)
-          else
-            Ai4r::NeuralNetwork::WeightInitializations.uniform
-          end
+                                   when :xavier
+                                     Ai4r::NeuralNetwork::WeightInitializations.xavier(@structure)
+                                   when :he
+                                     Ai4r::NeuralNetwork::WeightInitializations.he(@structure)
+                                   else
+                                     Ai4r::NeuralNetwork::WeightInitializations.uniform
+                                   end
       end
 
       # @param symbol [Object]
       # @return [Object]
       def loss_function=(symbol)
         @loss_function = symbol
-        if symbol == :cross_entropy && !@activation_overridden && !@custom_propagation
-          @set_by_loss = true
-          self.activation = :softmax
-          @activation_overridden = false
-        end
+        return unless symbol == :cross_entropy && !@activation_overridden && !@custom_propagation
+
+        @set_by_loss = true
+        self.activation = :softmax
+        @activation_overridden = false
       end
-      
+
       # Creates a new network specifying the its architecture.
       # E.g.
-      #    
+      #
       #   net = Backpropagation.new([4, 3, 2])  # 4 inputs
-      #                                         # 1 hidden layer with 3 neurons, 
-      #                                         # 2 outputs    
+      #                                         # 1 hidden layer with 3 neurons,
+      #                                         # 2 outputs
       #   net = Backpropagation.new([2, 3, 3, 4])   # 2 inputs
-      #                                             # 2 hidden layer with 3 neurons each, 
-      #                                             # 4 outputs    
+      #                                             # 2 hidden layer with 3 neurons each,
+      #                                             # 4 outputs
       #   net = Backpropagation.new([2, 1])   # 2 inputs
       #                                       # No hidden layer
-      #                                       # 1 output      
+      #                                       # 1 output
       # @param network_structure [Object]
       # @param activation [Object]
       # @param weight_init [Object]
@@ -203,17 +201,18 @@ module Ai4r
         @momentum = 0.1
         @loss_function = :mse
       end
+
       #     net.eval([25, 32.3, 12.8, 1.5])
       #         # =>  [0.83, 0.03]
       # @param input_values [Object]
       # @return [Object]
       def eval(input_values)
         check_input_dimension(input_values.length)
-        init_network if !@weights
+        init_network unless @weights
         feedforward(input_values)
-        return @activation_nodes.last.clone
+        @activation_nodes.last.clone
       end
-      
+
       # Evaluates the input and returns most active node
       # E.g.
       #     net = Backpropagation.new([4, 3, 2])
@@ -223,14 +222,14 @@ module Ai4r
       # @param input_values [Object]
       # @return [Object]
       def eval_result(input_values)
-        result = eval(input_values)
+        result = self.eval(input_values)
         result.index(result.max)
       end
-      
+
       # This method trains the network using the backpropagation algorithm.
-      # 
+      #
       # input: Networks input
-      # 
+      #
       # output: Expected output for the given input.
       #
       # This method returns the training loss according to +loss_function+.
@@ -238,7 +237,7 @@ module Ai4r
       # @param outputs [Object]
       # @return [Object]
       def train(inputs, outputs)
-        eval(inputs)
+        self.eval(inputs)
         backpropagate(outputs)
         calculate_loss(outputs, @activation_nodes.last)
       end
@@ -248,7 +247,11 @@ module Ai4r
       # @param batch_outputs [Object]
       # @return [Object]
       def train_batch(batch_inputs, batch_outputs)
-        raise ArgumentError, "Inputs and outputs size mismatch" if batch_inputs.length != batch_outputs.length
+        if batch_inputs.length != batch_outputs.length
+          raise ArgumentError,
+                'Inputs and outputs size mismatch'
+        end
+
         batch_size = batch_inputs.length
         init_network unless @weights
 
@@ -262,7 +265,7 @@ module Ai4r
         batch_inputs.each_index do |idx|
           inputs = batch_inputs[idx]
           outputs = batch_outputs[idx]
-          eval(inputs)
+          self.eval(inputs)
           calculate_output_deltas(outputs)
           calculate_internal_deltas
 
@@ -282,7 +285,7 @@ module Ai4r
           @weights[n].each_index do |i|
             @weights[n][i].each_index do |j|
               avg_change = accumulated_changes[n][i][j] / batch_size.to_f
-              @weights[n][i][j] += learning_rate * avg_change + momentum * @last_changes[n][i][j]
+              @weights[n][i][j] += (learning_rate * avg_change) + (momentum * @last_changes[n][i][j])
               @last_changes[n][i][j] = avg_change
             end
           end
@@ -299,7 +302,11 @@ module Ai4r
       def train_epochs(data_inputs, data_outputs, epochs:, batch_size: 1,
                        early_stopping_patience: nil, min_delta: 0.0,
                        shuffle: true, random_seed: nil, &block)
-        raise ArgumentError, "Inputs and outputs size mismatch" if data_inputs.length != data_outputs.length
+        if data_inputs.length != data_outputs.length
+          raise ArgumentError,
+                'Inputs and outputs size mismatch'
+        end
+
         losses = []
         best_loss = Float::INFINITY
         patience = early_stopping_patience
@@ -328,7 +335,7 @@ module Ai4r
             if block.arity >= 3
               correct = 0
               data_inputs.each_index do |i|
-                output = eval(data_inputs[i])
+                output = self.eval(data_inputs[i])
                 predicted = output.index(output.max)
                 expected = data_outputs[i].index(data_outputs[i].max)
                 correct += 1 if predicted == expected
@@ -351,15 +358,15 @@ module Ai4r
         end
         losses
       end
-      
-      # Initialize (or reset) activation nodes and weights, with the 
+
+      # Initialize (or reset) activation nodes and weights, with the
       # provided net structure and parameters.
       # @return [Object]
       def init_network
         init_activation_nodes
         init_weights
         init_last_changes
-        return self
+        self
       end
 
       protected
@@ -400,7 +407,6 @@ module Ai4r
         self.activation = @activation || :sigmoid
       end
 
-
       # Propagate error backwards
       # @param expected_output_values [Object]
       # @return [Object]
@@ -410,7 +416,7 @@ module Ai4r
         calculate_internal_deltas
         update_weights
       end
-      
+
       # Propagate values forward
       # @param input_values [Object]
       # @return [Object]
@@ -435,45 +441,45 @@ module Ai4r
           end
         end
       end
-      
+
       # Initialize neurons structure.
       # @return [Object]
       def init_activation_nodes
-        @activation_nodes = Array.new(@structure.length) do |n| 
+        @activation_nodes = Array.new(@structure.length) do |n|
           Array.new(@structure[n], 1.0)
         end
-        if not disable_bias
-          @activation_nodes[0...-1].each {|layer| layer << 1.0 }
-        end
+        return if disable_bias
+
+        @activation_nodes[0...-1].each { |layer| layer << 1.0 }
       end
-      
+
       # Initialize the weight arrays using function specified with the
       # initial_weight_function parameter
       # @return [Object]
       def init_weights
-        @weights = Array.new(@structure.length-1) do |i|
+        @weights = Array.new(@structure.length - 1) do |i|
           nodes_origin = @activation_nodes[i].length
-          nodes_target = @structure[i+1]
+          nodes_target = @structure[i + 1]
           Array.new(nodes_origin) do |j|
-            Array.new(nodes_target) do |k| 
+            Array.new(nodes_target) do |k|
               @initial_weight_function.call(i, j, k)
             end
           end
         end
-      end   
+      end
 
-      # Momentum usage need to know how much a weight changed in the 
-      # previous training. This method initialize the @last_changes 
+      # Momentum usage need to know how much a weight changed in the
+      # previous training. This method initialize the @last_changes
       # structure with 0 values.
       # @return [Object]
       def init_last_changes
         @last_changes = Array.new(@weights.length) do |w|
-          Array.new(@weights[w].length) do |i| 
+          Array.new(@weights[w].length) do |i|
             Array.new(@weights[w][i].length, 0.0)
           end
         end
       end
-      
+
       # Calculate deltas for output layer
       # @param expected_values [Object]
       # @return [Object]
@@ -486,21 +492,21 @@ module Ai4r
             output_deltas << (output_values[output_index] - expected_values[output_index])
           else
             error = expected_values[output_index] - output_values[output_index]
-            output_deltas << func.call(output_values[output_index]) * error
+            output_deltas << (func.call(output_values[output_index]) * error)
           end
         end
         @deltas = [output_deltas]
       end
-      
+
       # Calculate deltas for hidden layers
       # @return [Object]
       def calculate_internal_deltas
         prev_deltas = @deltas.last
-        (@activation_nodes.length-2).downto(1) do |layer_index|
+        (@activation_nodes.length - 2).downto(1) do |layer_index|
           layer_deltas = []
           @activation_nodes[layer_index].each_index do |j|
             error = 0.0
-            @structure[layer_index+1].times do |k|
+            @structure[layer_index + 1].times do |k|
               error += prev_deltas[k] * @weights[layer_index][j][k]
             end
             func = @derivative_functions[layer_index - 1]
@@ -510,22 +516,22 @@ module Ai4r
           @deltas.unshift(layer_deltas)
         end
       end
-      
+
       # Update weights after @deltas have been calculated.
       # @return [Object]
       def update_weights
-        (@weights.length-1).downto(0) do |n|
-          @weights[n].each_index do |i|  
-            @weights[n][i].each_index do |j|  
-              change = @deltas[n][j]*@activation_nodes[n][i]
-              @weights[n][i][j] += ( learning_rate * change + 
-                  momentum * @last_changes[n][i][j])
+        (@weights.length - 1).downto(0) do |n|
+          @weights[n].each_index do |i|
+            @weights[n][i].each_index do |j|
+              change = @deltas[n][j] * @activation_nodes[n][i]
+              @weights[n][i][j] += ((learning_rate * change) +
+                  (momentum * @last_changes[n][i][j]))
               @last_changes[n][i][j] = change
             end
           end
         end
       end
-      
+
       # Calculate quadratic error for an expected output value
       # Error = 0.5 * sum( (expected_value[i] - output_value[i])**2 )
       # @param expected_output [Object]
@@ -535,9 +541,9 @@ module Ai4r
         error = 0.0
         expected_output.each_index do |output_index|
           error +=
-            0.5*(output_values[output_index]-expected_output[output_index])**2
+            0.5 * ((output_values[output_index] - expected_output[output_index])**2)
         end
-        return error
+        error
       end
 
       # Calculate loss for expected/actual vectors according to selected
@@ -558,7 +564,7 @@ module Ai4r
           else
             expected.each_index do |i|
               p = [[actual[i], epsilon].max, 1 - epsilon].min
-              loss -= expected[i] * Math.log(p) + (1 - expected[i]) * Math.log(1 - p)
+              loss -= (expected[i] * Math.log(p)) + ((1 - expected[i]) * Math.log(1 - p))
             end
           end
           loss
@@ -566,28 +572,31 @@ module Ai4r
           # Mean squared error
           error = 0.0
           expected.each_index do |i|
-            error += 0.5 * (expected[i] - actual[i])**2
+            error += 0.5 * ((expected[i] - actual[i])**2)
           end
           error
         end
       end
-      
+
       # @param inputs [Object]
       # @return [Object]
       def check_input_dimension(inputs)
-        raise ArgumentError, "Wrong number of inputs. " +
-          "Expected: #{@structure.first}, " +
-          "received: #{inputs}." if inputs!=@structure.first
+        return unless inputs != @structure.first
+
+        raise ArgumentError, 'Wrong number of inputs. ' \
+                             "Expected: #{@structure.first}, " \
+                             "received: #{inputs}."
       end
 
       # @param outputs [Object]
       # @return [Object]
       def check_output_dimension(outputs)
-        raise ArgumentError, "Wrong number of outputs. " +
-          "Expected: #{@structure.last}, " +
-          "received: #{outputs}." if outputs!=@structure.last
+        return unless outputs != @structure.last
+
+        raise ArgumentError, 'Wrong number of outputs. ' \
+                             "Expected: #{@structure.last}, " \
+                             "received: #{outputs}."
       end
-      
     end
   end
 end

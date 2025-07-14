@@ -41,4 +41,3 @@ require_relative 'ai4r/genetic_algorithm/genetic_algorithm'
 
 # SOM
 require_relative 'ai4r/som/som'
-

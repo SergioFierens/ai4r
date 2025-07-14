@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Author::    Thomas Kern
 # License::   MPL 1.1
 # Project::   ai4r
@@ -11,9 +12,7 @@
 require_relative '../data/parameterizable'
 
 module Ai4r
-
   module Som
-
     # responsible for the implementation of the algorithm's decays
     # currently has methods for the decay of the radius, influence and learning rate.
     # Has only one phase, which ends after the number of epochs is passed by the Som-class.
@@ -25,13 +24,12 @@ module Ai4r
     # * epochs => number of epochs the algorithm runs, has to be an integer. By default it is set to 100
     # * learning_rate => sets the initial learning rate
     class Layer
-
       include Ai4r::Data::Parameterizable
 
-      parameters_info nodes: "number of nodes, has to be equal to the som",
-                      epochs: "number of epochs the algorithm has to run",
-                      radius: "sets the initial neighborhoud radius",
-                      distance_metric: "metric used to compute node distance"
+      parameters_info nodes: 'number of nodes, has to be equal to the som',
+                      epochs: 'number of epochs the algorithm has to run',
+                      radius: 'sets the initial neighborhoud radius',
+                      distance_metric: 'metric used to compute node distance'
 
       # @param nodes [Object]
       # @param radius [Object]
@@ -40,8 +38,8 @@ module Ai4r
       # @param options [Object]
       # @return [Object]
       def initialize(nodes, radius, epochs = 100, learning_rate = 0.7, options = {})
-        raise("Too few nodes") if nodes < 3
-        
+        raise('Too few nodes') if nodes < 3
+
         @nodes = nodes
         @epochs = epochs
         @radius = radius
@@ -58,7 +56,7 @@ module Ai4r
       # @param radius [Object]
       # @return [Object]
       def influence_decay(distance, radius)
-        Math.exp(- (distance.to_f**2 / 2.0 / radius.to_f**2))
+        Math.exp(- ((distance.to_f**2) / 2.0 / (radius.to_f**2)))
       end
 
       # calculates the radius decay for the current epoch. Uses @time_for_epoch
@@ -66,7 +64,7 @@ module Ai4r
       # @param epoch [Object]
       # @return [Object]
       def radius_decay(epoch)
-        (@radius * ( 1 - epoch/ @time_for_epoch)).round
+        (@radius * (1 - (epoch / @time_for_epoch))).round
       end
 
       # calculates the learning rate decay. uses @time_for_epoch again and same rule applies:
@@ -74,11 +72,8 @@ module Ai4r
       # @param epoch [Object]
       # @return [Object]
       def learning_rate_decay(epoch)
-        @initial_learning_rate * ( 1 - epoch / @time_for_epoch)
+        @initial_learning_rate * (1 - (epoch / @time_for_epoch))
       end
-
     end
-
   end
-
 end

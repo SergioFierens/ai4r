@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # neural_network_test.rb
 #
@@ -12,7 +14,6 @@
 # the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 #
-
 
 require 'simplecov'
 SimpleCov.start do
@@ -29,8 +30,7 @@ require_relative 'helpers/fixture_loader'
 Minitest::Test.include NumericAssertions
 Minitest::Test.include FixtureLoader
 
-
-def assert_approximate_equality(expected, real, delta=0.01)
+def assert_approximate_equality(expected, real, delta = 0.01)
   if expected.respond_to?(:abs) && real.respond_to?(:abs)
     assert (expected - real).abs < delta, "<#{expected}> and <#{real}> are not equal enough"
   else
@@ -38,9 +38,11 @@ def assert_approximate_equality(expected, real, delta=0.01)
   end
 end
 
-def assert_approximate_equality_of_nested_list(expected, real, delta=0.01)
+def assert_approximate_equality_of_nested_list(expected, real, delta = 0.01)
   if expected.respond_to?(:each) && real.respond_to?(:each) && expected.length == real.length
-    [expected, real].transpose.each{ |ex, re| assert_approximate_equality_of_nested_list(ex, re, delta) }
+    [expected, real].transpose.each do |ex, re|
+      assert_approximate_equality_of_nested_list(ex, re, delta)
+    end
   else
     assert_approximate_equality expected, real
   end
@@ -48,7 +50,7 @@ end
 
 def assert_equality_of_nested_list(expected, real)
   if expected.respond_to?(:each) && real.respond_to?(:each) && expected.length == real.length
-    [expected, real].transpose.each{ |ex, re| assert_equality_of_nested_list(ex, re) }
+    [expected, real].transpose.each { |ex, re| assert_equality_of_nested_list(ex, re) }
   else
     assert_equal expected, real
   end

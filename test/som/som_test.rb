@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This is a unit test file for the SOM algorithm implemented
 # in ai4r
 #
@@ -16,11 +18,8 @@ require 'tmpdir'
 require_relative '../test_helper'
 
 module Ai4r
-
   module Som
-
     class SomTest < Minitest::Test
-
       def setup
         @som = Som.new 2, 5, 5, Layer.new(3, 3)
         @som.initiate_map
@@ -34,17 +33,15 @@ module Ai4r
 
           node.weights.each do |weight|
             assert weight < 1
-            assert weight > 0
+            assert weight.positive?
           end
-
         end
       end
-
 
       # bmu
 
       def test_find_bmu
-        bmu = @som.find_bmu([0.5, 0.5])
+        @som.find_bmu([0.5, 0.5])
       end
 
       def test_adjust_nodes
@@ -95,7 +92,7 @@ module Ai4r
         end
 
         other = Som.new 2, 2, 2, Layer.new(3, 3)
-        other.set_parameters({ :init_weight_options => { range: -1..0, random_seed: 1 } })
+        other.set_parameters({ init_weight_options: { range: -1..0, random_seed: 1 } })
         other.initiate_map
         assert_equal som.nodes.map(&:weights), other.nodes.map(&:weights)
       end
@@ -142,14 +139,15 @@ module Ai4r
         layer = Layer.new(3, 3, 100, 0.7, distance_metric: :euclidean)
         som = Som.new 1, 2, 2, layer
         som.initiate_map
-        assert_approximate_equality Math.sqrt(2), som.get_node(0,0).distance_to_node(som.get_node(1,1))
+        assert_approximate_equality Math.sqrt(2),
+                                    som.get_node(0, 0).distance_to_node(som.get_node(1, 1))
       end
 
       def test_manhattan_distance_metric
         layer = Layer.new(3, 3, 100, 0.7, distance_metric: :manhattan)
         som = Som.new 1, 2, 2, layer
         som.initiate_map
-        assert_equal 2, som.get_node(0,0).distance_to_node(som.get_node(1,1))
+        assert_equal 2, som.get_node(0, 0).distance_to_node(som.get_node(1, 1))
       end
 
       private
@@ -157,9 +155,6 @@ module Ai4r
       def distancer(x1, y1, x2, y2)
         @som.get_node(x1, y1).distance_to_node(@som.get_node(x2, y2))
       end
-
     end
-
   end
-
 end

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Author::    Sergio Fierens
 # License::   MPL 1.1
 # Project::   ai4r
@@ -10,11 +11,9 @@
 
 module Ai4r
   module Data
-
     # This module provides some basic statistics functions to operate on
     # data set attributes.
     module Statistics
-
       # Get the sample mean
       # @param data_set [Object]
       # @param attribute [Object]
@@ -23,7 +22,7 @@ module Ai4r
         index = data_set.get_index(attribute)
         sum = 0.0
         data_set.data_items.each { |item| sum += item[index] }
-        return sum / data_set.data_items.length
+        sum / data_set.data_items.length
       end
 
       # Get the variance.
@@ -36,8 +35,8 @@ module Ai4r
         index = data_set.get_index(attribute)
         mean ||= mean(data_set, attribute)
         sum = 0.0
-        data_set.data_items.each { |item| sum += (item[index]-mean)**2 }
-        return sum / (data_set.data_items.length-1)
+        data_set.data_items.each { |item| sum += (item[index] - mean)**2 }
+        sum / (data_set.data_items.length - 1)
       end
 
       # Get the standard deviation.
@@ -68,7 +67,7 @@ module Ai4r
             max_count = attr_count
           end
         end
-        return mode
+        mode
       end
 
       # Get the maximum value of an attribute in the data set
@@ -78,7 +77,7 @@ module Ai4r
       def self.max(data_set, attribute)
         index = data_set.get_index(attribute)
         item = data_set.data_items.max_by { |item| item[index] }
-        return (item) ? item[index] : (-Float::INFINITY)
+        item ? item[index] : -Float::INFINITY
       end
 
       # Get the minimum value of an attribute in the data set
@@ -88,9 +87,8 @@ module Ai4r
       def self.min(data_set, attribute)
         index = data_set.get_index(attribute)
         item = data_set.data_items.min_by { |item| item[index] }
-        return (item) ? item[index] : (Float::INFINITY)
+        item ? item[index] : Float::INFINITY
       end
-
     end
   end
 end

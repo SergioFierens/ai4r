@@ -39,6 +39,7 @@ class ZeroRTest < Minitest::Test
     assert_equal('Y', classifier.eval(@@data_examples.last) )
   end
   
+  # rubocop:disable Security/Eval
   def test_get_rules
     classifier = ZeroR.new.build(DataSet.new(:data_items => @@data_examples,
       :data_labels => @@data_labels))
@@ -46,6 +47,7 @@ class ZeroRTest < Minitest::Test
     eval(classifier.get_rules)
     assert_equal('Y', marketing_target)
   end
+  # rubocop:enable Security/Eval
 
   def test_default_class
     classifier = ZeroR.new.set_parameters({:default_class => 'N'}).build(DataSet.new)

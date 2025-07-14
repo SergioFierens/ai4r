@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Author::    Thomas Kern
 # License::   MPL 1.1
 # Project::   ai4r
@@ -13,9 +14,7 @@ require_relative 'layer'
 require_relative 'distance_metrics'
 
 module Ai4r
-
   module Som
-
     # this class is used for the individual node and will be (nodes * nodes)-time instantiated
     #
     # = attributes
@@ -26,18 +25,17 @@ module Ai4r
     # * weights => values of the current weights are stored in an array of dimension 'dimensions'.
     # Weights are of type float
     # * instantiated_weight => the values of the first instantiation of weights. these values are
-    # never changed 
+    # never changed
 
     class Node
-
       include Ai4r::Data::Parameterizable
 
-      parameters_info weights: "holds the current weight",
-                      instantiated_weight: "holds the very first weight",
-                      x: "holds the row ID of the unit in the map",
-                      y: "holds the column ID of the unit in the map",
-                      id: "id of the node",
-                      distance_metric: "metric used to compute node distance"
+      parameters_info weights: 'holds the current weight',
+                      instantiated_weight: 'holds the very first weight',
+                      x: 'holds the row ID of the unit in the map',
+                      y: 'holds the column ID of the unit in the map',
+                      id: 'id of the node',
+                      distance_metric: 'metric used to compute node distance'
 
       # creates an instance of Node and instantiates the weights
       #
@@ -54,7 +52,7 @@ module Ai4r
       # @option options [Integer] :random_seed Seed for Ruby's RNG. The
       #   deprecated :seed key is supported for backward compatibility.
       # @return [Object]
-      def self.create(id, rows, columns, dimensions, options = {})
+      def self.create(id, _rows, columns, dimensions, options = {})
         n = Node.new
         n.id = id
         n.distance_metric = options[:distance_metric] || :chebyshev
@@ -86,7 +84,7 @@ module Ai4r
         @weights = Array.new dimensions
         @instantiated_weight = Array.new dimensions
         @weights.each_index do |index|
-          @weights[index] = min + rng.rand * span
+          @weights[index] = min + (rng.rand * span)
           @instantiated_weight[index] = @weights[index]
         end
       end
@@ -99,7 +97,7 @@ module Ai4r
       def distance_to_input(input)
         dist = 0
         input.each_with_index do |i, index|
-          dist += (i - @weights[index]) ** 2
+          dist += (i - @weights[index])**2
         end
 
         Math.sqrt(dist)
@@ -116,14 +114,11 @@ module Ai4r
       # @param node [Object]
       # @return [Object]
       def distance_to_node(node)
-        dx = self.x - node.x
-        dy = self.y - node.y
-        metric = (@distance_metric || :chebyshev)
+        dx = x - node.x
+        dy = y - node.y
+        metric = @distance_metric || :chebyshev
         DistanceMetrics.send(metric, dx, dy)
       end
-
     end
-
   end
-
 end

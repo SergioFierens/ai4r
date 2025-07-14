@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../lib/ai4r/classifiers/prism'
 require_relative '../../lib/ai4r/data/data_set'
 
@@ -10,7 +12,7 @@ items = [
   [30, 60, 'Y'],
   [35, 65, 'Y']
 ]
-labels = ['temperature', 'humidity', 'play']
+labels = %w[temperature humidity play]
 
 data = DataSet.new(data_items: items, data_labels: labels)
 
@@ -20,4 +22,3 @@ puts 'Rules:'
 puts classifier.get_rules
 puts
 puts "Prediction for [30, 70]: #{classifier.eval([30, 70])}"
-

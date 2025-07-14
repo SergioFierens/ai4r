@@ -44,6 +44,7 @@ class PrismTest < Minitest::Test
     end
   end
   
+  # rubocop:disable Security/Eval, Lint/UselessAssignment
   def test_get_rules
     classifier = Prism.new.build(DataSet.new(:data_items => @@data_examples, 
         :data_labels => @@data_labels))
@@ -62,9 +63,10 @@ class PrismTest < Minitest::Test
     eval(classifier.get_rules) 
     assert_equal("N", marketing_target)
     age_range = '[50-80]'
-    eval(classifier.get_rules) 
-    assert_equal("N", marketing_target)   
+    eval(classifier.get_rules)
+    assert_equal("N", marketing_target)
   end
+  # rubocop:enable Security/Eval, Lint/UselessAssignment
     
   def test_matches_conditions
     classifier = Prism.new.build(DataSet.new(:data_labels => @@data_labels,
@@ -137,7 +139,7 @@ class PrismTest < Minitest::Test
     classifier = Prism.new.build(DataSet.new(
       :data_items => @@numeric_examples,
       :data_labels => @@numeric_labels))
-    assert classifier.rules.any? { |r| r[:conditions].values.any? { |v| v.is_a?(Range) } }
+    assert(classifier.rules.any? { |r| r[:conditions].values.any? { |v| v.is_a?(Range) } })
     assert_equal('Y', classifier.eval(['New York', 20, 'M']))
     assert_equal('N', classifier.eval(['Chicago', 55, 'M']))
   end

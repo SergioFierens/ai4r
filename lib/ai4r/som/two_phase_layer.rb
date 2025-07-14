@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Author::    Thomas Kern
 # License::   MPL 1.1
 # Project::   ai4r
@@ -12,9 +13,7 @@ require_relative '../data/parameterizable'
 require_relative 'layer'
 
 module Ai4r
-
   module Som
-
     # responsible for the implementation of the algorithm's decays, extends the class Layer.
     # currently overrides the radius and learning rate decay methods of Layer.
     # Has two phases, phase one has a decay in both the learning rate and the radius. The number
@@ -33,11 +32,10 @@ module Ai4r
     # * phase_two_learning_rate  => sets the learning rate for phase two
 
     class TwoPhaseLayer < Layer
-
       # @return [Object]
       def initialize(nodes, learning_rate = 0.9, phase_one = 150, phase_two = 100,
-              phase_one_learning_rate = 0.1, phase_two_learning_rate = 0, options = {})
-        super nodes, nodes, phase_one + phase_two, learning_rate, options
+                     phase_one_learning_rate = 0.1, phase_two_learning_rate = 0, options = {})
+        super(nodes, nodes, phase_one + phase_two, learning_rate, options)
         @phase_one = phase_one
         @phase_two = phase_two
         @lr = @initial_learning_rate
@@ -45,8 +43,8 @@ module Ai4r
         @phase_one_learning_rate = phase_one_learning_rate
         @phase_two_learning_rate = phase_two_learning_rate
 
-        @radius_reduction = @phase_one / (nodes/2.0 - 1) + 1
-        @delta_lr = (@lr - @phase_one_learning_rate)/ @phase_one
+        @radius_reduction = (@phase_one / ((nodes / 2.0) - 1)) + 1
+        @delta_lr = (@lr - @phase_one_learning_rate) / @phase_one
         @radius = (nodes / 2.0).to_i
       end
 
@@ -56,15 +54,10 @@ module Ai4r
       # @param epoch [Object]
       # @return [Object]
       def radius_decay(epoch)
-        if epoch > @phase_one
-          return 1
-        else
-          if (epoch % @radius_reduction) == 0
-            @radius -= 1
-          end
-          @radius
-        end
+        return 1 if epoch > @phase_one
 
+        @radius -= 1 if (epoch % @radius_reduction).zero?
+        @radius
       end
 
       # two different values will be returned, depending on the phase
@@ -78,19 +71,15 @@ module Ai4r
       def learning_rate_decay(epoch)
         if epoch < @phase_one
           @lr -= @delta_lr
-          return @lr
+          @lr
         elsif epoch == @phase_one
           @lr = @phase_one_learning_rate
-          @delta_lr = (@phase_one_learning_rate - @phase_two_learning_rate)/@phase_two
-          return @lr
+          @delta_lr = (@phase_one_learning_rate - @phase_two_learning_rate) / @phase_two
+          @lr
         else
           @lr -= @delta_lr
         end
       end
-
     end
-
   end
-
 end
-

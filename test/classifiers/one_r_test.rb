@@ -40,23 +40,25 @@ class OneRTest < Minitest::Test
     assert_equal("N", classifier.eval(['Chicago',  55,      'M']))
   end
   
+  # rubocop:disable Security/Eval
   def test_get_rules
     classifier = OneR.new.build(DataSet.new(:data_items => @@data_examples,
       :data_labels => @@data_labels))
     marketing_target = nil
-    age = nil
+    age = nil # rubocop:disable Lint/UselessAssignment
     eval(classifier.get_rules)
     assert_nil(marketing_target)
-    age = 20
+    age = 20 # rubocop:disable Lint/UselessAssignment
     eval(classifier.get_rules)
     assert_equal("Y", marketing_target)
-    age = 35
+    age = 35 # rubocop:disable Lint/UselessAssignment
     eval(classifier.get_rules)
     assert_equal("N", marketing_target)
-    age = 55
+    age = 55 # rubocop:disable Lint/UselessAssignment
     eval(classifier.get_rules)
     assert_equal("N", marketing_target)
   end
+  # rubocop:enable Security/Eval
 
   def test_selected_attribute
     classifier = OneR.new.set_parameters({:selected_attribute => 0}).build(
