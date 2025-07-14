@@ -31,13 +31,13 @@ class TestDiana < Minitest::Test
   end
 
   def test_dendrogram_height
-    ds = DataSet.new(data_items: DATA)
+    ds = DataSet.new(data_items: DATA.map(&:dup))
     d = CountingDiana.new.build(ds, DATA.length)
     assert_equal DATA.length - 1, d.splits
   end
 
   def test_first_cluster_has_all_points
-    ds = DataSet.new(data_items: DATA)
+    ds = DataSet.new(data_items: DATA.map(&:dup))
     d = CountingDiana.new.build(ds, 3)
     assert_equal DATA, d.first_cluster
   end

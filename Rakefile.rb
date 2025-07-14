@@ -17,6 +17,14 @@ namespace :test do
     script = 'ARGV.each { |f| require File.expand_path(f) }'
     ruby '-Ilib:test', '-e', script, *files
   end
+
+  desc 'Run clusterer unit and integration tests'
+  task :cl do
+    files = Dir['test/unit/clusterers/test_*.rb'] +
+            Dir['test/integration/test_cl_flow.rb']
+    script = 'ARGV.each { |f| require File.expand_path(f) }'
+    ruby '-Ilib:test', '-e', script, *files
+  end
 end
 
 task :e2e do
