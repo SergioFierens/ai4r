@@ -10,6 +10,11 @@ When creating a Transformer you pick one of three modes:
 * **Decoder** – predicts a sequence given its own past tokens. It uses causal attention so each position only attends to previous ones. Great for toy language models or decode‑only classifiers.
 * **Seq2seq** – combines an encoder and a decoder. The decoder attends both to its own history and to the encoder output, mimicking translation or summarization setups.
 
+The initializer exposes additional hyperparameters such as `embed_dim`,
+`num_heads` and `ff_dim`. You can also pass a `seed` to make the random weight
+initialization deterministic, which helps when demonstrating the same example
+multiple times.
+
 ## Usage
 
 ```ruby
@@ -42,6 +47,7 @@ seq2seq_output = seq2seq.eval([1, 2, 3], [4, 5])
 
 * **Decode‑only text classification** – [`examples/transformer/decode_classifier_example.rb`](../examples/transformer/decode_classifier_example.rb) shows how to build embeddings with a decoder and train logistic regression on top.
 * **Encoder sentiment demo** – [`examples/neural_network/transformer_text_classification.rb`](../examples/neural_network/transformer_text_classification.rb) uses the encoder to create sentence vectors for a tiny sentiment dataset.
+* **Deterministic initialization** – [`examples/transformer/deterministic_example.rb`](../examples/transformer/deterministic_example.rb) illustrates how the `seed` parameter yields repeatable results.
 
 Transformers build on the same fundamentals as the backpropagation network described in [Neural Networks](neural_networks.md), but attention lets them capture long-range dependencies. Even this toy implementation highlights how sequences can be processed as a whole rather than token by token.
 

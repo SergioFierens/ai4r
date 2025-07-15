@@ -23,14 +23,17 @@ module Ai4r
                       ff_dim: 'Feed-forward hidden size.',
                       vocab_size: 'Vocabulary size.',
                       max_len: 'Maximum sequence length.',
-                      architecture: 'Architecture (:encoder, :decoder or :seq2seq).'
+                      architecture: 'Architecture (:encoder, :decoder or :seq2seq).',
+                      seed: 'Deterministic random seed for initialization.'
 
       attr_accessor :embed_dim, :num_heads, :ff_dim, :vocab_size, :max_len,
-                    :architecture
+                    :architecture, :seed
 
       # Initialize the Transformer with given hyperparameters.
       def initialize(vocab_size:, max_len:, embed_dim: 8, num_heads: 2, ff_dim: 32,
-                     architecture: :encoder)
+                     architecture: :encoder, seed: nil)
+        @seed = seed
+        @rng = seed ? Random.new(seed) : Random.new
         @vocab_size = vocab_size
         @max_len = max_len
         @embed_dim = embed_dim
@@ -92,19 +95,19 @@ module Ai4r
       end
 
       def init_weights
-        @token_embeddings = Array.new(@vocab_size) { Array.new(@embed_dim) { rand * 2 - 1 } }
+        @token_embeddings = Array.new(@vocab_size) { Array.new(@embed_dim) { @rng.rand * 2 - 1 } }
         hd = head_dim
         @heads = Array.new(@num_heads) do
           {
-            q: Array.new(@embed_dim) { Array.new(hd) { rand * 2 - 1 } },
-            k: Array.new(@embed_dim) { Array.new(hd) { rand * 2 - 1 } },
-            v: Array.new(@embed_dim) { Array.new(hd) { rand * 2 - 1 } }
+            q: Array.new(@embed_dim) { Array.new(hd) { @rng.rand * 2 - 1 } },
+            k: Array.new(@embed_dim) { Array.new(hd) { @rng.rand * 2 - 1 } },
+            v: Array.new(@embed_dim) { Array.new(hd) { @rng.rand * 2 - 1 } }
           }
         end
-        @wo = Array.new(@num_heads * hd) { Array.new(@embed_dim) { rand * 2 - 1 } }
-        @w1 = Array.new(@embed_dim) { Array.new(@ff_dim) { rand * 2 - 1 } }
+        @wo = Array.new(@num_heads * hd) { Array.new(@embed_dim) { @rng.rand * 2 - 1 } }
+        @w1 = Array.new(@embed_dim) { Array.new(@ff_dim) { @rng.rand * 2 - 1 } }
         @b1 = Array.new(@ff_dim, 0.0)
-        @w2 = Array.new(@ff_dim) { Array.new(@embed_dim) { rand * 2 - 1 } }
+        @w2 = Array.new(@ff_dim) { Array.new(@embed_dim) { @rng.rand * 2 - 1 } }
         @b2 = Array.new(@embed_dim, 0.0)
       end
 

@@ -2,6 +2,8 @@
 # frozen_string_literal: true
 
 require 'csv'
+$LOAD_PATH.unshift File.expand_path('../../lib', __dir__)
+require 'ai4r'
 require_relative '../common/cli'
 require_relative 'runners/kmeans_runner'
 require_relative 'runners/single_linkage_runner'
