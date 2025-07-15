@@ -8,6 +8,8 @@ This project is an educational Ruby library for machine learning and artificial 
 
 Maintained over the years mostly for the joy of it (and perhaps a misplaced sense of duty to Ruby), this open-source library supports developers, students and educators who want to understand machine learning in Ruby without drowning in complexity.
 
+Over time the project has stretched beyond classical techniques. A bite-sized Transformer implementation now ships with AI4R, so you can tinker with encoder-only, decoder-only and seq2seq modes—the modern building blocks of today's language models—without leaving the comfort of Ruby.
+
 ## AI4R
 
 AI4R is distributed as a gem and works with modern versions of Ruby.
