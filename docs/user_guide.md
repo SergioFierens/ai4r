@@ -50,6 +50,7 @@ AI4R includes several algorithms:
 * [Genetic Algorithms](genetic_algorithms.md) for optimization
 * Clustering with [KMeans](kmeans.md) and [Hierarchical Clustering](hierarchical_clustering.md)
 * Baseline classifiers like OneR, ZeroR and [Hyperpipes](hyperpipes.md)
+* [Reinforcement Learning](reinforcement_learning.md) for Q-learning and policy iteration
 
 See the documents in this directory for detailed tutorials on each topic.
 
