@@ -69,9 +69,9 @@ module Ai4r
       # @param ci [Object]
       # @param cj [Object]
       # @return [Object]
-      def linkage_distance(cx, ci, cj)
-        (read_distance_matrix(cx, ci) +
-          read_distance_matrix(cx, cj)) / 2
+      def linkage_distance(cluster_x, cluster_i, cluster_j)
+        (read_distance_matrix(cluster_x, cluster_i) +
+          read_distance_matrix(cluster_x, cluster_j)) / 2
       end
     end
   end

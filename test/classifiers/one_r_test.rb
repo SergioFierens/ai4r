@@ -44,16 +44,16 @@ class OneRTest < Minitest::Test
     classifier = OneR.new.build(DataSet.new(data_items: @@data_examples,
                                             data_labels: @@data_labels))
     marketing_target = nil
-    age = nil
+    age = nil # rubocop:disable Lint/UselessAssignment
     eval(classifier.get_rules)
     assert_nil(marketing_target)
-    age = 20
+    age = 20 # rubocop:disable Lint/UselessAssignment
     eval(classifier.get_rules)
     assert_equal('Y', marketing_target)
-    age = 35
+    age = 35 # rubocop:disable Lint/UselessAssignment
     eval(classifier.get_rules)
     assert_equal('N', marketing_target)
-    age = 55
+    age = 55 # rubocop:disable Lint/UselessAssignment
     eval(classifier.get_rules)
     assert_equal('N', marketing_target)
   end

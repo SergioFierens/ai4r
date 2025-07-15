@@ -67,13 +67,13 @@ module Ai4r
       # @param ci [Object]
       # @param cj [Object]
       # @return [Object]
-      def linkage_distance(cx, ci, cj)
-        ni = @index_clusters[ci].length
-        nj = @index_clusters[cj].length
-        nx = @index_clusters[cx].length
-        ((((1.0 * (ni + nx) * read_distance_matrix(cx, ci)) +
-            (1.0 * (nj + nx) * read_distance_matrix(cx, cj))) / (ni + nj + nx)) -
-            (1.0 * nx * read_distance_matrix(ci, cj) / ((ni + nj)**2)))
+      def linkage_distance(cluster_x, cluster_i, cluster_j)
+        ni = @index_clusters[cluster_i].length
+        nj = @index_clusters[cluster_j].length
+        nx = @index_clusters[cluster_x].length
+        ((((1.0 * (ni + nx) * read_distance_matrix(cluster_x, cluster_i)) +
+            (1.0 * (nj + nx) * read_distance_matrix(cluster_x, cluster_j))) / (ni + nj + nx)) -
+            (1.0 * nx * read_distance_matrix(cluster_i, cluster_j) / ((ni + nj)**2)))
       end
     end
   end

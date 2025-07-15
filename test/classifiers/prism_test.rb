@@ -46,21 +46,21 @@ class PrismTest < Minitest::Test
     classifier = Ai4r::Classifiers::Prism.new.build(DataSet.new(data_items: @@data_examples,
                                                                 data_labels: @@data_labels))
     marketing_target = nil
-    age_range = nil
-    city = 'Chicago'
+    age_range = nil # rubocop:disable Lint/UselessAssignment
+    city = 'Chicago' # rubocop:disable Lint/UselessAssignment
     eval(classifier.get_rules)
-    age_range = '<30'
-    eval(classifier.get_rules)
-    assert_equal('Y', marketing_target)
+    age_range = '<30' # rubocop:disable Lint/UselessAssignment
     eval(classifier.get_rules)
     assert_equal('Y', marketing_target)
     eval(classifier.get_rules)
     assert_equal('Y', marketing_target)
-    age_range = '[30-50)'
-    city = 'New York'
+    eval(classifier.get_rules)
+    assert_equal('Y', marketing_target)
+    age_range = '[30-50)' # rubocop:disable Lint/UselessAssignment
+    city = 'New York' # rubocop:disable Lint/UselessAssignment
     eval(classifier.get_rules)
     assert_equal('N', marketing_target)
-    age_range = '[50-80]'
+    age_range = '[50-80]' # rubocop:disable Lint/UselessAssignment
     eval(classifier.get_rules)
     assert_equal('N', marketing_target)
   end

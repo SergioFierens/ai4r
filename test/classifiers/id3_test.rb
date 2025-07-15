@@ -239,12 +239,12 @@ class ID3Test < Minitest::Test
     id3 = ID3.new.build(DataSet.new(data_items: DATA_ITEMS, data_labels: DATA_LABELS))
     # if age_range='<30' then marketing_target='Y'
     marketing_target = nil
-    age_range = '<30'
+    age_range = '<30' # rubocop:disable Lint/UselessAssignment
     eval id3.get_rules
     assert_equal 'Y', marketing_target
     # if age_range='[30-50)' and city='New York' then marketing_target='N'
-    age_range = '[30-50)'
-    city = 'New York'
+    age_range = '[30-50)' # rubocop:disable Lint/UselessAssignment
+    city = 'New York' # rubocop:disable Lint/UselessAssignment
     eval id3.get_rules
     assert_equal 'N', marketing_target
   end
