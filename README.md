@@ -190,6 +190,9 @@ ruby bench/classifier/compare_all.rb
 - Reinforcement intro: `docs/reinforcement_learning.md`
 - Search walkthrough: `docs/search_algorithms.md`
 - HMM basics: `docs/hmm.md`
+- [Beginner Track](docs/learning_path_1_beginner.md) – Build core intuition for AI—step by step, in Ruby.
+- [Intermediate Track](docs/learning_path_2_intermediate.md) – From "I can run a model" to "I can tune, extend, and build smart stuff that actually works."
+- [Advanced Track](docs/learning_path_3_advanced.md) – Time to stop following recipes and start writing your own.
 
 Every module is short, readable and ready to hack.
 
