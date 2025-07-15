@@ -22,3 +22,5 @@ reg.set_parameters(learning_rate: 0.5, iterations: 2000).build(set)
 
 reg.eval([1, 0]) # => 1
 ```
+
+See `examples/classifiers/logistic_regression_example.rb` for a runnable script.

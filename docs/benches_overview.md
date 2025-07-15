@@ -6,6 +6,10 @@ problems. Shared helpers such as the CLI, metrics and table reporter reside in
 `bench/common`.
 
 Currently the search lab is available under `bench/search`.
+Labs exist for search algorithms, clustering algorithms and now classifiers:
+- `bench/search`
+- `bench/clusterer`
+- `bench/classifier`
 
 ## Adding a new lab
 

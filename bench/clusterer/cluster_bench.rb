@@ -1,14 +1,18 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require 'csv'
-$LOAD_PATH.unshift File.expand_path('../../lib', __dir__)
+$LOAD_PATH.unshift(File.expand_path('../../lib', __dir__))
 require 'ai4r'
+require 'csv'
+
+$LOAD_PATH.unshift(File.expand_path('../../lib', __dir__))
+
 require_relative '../common/cli'
 require_relative 'runners/kmeans_runner'
 require_relative 'runners/single_linkage_runner'
 require_relative 'runners/average_linkage_runner'
 require_relative 'runners/diana_runner'
+require_relative 'runners/dbscan_runner'
 
 module Bench
   module Clusterer
@@ -18,7 +22,8 @@ module Bench
       'kmeans' => Runners::KmeansRunner,
       'single_linkage' => Runners::SingleLinkageRunner,
       'average_linkage' => Runners::AverageLinkageRunner,
-      'diana' => Runners::DianaRunner
+      'diana' => Runners::DianaRunner,
+      'dbscan' => Runners::DbscanRunner
     }.freeze
 
     module_function
@@ -36,6 +41,8 @@ module Bench
       cli = Bench::Common::CLI.new('clusterer', RUNNERS.keys, CLUSTER_METRICS) do |opts, options|
         opts.on('--dataset FILE', 'CSV data file') { |v| options[:dataset] = v }
         opts.on('--k N', Integer, 'Number of clusters') { |v| options[:k] = v }
+        opts.on('--epsilon N', Float, 'DBSCAN squared radius') { |v| options[:epsilon] = v }
+        opts.on('--min-points N', Integer, 'DBSCAN minimum neighbours') { |v| options[:min_points] = v }
         opts.on('--with-ground-truth', 'Use labels column') { options[:with_gt] = true }
       end
       options = cli.parse(argv)
@@ -47,7 +54,14 @@ module Bench
       k = options[:k] || 3
 
       results = options[:algos].map do |name|
-        runner = RUNNERS[name].new(data_set, k)
+        runner = case name
+                 when 'dbscan'
+                   eps = options[:epsilon] || 4.0
+                   min_p = options[:min_points] || 3
+                   RUNNERS[name].new(data_set, eps, min_p)
+                 else
+                   RUNNERS[name].new(data_set, k)
+                 end
         runner.call
       end
       cli.report(results, options[:export])

@@ -28,6 +28,7 @@ require 'ai4r'
 * **Genetic Algorithms** – optimization of the Travelling Salesman Problem.
 * **Neural Networks** – simple OCR recognition with a classic feed‑forward model.
 * [Hopfield Networks](hopfield_network.md) – memory based recognition of noisy patterns.
+* [Self-Organizing Maps](som.md) – unsupervised mapping from high dimensions into a grid.
 * [Hierarchical Clustering](hierarchical_clustering.md) – build dendrograms from merge steps.
 * [DBSCAN](dbscan.md) – density-based clustering using a squared distance threshold.
 * **Automatic Classifiers** – identify relevant marketing targets using decision trees.
@@ -38,6 +39,7 @@ require 'ai4r'
 * [Logistic Regression](logistic_regression.md) – binary classifier trained with gradient descent.
 * [Reinforcement Learning](reinforcement_learning.md) – Q-learning and policy iteration.
 * [Search Algorithms](search_algorithms.md) – breadth-first and depth-first search implementations.
+* [Clusterer Bench](clusterer_bench.md) – compare clustering algorithms on small datasets.
 * [Monte Carlo Tree Search](monte_carlo_tree_search.md) – generic UCT search.
 * [A* Search](a_star_search.md) – heuristic best-first path search.
 * [Transformer](transformer.md) – a minimal take on the attention-powered architecture that transformed modern AI.

@@ -9,7 +9,8 @@ under `bench/clusterer` while shared helpers are in `bench/common`.
 $ ruby -Ilib bench/clusterer/cluster_bench.rb \
     --dataset bench/clusterer/datasets/blobs.csv \
     --k 3 \
-    --algos kmeans,single_linkage,average_linkage,diana \
+    --epsilon 4 --min-points 3 \
+    --algos kmeans,single_linkage,average_linkage,diana,dbscan \
     --export out/cluster_results.csv
 ```
 
@@ -17,6 +18,11 @@ When running directly from the git repository you must include `-Ilib` so Ruby
 can find the library without installing the gem.
 
 This prints an ASCII table of metrics and saves a CSV with the same data.
+`--epsilon` and `--min-points` control DBSCAN when selected. They default to
+`4` and `3` respectively.
+
+Run the command from the project root. The script automatically adds the
+`lib/` directory to Ruby's load path so no gem installation is required.
 
 ## Understanding the numbers
 
