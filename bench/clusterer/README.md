@@ -9,11 +9,14 @@ under `bench/clusterer` while shared helpers are in `bench/common`.
 $ ruby bench/clusterer/cluster_bench.rb \
     --dataset bench/clusterer/datasets/blobs.csv \
     --k 3 \
-    --algos kmeans,single_linkage,average_linkage,diana \
+    --epsilon 4 --min-points 3 \
+    --algos kmeans,single_linkage,average_linkage,diana,dbscan \
     --export out/cluster_results.csv
 ```
 
 This prints an ASCII table of metrics and saves a CSV with the same data.
+`--epsilon` and `--min-points` control DBSCAN when selected. They default to
+`4` and `3` respectively.
 
 ## Understanding the numbers
 
