@@ -1,3 +1,5 @@
+require_relative 'metrics'
+
 module Bench
   module Common
     # Base class for algorithm runners collecting simple metrics.

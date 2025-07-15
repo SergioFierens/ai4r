@@ -5,17 +5,18 @@ state spaces. The goal predicates and successor functions are tiny Ruby
 procs so you can prototype ideas in a few lines of code. Breadth-first
 search (BFS) expands the frontier level by level, whereas depth-first
 search (DFS) follows one branch as deep as it can. They both expect a
-`goal_test` and a `neighbor_fn` describing your problem space. For large
-graphs you can also try iterative deepening search (IDDFS) which mixes the
+`goal_test` and a `neighbor_fn` describing your problem space. Both accept a
+`max_depth` parameter if you want to limit exploration.
+For large graphs you can also try iterative deepening search (IDDFS) which mixes the
 two approaches.
 
 ```ruby
 require 'ai4r/search'
 
-bfs = Ai4r::Search::BFS.new(goal_test, neighbor_fn)
+bfs = Ai4r::Search::BFS.new(goal_test, neighbor_fn, nil, max_depth: 5)
 path = bfs.search(start)
 
-dfs = Ai4r::Search::DFS.new(goal_test, neighbor_fn)
+dfs = Ai4r::Search::DFS.new(goal_test, neighbor_fn, nil, max_depth: 5)
 path = dfs.search(start)
 ```
 

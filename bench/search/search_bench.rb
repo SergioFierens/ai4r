@@ -32,6 +32,9 @@ module Bench
         opts.on('--problem NAME', PROBLEMS.keys, 'Problem name') { |v| options[:problem] = v }
         opts.on('--map FILE', 'Grid map file for grid problem') { |v| options[:map] = v }
         opts.on('--start STATE', 'Initial state for eight puzzle') { |v| options[:start] = v }
+        opts.on('--max-depth N', Integer, 'Depth limit for BFS/DFS algorithms') do |v|
+          options[:max_depth] = v
+        end
       end
       options = cli.parse(argv)
 
@@ -46,7 +49,7 @@ module Bench
                  end
 
       results = options[:algos].map do |name|
-        runner = RUNNERS[name].new(problem)
+        runner = RUNNERS[name].new(problem, options[:max_depth])
         runner.call
       end
       cli.report(results, options[:export])

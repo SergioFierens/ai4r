@@ -41,4 +41,9 @@ class BFSTest < Minitest::Test
     path = bfs.search(:a)
     assert_nil path
   end
+
+  def test_respects_max_depth
+    bfs = BFS.new(method(:goal_test), method(:neighbor_fn), nil, max_depth: 1)
+    assert_nil bfs.search(:a)
+  end
 end

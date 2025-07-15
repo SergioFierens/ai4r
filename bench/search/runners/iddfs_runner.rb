@@ -5,6 +5,10 @@ module Bench
     module Runners
       # Iterative deepening depth-first search runner.
       class IddfsRunner < Bench::Common::BaseRunner
+        def initialize(problem, _max_depth = nil)
+          super(problem)
+        end
+
         private
 
         def run

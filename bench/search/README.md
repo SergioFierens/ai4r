@@ -17,6 +17,9 @@ Console output shows a table of metrics and the CSV can be loaded into a
 spreadsheet. Swap the problem or algorithm names to try DFS, IDDFS or the
 classic eight puzzle.
 
+Use `--max-depth` to limit how far BFS and DFS explore. This is handy when
+demonstrating incomplete searches or examining progressively deeper levels.
+
 ## Metrics
 
 * `solution_depth` – length of the returned path minus one

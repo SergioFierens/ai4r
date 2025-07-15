@@ -6,6 +6,10 @@ module Bench
     module Runners
       # A* search runner.
       class AStarRunner < Bench::Common::BaseRunner
+        def initialize(problem, _max_depth = nil)
+          super(problem)
+        end
+
         private
 
         def run

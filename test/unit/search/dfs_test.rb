@@ -28,4 +28,9 @@ class DFSTest < Minitest::Test
     path = dfs.search(:a)
     assert_equal %i[a c e], path
   end
+
+  def test_respects_max_depth
+    dfs = DFS.new(method(:goal_test), method(:neighbor_fn), nil, max_depth: 1)
+    assert_nil dfs.search(:a)
+  end
 end
