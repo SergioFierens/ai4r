@@ -7,6 +7,7 @@ require 'ai4r/classifiers/ib1'
 module Bench
   module Classifier
     module Runners
+      # Benchmark runner for the IB1 classifier.
       class Ib1Runner < Bench::Common::BaseRunner
         def initialize(train_set, test_set)
           @test_set = test_set

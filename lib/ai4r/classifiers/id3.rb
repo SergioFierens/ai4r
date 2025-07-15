@@ -658,6 +658,7 @@ module Ai4r
       end
     end
 
+    # Raised when the training data is insufficient to build a model.
     class ModelFailureError < StandardError
       'There was not enough information during training to do a proper induction for this data element.'
     end

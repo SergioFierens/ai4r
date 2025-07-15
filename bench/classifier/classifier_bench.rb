@@ -9,6 +9,7 @@ require_relative 'runners/ib1_runner'
 require_relative 'runners/hyperpipes_runner'
 
 module Bench
+  # Entry point for running classifier benchmarks.
   module Classifier
     CLASS_METRICS = %i[accuracy f1 training_ms predict_ms model_size_kb].freeze
 

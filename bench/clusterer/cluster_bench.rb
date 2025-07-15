@@ -44,7 +44,9 @@ module Bench
         opts.on('--dataset FILE', 'CSV data file') { |v| options[:dataset] = v }
         opts.on('--k N', Integer, 'Number of clusters') { |v| options[:k] = v }
         opts.on('--epsilon N', Float, 'DBSCAN squared radius') { |v| options[:epsilon] = v }
-        opts.on('--min-points N', Integer, 'DBSCAN minimum neighbours') { |v| options[:min_points] = v }
+        opts.on('--min-points N', Integer, 'DBSCAN minimum neighbours') do |v|
+          options[:min_points] = v
+        end
         opts.on('--with-ground-truth', 'Use labels column') { options[:with_gt] = true }
       end
       options = cli.parse(argv)
