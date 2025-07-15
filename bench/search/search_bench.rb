@@ -12,6 +12,7 @@ require_relative 'runners/iddfs_runner'
 require_relative 'runners/a_star_runner'
 
 module Bench
+  # Benchmark search algorithms.
   module Search
     SEARCH_METRICS = %i[solution_depth nodes_expanded max_frontier_size duration_ms
                         completed].freeze
@@ -30,6 +31,7 @@ module Bench
 
     module_function
 
+    # rubocop:disable Metrics/AbcSize
     def run(argv)
       cli = Bench::Common::CLI.new('search', RUNNERS.keys, SEARCH_METRICS) do |opts, options|
         opts.on('--problem NAME', PROBLEMS.keys, 'Problem name') { |v| options[:problem] = v }
@@ -55,6 +57,7 @@ module Bench
       end
       cli.report(results, options[:export])
     end
+    # rubocop:enable Metrics/AbcSize
   end
 end
 

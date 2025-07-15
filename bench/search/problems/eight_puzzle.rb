@@ -14,6 +14,7 @@ module Bench
           state == GOAL
         end
 
+        # rubocop:disable Metrics/AbcSize
         def neighbors(state)
           idx = state.index('0')
           x = idx % 3
@@ -30,6 +31,7 @@ module Bench
           end
           n
         end
+        # rubocop:enable Metrics/AbcSize
 
         def heuristic(state)
           total = 0
