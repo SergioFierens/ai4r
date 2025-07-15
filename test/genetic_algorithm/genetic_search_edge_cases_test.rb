@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'minitest/autorun'
+require_relative '../test_helper'
 require 'ai4r/genetic_algorithm/genetic_algorithm'
 
 module Ai4r

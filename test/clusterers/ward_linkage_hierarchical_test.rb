@@ -9,7 +9,7 @@
 # the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require 'minitest/autorun'
+require_relative '../test_helper'
 require "#{File.dirname(__FILE__)}/../../lib/ai4r/clusterers/ward_linkage_hierarchical"
 
 module Ai4r

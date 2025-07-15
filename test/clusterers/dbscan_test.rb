@@ -5,7 +5,7 @@
 # Project::   ai4r
 # Url::       https://github.com/SergioFierens/ai4r
 
-require 'minitest/autorun'
+require_relative '../test_helper'
 require 'ai4r/clusterers/dbscan'
 
 class DBSCANTest < Minitest::Test

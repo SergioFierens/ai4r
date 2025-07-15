@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'English'
-require 'minitest/autorun'
+require_relative '../test_helper'
 
 class ExamplesTest < Minitest::Test
   EXAMPLES_DIR = File.expand_path('../../examples/classifiers', __dir__)

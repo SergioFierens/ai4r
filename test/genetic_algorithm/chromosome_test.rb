@@ -11,7 +11,7 @@
 
 require 'ai4r/genetic_algorithm/genetic_algorithm'
 require 'ai4r/genetic_algorithm/tsp_chromosome'
-require 'minitest/autorun'
+require_relative '../test_helper'
 
 module Ai4r
   module GeneticAlgorithm

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'minitest/autorun'
+require_relative '../test_helper'
 require 'ai4r/classifiers/zero_r'
 require 'ai4r/data/data_set'
 

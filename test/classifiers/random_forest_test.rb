@@ -2,7 +2,7 @@
 
 require 'ai4r/classifiers/random_forest'
 require 'ai4r/data/data_set'
-require 'minitest/autorun'
+require_relative '../test_helper'
 
 include Ai4r::Classifiers
 include Ai4r::Data

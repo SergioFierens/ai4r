@@ -1,4 +1,4 @@
-require 'minitest/autorun'
+require_relative '../test_helper'
 require 'ai4r/neural_network/transformer'
 
 class TransformerTest < Minitest::Test

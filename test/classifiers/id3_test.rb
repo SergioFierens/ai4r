@@ -15,7 +15,7 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'ai4r/classifiers/id3'
-require 'minitest/autorun'
+require_relative '../test_helper'
 
 DATA_LABELS = %w[city age_range gender marketing_target].freeze
 

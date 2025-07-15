@@ -10,7 +10,7 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'ai4r/classifiers/ib1'
-require 'minitest/autorun'
+require_relative '../test_helper'
 
 include Ai4r::Classifiers
 include Ai4r::Data
