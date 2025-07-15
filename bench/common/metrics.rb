@@ -65,6 +65,66 @@ module Bench
       total / count
     end
 
+    # Compute classification accuracy between expected and predicted labels.
+    # @param actual [Array] ground truth labels
+    # @param predicted [Array] predicted labels
+    # @return [Float]
+    def accuracy(actual, predicted)
+      correct = actual.zip(predicted).count { |a, p| a == p }
+      correct.to_f / actual.length
+    end
+
+    # Macro-averaged precision over all labels.
+    # @param actual [Array]
+    # @param predicted [Array]
+    # @return [Float]
+    def precision(actual, predicted)
+      labels = actual.uniq
+      labels.sum do |label|
+        tp = 0
+        fp = 0
+        actual.zip(predicted).each do |a, p|
+          if p == label
+            if a == label
+              tp += 1
+            else
+              fp += 1
+            end
+          end
+        end
+        denom = tp + fp
+        denom.zero? ? 0.0 : tp.to_f / denom
+      end / labels.length.to_f
+    end
+
+    # Macro-averaged recall over all labels.
+    def recall(actual, predicted)
+      labels = actual.uniq
+      labels.sum do |label|
+        tp = 0
+        fn = 0
+        actual.zip(predicted).each do |a, p|
+          if a == label
+            if p == label
+              tp += 1
+            else
+              fn += 1
+            end
+          end
+        end
+        denom = tp + fn
+        denom.zero? ? 0.0 : tp.to_f / denom
+      end / labels.length.to_f
+    end
+
+    # Macro F1 score derived from precision and recall.
+    def f1(actual, predicted)
+      p = precision(actual, predicted)
+      r = recall(actual, predicted)
+      denom = p + r
+      denom.zero? ? 0.0 : 2 * p * r / denom
+    end
+
     # Simple container for benchmark metrics.
     class Metrics
       attr_reader :algorithm, :data

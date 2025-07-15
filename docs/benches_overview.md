@@ -5,7 +5,8 @@ Benchmark scripts for selected algorithms live in the `bench/` directory. Each
 problems. Shared helpers such as the CLI, metrics and table reporter reside in
 `bench/common`.
 
-Currently the search lab is available under `bench/search`.
+Currently the search and clusterer labs are available under `bench/search` and
+`bench/clusterer`. A new classifier lab lives under `bench/classifier`.
 
 ## Adding a new lab
 
