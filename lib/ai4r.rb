@@ -61,6 +61,12 @@ require_relative "ai4r/som/educational_som"
 
 # Search Algorithms
 require_relative "ai4r/search/a_star"
+require_relative "ai4r/search/minimax"
+
+# Machine Learning Algorithms
+require_relative "ai4r/machine_learning/random_forest"
+require_relative "ai4r/machine_learning/pca"
+require_relative "ai4r/machine_learning/hidden_markov_model"
 
 # Educational Data Handling Framework
 require_relative "ai4r/data/educational_data_set"
