@@ -3,13 +3,13 @@ require 'ai4r/neural_network/transformer'
 
 class TransformerTest < Minitest::Test
   def test_encoder_eval_shape
-    srand 1
     model = Ai4r::NeuralNetwork::Transformer.new(
       vocab_size: 20,
       max_len: 5,
       embed_dim: 8,
       num_heads: 2,
-      ff_dim: 16
+      ff_dim: 16,
+      seed: 1
     )
     out = model.eval([1, 2, 3])
     assert_equal 3, out.length

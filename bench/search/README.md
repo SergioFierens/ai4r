@@ -8,10 +8,13 @@ problem with minimal setup.
 ## Quick start
 
 ```
-$ ruby bench/search/search_bench.rb \
+$ ruby -Ilib bench/search/search_bench.rb \
     --problem grid --map bench/search/maps/small.txt \
     --algos bfs,a_star --export out.csv
 ```
+
+Running from the repository requires the `-Ilib` flag so Ruby picks up the
+library without installing the gem.
 
 Console output shows a table of metrics and the CSV can be loaded into a
 spreadsheet. Swap the problem or algorithm names to try DFS, IDDFS or the
