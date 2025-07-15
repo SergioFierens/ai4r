@@ -3,9 +3,6 @@
 require_relative '../../lib/ai4r/classifiers/prism'
 require_relative '../../lib/ai4r/data/data_set'
 
-include Ai4r::Classifiers
-include Ai4r::Data
-
 items = [
   [20, 70, 'N'],
   [25, 80, 'N'],
@@ -14,9 +11,9 @@ items = [
 ]
 labels = %w[temperature humidity play]
 
-data = DataSet.new(data_items: items, data_labels: labels)
+data = Ai4r::Data::DataSet.new(data_items: items, data_labels: labels)
 
-classifier = Prism.new.build(data)
+classifier = Ai4r::Classifiers::Prism.new.build(data)
 
 puts 'Rules:'
 puts classifier.get_rules

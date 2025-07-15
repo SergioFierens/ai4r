@@ -3,15 +3,12 @@
 require_relative '../../lib/ai4r/classifiers/simple_linear_regression'
 require_relative '../../lib/ai4r/data/data_set'
 
-include Ai4r::Classifiers
-include Ai4r::Data
-
 # Load training data
 file = "#{File.dirname(__FILE__)}/simple_linear_regression_example.csv"
-data_set = DataSet.new.parse_csv_with_labels file
+data_set = Ai4r::Data::DataSet.new.parse_csv_with_labels file
 
 # Build the regression model and inspect its coefficients
-r = SimpleLinearRegression.new.build data_set
+r = Ai4r::Classifiers::SimpleLinearRegression.new.build data_set
 puts "Selected attribute: #{r.attribute}"
 puts "Slope: #{r.slope}, Intercept: #{r.intercept}"
 

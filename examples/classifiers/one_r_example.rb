@@ -9,9 +9,6 @@
 require_relative '../../lib/ai4r/classifiers/one_r'
 require_relative '../../lib/ai4r/data/data_set'
 
-include Ai4r::Classifiers
-include Ai4r::Data
-
 items = [
   ['New York', 20, 'M', 'Y'],
   ['Chicago', 25, 'M', 'Y'],
@@ -23,8 +20,8 @@ items = [
 ]
 labels = %w[city age gender marketing_target]
 
-ds = DataSet.new(data_items: items, data_labels: labels)
+ds = Ai4r::Data::DataSet.new(data_items: items, data_labels: labels)
 
-classifier = OneR.new.build(ds)
+classifier = Ai4r::Classifiers::OneR.new.build(ds)
 puts classifier.get_rules
 puts classifier.eval(['Chicago', 55, 'M'])

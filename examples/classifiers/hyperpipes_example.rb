@@ -3,15 +3,14 @@
 require_relative '../../lib/ai4r/classifiers/hyperpipes'
 require_relative '../../lib/ai4r/data/data_set'
 
-include Ai4r::Classifiers
-include Ai4r::Data
+# Use fully qualified class names instead of including modules.
 
 # Load the training data
 file = "#{File.dirname(__FILE__)}/hyperpipes_data.csv"
-data = DataSet.new.parse_csv_with_labels(file)
+data = Ai4r::Data::DataSet.new.parse_csv_with_labels(file)
 
 # Build the classifier using custom parameters
-classifier = Hyperpipes.new.set_parameters(tie_break: :random).build(data)
+classifier = Ai4r::Classifiers::Hyperpipes.new.set_parameters(tie_break: :random).build(data)
 
 # Inspect the generated pipes
 pipes_summary = classifier.pipes
