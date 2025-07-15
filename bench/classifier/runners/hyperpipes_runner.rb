@@ -7,6 +7,7 @@ require 'ai4r/classifiers/hyperpipes'
 module Bench
   module Classifier
     module Runners
+      # Benchmark runner for the Hyperpipes classifier.
       class HyperpipesRunner < Bench::Common::BaseRunner
         def initialize(train_set, test_set)
           @test_set = test_set

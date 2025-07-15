@@ -17,7 +17,7 @@ module Bench
         path = run
         duration = Process.clock_gettime(Process::CLOCK_MONOTONIC) - start
         @metrics[:duration_ms] = (duration * 1000).round(2)
-        @metrics[:solution_depth] = path ? path.length - 1 : nil
+        @metrics[:solution_depth] = path&.length&.-(1)
         @metrics[:completed] = !path.nil?
         Metrics.new(algo_name, @metrics)
       end

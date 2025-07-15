@@ -16,6 +16,7 @@ require_relative '../classifiers/votes'
 
 module Ai4r
   module Classifiers
+    # Collection of classifier algorithms.
     include Ai4r::Data
 
     # = Introduction

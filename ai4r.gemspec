@@ -14,7 +14,7 @@ SPEC = Gem::Specification.new do |s|
 
     With no external dependencies, no GPU support, and no production overhead, AI4R serves as a practical and transparent way to explore the foundations of AI in Ruby. It is a long-maintained open-source effort to bring accessible, hands-on machine learning to the Ruby community.
   DESC
-  s.required_ruby_version = '>= 3.2'
+  s.required_ruby_version = '>= 3.1'
   s.license = 'Unlicense'
   s.files = FileList['{examples,lib}/**/*'].to_a
   s.require_path = 'lib'

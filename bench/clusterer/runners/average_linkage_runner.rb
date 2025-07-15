@@ -7,9 +7,10 @@ require 'ai4r/clusterers/average_linkage'
 module Bench
   module Clusterer
     module Runners
+      # Benchmark runner for Average Linkage clustering.
       class AverageLinkageRunner < Bench::Common::BaseRunner
-        def initialize(data_set, k)
-          @k = k
+        def initialize(data_set, k_value)
+          @k = k_value
           super(data_set)
         end
 

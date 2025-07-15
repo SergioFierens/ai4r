@@ -7,6 +7,7 @@ require 'ai4r/classifiers/id3'
 module Bench
   module Classifier
     module Runners
+      # Benchmark runner for the ID3 classifier.
       class Id3Runner < Bench::Common::BaseRunner
         def initialize(train_set, test_set)
           @test_set = test_set
