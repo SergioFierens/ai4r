@@ -27,16 +27,13 @@ puts classifier.get_probability_map(['Red', 'SUV', 'Domestic'])
 
 The last line prints a hash with the probability for each class.
 
-# Naive Bayes
-
-`Ai4r::Classifiers::NaiveBayes` computes several probability tables when built. These attributes are exposed as read-only accessors:
+`Ai4r::Classifiers::NaiveBayes` computes several probability tables you can inspect:
 
 * `class_prob` – Probability of each class in the training set.
-* `pcc` – Count of occurrences for every attribute value and class. Layout is `[attribute][value][class]`.
-* `pcp` – Conditional probability of an attribute value given a class. Shares the same layout as `pcc` and is derived from it using the `:m` parameter.
+* `pcc` – Count of attribute value and class occurrences.
+* `pcp` – Conditional probability of an attribute value given a class.
 
-Inspecting these arrays helps you understand the learned model.
-
+Inspect these arrays to understand the learned model.
 Run [Classifier Bench](classifier_bench.md) to see how Naive Bayes performs alongside other classifiers.
 
 
