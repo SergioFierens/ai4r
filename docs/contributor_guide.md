@@ -1,6 +1,6 @@
 # Contributor Guide
 
-AI4R welcomes contributions of all sizes. This document explains how to get started, then dives into details for a smooth development workflow.
+AI4R welcomes contributions of all sizes. The project is released into the public domain through the Unlicense, so you are free to reuse the code without restrictions. This guide explains how to get started and keeps the workflow smooth.
 
 ## Quick Start
 
@@ -46,4 +46,8 @@ Pull requests should remain focused on a single topic whenever possible. Small, 
 ## Getting Help
 
 Questions and suggestions are welcome. Feel free to open an issue on GitHub or contact the maintainers listed in [docs/index.md](index.md).
+
+## License
+
+AI4R is distributed under the [Unlicense](https://unlicense.org/), placing it in the public domain. Contributions are released the same way, so you can reuse the code in any project with no strings attached.
 
