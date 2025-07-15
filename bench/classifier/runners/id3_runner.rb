@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../common/base_runner'
 require_relative '../../common/metrics'
 require 'ai4r/classifiers/id3'
