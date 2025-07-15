@@ -4,6 +4,7 @@ require 'rake'
 require 'rake/testtask'
 require 'rdoc/task'
 require 'rubocop/rake_task'
+require 'rspec/core/rake_task'
 
 Rake::TestTask.new do |t|
   t.test_files = FileList['test/**/*_test.rb']
@@ -41,3 +42,5 @@ Rake::RDocTask.new do |rd|
 end
 
 RuboCop::RakeTask.new(:rubocop)
+
+RSpec::Core::RakeTask.new(:spec)
