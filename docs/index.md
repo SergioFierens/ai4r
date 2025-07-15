@@ -38,6 +38,13 @@ require 'ai4r'
 * [Hyperpipes](hyperpipes.md) – baseline classifier using value ranges.
 * [IB1 Classifier](ib1.md) – instance-based nearest neighbour algorithm.
 * [Logistic Regression](logistic_regression.md) – binary classifier trained with gradient descent.
+* [OneR](one_r.md) – single attribute rules.
+* [ZeroR](zero_r.md) – majority class baseline.
+* [Random Forest](random_forest.md) – ensemble of decision trees.
+* [Support Vector Machine](support_vector_machine.md) – linear SVM with SGD.
+* [Gradient Boosting](gradient_boosting.md) – boosted regressors.
+* [Simple Linear Regression](simple_linear_regression.md) – fit a line to one attribute.
+* [Multilayer Perceptron](multilayer_perceptron.md) – neural network classifier.
 * [Reinforcement Learning](reinforcement_learning.md) – Q-learning and policy iteration.
 * [Search Algorithms](search_algorithms.md) – breadth-first and depth-first search implementations.
 * [Clusterer Bench](clusterer_bench.md) – compare clustering algorithms on small datasets.

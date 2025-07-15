@@ -45,3 +45,5 @@ classifier = Ai4r::Classifiers::Prism.new.build(data)
 puts classifier.eval([30, 70])
 ```
 
+Compare PRISM with other models in the [Classifier Bench](classifier_bench.md).
+

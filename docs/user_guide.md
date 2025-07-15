@@ -49,7 +49,7 @@ AI4R includes several algorithms:
 * [Transformer](transformer.md) for sequence processing
 * [Genetic Algorithms](genetic_algorithms.md) for optimization
 * Clustering with [KMeans](kmeans.md) and [Hierarchical Clustering](hierarchical_clustering.md)
-* Baseline classifiers like OneR, ZeroR and [Hyperpipes](hyperpipes.md)
+* Baseline classifiers like [OneR](one_r.md), [ZeroR](zero_r.md) and [Hyperpipes](hyperpipes.md)
 
 See the documents in this directory for detailed tutorials on each topic.
 
