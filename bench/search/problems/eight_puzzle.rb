@@ -21,6 +21,7 @@ module Bench
           n = {}
           [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]].each do |nx, ny|
             next if nx.negative? || ny.negative? || nx >= 3 || ny >= 3
+
             swap = ny * 3 + nx
             new_state = state.dup
             new_state[idx] = new_state[swap]
@@ -34,6 +35,7 @@ module Bench
           total = 0
           state.chars.each_with_index do |ch, index|
             next if ch == '0'
+
             goal_index = GOAL.index(ch)
             x1 = index % 3
             y1 = index / 3

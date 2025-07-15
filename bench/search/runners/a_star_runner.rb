@@ -26,13 +26,14 @@ module Bench
             expand
             problem.neighbors(current).each do |nbr, cost|
               next if closed.include?(nbr)
+
               tentative_g = g[current] + cost
-              if g[nbr].nil? || tentative_g < g[nbr]
-                came_from[nbr] = current
-                g[nbr] = tentative_g
-                f[nbr] = tentative_g + problem.heuristic(nbr)
-                open_set << nbr unless open_set.include?(nbr)
-              end
+              next unless g[nbr].nil? || tentative_g < g[nbr]
+
+              came_from[nbr] = current
+              g[nbr] = tentative_g
+              f[nbr] = tentative_g + problem.heuristic(nbr)
+              open_set << nbr unless open_set.include?(nbr)
             end
           end
           nil

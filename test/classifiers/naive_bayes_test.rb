@@ -58,9 +58,7 @@ class NaiveBayesTest < Minitest::Test
   def test_unknown_value_error
     assert_raises RuntimeError do
       NaiveBayes.new.set_parameters(unknown_value_strategy: :error).build(@data_set).eval(%w[
-
             Blue SUV Domestic
-
           ])
     end
   end

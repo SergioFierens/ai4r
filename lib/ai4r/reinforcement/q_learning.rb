@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Author::    OpenAI Assistant
 # License::   MPL 1.1
 # Project::   ai4r

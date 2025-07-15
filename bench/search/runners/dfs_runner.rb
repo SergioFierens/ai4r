@@ -15,9 +15,11 @@ module Bench
             frontier_size(stack.size)
             node, path = stack.pop
             return path if problem.goal?(node)
+
             expand
             problem.neighbors(node).each_key do |nbr|
               next if visited[nbr]
+
               visited[nbr] = true
               stack << [nbr, path + [nbr]]
             end

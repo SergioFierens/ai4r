@@ -40,4 +40,4 @@ class SupportVectorMachineTest < Minitest::Test
     assert_equal 'SupportVectorMachine does not support rule extraction.',
                  svm.get_rules
   end
-  end
+end

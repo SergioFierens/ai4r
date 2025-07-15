@@ -35,7 +35,7 @@ module Ai4r
       # @param data_set [Ai4r::Data::DataSet]
       # @param number_of_clusters [Integer, nil]
       # @return [DBSCAN]
-      def build(data_set, number_of_clusters = nil)
+      def build(data_set, _number_of_clusters = nil)
         @data_set = data_set
         @clusters = []
         @cluster_indices = []

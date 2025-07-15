@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Author::    OpenAI Assistant
 # License::   MPL 1.1
 # Project::   ai4r
@@ -38,7 +39,7 @@ module Ai4r
               v = values[s]
               a = policy[s]
               new_v = reward[s][a] +
-                @discount * transition[s][a].sum { |s2, p| p * values[s2] }
+                      @discount * transition[s][a].sum { |s2, p| p * values[s2] }
               values[s] = new_v
               diff = (v - new_v).abs
               delta = diff if diff > delta

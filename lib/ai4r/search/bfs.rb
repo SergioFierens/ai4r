@@ -35,8 +35,10 @@ module Ai4r
         until queue.empty?
           node, path = queue.shift
           return path if @goal_test.call(node)
+
           @neighbor_fn.call(node).each do |n|
             next if visited[n]
+
             visited[n] = true
             queue << [n, path + [n]]
           end

@@ -35,8 +35,10 @@ module Ai4r
         until stack.empty?
           node, path = stack.pop
           return path if @goal_test.call(node)
+
           @neighbor_fn.call(node).each do |n|
             next if visited[n]
+
             visited[n] = true
             stack << [n, path + [n]]
           end

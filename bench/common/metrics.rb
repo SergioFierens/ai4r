@@ -41,6 +41,7 @@ module Bench
           if cluster.length > 1
             cluster.each do |j|
               next if j == index
+
               a += dims.times.sum { |d| (items[index][d] - items[j][d])**2 }
             end
             a /= (cluster.length - 1)
@@ -50,6 +51,7 @@ module Bench
           b = nil
           clusters.each_with_index do |other_cluster, cj|
             next if ci == cj
+
             dist = other_cluster.sum do |j|
               dims.times.sum { |d| (items[index][d] - items[j][d])**2 }
             end
@@ -82,13 +84,14 @@ module Bench
         fp = 0
         truth.each_index do |i|
           next unless preds[i] == label
+
           if truth[i] == label
             tp += 1
           else
             fp += 1
           end
         end
-        tp + fp > 0 ? tp.to_f / (tp + fp) : 0.0
+        (tp + fp).positive? ? tp.to_f / (tp + fp) : 0.0
       end
       sum / labels.size.to_f
     end
@@ -100,13 +103,14 @@ module Bench
         fn = 0
         truth.each_index do |i|
           next unless truth[i] == label
+
           if preds[i] == label
             tp += 1
           else
             fn += 1
           end
         end
-        tp + fn > 0 ? tp.to_f / (tp + fn) : 0.0
+        (tp + fn).positive? ? tp.to_f / (tp + fn) : 0.0
       end
       sum / labels.size.to_f
     end
@@ -114,7 +118,7 @@ module Bench
     def f1(truth, preds)
       p = precision(truth, preds)
       r = recall(truth, preds)
-      p + r > 0 ? 2 * p * r / (p + r) : 0.0
+      (p + r).positive? ? 2 * p * r / (p + r) : 0.0
     end
 
     # Simple container for benchmark metrics.

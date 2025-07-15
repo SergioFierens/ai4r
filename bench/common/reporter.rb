@@ -84,7 +84,11 @@ module Bench
         badges.each do |r|
           row = metrics.each_with_index.map do |m, i|
             val = r[m]
-            val = val == true ? '✓' : (val == false ? '' : val)
+            val = if val == true
+                    '✓'
+                  else
+                    (val == false ? '' : val)
+                  end
             val.to_s.ljust(widths[i])
           end.join(' | ')
           puts row

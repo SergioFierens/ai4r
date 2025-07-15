@@ -51,4 +51,4 @@ class SimpleLinearRegressionTest < Minitest::Test
     assert_equal 'SimpleLinearRegression does not support rule extraction.',
                  classifier.get_rules
   end
-  end
+end
