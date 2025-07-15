@@ -1,10 +1,8 @@
 # Neural Networks: Backpropagation OCR
 
-AI4R includes a classic backpropagation neural network implementation. While decision trees or logistic regression rely on explicit rules and formulas, neural networks learn directly from examples. They map inputs to outputs through layers of weighted connections, paving the way for modern deep‑learning techniques.
+AI4R includes a classic backpropagation neural network implementation. While [decision trees](machine_learning.md) or [logistic regression](logistic_regression.md) rely on explicit rules and formulas, neural networks learn directly from examples. They map inputs to outputs through weighted layers, the basis of modern deep learning.
 
-If you are curious about how today's world‑changing Transformer models extend these ideas with attention mechanisms, see the [Transformer](transformer.md) document. The rest of this page focuses on the traditional feed‑forward network used throughout the library.
-
-## OCR Example
+For attention-based models see the [Transformer](transformer.md) guide. The rest of this page covers the feed-forward network used in the library.
 
 The library demonstrates a simple optical character recognition system. Patterns such as triangles, squares and crosses are represented by 16x16 matrices where pixels range from 0 (white) to 10 (black). The network has 256 input neurons and three outputs corresponding to the shapes.
 
@@ -22,8 +20,7 @@ After training, the network can evaluate noisy patterns with good accuracy.
 
 ## Customizing Parameters
 
-You can tweak the learning rate, momentum and propagation function. You can also
-pick one of the built-in activation functions with the `activation` parameter:
+Adjust learning rate, momentum and propagation function, or simply set `activation` to a built-in one:
 
 ```ruby
 net.set_parameters(
@@ -33,10 +30,7 @@ net.set_parameters(
   derivative_propagation_function: ->(y) { 1.0 - y**2 }
 )
 ```
-
-Weight initialization can be selected with the `weight_init` parameter. Options
-are `:uniform`, `:xavier` and `:he`:
-
+Choose weight initialization via `weight_init`: `:uniform`, `:xavier`, or `:he`:
 ```ruby
 net = Ai4r::NeuralNetwork::Backpropagation.new([256, 3], :tanh, :xavier)
 net.set_parameters(weight_init: :he)
@@ -91,7 +85,7 @@ g.data(:loss, history)
 g.write('loss.png')
 ```
 
-For a recurrent associative network that can recall patterns from noisy inputs see the [Hopfield network](hopfield_network.md) document.
+For a recurrent associative network that can recall patterns from noisy inputs see the [Hopfield network](hopfield_network.md) document. For unsupervised feature mapping see [Self-Organizing Maps](som.md).
 
 ### Additional Examples
 
@@ -99,6 +93,8 @@ Example scripts under `examples/neural_network` demonstrate other uses:
 
 * `xor_example.rb` – trains a tiny network to learn the XOR logic gate.
 * `patterns_with_noise.rb` – shows how the OCR network copes with noisy data.
+* `hopfield_example.rb` – associative memory with Hopfield networks.
 * `transformer_text_classification.rb` – pairs a Transformer encoder with logistic regression for text sentiment.
+* `../som/som_single_example.rb` – explores Self-Organizing Maps.
 
 See the [Artificial Neural Network](http://en.wikipedia.org/wiki/Artificial_neural_network) and [Backpropagation](http://en.wikipedia.org/wiki/Backpropagation) articles for more information.
