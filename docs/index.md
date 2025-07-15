@@ -55,6 +55,7 @@ require 'ai4r'
 * [Encoder Text Classification Example](../examples/neural_network/transformer_text_classification.rb)
 * [Seq2seq Example](../examples/transformer/seq2seq_example.rb)
 * [Deterministic Initialization Example](../examples/transformer/deterministic_example.rb)
+* [Learning Paths](learning_paths.md) – step-by-step guides from beginner to advanced.
 
 ## Contributing
 
