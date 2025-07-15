@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Modular activation functions for educational neural networks
+# Modular activation functions for neural networks
 # Author::    Sergio Fierens
 # License::   MPL 1.1
 # Project::   ai4r
@@ -8,422 +8,478 @@
 
 module Ai4r
   module NeuralNetwork
-    
-    # Collection of activation functions with educational explanations
     module ActivationFunctions
       
-      # Sigmoid activation function - classic choice for neural networks
-      class Sigmoid
-        def self.function
-          lambda { |x| 1.0 / (1.0 + Math.exp(-x)) }
+      # Base class for activation functions
+      class ActivationFunction
+        def forward(x)
+          raise NotImplementedError, "Subclass must implement forward method"
         end
         
-        def self.derivative
-          lambda { |y| y * (1.0 - y) }
+        def backward(output)
+          raise NotImplementedError, "Subclass must implement backward method"
         end
         
-        def self.description
-          "Sigmoid: Smooth S-shaped curve, outputs between 0 and 1. Good for binary classification."
+        def name
+          self.class.name.split('::').last
         end
         
-        def self.characteristics
-          {
-            range: [0.0, 1.0],
-            differentiable: true,
-            monotonic: true,
-            zero_centered: false,
-            vanishing_gradient_problem: true
-          }
+        def educational_notes
+          "Base activation function"
         end
       end
       
-      # Hyperbolic Tangent - zero-centered alternative to sigmoid
-      class Tanh
-        def self.function
-          lambda { |x| Math.tanh(x) }
+      # Sigmoid activation function
+      class Sigmoid < ActivationFunction
+        def forward(x)
+          1.0 / (1.0 + Math.exp(-x))
         end
         
-        def self.derivative
-          lambda { |y| 1.0 - y**2 }
+        def backward(output)
+          output * (1.0 - output)
         end
         
-        def self.description
-          "Tanh: Zero-centered S-shaped curve, outputs between -1 and 1. Often better than sigmoid."
-        end
-        
-        def self.characteristics
-          {
-            range: [-1.0, 1.0],
-            differentiable: true,
-            monotonic: true,
-            zero_centered: true,
-            vanishing_gradient_problem: true
-          }
+        def educational_notes
+          <<~NOTES
+            Sigmoid (Logistic) Function
+            Range: (0, 1)
+            Pros:
+            • Smooth and differentiable everywhere
+            • Output can be interpreted as probability
+            • Historically popular
+            
+            Cons:
+            • Vanishing gradient problem for large |x|
+            • Outputs not zero-centered
+            • Computationally expensive (exp)
+            
+            Use cases:
+            • Binary classification output layer
+            • Gates in LSTM/GRU
+            
+            Mathematical form: σ(x) = 1/(1+e^(-x))
+            Derivative: σ'(x) = σ(x)(1-σ(x))
+          NOTES
         end
       end
       
-      # ReLU - Rectified Linear Unit, modern default choice
-      class ReLU
-        def self.function
-          lambda { |x| [0.0, x].max }
+      # Hyperbolic tangent activation
+      class Tanh < ActivationFunction
+        def forward(x)
+          Math.tanh(x)
         end
         
-        def self.derivative
-          lambda { |y| y > 0 ? 1.0 : 0.0 }
+        def backward(output)
+          1.0 - output**2
         end
         
-        def self.description
-          "ReLU: Simple and effective, outputs x if positive, 0 otherwise. Fast training, no vanishing gradients."
-        end
-        
-        def self.characteristics
-          {
-            range: [0.0, Float::INFINITY],
-            differentiable: false,  # at x=0
-            monotonic: true,
-            zero_centered: false,
-            vanishing_gradient_problem: false
-          }
+        def educational_notes
+          <<~NOTES
+            Hyperbolic Tangent (tanh) Function
+            Range: (-1, 1)
+            Pros:
+            • Zero-centered outputs
+            • Stronger gradients than sigmoid
+            • Smooth and differentiable
+            
+            Cons:
+            • Still suffers from vanishing gradients
+            • Computationally expensive
+            
+            Use cases:
+            • Hidden layers in older networks
+            • RNN hidden states
+            
+            Mathematical form: tanh(x) = (e^x - e^(-x))/(e^x + e^(-x))
+            Derivative: tanh'(x) = 1 - tanh²(x)
+          NOTES
         end
       end
       
-      # Leaky ReLU - Addresses "dying ReLU" problem
-      class LeakyReLU
-        def self.function(alpha = 0.01)
-          lambda { |x| x > 0 ? x : alpha * x }
+      # Rectified Linear Unit
+      class ReLU < ActivationFunction
+        def forward(x)
+          [0, x].max
         end
         
-        def self.derivative(alpha = 0.01)
-          lambda { |y| y > 0 ? 1.0 : alpha }
+        def backward(output)
+          output > 0 ? 1.0 : 0.0
         end
         
-        def self.description
-          "Leaky ReLU: Like ReLU but allows small negative values. Prevents 'dead neurons'."
-        end
-        
-        def self.characteristics
-          {
-            range: [-Float::INFINITY, Float::INFINITY],
-            differentiable: false,  # at x=0
-            monotonic: true,
-            zero_centered: false,
-            vanishing_gradient_problem: false
-          }
+        def educational_notes
+          <<~NOTES
+            Rectified Linear Unit (ReLU)
+            Range: [0, ∞)
+            Pros:
+            • No vanishing gradient for positive inputs
+            • Computationally efficient
+            • Promotes sparsity
+            • Works well in practice
+            
+            Cons:
+            • Dying ReLU problem (neurons can get stuck)
+            • Not differentiable at x=0
+            • Unbounded output
+            • Not zero-centered
+            
+            Use cases:
+            • Default choice for hidden layers
+            • Deep networks
+            
+            Mathematical form: f(x) = max(0, x)
+            Derivative: f'(x) = 1 if x > 0, else 0
+          NOTES
         end
       end
       
-      # ELU - Exponential Linear Unit
-      class ELU
-        def self.function(alpha = 1.0)
-          lambda { |x| x > 0 ? x : alpha * (Math.exp(x) - 1) }
+      # Leaky ReLU
+      class LeakyReLU < ActivationFunction
+        attr_reader :alpha
+        
+        def initialize(alpha = 0.01)
+          @alpha = alpha
         end
         
-        def self.derivative(alpha = 1.0)
-          lambda { |x, y| x > 0 ? 1.0 : y + alpha }  # Note: needs both x and y
+        def forward(x)
+          x > 0 ? x : @alpha * x
         end
         
-        def self.description
-          "ELU: Smooth function that can produce negative outputs. Zero-centered, no vanishing gradients."
+        def backward(output)
+          output > 0 ? 1.0 : @alpha
         end
         
-        def self.characteristics
-          {
-            range: [-1.0, Float::INFINITY],  # with alpha=1
-            differentiable: true,
-            monotonic: true,
-            zero_centered: true,
-            vanishing_gradient_problem: false
-          }
+        def educational_notes
+          <<~NOTES
+            Leaky Rectified Linear Unit
+            Range: (-∞, ∞)
+            Pros:
+            • Prevents dying ReLU problem
+            • Still computationally efficient
+            • Allows negative outputs
+            
+            Cons:
+            • Extra hyperparameter (α)
+            • Not zero-centered
+            • Negative side not well motivated
+            
+            Use cases:
+            • When experiencing dying ReLU
+            • Deep networks
+            
+            Mathematical form: f(x) = max(αx, x)
+            Derivative: f'(x) = 1 if x > 0, else α
+            Current α: #{@alpha}
+          NOTES
         end
       end
       
-      # Linear activation - no transformation
-      class Linear
-        def self.function
-          lambda { |x| x }
+      # Exponential Linear Unit
+      class ELU < ActivationFunction
+        attr_reader :alpha
+        
+        def initialize(alpha = 1.0)
+          @alpha = alpha
         end
         
-        def self.derivative
-          lambda { |y| 1.0 }
+        def forward(x)
+          x >= 0 ? x : @alpha * (Math.exp(x) - 1)
         end
         
-        def self.description
-          "Linear: No transformation, output equals input. Used in regression output layers."
+        def backward(output)
+          output >= 0 ? 1.0 : output + @alpha
         end
         
-        def self.characteristics
-          {
-            range: [-Float::INFINITY, Float::INFINITY],
-            differentiable: true,
-            monotonic: true,
-            zero_centered: true,
-            vanishing_gradient_problem: false
-          }
+        def educational_notes
+          <<~NOTES
+            Exponential Linear Unit (ELU)
+            Range: (-α, ∞)
+            Pros:
+            • Smooth everywhere (including x=0)
+            • Negative outputs (closer to zero mean)
+            • Robust to noise
+            
+            Cons:
+            • Computationally expensive (exp)
+            • Extra hyperparameter
+            
+            Use cases:
+            • When smoother activation needed
+            • Networks requiring negative outputs
+            
+            Mathematical form: f(x) = x if x ≥ 0, else α(e^x - 1)
+            Current α: #{@alpha}
+          NOTES
         end
       end
       
-      # Swish - Self-gated activation function
-      class Swish
-        def self.function
-          lambda { |x| x / (1.0 + Math.exp(-x)) }
+      # Swish (SiLU) activation
+      class Swish < ActivationFunction
+        attr_reader :beta
+        
+        def initialize(beta = 1.0)
+          @beta = beta
         end
         
-        def self.derivative
-          lambda { |x| 
-            sigmoid_x = 1.0 / (1.0 + Math.exp(-x))
-            sigmoid_x + x * sigmoid_x * (1.0 - sigmoid_x)
-          }
+        def forward(x)
+          @x = x  # Store for backward pass
+          x * sigmoid(x * @beta)
         end
         
-        def self.description
-          "Swish: Self-gated function, x * sigmoid(x). Smooth and often outperforms ReLU."
+        def backward(output)
+          sigmoid_beta_x = sigmoid(@x * @beta)
+          output + sigmoid_beta_x * @beta * (1 - output)
         end
         
-        def self.characteristics
-          {
-            range: [-0.28, Float::INFINITY],
-            differentiable: true,
-            monotonic: false,
-            zero_centered: false,
-            vanishing_gradient_problem: false
-          }
+        private
+        
+        def sigmoid(x)
+          1.0 / (1.0 + Math.exp(-x))
+        end
+        
+        def educational_notes
+          <<~NOTES
+            Swish (Sigmoid Linear Unit)
+            Range: (-∞, ∞)
+            Pros:
+            • Smooth and non-monotonic
+            • Self-gating property
+            • Often outperforms ReLU
+            • Bounded below, unbounded above
+            
+            Cons:
+            • Computationally expensive
+            • More complex gradient
+            
+            Use cases:
+            • Deep networks
+            • When ReLU underperforms
+            
+            Mathematical form: f(x) = x·σ(βx)
+            Current β: #{@beta}
+          NOTES
         end
       end
       
-      # Softmax - for multi-class classification output layers
-      class Softmax
-        def self.function(vector)
-          # Subtract max for numerical stability
-          shifted = vector.map { |x| x - vector.max }
-          exp_values = shifted.map { |x| Math.exp(x) }
-          sum_exp = exp_values.sum
-          exp_values.map { |exp_val| exp_val / sum_exp }
-        end
-        
-        def self.derivative(softmax_output, i, j)
-          # Jacobian matrix element
-          if i == j
-            softmax_output[i] * (1.0 - softmax_output[i])
+      # Softmax activation (for output layer)
+      class Softmax < ActivationFunction
+        def forward(x)
+          # Handle numerical stability
+          if x.is_a?(Array)
+            max_x = x.max
+            exp_x = x.map { |xi| Math.exp(xi - max_x) }
+            sum_exp = exp_x.sum
+            exp_x.map { |e| e / sum_exp }
           else
-            -softmax_output[i] * softmax_output[j]
+            # Single value softmax = sigmoid
+            1.0 / (1.0 + Math.exp(-x))
           end
         end
         
-        def self.description
-          "Softmax: Converts vector to probability distribution. Sum of outputs equals 1."
+        def backward(output)
+          # For softmax, the derivative depends on all outputs
+          # This is a simplified version for single class
+          if output.is_a?(Array)
+            # Full Jacobian would be needed for proper implementation
+            output.map { |o| o * (1.0 - o) }
+          else
+            output * (1.0 - output)
+          end
         end
         
-        def self.characteristics
-          {
-            range: [0.0, 1.0],
-            differentiable: true,
-            sum_equals_one: true,
-            vector_function: true
-          }
+        def educational_notes
+          <<~NOTES
+            Softmax Function
+            Range: (0, 1) with sum = 1
+            Pros:
+            • Outputs sum to 1 (probability distribution)
+            • Differentiable
+            • Standard for multi-class classification
+            
+            Cons:
+            • Computationally expensive
+            • Can saturate with extreme values
+            • Gradient vanishing for wrong predictions
+            
+            Use cases:
+            • Multi-class classification output
+            • Attention mechanisms
+            
+            Mathematical form: softmax(x_i) = e^(x_i) / Σ(e^(x_j))
+          NOTES
         end
       end
       
-      # Factory for creating activation functions
-      class ActivationFactory
-        AVAILABLE_FUNCTIONS = {
+      # Linear (identity) activation
+      class Linear < ActivationFunction
+        def forward(x)
+          x
+        end
+        
+        def backward(output)
+          1.0
+        end
+        
+        def educational_notes
+          <<~NOTES
+            Linear (Identity) Function
+            Range: (-∞, ∞)
+            Pros:
+            • No saturation
+            • Simple gradient
+            • Preserves input scale
+            
+            Cons:
+            • No non-linearity
+            • Multiple linear layers = single linear layer
+            
+            Use cases:
+            • Regression output layer
+            • Skip connections
+            • Testing/debugging
+            
+            Mathematical form: f(x) = x
+            Derivative: f'(x) = 1
+          NOTES
+        end
+      end
+      
+      # GELU (Gaussian Error Linear Unit)
+      class GELU < ActivationFunction
+        def forward(x)
+          # Approximation for computational efficiency
+          0.5 * x * (1 + Math.tanh(Math.sqrt(2.0 / Math::PI) * (x + 0.044715 * x**3)))
+        end
+        
+        def backward(output)
+          # This is an approximation
+          x = @last_input || 0
+          cdf = 0.5 * (1 + Math.tanh(Math.sqrt(2.0 / Math::PI) * (x + 0.044715 * x**3)))
+          pdf_approx = Math.exp(-0.5 * x**2) / Math.sqrt(2 * Math::PI)
+          cdf + x * pdf_approx
+        end
+        
+        def educational_notes
+          <<~NOTES
+            Gaussian Error Linear Unit (GELU)
+            Range: (-∞, ∞)
+            Pros:
+            • Smooth approximation of ReLU
+            • Used in transformer models
+            • Stochastic regularization interpretation
+            
+            Cons:
+            • Computationally expensive
+            • Complex derivative
+            
+            Use cases:
+            • Transformer models (BERT, GPT)
+            • NLP applications
+            
+            Mathematical form: f(x) = x·Φ(x) where Φ is Gaussian CDF
+          NOTES
+        end
+      end
+      
+      # Helper class to manage activation functions
+      class ActivationFunctionFactory
+        FUNCTIONS = {
           sigmoid: Sigmoid,
           tanh: Tanh,
           relu: ReLU,
           leaky_relu: LeakyReLU,
           elu: ELU,
-          linear: Linear,
           swish: Swish,
-          softmax: Softmax
+          softmax: Softmax,
+          linear: Linear,
+          gelu: GELU
         }.freeze
         
-        def self.create(function_name, options = {})
-          function_class = AVAILABLE_FUNCTIONS[function_name.to_sym]
-          raise ArgumentError, "Unknown activation function: #{function_name}" unless function_class
+        def self.create(name, params = {})
+          function_class = FUNCTIONS[name.to_sym]
+          raise ArgumentError, "Unknown activation function: #{name}" unless function_class
           
-          case function_name.to_sym
-          when :leaky_relu
-            alpha = options[:alpha] || 0.01
-            {
-              function: function_class.function(alpha),
-              derivative: function_class.derivative(alpha),
-              description: function_class.description,
-              characteristics: function_class.characteristics
-            }
-          when :elu
-            alpha = options[:alpha] || 1.0
-            {
-              function: function_class.function(alpha),
-              derivative: function_class.derivative(alpha),
-              description: function_class.description,
-              characteristics: function_class.characteristics
-            }
-          when :softmax
-            {
-              function: function_class.method(:function),
-              derivative: function_class.method(:derivative),
-              description: function_class.description,
-              characteristics: function_class.characteristics
-            }
+          if params.any?
+            function_class.new(**params)
           else
-            {
-              function: function_class.function,
-              derivative: function_class.derivative,
-              description: function_class.description,
-              characteristics: function_class.characteristics
-            }
+            function_class.new
           end
         end
         
-        def self.list_functions
-          AVAILABLE_FUNCTIONS.keys
+        def self.list_available
+          FUNCTIONS.keys
         end
         
-        def self.compare_functions(input_range = (-5..5), step = 0.1)
+        def self.compare_functions(x_range = -5..5, step = 0.1)
           puts "=== Activation Function Comparison ==="
-          puts "Input range: #{input_range}"
-          puts
           
-          inputs = input_range.step(step).to_a
+          x_values = x_range.step(step).to_a
           
-          AVAILABLE_FUNCTIONS.each do |name, function_class|
-            next if name == :softmax  # Skip vector function
+          FUNCTIONS.each do |name, function_class|
+            func = function_class.new
+            puts "\n#{name.to_s.capitalize}:"
             
-            puts "#{name.to_s.upcase}:"
-            puts "  #{function_class.description}"
-            puts "  Characteristics: #{function_class.characteristics}"
-            
-            activation = create(name)
-            sample_inputs = [-2, -1, 0, 1, 2]
-            
-            puts "  Sample values:"
-            sample_inputs.each do |input|
-              output = activation[:function].call(input)
-              derivative = activation[:derivative].call(output)
-              puts "    f(#{input}) = #{output.round(4)}, f'(#{output.round(4)}) = #{derivative.round(4)}"
+            # Sample some values
+            sample_points = [-2, -1, 0, 1, 2]
+            sample_points.each do |x|
+              y = func.forward(x)
+              puts "  f(#{x}) = #{y.round(4)}"
             end
-            puts
+            
+            # Show derivative at 0
+            y_at_0 = func.forward(0)
+            dy_at_0 = func.backward(y_at_0)
+            puts "  f'(0) = #{dy_at_0.round(4)}"
           end
-        end
-        
-        def self.recommend_function(problem_type)
-          recommendations = {
-            binary_classification: "sigmoid (output layer) or relu (hidden layers)",
-            multiclass_classification: "softmax (output layer) and relu (hidden layers)",
-            regression: "linear (output layer) and relu or tanh (hidden layers)",
-            autoencoder: "sigmoid or tanh for symmetry",
-            deep_network: "relu or leaky_relu to avoid vanishing gradients",
-            recurrent_network: "tanh or sigmoid for gating mechanisms"
-          }
-          
-          recommendation = recommendations[problem_type.to_sym]
-          if recommendation
-            puts "For #{problem_type.to_s.humanize}, recommend: #{recommendation}"
-          else
-            puts "Available problem types: #{recommendations.keys.join(', ')}"
-          end
-          
-          recommendation
         end
       end
       
-      # Educational tools for understanding activation functions
-      class ActivationAnalyzer
-        def self.plot_function(function_name, range = (-5..5), step = 0.1)
-          activation = ActivationFactory.create(function_name)
-          inputs = range.step(step).to_a
+      # Educational comparison tool
+      class ActivationComparison
+        def self.visualize_functions
+          puts "\n=== Activation Functions Visualization ==="
           
-          puts "=== #{function_name.to_s.upcase} Activation Function ==="
-          puts activation[:description]
-          puts
+          functions = [:sigmoid, :tanh, :relu, :leaky_relu]
+          x_range = -3..3
           
-          # Simple ASCII plot
-          outputs = inputs.map { |x| activation[:function].call(x) }
-          min_output, max_output = outputs.minmax
+          # Create ASCII plot
+          puts "  x  | " + functions.map { |f| f.to_s.ljust(8) }.join(" | ")
+          puts "-----+" + ("-" * 10 * functions.length)
           
-          puts "Input  | Output   | Derivative | Visualization"
-          puts "-------|----------|------------|---------------"
-          
-          sample_inputs = inputs.select.with_index { |_, i| i % (inputs.length / 20).ceil == 0 }
-          sample_inputs.each do |input|
-            output = activation[:function].call(input)
-            derivative = activation[:derivative].call(output)
-            
-            # Simple visualization bar
-            if max_output > min_output
-              normalized = (output - min_output) / (max_output - min_output)
-              bar_length = (normalized * 20).to_i
-              bar = "█" * bar_length + "░" * (20 - bar_length)
-            else
-              bar = "█" * 10 + "░" * 10
+          x_range.step(0.5) do |x|
+            values = functions.map do |func_name|
+              func = ActivationFunctionFactory.create(func_name)
+              func.forward(x).round(2).to_s.ljust(8)
             end
             
-            puts sprintf("%6.2f | %8.4f | %10.4f | %s", input, output, derivative, bar)
-          end
-          
-          puts
-          puts "Function characteristics:"
-          activation[:characteristics].each do |key, value|
-            puts "  #{key}: #{value}"
+            puts sprintf("%4.1f | %s", x, values.join(" | "))
           end
         end
         
-        def self.analyze_gradients(function_name, input_values = [-3, -1, 0, 1, 3])
-          activation = ActivationFactory.create(function_name)
+        def self.analyze_gradients
+          puts "\n=== Gradient Analysis ==="
           
-          puts "=== Gradient Analysis for #{function_name.to_s.upcase} ==="
-          puts
+          functions = [:sigmoid, :tanh, :relu, :leaky_relu]
+          test_outputs = [0.01, 0.5, 0.99]  # Different saturation levels
           
-          puts "Input | Output | Derivative | Gradient Flow"
-          puts "------|--------|------------|---------------"
-          
-          input_values.each do |input|
-            output = activation[:function].call(input)
-            derivative = activation[:derivative].call(output)
+          functions.each do |func_name|
+            func = ActivationFunctionFactory.create(func_name)
+            puts "\n#{func_name}:"
             
-            # Classify gradient strength
-            gradient_strength = case derivative.abs
-                               when 0...0.01 then "Very Weak   ⚠️"
-                               when 0.01...0.1 then "Weak       ⚠️"
-                               when 0.1...0.5 then "Moderate   ✓"
-                               when 0.5...1.0 then "Strong     ✓"
-                               else "Very Strong ✓"
-                               end
-            
-            puts sprintf("%5.1f | %6.3f | %10.4f | %s", input, output, derivative, gradient_strength)
+            # For functions that map to [0,1] or [-1,1]
+            if [:sigmoid, :tanh].include?(func_name)
+              test_outputs.each do |output|
+                gradient = func.backward(output)
+                puts "  Gradient at output=#{output}: #{gradient.round(4)}"
+              end
+            else
+              # For unbounded functions, test at different input values
+              [-1, 0, 1].each do |x|
+                output = func.forward(x)
+                gradient = func.backward(output)
+                puts "  Gradient at x=#{x}: #{gradient.round(4)}"
+              end
+            end
           end
-          
-          puts
-          puts "Gradient flow analysis:"
-          if activation[:characteristics][:vanishing_gradient_problem]
-            puts "⚠️  This function may suffer from vanishing gradients in deep networks"
-          else
-            puts "✓ This function maintains good gradient flow"
-          end
-        end
-        
-        def self.educational_summary
-          puts "=== Activation Functions Educational Summary ==="
-          puts
-          puts "Activation functions determine the output of neurons and affect:"
-          puts "• Learning speed and stability"
-          puts "• Gradient flow in deep networks"
-          puts "• Network expressiveness"
-          puts "• Output interpretation"
-          puts
-          puts "Key considerations when choosing activation functions:"
-          puts "1. Problem type (classification, regression, etc.)"
-          puts "2. Network depth (vanishing gradients)"
-          puts "3. Output requirements (range, interpretation)"
-          puts "4. Training speed requirements"
-          puts
-          puts "Common patterns:"
-          puts "• Hidden layers: ReLU (modern default) or Tanh (classical)"
-          puts "• Binary classification output: Sigmoid"
-          puts "• Multi-class classification output: Softmax"
-          puts "• Regression output: Linear"
-          puts "• Deep networks: ReLU variants to avoid vanishing gradients"
-          puts
-          puts "Experiment with different functions to understand their behavior!"
         end
       end
     end
