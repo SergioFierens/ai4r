@@ -1,6 +1,6 @@
 # Hopfield Networks
 
-A Hopfield network is a recurrent neural network that stores patterns as stable states. It can remove noise from an input pattern by iteratively updating the neurons until it converges to the closest memorized pattern.
+A Hopfield network is a classical recurrent neural network that stores patterns as stable states. It can remove noise from an input pattern by iteratively updating the neurons until it converges to the closest memorized pattern. While newer models like Transformers excel at sequence learning, Hopfield networks showcase associative memory in its simplest form.
 
 ## Input Format
 

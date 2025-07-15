@@ -44,11 +44,12 @@ Datasets can be loaded from CSV files or created directly from arrays. Numeric a
 
 AI4R includes several algorithms:
 
-- Decision trees such as ID3
-- Neural networks with backpropagation
-- Genetic algorithms for optimization
-- Clustering methods including KMeans and hierarchical clustering
-- Baseline classifiers like OneR, ZeroR and Hyperpipes
+* Decision trees such as ID3
+* Neural networks with backpropagation
+* A minimal Transformer for sequence processing
+* Genetic algorithms for optimization
+* Clustering methods including KMeans and hierarchical clustering
+* Baseline classifiers like OneR, ZeroR and Hyperpipes
 
 See the documents in this directory for detailed tutorials on each topic.
 
