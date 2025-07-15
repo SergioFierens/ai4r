@@ -51,13 +51,13 @@ class HyperpipesTest < Minitest::Test
 
   def test_get_rules
     classifier = Hyperpipes.new.build(@data_set)
-    age = 28
-    gender = 'M'
+    age = 28 # rubocop:disable Lint/UselessAssignment
+    gender = 'M' # rubocop:disable Lint/UselessAssignment
     marketing_target = nil
     eval classifier.get_rules
     assert_equal 'Y', marketing_target
-    age = 44
-    city = 'New York'
+    age = 44 # rubocop:disable Lint/UselessAssignment
+    city = 'New York' # rubocop:disable Lint/UselessAssignment
     eval classifier.get_rules
     assert_equal 'N', marketing_target
   end

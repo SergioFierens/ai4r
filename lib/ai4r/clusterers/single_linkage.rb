@@ -230,9 +230,9 @@ module Ai4r
       # @param ci [Object]
       # @param cj [Object]
       # @return [Object]
-      def linkage_distance(cx, ci, cj)
-        [read_distance_matrix(cx, ci),
-         read_distance_matrix(cx, cj)].min
+      def linkage_distance(cluster_x, cluster_i, cluster_j)
+        [read_distance_matrix(cluster_x, cluster_i),
+         read_distance_matrix(cluster_x, cluster_j)].min
       end
 
       # cluster_a and cluster_b are removed from index_cluster,

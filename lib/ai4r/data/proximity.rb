@@ -15,10 +15,10 @@ module Ai4r
     module Proximity
       # This is a faster computational replacement for eclidean distance.
       # Parameters a and b are vectors with continuous attributes.
-      def squared_euclidean_distance(a, b)
+      def squared_euclidean_distance(vec_a, vec_b)
         sum = 0.0
-        a.each_with_index do |item_a, i|
-          item_b = b[i]
+        vec_a.each_with_index do |item_a, i|
+          item_b = vec_b[i]
           sum += (item_a - item_b)**2
         end
         sum
@@ -33,16 +33,16 @@ module Ai4r
       # If attributes are measured with different units,
       # attributes with larger values and variance will
       # dominate the metric.
-      def euclidean_distance(a, b)
-        Math.sqrt(squared_euclidean_distance(a, b))
+      def euclidean_distance(vec_a, vec_b)
+        Math.sqrt(squared_euclidean_distance(vec_a, vec_b))
       end
 
       # city block, Manhattan distance, or L1 norm.
       # Parameters a and b are vectors with continuous attributes.
-      def manhattan_distance(a, b)
+      def manhattan_distance(vec_a, vec_b)
         sum = 0.0
-        a.each_with_index do |item_a, i|
-          item_b = b[i]
+        vec_a.each_with_index do |item_a, i|
+          item_b = vec_b[i]
           sum += (item_a - item_b).abs
         end
         sum
@@ -50,10 +50,10 @@ module Ai4r
 
       # Sup distance, or L-intinity norm
       # Parameters a and b are vectors with continuous attributes.
-      def sup_distance(a, b)
+      def sup_distance(vec_a, vec_b)
         distance = 0.0
-        a.each_with_index do |item_a, i|
-          item_b = b[i]
+        vec_a.each_with_index do |item_a, i|
+          item_b = vec_b[i]
           diff = (item_a - item_b).abs
           distance = diff if diff > distance
         end
@@ -65,10 +65,10 @@ module Ai4r
       # vectors are different
       # This distance function is frequently used with binary attributes,
       # though it can be used with other discrete attributes.
-      def hamming_distance(a, b)
+      def hamming_distance(vec_a, vec_b)
         count = 0
-        a.each_index do |i|
-          count += 1 if a[i] != b[i]
+        vec_a.each_index do |i|
+          count += 1 if vec_a[i] != vec_b[i]
         end
         count
       end
@@ -84,10 +84,10 @@ module Ai4r
       # * a and b must not include repeated items
       # * all attributes are treated equally
       # * all attributes are treated equally
-      def simple_matching_distance(a, b)
+      def simple_matching_distance(vec_a, vec_b)
         similarity = 0.0
-        a.each { |item| similarity += 2 if b.include?(item) }
-        similarity /= (a.length + b.length)
+        vec_a.each { |item| similarity += 2 if vec_b.include?(item) }
+        similarity /= (vec_a.length + vec_b.length)
         (1.0 / similarity) - 1
       end
 
@@ -98,15 +98,15 @@ module Ai4r
       # Parameters a and b are vectors with continuous attributes.
       #
       # D = sum(a[i] * b[i]) / sqrt(sum(a[i]**2)) * sqrt(sum(b[i]**2))
-      def cosine_distance(a, b)
+      def cosine_distance(vec_a, vec_b)
         dot_product = 0.0
         norm_a = 0.0
         norm_b = 0.0
 
-        a.each_index do |i|
-          dot_product += a[i] * b[i]
-          norm_a += a[i]**2
-          norm_b += b[i]**2
+        vec_a.each_index do |i|
+          dot_product += vec_a[i] * vec_b[i]
+          norm_a += vec_a[i]**2
+          norm_b += vec_b[i]**2
         end
 
         magnitude = Math.sqrt(norm_a) * Math.sqrt(norm_b)
