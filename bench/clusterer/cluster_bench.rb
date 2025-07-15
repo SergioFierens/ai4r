@@ -14,7 +14,9 @@ require_relative 'runners/average_linkage_runner'
 require_relative 'runners/diana_runner'
 require_relative 'runners/dbscan_runner'
 
+# Benchmark runners for clustering algorithms
 module Bench
+  # Namespace for clustering benchmark runners
   module Clusterer
     CLUSTER_METRICS = %i[silhouette sse duration_ms notes].freeze
 

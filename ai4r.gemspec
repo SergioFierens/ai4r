@@ -21,7 +21,7 @@ SPEC = Gem::Specification.new do |s|
   s.has_rdoc = true
   s.extra_rdoc_files = ['README.md']
   s.metadata = {
-    'source_code_uri' => 'https://github.com/SergioFierens/ai4r'
+    'source_code_uri' => 'https://github.com/SergioFierens/ai4r',
+    'rubygems_mfa_required' => 'true'
   }
-  s.metadata['rubygems_mfa_required'] = 'true'
 end
