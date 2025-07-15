@@ -97,7 +97,7 @@ module Ai4r
         end
 
         counts = Hash.new(0)
-        k_neighbors.each_value { |klass| counts[klass] += 1 }
+        k_neighbors.each { |_, klass| counts[klass] += 1 }
         max_votes = counts.values.max
         tied = counts.select { |_, v| v == max_votes }.keys
 
@@ -109,7 +109,7 @@ module Ai4r
         when :random
           tied.sample(random: rng)
         else
-          k_neighbors.each_value { |klass| return klass if tied.include?(klass) }
+          k_neighbors.each { |_, klass| return klass if tied.include?(klass) }
         end
       end
 
