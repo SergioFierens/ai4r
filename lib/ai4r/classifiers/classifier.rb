@@ -61,9 +61,11 @@ module Ai4r
       # Note, however, that not all classifiers are able to produce rules.
       # This method is not implemented in such classifiers.
       # @return [Object]
+      # rubocop:disable Naming/AccessorMethodName
       def get_rules
         raise NotImplementedError
       end
+      # rubocop:enable Naming/AccessorMethodName
     end
   end
 end

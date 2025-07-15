@@ -12,6 +12,7 @@ require_relative '../som/som_data'
 # behaves deterministically across runs.
 srand 1
 
+# Chromosome used to search for a good random seed for KMeans.
 class SeedChromosome < Ai4r::GeneticAlgorithm::ChromosomeBase
   RANGE = (0..10)
   DATA = Ai4r::Data::DataSet.new(data_items: SOM_DATA.first(30))
@@ -27,8 +28,8 @@ class SeedChromosome < Ai4r::GeneticAlgorithm::ChromosomeBase
     new(RANGE.to_a.sample)
   end
 
-  def self.reproduce(a, b, _rate = 0.7)
-    new([a.data, b.data].sample)
+  def self.reproduce(parent_a, parent_b, _rate = 0.7)
+    new([parent_a.data, parent_b.data].sample)
   end
 
   def self.mutate(chrom, rate = 0.3)

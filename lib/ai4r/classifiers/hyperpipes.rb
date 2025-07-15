@@ -15,8 +15,8 @@ require_relative '../classifiers/classifier'
 require_relative '../classifiers/votes'
 
 module Ai4r
+  # Collection of classifier algorithms.
   module Classifiers
-    # Collection of classifier algorithms.
     include Ai4r::Data
 
     # = Introduction
@@ -34,6 +34,7 @@ module Ai4r
 
       # @return [Object]
       def initialize
+        super()
         @tie_break = :last
         @margin = 0
         @random_seed = nil
@@ -93,6 +94,7 @@ module Ai4r
       #     puts marketing_target
       #       # =>  'Y'
       # @return [Object]
+      # rubocop:disable Naming/AccessorMethodName
       def get_rules
         rules = []
         rules << 'votes = Votes.new'
@@ -112,6 +114,7 @@ module Ai4r
         rules << "#{labels.last} = votes.get_winner(:#{@tie_break})"
         rules.join("\n")
       end
+      # rubocop:enable Naming/AccessorMethodName
 
       # Return a summary representation of all pipes.
       #

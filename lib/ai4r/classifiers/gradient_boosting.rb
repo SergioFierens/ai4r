@@ -13,6 +13,7 @@ require_relative '../classifiers/classifier'
 
 module Ai4r
   module Classifiers
+    # Gradient boosting regressor using simple linear regression base learners.
     class GradientBoosting < Classifier
       parameters_info n_estimators: 'Number of boosting iterations. Default 10.',
                       learning_rate: 'Shrinkage parameter for each learner. Default 0.1.'
@@ -20,6 +21,7 @@ module Ai4r
       attr_reader :initial_value, :learners
 
       def initialize
+        super()
         @n_estimators = 10
         @learning_rate = 0.1
       end
@@ -52,9 +54,11 @@ module Ai4r
         value
       end
 
+      # rubocop:disable Naming/AccessorMethodName
       def get_rules
         'GradientBoosting does not support rule extraction.'
       end
+      # rubocop:enable Naming/AccessorMethodName
     end
   end
 end

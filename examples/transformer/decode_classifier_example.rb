@@ -4,10 +4,6 @@ require_relative '../../lib/ai4r/neural_network/transformer'
 require_relative '../../lib/ai4r/classifiers/logistic_regression'
 require_relative '../../lib/ai4r/data/data_set'
 
-include Ai4r::NeuralNetwork
-include Ai4r::Classifiers
-include Ai4r::Data
-
 # Tiny dataset of greetings (label 0) and farewells (label 1)
 sentences = [
   %w[hello there],
@@ -36,7 +32,7 @@ end
 vocab_size = vocab.length
 max_len = sentences.map(&:length).max
 
-transformer = Transformer.new(
+transformer = Ai4r::NeuralNetwork::Transformer.new(
   vocab_size: vocab_size,
   max_len: max_len,
   architecture: :decoder
@@ -57,9 +53,9 @@ sentences.each_with_index do |tokens, idx|
 end
 
 labels_names = (0...embed_dim).map { |i| "x#{i}" } + ['class']
-set = DataSet.new(data_items: items, data_labels: labels_names)
+set = Ai4r::Data::DataSet.new(data_items: items, data_labels: labels_names)
 
-classifier = LogisticRegression.new
+classifier = Ai4r::Classifiers::LogisticRegression.new
 classifier.set_parameters(lr: 0.5, iterations: 500).build(set)
 
 # Classify a short greeting

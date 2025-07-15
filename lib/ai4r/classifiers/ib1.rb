@@ -40,6 +40,7 @@ module Ai4r
 
       # @return [Object]
       def initialize
+        super()
         @k = 1
         @distance_function = nil
         @tie_break = :first
@@ -119,12 +120,12 @@ module Ai4r
       # @param data [Object]
       # @param k [Object]
       # @return [Object]
-      def neighbors_for(data, k)
+      def neighbors_for(data, k_neighbors)
         update_min_max(data)
         @data_set.data_items
                  .map { |train_item| [train_item, distance(data, train_item)] }
                  .sort_by(&:last)
-                 .first(k)
+                 .first(k_neighbors)
                  .map(&:first)
       end
 
@@ -164,12 +165,12 @@ module Ai4r
       # @param a [Object]
       # @param b [Object]
       # @return [Object]
-      def distance(a, b)
-        return @distance_function.call(a, b) if @distance_function
+      def distance(data_a, data_b)
+        return @distance_function.call(data_a, data_b) if @distance_function
 
         d = 0
-        a.each_with_index do |att_a, i|
-          att_b = b[i]
+        data_a.each_with_index do |att_a, i|
+          att_b = data_b[i]
           if att_a.nil?
             if att_b.is_a? Numeric
               diff = norm(att_b, i)
