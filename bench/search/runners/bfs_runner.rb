@@ -15,9 +15,11 @@ module Bench
             frontier_size(queue.size)
             node, path = queue.shift
             return path if problem.goal?(node)
+
             expand
             problem.neighbors(node).each_key do |nbr|
               next if visited[nbr]
+
               visited[nbr] = true
               queue << [nbr, path + [nbr]]
             end

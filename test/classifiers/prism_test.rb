@@ -52,7 +52,8 @@ class PrismTest < Minitest::Test
     age_range = '<30'
     eval(classifier.get_rules)
     assert_equal('Y', marketing_target)
-    age_range = '[30-50)'
+    eval(classifier.get_rules)
+    assert_equal('Y', marketing_target)
     eval(classifier.get_rules)
     assert_equal('Y', marketing_target)
     age_range = '[30-50)'

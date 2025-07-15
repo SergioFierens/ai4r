@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../../test_helper'
 require 'ai4r/search/mcts'
 
@@ -8,7 +9,7 @@ class MCTSTest < Minitest::Test
   def setup
     @env = {
       actions_fn: ->(s) { s == :root ? %i[a b] : [] },
-      transition_fn: ->(s, a) { a == :a ? :win : :lose },
+      transition_fn: ->(_s, a) { a == :a ? :win : :lose },
       terminal_fn: ->(s) { %i[win lose].include?(s) },
       reward_fn: ->(s) { s == :win ? 1.0 : 0.0 }
     }

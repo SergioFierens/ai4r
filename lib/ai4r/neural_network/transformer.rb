@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Minimal Transformer implementation
 # Author::    OpenAI Assistant
 # License::   MPL 1.1
@@ -40,10 +41,14 @@ module Ai4r
         @num_heads = num_heads
         @ff_dim = ff_dim
         @architecture = architecture
-        raise ArgumentError, 'embed_dim must be divisible by num_heads' if embed_dim % num_heads != 0
-        unless [:encoder, :decoder, :seq2seq].include?(@architecture)
+        if embed_dim % num_heads != 0
+          raise ArgumentError,
+                'embed_dim must be divisible by num_heads'
+        end
+        unless %i[encoder decoder seq2seq].include?(@architecture)
           raise ArgumentError, 'invalid architecture'
         end
+
         init_weights
         build_positional_encoding
       end
@@ -55,14 +60,17 @@ module Ai4r
         when :encoder
           tokens = args.first
           raise ArgumentError, 'sequence too long' if tokens.length > @max_len
+
           encode(tokens)
         when :decoder
           tokens = args.first
           raise ArgumentError, 'sequence too long' if tokens.length > @max_len
+
           decode(tokens)
         when :seq2seq
           src, tgt = args
           raise ArgumentError, 'sequence too long' if src.length > @max_len || tgt.length > @max_len
+
           memory = encode(src)
           decode(tgt, memory)
         else
@@ -114,7 +122,7 @@ module Ai4r
       def build_positional_encoding
         @positional = Array.new(@max_len) do |pos|
           Array.new(@embed_dim) do |i|
-            angle = pos / (10000.0 ** ((2 * (i / 2)) / @embed_dim.to_f))
+            angle = pos / (10_000.0**((2 * (i / 2)) / @embed_dim.to_f))
             i.even? ? Math.sin(angle) : Math.cos(angle)
           end
         end
@@ -172,7 +180,7 @@ module Ai4r
       end
 
       def relu(x)
-        x > 0 ? x : 0
+        x.positive? ? x : 0
       end
 
       def affine(mat, weights, bias)
@@ -189,4 +197,3 @@ module Ai4r
     end
   end
 end
-

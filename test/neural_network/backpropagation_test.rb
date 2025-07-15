@@ -216,6 +216,7 @@ module Ai4r
       end
     end
   end
+
   def test_initializes_networks_with_given_structure
     [
       [[4, 2], [[1.0, 1.0, 1.0, 1.0, 1.0], [1.0, 1.0]], false],

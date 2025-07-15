@@ -14,4 +14,3 @@ decoder_input = [4, 5]
 
 output = model.eval(encoder_input, decoder_input)
 puts "Output length: #{output.length}"
-

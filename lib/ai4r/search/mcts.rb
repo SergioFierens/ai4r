@@ -45,7 +45,8 @@ module Ai4r
       # transition_fn::  computes the next state given a state and action
       # terminal_fn::    predicate to detect terminal states
       # reward_fn::      numeric payoff for terminal states
-      def initialize(actions_fn:, transition_fn:, terminal_fn:, reward_fn:, exploration: Math.sqrt(2))
+      def initialize(actions_fn:, transition_fn:, terminal_fn:, reward_fn:,
+                     exploration: Math.sqrt(2))
         @actions_fn = actions_fn
         @transition_fn = transition_fn
         @terminal_fn = terminal_fn
@@ -70,11 +71,10 @@ module Ai4r
       def tree_policy(node)
         until @terminal_fn.call(node.state)
           actions = @actions_fn.call(node.state)
-          if node.children.length < actions.length
-            return expand(node, actions)
-          else
-            node = best_child(node, @exploration)
-          end
+          return expand(node, actions) if node.children.length < actions.length
+
+          node = best_child(node, @exploration)
+
         end
         node
       end

@@ -50,12 +50,12 @@ module Ai4r
             next if closed.include?(neighbor)
 
             tentative_g = g[current] + cost
-            if g[neighbor].nil? || tentative_g < g[neighbor]
-              came_from[neighbor] = current
-              g[neighbor] = tentative_g
-              f[neighbor] = tentative_g + @heuristic_fn.call(neighbor)
-              open_set << neighbor unless open_set.include?(neighbor)
-            end
+            next unless g[neighbor].nil? || tentative_g < g[neighbor]
+
+            came_from[neighbor] = current
+            g[neighbor] = tentative_g
+            f[neighbor] = tentative_g + @heuristic_fn.call(neighbor)
+            open_set << neighbor unless open_set.include?(neighbor)
           end
         end
         nil

@@ -28,7 +28,7 @@ class ClustererFlowTest < Minitest::Test
     labeled = DataSet.new(data_items: labeled_items,
                           data_labels: ds.data_labels + ['cluster'])
     assert_equal ds.data_items.length, labeled.data_items.length
-    assert labeled.data_items.all? { |r| r.last.is_a?(Integer) }
+    assert(labeled.data_items.all? { |r| r.last.is_a?(Integer) })
   end
 
   def test_dendrogram_cut_to_three_clusters

@@ -11,7 +11,7 @@ module Bench
         end
 
         def initialize(lines)
-          @grid = lines.map { |l| l.chars }
+          @grid = lines.map(&:chars)
           @height = @grid.length
           @width = @grid.first.length
           @start_state = find('S')
@@ -27,8 +27,10 @@ module Bench
           n = {}
           [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]].each do |nx, ny|
             next if nx.negative? || ny.negative? || nx >= @width || ny >= @height
+
             cell = @grid[ny][nx]
             next if cell == '#'
+
             n[[nx, ny]] = 1
           end
           n

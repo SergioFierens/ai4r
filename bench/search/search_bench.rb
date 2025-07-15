@@ -13,7 +13,8 @@ require_relative 'runners/a_star_runner'
 
 module Bench
   module Search
-    SEARCH_METRICS = %i[solution_depth nodes_expanded max_frontier_size duration_ms completed].freeze
+    SEARCH_METRICS = %i[solution_depth nodes_expanded max_frontier_size duration_ms
+                        completed].freeze
 
     RUNNERS = {
       'bfs' => Runners::BfsRunner,
@@ -38,14 +39,15 @@ module Bench
       options = cli.parse(argv)
 
       raise ArgumentError, 'Please select algorithms with --algos' if options[:algos].empty?
+
       problem_class = PROBLEMS[options[:problem]] or raise ArgumentError, 'Unknown problem'
       problem = if problem_class == Problems::Grid
-                   map_path = options[:map] || raise(ArgumentError, 'Map required')
-                   problem_class.from_file(map_path)
-                 else
-                   start_state = options[:start] || Problems::EightPuzzle::GOAL
-                   problem_class.new(start_state)
-                 end
+                  map_path = options[:map] || raise(ArgumentError, 'Map required')
+                  problem_class.from_file(map_path)
+                else
+                  start_state = options[:start] || Problems::EightPuzzle::GOAL
+                  problem_class.new(start_state)
+                end
 
       results = options[:algos].map do |name|
         runner = RUNNERS[name].new(problem)

@@ -39,4 +39,4 @@ class LogisticRegressionTest < Minitest::Test
     assert_equal 'LogisticRegression does not support rule extraction.',
                  classifier.get_rules
   end
-  end
+end
