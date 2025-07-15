@@ -45,7 +45,10 @@ module Ai4r
       #           elsif age_range=='[30-50)' and city=='New York' then marketing_target='N'
       #           elsif age_range=='[50-80]' then marketing_target='N'
       #           elsif age_range=='>80' then marketing_target='Y'
-      #           else raise 'There was not enough information during training to do a proper induction for this data element' end
+      #           else
+      #             raise 'There was not enough information during training to do a '
+      #                   'proper induction for this data element'
+      #           end
       #
       # It is a nice way to inspect induction results, and also to execute them:
       #     age_range = '<30'

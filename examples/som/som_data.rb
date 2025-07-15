@@ -2,7 +2,8 @@
 
 # data is from the iris dataset (http://archive.ics.uci.edu/ml/datasets/Iris)
 # it is the full dataset, removing the last column
-# website provides additional information on the dataset itself (attributes, class distribution, etc)
+# website provides additional information on the dataset itself
+# (attributes, class distribution, etc)
 
 SOM_DATA = [
   [5.1, 3.5, 1.4, 0.2],

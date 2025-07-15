@@ -30,9 +30,13 @@ module Ai4r
       attr_reader :data_set, :min_values, :max_values
 
       parameters_info k: 'Number of nearest neighbors to consider. Default is 1.',
-                      distance_function: 'Optional custom distance metric taking two instances.',
-                      tie_break: 'Strategy used when neighbors vote tie. Valid values are :first (default) and :random.',
-                      random_seed: 'Seed for random tie-breaking when :tie_break is :random.'
+                      distance_function:
+                        'Optional custom distance metric taking two instances.',
+                      tie_break:
+                        'Strategy used when neighbors vote tie. ' \
+                        'Valid values are :first (default) and :random.',
+                      random_seed:
+                        'Seed for random tie-breaking when :tie_break is :random.'
 
       # @return [Object]
       def initialize
@@ -93,7 +97,7 @@ module Ai4r
         end
 
         counts = Hash.new(0)
-        k_neighbors.each { |_, klass| counts[klass] += 1 }
+        k_neighbors.each_value { |klass| counts[klass] += 1 }
         max_votes = counts.values.max
         tied = counts.select { |_, v| v == max_votes }.keys
 
@@ -105,7 +109,7 @@ module Ai4r
         when :random
           tied.sample(random: rng)
         else
-          k_neighbors.each { |_, klass| return klass if tied.include?(klass) }
+          k_neighbors.each_value { |klass| return klass if tied.include?(klass) }
         end
       end
 

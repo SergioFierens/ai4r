@@ -26,8 +26,9 @@ module Ai4r
     class Hyperpipes < Classifier
       attr_reader :data_set, :pipes
 
-      parameters_info tie_break: 'Strategy used when more than one class has the same maximal vote. ' \
-                                  'Valid values are :last (default) and :random.',
+      parameters_info tie_break:
+                        'Strategy used when more than one class has the same maximal vote. ' \
+                        'Valid values are :last (default) and :random.',
                       margin: 'Numeric margin added to the bounds of numeric attributes.',
                       random_seed: 'Seed for random tie-breaking when tie_break is :random.'
 
