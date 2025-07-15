@@ -26,7 +26,7 @@ require 'ai4r'
 
 * [User Guide](user_guide.md) – start with the basics and explore the library in depth.
 * **Genetic Algorithms** – optimization of the Travelling Salesman Problem.
-* **Neural Networks** – simple OCR recognition of visual patterns.
+* **Neural Networks** – simple OCR recognition with a classic feed‑forward model.
 * [Hopfield Networks](hopfield_network.md) – memory based recognition of noisy patterns.
 * [Hierarchical Clustering](hierarchical_clustering.md) – build dendrograms from merge steps.
 * [DBSCAN](dbscan.md) – density-based clustering using a squared distance threshold.
@@ -40,7 +40,7 @@ require 'ai4r'
 * [Search Algorithms](search_algorithms.md) – breadth-first and depth-first search implementations.
 * [Monte Carlo Tree Search](monte_carlo_tree_search.md) – generic UCT search.
 * [A* Search](a_star_search.md) – heuristic best-first path search.
-* [Transformer](transformer.md) – tiny encoder, decoder and seq2seq models.
+* [Transformer](transformer.md) – a minimal take on the attention-powered architecture that transformed modern AI.
 * [Decode-only Classification Example](../examples/transformer/decode_classifier_example.rb)
 * [Encoder Text Classification Example](../examples/neural_network/transformer_text_classification.rb)
 

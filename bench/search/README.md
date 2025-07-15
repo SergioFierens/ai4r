@@ -2,7 +2,8 @@
 
 A tiny benchmarking harness for basic search algorithms. Problems and
 algorithms live under this folder while shared helpers are kept in
-`bench/common`.
+`bench/common`. Use it to compare BFS, DFS, IDDFS and A* on the same
+problem with minimal setup.
 
 ## Quick start
 
@@ -13,7 +14,8 @@ $ ruby bench/search/search_bench.rb \
 ```
 
 Console output shows a table of metrics and the CSV can be loaded into a
-spreadsheet.
+spreadsheet. Swap the problem or algorithm names to try DFS, IDDFS or the
+classic eight puzzle.
 
 ## Metrics
 

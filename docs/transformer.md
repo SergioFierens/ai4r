@@ -42,3 +42,6 @@ seq2seq_output = seq2seq.eval([1, 2, 3], [4, 5])
 
 * **Decode‑only text classification** – [`examples/transformer/decode_classifier_example.rb`](../examples/transformer/decode_classifier_example.rb) shows how to build embeddings with a decoder and train logistic regression on top.
 * **Encoder sentiment demo** – [`examples/neural_network/transformer_text_classification.rb`](../examples/neural_network/transformer_text_classification.rb) uses the encoder to create sentence vectors for a tiny sentiment dataset.
+
+Transformers build on the same fundamentals as the backpropagation network described in [Neural Networks](neural_networks.md), but attention lets them capture long-range dependencies. Even this toy implementation highlights how sequences can be processed as a whole rather than token by token.
+
