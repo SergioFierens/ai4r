@@ -1,5 +1,6 @@
 # Helper metrics used by benchmark scripts.
 module Bench
+  # Common benchmark metrics.
   module Common
     module_function
 
