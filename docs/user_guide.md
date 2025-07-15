@@ -38,7 +38,8 @@ Running this script prints `"yes"`.
 
 ## Working with Data
 
-Datasets can be loaded from CSV files or created directly from arrays. Numeric attributes support normalization with either z-score or min-max scaling.
+Datasets can be loaded from CSV files or created directly from arrays. The CSV helpers accept the same options as Ruby's `CSV` class, so you can specify separators or encoding via `csv_options:`.
+Numeric attributes support normalization with either z-score or min-max scaling. Call `describe` on a dataset to obtain a quick statistical summary of each attribute.
 
 ## Algorithm Overview
 

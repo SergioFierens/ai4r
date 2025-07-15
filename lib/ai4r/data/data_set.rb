@@ -70,12 +70,12 @@ module Ai4r
       # Load data items from csv file
       # @param filepath [Object]
       # @return [Object]
-      def load_csv(filepath, parse_numeric: false)
+      def load_csv(filepath, parse_numeric: false, csv_options: {})
         if parse_numeric
-          parse_csv(filepath)
+          parse_csv(filepath, csv_options: csv_options)
         else
           items = []
-          open_csv_file(filepath) do |entry|
+          open_csv_file(filepath, csv_options: csv_options) do |entry|
             items << entry
           end
           set_data_items(items)
@@ -86,15 +86,15 @@ module Ai4r
       # @param filepath [Object]
       # @param block [Object]
       # @return [Object]
-      def open_csv_file(filepath, &)
-        CSV.foreach(filepath, &)
+      def open_csv_file(filepath, csv_options: {}, &)
+        CSV.foreach(filepath, **csv_options, &)
       end
 
       # Load data items from csv file. The first row is used as data labels.
       # @param filepath [Object]
       # @return [Object]
-      def load_csv_with_labels(filepath, parse_numeric: false)
-        load_csv(filepath, parse_numeric: parse_numeric)
+      def load_csv_with_labels(filepath, parse_numeric: false, csv_options: {})
+        load_csv(filepath, parse_numeric: parse_numeric, csv_options: csv_options)
         @data_labels = @data_items.shift
         self
       end
@@ -102,9 +102,9 @@ module Ai4r
       # Same as load_csv, but it will try to convert cell contents as numbers.
       # @param filepath [Object]
       # @return [Object]
-      def parse_csv(filepath)
+      def parse_csv(filepath, csv_options: {})
         items = []
-        open_csv_file(filepath) do |row|
+        open_csv_file(filepath, csv_options: csv_options) do |row|
           items << row.collect do |x|
             is_number?(x) ? Float(x, exception: false) : x
           end
@@ -115,8 +115,8 @@ module Ai4r
       # Same as load_csv_with_labels, but it will try to convert cell contents as numbers.
       # @param filepath [Object]
       # @return [Object]
-      def parse_csv_with_labels(filepath)
-        load_csv_with_labels(filepath, parse_numeric: true)
+      def parse_csv_with_labels(filepath, csv_options: {})
+        load_csv_with_labels(filepath, parse_numeric: true, csv_options: csv_options)
       end
 
       # Set data labels.
@@ -340,6 +340,36 @@ module Ai4r
       # @return [Object]
       def category_label
         data_labels.last
+      end
+
+      # Return a summary hash describing each attribute.
+      # Numeric attributes include count, mean, standard deviation,
+      # minimum and maximum. Nominal attributes include count,
+      # number of unique values and the most frequent value.
+      def describe
+        summary = {}
+        num_attributes.times do |i|
+          label = @data_labels[i] || "attribute_#{i + 1}"
+          if @data_items.first[i].is_a?(Numeric)
+            summary[label] = {
+              type: :numeric,
+              count: @data_items.size,
+              mean: Statistics.mean(self, i),
+              std: Statistics.standard_deviation(self, i),
+              min: Statistics.min(self, i),
+              max: Statistics.max(self, i)
+            }
+          else
+            column = @data_items.map { |row| row[i] }
+            summary[label] = {
+              type: :nominal,
+              count: column.length,
+              unique: column.uniq.length,
+              top: Statistics.mode(self, i)
+            }
+          end
+        end
+        summary
       end
 
       protected

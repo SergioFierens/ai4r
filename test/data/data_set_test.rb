@@ -156,6 +156,25 @@ module Ai4r
         assert_equal labels, first.data_labels
         assert_equal labels, second.data_labels
       end
+
+      def test_load_csv_custom_separator
+        file = File.join(File.dirname(__FILE__), 'data_set_semicolon.csv')
+        set = DataSet.new.load_csv_with_labels(file, parse_numeric: true,
+                                               csv_options: { col_sep: ';' })
+        assert_equal %w[zone rooms size price], set.data_labels
+        assert_equal ['A', 1.0, 10.0, 'Y'], set.data_items.first
+      end
+
+      def test_describe
+        items = [['A', 1], ['B', 2], ['A', 3]]
+        labels = %w[name val]
+        set = DataSet.new(data_items: items, data_labels: labels)
+        expected = {
+          'name' => { type: :nominal, count: 3, unique: 2, top: 'A' },
+          'val' => { type: :numeric, count: 3, mean: 2.0, std: 1.0, min: 1, max: 3 }
+        }
+        assert_equal expected, set.describe
+      end
     end
   end
 end
