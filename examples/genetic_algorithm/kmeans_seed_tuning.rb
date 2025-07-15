@@ -9,6 +9,13 @@ include Ai4r::GeneticAlgorithm
 include Ai4r::Clusterers
 include Ai4r::Data
 
+##
+# Running the genetic search without a fixed random seed leads to
+# different SSE results each time, which causes flaky tests in CI.
+# Explicitly seed Ruby's random number generator so that the script
+# behaves deterministically across runs.
+srand 1
+
 class SeedChromosome < ChromosomeBase
   RANGE = (0..10)
   DATA = DataSet.new(data_items: SOM_DATA.first(30))
