@@ -1,0 +1,366 @@
+# RuboCop configuration for AI4R Educational Framework
+# Tailored for educational Ruby projects with focus on readability and learning
+
+require:
+  - rubocop-rspec
+  - rubocop-performance
+  - rubocop-rake
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 2.7
+  Include:
+    - 'lib/**/*.rb'
+    - 'spec/**/*.rb'
+    - 'examples/**/*.rb'
+    - 'Rakefile'
+    - 'Gemfile'
+    - '*.gemspec'
+  Exclude:
+    - 'test_legacy_backup/**/*'
+    - 'docs/**/*'
+    - 'coverage/**/*'
+    - 'vendor/**/*'
+    - 'tmp/**/*'
+    - 'bin/**/*'
+    - '.git/**/*'
+
+# ==============================================================================
+# EDUCATIONAL PROJECT SPECIFIC RULES
+# ==============================================================================
+
+# Allow longer lines for educational explanations and examples
+Layout/LineLength:
+  Max: 120
+  AllowedPatterns:
+    - '^\s*#'  # Allow long comments for educational explanations
+    - 'puts.*"'  # Allow long puts statements for educational output
+  Exclude:
+    - 'spec/**/*'  # Be more lenient in tests
+    - 'examples/**/*'  # Allow longer lines in examples
+
+# Allow more complex methods in educational examples
+Metrics/MethodLength:
+  Max: 25
+  CountAsOne: ['array', 'hash', 'heredoc']
+  Exclude:
+    - 'spec/**/*'
+    - 'examples/**/*'
+    - 'lib/ai4r/classifiers/educational_*.rb'
+    - 'lib/ai4r/neural_network/educational_*.rb'
+    - 'lib/ai4r/genetic_algorithm/educational_*.rb'
+
+# Allow complex classes for comprehensive educational frameworks
+Metrics/ClassLength:
+  Max: 200
+  CountAsOne: ['array', 'hash', 'heredoc']
+  Exclude:
+    - 'spec/**/*'
+    - 'examples/**/*'
+    - 'lib/ai4r/data/educational_*.rb'
+
+# Allow more complexity in educational demonstration methods
+Metrics/CyclomaticComplexity:
+  Max: 15
+  Exclude:
+    - 'examples/**/*'
+    - 'spec/**/*'
+
+# Allow more ABC complexity for educational completeness
+Metrics/AbcSize:
+  Max: 25
+  Exclude:
+    - 'spec/**/*'
+    - 'examples/**/*'
+
+# Allow more parameters in educational method signatures
+Metrics/ParameterLists:
+  Max: 6
+  CountKeywordArgs: false
+
+# Allow more instance variables in educational classes
+Metrics/InstanceVariable:
+  Max: 12
+
+# ==============================================================================
+# LAYOUT AND FORMATTING
+# ==============================================================================
+
+# Use consistent string literals
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+  SupportedStyles:
+    - single_quotes
+    - double_quotes
+  ConsistentQuotesInMultiline: true
+
+# Prefer frozen string literals for performance
+Style/FrozenStringLiteralComment:
+  Enabled: true
+  EnforcedStyle: always
+
+# Use consistent hash syntax
+Style/HashSyntax:
+  EnforcedStyle: ruby19_no_mixed_keys
+
+# Allow both lambda styles for educational variety
+Style/Lambda:
+  EnforcedStyle: literal
+
+# Use consistent method definitions
+Style/MethodDefParentheses:
+  EnforcedStyle: require_parentheses
+
+# Allow educational comments to be more verbose
+Style/Documentation:
+  Enabled: true
+  Exclude:
+    - 'spec/**/*'
+    - 'examples/**/*'
+    - 'lib/ai4r/data/proximity.rb'
+    - 'lib/ai4r/data/statistics.rb'
+
+# Keep educational explanations readable
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+# Use consistent spacing
+Layout/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: space
+
+# ==============================================================================
+# NAMING CONVENTIONS
+# ==============================================================================
+
+# Use descriptive names for educational clarity
+Naming/VariableNumber:
+  EnforcedStyle: snake_case
+
+# Allow longer method names for educational descriptiveness
+Naming/MethodName:
+  MinNameLength: 2
+  AllowedPatterns:
+    - '^[a-z_][a-zA-Z0-9_]*[!?]?$'
+    - '^is_'
+    - '^has_'
+    - '^can_'
+
+# Allow educational prefixes in method names
+Naming/PredicateName:
+  ForbiddenPrefixes:
+    - is_
+  AllowedMethods:
+    - is_a?
+    - is_educational_mode?
+    - is_learning_enabled?
+
+# ==============================================================================
+# STYLE PREFERENCES
+# ==============================================================================
+
+# Prefer explicit returns for educational clarity
+Style/RedundantReturn:
+  Enabled: false
+
+# Allow educational guard clauses
+Style/GuardClause:
+  Enabled: true
+  MinBodyLength: 3
+
+# Prefer modern Ruby syntax
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+
+Style/HashTransformValues:
+  Enabled: true
+
+# Use consistent conditional assignment
+Style/ConditionalAssignment:
+  Enabled: true
+  EnforcedStyle: assign_to_condition
+
+# Allow educational verbose blocks
+Style/SingleLineBlockParams:
+  Enabled: false
+
+# ==============================================================================
+# RSPEC SPECIFIC RULES
+# ==============================================================================
+
+# Allow longer RSpec examples for educational completeness
+RSpec/ExampleLength:
+  Max: 50
+  CountAsOne: ['array', 'hash', 'heredoc']
+
+# Allow more expectations in educational tests
+RSpec/MultipleExpectations:
+  Max: 10
+
+# Allow descriptive test names
+RSpec/DescribeClass:
+  Enabled: true
+  Exclude:
+    - 'spec/integration/**/*'
+    - 'spec/educational_examples/**/*'
+
+# Allow educational context descriptions
+RSpec/ContextWording:
+  Enabled: true
+  Prefixes:
+    - when
+    - with
+    - without
+    - if
+    - unless
+    - for
+    - during
+    - before
+    - after
+    - in
+    - on
+    - at
+    - educational
+    - learning
+    - teaching
+
+# Allow nested groups for educational organization
+RSpec/NestedGroups:
+  Max: 4
+
+# Allow educational variable names in tests
+RSpec/VariableName:
+  Enabled: false
+
+# Allow educational instance variables in tests
+RSpec/InstanceVariable:
+  Enabled: false
+
+# Allow let definitions for educational setup
+RSpec/MultipleMemoizedHelpers:
+  Max: 15
+
+# ==============================================================================
+# PERFORMANCE RULES
+# ==============================================================================
+
+# Prefer performance optimizations where educational
+Performance/StringReplacement:
+  Enabled: true
+
+Performance/RegexpMatch:
+  Enabled: true
+
+Performance/ReverseEach:
+  Enabled: true
+
+Performance/TimesMap:
+  Enabled: true
+
+Performance/RedundantBlockCall:
+  Enabled: true
+
+# ==============================================================================
+# DISABLED RULES FOR EDUCATIONAL PURPOSES
+# ==============================================================================
+
+# Allow educational examples to be more verbose
+Style/CommentedKeyword:
+  Enabled: false
+
+# Allow educational ASCII art and formatting
+Style/AsciiComments:
+  Enabled: false
+
+# Allow educational output methods
+Style/GlobalVars:
+  Enabled: false
+
+# Allow educational mathematical expressions
+Style/NumericPredicate:
+  Enabled: false
+
+# Allow educational method chaining examples
+Style/MultilineBlockChain:
+  Enabled: false
+
+# Allow educational parallel assignment
+Style/ParallelAssignment:
+  Enabled: false
+
+# Allow educational class variable usage
+Style/ClassVars:
+  Enabled: false
+
+# Allow educational constant definitions
+Style/MutableConstant:
+  Enabled: false
+
+# Allow educational metaprogramming examples
+Style/EvalWithLocation:
+  Enabled: false
+
+# Allow educational flexibility in conditional styles
+Style/TernaryParentheses:
+  Enabled: false
+
+# ==============================================================================
+# SECURITY RULES (Important for educational framework)
+# ==============================================================================
+
+Security/Eval:
+  Enabled: true
+
+Security/JSONLoad:
+  Enabled: true
+
+Security/MarshalLoad:
+  Enabled: true
+
+Security/YAMLLoad:
+  Enabled: true
+
+# ==============================================================================
+# LINT RULES (Critical for educational reliability)
+# ==============================================================================
+
+Lint/AmbiguousOperator:
+  Enabled: true
+
+Lint/AmbiguousRegexpLiteral:
+  Enabled: true
+
+Lint/AssignmentInCondition:
+  Enabled: true
+
+Lint/DeprecatedConstants:
+  Enabled: true
+
+Lint/DuplicateMethods:
+  Enabled: true
+
+Lint/EmptyWhen:
+  Enabled: true
+
+Lint/FlipFlop:
+  Enabled: true
+
+Lint/LiteralAsCondition:
+  Enabled: true
+
+Lint/RedundantRequireStatement:
+  Enabled: true
+
+Lint/ShadowingOuterLocalVariable:
+  Enabled: true
+
+Lint/UnreachableCode:
+  Enabled: true
+
+Lint/UselessAssignment:
+  Enabled: true
+
+Lint/Void:
+  Enabled: true

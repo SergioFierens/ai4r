@@ -13,7 +13,14 @@ gem 'faker', '~> 3.2'
 # Development and testing utilities
 gem 'pry', '~> 0.14'
 gem 'simplecov', '~> 0.22'
+gem 'simplecov-html', '~> 0.12'
 gem 'benchmark-ips', '~> 2.10'
+
+# Code quality and style
+gem 'rubocop', '~> 1.57'
+gem 'rubocop-rspec', '~> 2.25'
+gem 'rubocop-performance', '~> 1.19'
+gem 'rubocop-rake', '~> 0.6'
 
 # Legacy test framework (for migration period)
 gem 'test-unit', '~> 3.6'

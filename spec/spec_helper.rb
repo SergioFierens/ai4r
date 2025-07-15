@@ -8,15 +8,70 @@
 # Url:: https://github.com/SergioFierens/ai4r
 
 require 'simplecov'
+require 'simplecov-html'
+
 SimpleCov.start do
+  # Coverage thresholds for educational project
+  minimum_coverage 85
+  minimum_coverage_by_file 70
+  
+  # Enable branch coverage for better insights
+  enable_coverage :branch
+  
+  # Output formats
+  formatter SimpleCov::Formatter::MultiFormatter.new([
+    SimpleCov::Formatter::HTMLFormatter,
+    SimpleCov::Formatter::SimpleFormatter
+  ])
+  
+  # Filter out non-source files
   add_filter '/spec/'
   add_filter '/test/'
+  add_filter '/test_legacy_backup/'
+  add_filter '/examples/'
+  add_filter '/docs/'
+  add_filter '/coverage/'
+  add_filter '/vendor/'
+  add_filter '/Gemfile'
+  add_filter '/Rakefile'
+  add_filter '/.gemspec'
+  
+  # Group source files by functionality for better reporting
+  add_group 'Core Library', 'lib/ai4r.rb'
   add_group 'Data Handling', 'lib/ai4r/data'
-  add_group 'Classifiers', 'lib/ai4r/classifiers'
-  add_group 'Clusterers', 'lib/ai4r/clusterers'
   add_group 'Neural Networks', 'lib/ai4r/neural_network'
   add_group 'Genetic Algorithms', 'lib/ai4r/genetic_algorithm'
-  add_group 'SOM', 'lib/ai4r/som'
+  add_group 'Classifiers', 'lib/ai4r/classifiers'
+  add_group 'Clusterers', 'lib/ai4r/clusterers'
+  add_group 'Self-Organizing Maps', 'lib/ai4r/som'
+  add_group 'Experimental', 'lib/ai4r/experiment'
+  
+  # Track files that are never touched
+  track_files 'lib/**/*.rb'
+  
+  # Educational coverage insights
+  at_exit do
+    puts "\n📊 Code Coverage Report for AI4R Educational Framework"
+    puts "=" * 60
+    puts "📈 Overall Coverage: #{SimpleCov.result.covered_percent.round(2)}%"
+    puts "📊 Line Coverage: #{SimpleCov.result.covered_lines}/#{SimpleCov.result.total_lines} lines"
+    
+    if SimpleCov.result.covered_percent < 85
+      puts "⚠️  Warning: Coverage below educational project threshold (85%)"
+      puts "💡 Consider adding more comprehensive tests for student learning"
+    else
+      puts "✅ Excellent coverage for educational framework!"
+    end
+    
+    # Show least covered files for educational improvement
+    puts "\n📋 Areas needing more educational examples:"
+    SimpleCov.result.files.sort_by(&:covered_percent).first(5).each do |file|
+      if file.covered_percent < 90
+        puts "  📝 #{file.filename.gsub(Dir.pwd, '.')}: #{file.covered_percent.round(1)}%"
+      end
+    end
+    puts "=" * 60
+  end
 end
 
 require 'pry'

@@ -59,6 +59,9 @@ require_relative "ai4r/som/som"
 # Educational SOM Framework
 require_relative "ai4r/som/educational_som"
 
+# Search Algorithms
+require_relative "ai4r/search/a_star"
+
 # Educational Data Handling Framework
 require_relative "ai4r/data/educational_data_set"
 require_relative "ai4r/data/data_preprocessing"
