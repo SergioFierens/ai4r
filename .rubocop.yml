@@ -1,6 +1,8 @@
 AllCops:
-  NewCops: enable
   TargetRubyVersion: 3.1
+  NewCops: disable
+  Exclude:
+    - 'vendor/**/*'
 
 Layout/LineLength:
   Max: 100
@@ -10,3 +12,14 @@ Layout/IndentationStyle:
 
 Layout/IndentationWidth:
   Width: 2
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+Metrics/MethodLength:
+  Max: 25
+  Exclude:
+    - 'test/**/*'
