@@ -1,11 +1,11 @@
 require_relative '../../common/base_runner'
 require_relative '../../common/metrics'
-require 'ai4r/classifiers/naive_bayes'
+require 'ai4r/classifiers/hyperpipes'
 
 module Bench
   module Classifier
     module Runners
-      class NaiveBayesRunner < Bench::Common::BaseRunner
+      class HyperpipesRunner < Bench::Common::BaseRunner
         def initialize(train_set, test_set)
           @test_set = test_set
           super(train_set)
@@ -13,7 +13,7 @@ module Bench
 
         def call
           start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-          classifier = Ai4r::Classifiers::NaiveBayes.new.build(problem)
+          classifier = Ai4r::Classifiers::Hyperpipes.new.build(problem)
           training = Process.clock_gettime(Process::CLOCK_MONOTONIC) - start
 
           start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
