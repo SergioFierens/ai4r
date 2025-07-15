@@ -46,6 +46,8 @@ require 'ai4r'
 * [Transformer](transformer.md) – a minimal take on the attention-powered architecture that transformed modern AI.
 * [Decode-only Classification Example](../examples/transformer/decode_classifier_example.rb)
 * [Encoder Text Classification Example](../examples/neural_network/transformer_text_classification.rb)
+* [Seq2seq Example](../examples/transformer/seq2seq_example.rb)
+* [Deterministic Initialization Example](../examples/transformer/deterministic_example.rb)
 
 ## Contributing
 
