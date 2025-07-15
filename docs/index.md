@@ -25,13 +25,14 @@ require 'ai4r'
 ## Practical Examples
 
 * [User Guide](user_guide.md) – start with the basics and explore the library in depth.
-* **Genetic Algorithms** – optimization of the Travelling Salesman Problem.
-* **Neural Networks** – simple OCR recognition with a classic feed‑forward model.
+* [Genetic Algorithms](genetic_algorithms.md) – optimization of the Travelling Salesman Problem.
+* [Neural Networks](neural_networks.md) – simple OCR recognition with a classic feed‑forward model.
 * [Hopfield Networks](hopfield_network.md) – memory based recognition of noisy patterns.
 * [Self-Organizing Maps](som.md) – unsupervised mapping from high dimensions into a grid.
 * [Hierarchical Clustering](hierarchical_clustering.md) – build dendrograms from merge steps.
 * [DBSCAN](dbscan.md) – density-based clustering using a squared distance threshold.
-* **Automatic Classifiers** – identify relevant marketing targets using decision trees.
+* [KMeans](kmeans.md) – partition data into k clusters with iterative centroid updates.
+* [ID3 Decision Trees](machine_learning.md) – interpretable rules for marketing targets.
 * [PRISM](prism.md) – rule induction algorithm for discrete attributes.
 * [Naive Bayes Classifier](naive_bayes.md) – probabilistic classification for categorical data.
 * [Hyperpipes](hyperpipes.md) – baseline classifier using value ranges.

@@ -89,3 +89,5 @@ File.write('tree.dot', dot)
 
 Running `dot -Tpng tree.dot -o tree.png` will generate an image of the decision
 tree.
+
+For performance metrics against other models see the [Classifier Bench](classifier_bench.md).

@@ -24,3 +24,4 @@ reg.eval([1, 0]) # => 1
 ```
 
 See `examples/classifiers/logistic_regression_example.rb` for a runnable script.
+You can benchmark it with other models in the [Classifier Bench](classifier_bench.md).

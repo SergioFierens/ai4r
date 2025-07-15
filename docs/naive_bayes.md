@@ -37,4 +37,6 @@ The last line prints a hash with the probability for each class.
 
 Inspecting these arrays helps you understand the learned model.
 
+Run [Classifier Bench](classifier_bench.md) to see how Naive Bayes performs alongside other classifiers.
+
 

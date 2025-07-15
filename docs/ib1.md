@@ -25,4 +25,6 @@ puts "Prediction for #{sample.inspect}: #{classifier.eval(sample)}"
 
 The classifier automatically updates attribute ranges as new examples are seen and returns the class of the closest training instance.
 
+See [Classifier Bench](classifier_bench.md) for a comparison with other classifiers.
+
 

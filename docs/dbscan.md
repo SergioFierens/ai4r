@@ -12,7 +12,7 @@ DBSCAN groups together densely packed points and labels isolated points as noise
 
 For example, a radius of `3` units corresponds to `epsilon: 9`.
 
-Unlike KMeans, DBSCAN cannot classify new items once built.  Calling
+Unlike [KMeans](kmeans.md), DBSCAN cannot classify new items once built.  Calling
 `supports_eval?` returns `false` and attempting to use `eval` will raise
 `NotImplementedError`.
 
@@ -68,3 +68,5 @@ The output shows two clusters and three points labelled as noise:
 With `epsilon` set to `10` (squared radius) and `min_points` set to `2`,
 DBSCAN groups points within each dense region while ignoring the scattered
 items.
+
+See [Clusterer Bench](clusterer_bench.md) to compare DBSCAN with other clusterers.
