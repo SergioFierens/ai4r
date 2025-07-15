@@ -26,6 +26,24 @@ require 'ai4r'
 
 A quick map to AI4R’s built‑in toolkits, grouped by type. Each folder comes with examples and benchmark runners so you can dive right in.
 
+### 🤖 Transformers – *Play with the Building Blocks of Modern LLMs*
+
+> *“Meet your future coworker / overlord.”*
+
+This is not a full GPT—but it is the core logic, stripped down and readable.  
+AI4R ships with a bite-sized, dependency-free Transformer implementation that supports:
+
+- **Encoder-only** mode (like BERT)
+- **Decoder-only** mode (like GPT)
+- **Seq2Seq** mode (like T5)
+
+📂 Code: `lib/ai4r/neural_network/transformer.rb`  
+🧪 Demos: See inline examples in the source file itself
+
+💡 **Try this**:  
+Load up the transformer and walk through a simple forward pass.  
+Everything from attention weights to layer normalization is short enough to read and understand in one go.
+
 ### 🧠 Classifiers – Make Predictions
 "What’s the most likely outcome?"
 
