@@ -1,6 +1,8 @@
 # Neural Networks: Backpropagation OCR
 
-AI4R includes a backpropagation neural network implementation. Neural networks infer functions from observations and are useful when business rules are hard to define.
+AI4R includes a classic backpropagation neural network implementation. While decision trees or logistic regression rely on explicit rules and formulas, neural networks learn directly from examples. They map inputs to outputs through layers of weighted connections, paving the way for modern deep‑learning techniques.
+
+If you are curious about how today's world‑changing Transformer models extend these ideas with attention mechanisms, see the [Transformer](transformer.md) document. The rest of this page focuses on the traditional feed‑forward network used throughout the library.
 
 ## OCR Example
 
@@ -90,5 +92,13 @@ g.write('loss.png')
 ```
 
 For a recurrent associative network that can recall patterns from noisy inputs see the [Hopfield network](hopfield_network.md) document.
+
+### Additional Examples
+
+Example scripts under `examples/neural_network` demonstrate other uses:
+
+* `xor_example.rb` – trains a tiny network to learn the XOR logic gate.
+* `patterns_with_noise.rb` – shows how the OCR network copes with noisy data.
+* `transformer_text_classification.rb` – pairs a Transformer encoder with logistic regression for text sentiment.
 
 See the [Artificial Neural Network](http://en.wikipedia.org/wiki/Artificial_neural_network) and [Backpropagation](http://en.wikipedia.org/wiki/Backpropagation) articles for more information.
