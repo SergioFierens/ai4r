@@ -18,8 +18,8 @@ puts '== ZeroR with default parameters =='
 zero_default = ZeroR.new.build(set)
 puts zero_default.get_rules
 
-puts "\n== ZeroR with :tie_strategy => :random =="
-zero_rand = ZeroR.new.set_parameters(tie_strategy: :random).build(set)
+puts "\n== ZeroR with :tie_break => :random =="
+zero_rand = ZeroR.new.set_parameters(tie_break: :random).build(set)
 puts zero_rand.get_rules
 
 puts "\n== OneR default behaviour =="

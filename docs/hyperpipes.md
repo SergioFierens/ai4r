@@ -12,7 +12,7 @@ file = 'examples/classifiers/hyperpipes_data.csv'
 data = DataSet.new.parse_csv_with_labels(file)
 
 classifier = Hyperpipes.new
-classifier.set_parameters(:tie_strategy => :random).build(data)
+classifier.set_parameters(:tie_break => :random).build(data)
 
 pp classifier.pipes    # inspect pipes_summary
 puts classifier.eval(['Chicago', 85, 'F'])
@@ -27,7 +27,7 @@ attributes match each pipe.
 
 ## Parameters
 
-`tie_strategy` – determines how to break ties when several classes receive the
+`tie_break` – determines how to break ties when several classes receive the
 same number of votes. Options are `:first`, `:last` or `:random`.
 
 `margin` – expands numeric boundaries by this amount when building the pipes.
@@ -46,7 +46,7 @@ items = [
 
 set = Ai4r::Data::DataSet.new(data_items: items, data_labels: labels)
 classifier = Ai4r::Classifiers::Hyperpipes.new
-classifier.set_parameters(tie_strategy: :last, margin: 0.5)
+classifier.set_parameters(tie_break: :last, margin: 0.5)
 classifier.build(set)
 classifier.eval(['New York', 30, 'M'])
 ```

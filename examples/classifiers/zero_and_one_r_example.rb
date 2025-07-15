@@ -20,7 +20,7 @@ puts "ZeroR default prediction: #{zero_default.eval(data.data_items.first)}"
 puts "Generated rule: #{zero_default.get_rules}"
 
 # Build ZeroR with custom tie strategy
-zero_random = ZeroR.new.set_parameters(tie_strategy: :random).build(data)
+zero_random = ZeroR.new.set_parameters(tie_break: :random).build(data)
 puts "ZeroR random tie strategy prediction: #{zero_random.eval(data.data_items.first)}"
 
 puts

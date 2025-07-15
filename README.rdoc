@@ -30,10 +30,10 @@ strategies.  You can list available parameters by calling
 
   data = Ai4r::Data::DataSet.new.load_csv_with_labels 'examples/classifiers/zero_one_r_data.csv'
 
-  # ZeroR will return the most frequent class.  The ``tie_strategy'' parameter
+  # ZeroR will return the most frequent class.  The ``tie_break'' parameter
   # controls what happens when more than one class has the same frequency.
   zero_r = Ai4r::Classifiers::ZeroR.new
-  zero_r.set_parameters(:tie_strategy => :random)
+  zero_r.set_parameters(:tie_break => :random)
   zero_r.build(data)
 
   # OneR selects the single attribute with the lowest prediction error.  You
