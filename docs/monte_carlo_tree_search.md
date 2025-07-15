@@ -27,3 +27,4 @@ Only a few dozen iterations are often enough to obtain a good action in small ga
 
 Experiment with the parameters or plug in your own environment to see how the algorithm balances exploration and exploitation. MCTS shines when the search space is enormous but simulations are cheap.
 You can run the search benchmark under `bench/search` to compare MCTS with other search strategies.
+For value-based approaches see [Reinforcement Learning](reinforcement_learning.md).
