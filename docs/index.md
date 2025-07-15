@@ -42,6 +42,7 @@ require 'ai4r'
 * [A* Search](a_star_search.md) – heuristic best-first path search.
 * [Transformer](transformer.md) – a minimal take on the attention-powered architecture that transformed modern AI.
 * [Decode-only Classification Example](../examples/transformer/decode_classifier_example.rb)
+* [Encoder Text Classification Example](../examples/neural_network/transformer_text_classification.rb)
 
 ## Contributing
 
