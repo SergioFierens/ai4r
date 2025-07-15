@@ -1,8 +1,11 @@
 # Minimal Transformer
 
-`Ai4r::NeuralNetwork::Transformer` is a bite‑sized implementation of the Transformer architecture. It keeps the core ideas—token embeddings, sinusoidal positional encodings, multi‑head attention and a two‑layer feed‑forward network—while discarding the heavy training machinery. Everything is initialized at random, so you can focus on understanding the flow of data rather than achieving state‑of‑the‑art results.
+`Ai4r::NeuralNetwork::Transformer` implements a tiny Transformer with token
+embeddings, sinusoidal positions, multi‑head attention and a two‑layer
+feed‑forward network. Weights start random and there is no training support, so
+the goal is to inspect the data flow rather than chase state‑of‑the‑art results.
 
-## Architecture options
+## Architecture modes
 
 When creating a Transformer you pick one of three modes:
 
@@ -45,9 +48,12 @@ seq2seq_output = seq2seq.eval([1, 2, 3], [4, 5])
 
 ## Examples
 
-* **Decode‑only text classification** – [`examples/transformer/decode_classifier_example.rb`](../examples/transformer/decode_classifier_example.rb) shows how to build embeddings with a decoder and train logistic regression on top.
-* **Encoder sentiment demo** – [`examples/neural_network/transformer_text_classification.rb`](../examples/neural_network/transformer_text_classification.rb) uses the encoder to create sentence vectors for a tiny sentiment dataset.
+* **Decode‑only text classification** – [`examples/transformer/decode_classifier_example.rb`](../examples/transformer/decode_classifier_example.rb) shows how to build embeddings with a decoder and train [Logistic Regression](logistic_regression.md) on top.
+* **Encoder sentiment demo** – [`examples/neural_network/transformer_text_classification.rb`](../examples/neural_network/transformer_text_classification.rb) uses the encoder to create sentence vectors for a tiny dataset.
+* **Seq2seq demo** – [`examples/transformer/seq2seq_example.rb`](../examples/transformer/seq2seq_example.rb) runs the full encoder–decoder pipeline.
 * **Deterministic initialization** – [`examples/transformer/deterministic_example.rb`](../examples/transformer/deterministic_example.rb) illustrates how the `seed` parameter yields repeatable results.
 
-Transformers build on the same fundamentals as the backpropagation network described in [Neural Networks](neural_networks.md), but attention lets them capture long-range dependencies. Even this toy implementation highlights how sequences can be processed as a whole rather than token by token.
+Transformers extend the ideas in [Neural Networks](neural_networks.md) with
+attention to capture long‑range dependencies. Even this toy implementation shows
+how a sequence can be processed all at once instead of token by token.
 
