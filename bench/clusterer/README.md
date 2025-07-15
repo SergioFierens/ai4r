@@ -18,6 +18,9 @@ This prints an ASCII table of metrics and saves a CSV with the same data.
 `--epsilon` and `--min-points` control DBSCAN when selected. They default to
 `4` and `3` respectively.
 
+Run the command from the project root. The script automatically adds the
+`lib/` directory to Ruby's load path so no gem installation is required.
+
 ## Understanding the numbers
 
 * `silhouette` – average silhouette coefficient (-1..1), higher is better.
