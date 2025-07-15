@@ -42,6 +42,7 @@ require 'ai4r'
 * [A* Search](a_star_search.md) – heuristic best-first path search.
 * [Transformer](transformer.md) – tiny encoder, decoder and seq2seq models.
 * [Decode-only Classification Example](../examples/transformer/decode_classifier_example.rb)
+* [Encoder Text Classification Example](../examples/neural_network/transformer_text_classification.rb)
 
 ## Contributing
 
