@@ -34,4 +34,10 @@ class SupportVectorMachineTest < Minitest::Test
     ds = DataSet.new(data_items: items, data_labels: labels)
     assert_raises(ArgumentError) { SupportVectorMachine.new.build(ds) }
   end
-end
+
+  def test_get_rules
+    svm = SupportVectorMachine.new
+    assert_equal 'SupportVectorMachine does not support rule extraction.',
+                 svm.get_rules
+  end
+  end

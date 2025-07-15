@@ -73,6 +73,14 @@ module Ai4r
         prob = 1.0 / (1.0 + Math.exp(-z))
         prob >= 0.5 ? 1 : 0
       end
+
+      # Logistic Regression classifiers cannot generate human readable rules.
+      #
+      # This method returns a string explaining that rule extraction is not
+      # supported for this algorithm.
+      def get_rules
+        'LogisticRegression does not support rule extraction.'
+      end
     end
   end
 end

@@ -125,6 +125,13 @@ module Ai4r
         self
       end
 
+      # Naive Bayes classifiers cannot generate human readable rules.
+      # This method returns a descriptive string explaining that rule
+      # extraction is not supported for this algorithm.
+      def get_rules
+        'NaiveBayes does not support rule extraction.'
+      end
+
       private
 
       # @param data [Object]
