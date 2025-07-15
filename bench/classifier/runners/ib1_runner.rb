@@ -14,6 +14,7 @@ module Bench
           super(train_set)
         end
 
+        # rubocop:disable Metrics/AbcSize
         def call
           start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
           classifier = Ai4r::Classifiers::IB1.new.build(problem)
@@ -36,6 +37,7 @@ module Bench
           }
           Bench::Common::Metrics.new(algo_name, metrics)
         end
+        # rubocop:enable Metrics/AbcSize
       end
     end
   end

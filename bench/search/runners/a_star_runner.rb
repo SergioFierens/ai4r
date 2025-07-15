@@ -8,6 +8,7 @@ module Bench
       class AStarRunner < Bench::Common::BaseRunner
         private
 
+        # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
         def run
           start = problem.start_state
           open_set = [start]
@@ -38,6 +39,7 @@ module Bench
           end
           nil
         end
+        # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
         def reconstruct_path(came_from, node)
           path = [node]

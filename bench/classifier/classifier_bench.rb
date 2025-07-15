@@ -26,6 +26,7 @@ module Bench
       Ai4r::Data::DataSet.new.parse_csv_with_labels(path)
     end
 
+    # rubocop:disable Metrics/AbcSize
     def run(argv)
       cli = Bench::Common::CLI.new('classifier', RUNNERS.keys, CLASS_METRICS) do |opts, options|
         opts.on('--dataset FILE', 'CSV data file') { |v| options[:dataset] = v }
@@ -47,6 +48,7 @@ module Bench
       end
       cli.report(results, options[:export])
     end
+    # rubocop:enable Metrics/AbcSize
   end
 end
 

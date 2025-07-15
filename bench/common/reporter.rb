@@ -9,6 +9,7 @@ module Bench
         @metrics = [:algorithm] + metrics
       end
 
+      # rubocop:disable Metrics/AbcSize
       def print_table
         widths = @metrics.map do |m|
           [m.to_s.length, *@results.map { |r| r[m].to_s.length }].max
@@ -25,6 +26,7 @@ module Bench
         puts "\n"
         print_badges_table(badges) if badges
       end
+      # rubocop:enable Metrics/AbcSize
 
       def export_csv(path)
         CSV.open(path, 'w') do |csv|
@@ -35,6 +37,7 @@ module Bench
 
       private
 
+      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
       def compute_badges
         return nil if @results.empty?
 
@@ -72,7 +75,9 @@ module Bench
           end
         end
       end
+      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
+      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       def print_badges_table(badges)
         metrics = badges.first.keys
         widths = metrics.map do |m|
@@ -94,6 +99,7 @@ module Bench
           puts row
         end
       end
+      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     end
   end
 end

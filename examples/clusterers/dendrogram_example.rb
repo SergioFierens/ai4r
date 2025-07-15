@@ -3,13 +3,10 @@
 require 'ai4r'
 require 'dendrograms'
 
-include Ai4r::Clusterers
-include Ai4r::Data
-
 points = [[0, 0], [0, 1], [1, 0], [1, 1]]
-data = DataSet.new(data_items: points)
+data = Ai4r::Data::DataSet.new(data_items: points)
 
-clusterer = WardLinkage.new.build(data, 1)
+clusterer = Ai4r::Clusterers::WardLinkage.new.build(data, 1)
 
 # Convert stored tree to a simple array of point sets
 steps = clusterer.cluster_tree.map do |clusters|

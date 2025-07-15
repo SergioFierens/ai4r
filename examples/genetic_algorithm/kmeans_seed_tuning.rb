@@ -5,10 +5,6 @@ require_relative '../../lib/ai4r/genetic_algorithm/genetic_algorithm'
 require_relative '../../lib/ai4r/clusterers/k_means'
 require_relative '../som/som_data'
 
-include Ai4r::GeneticAlgorithm
-include Ai4r::Clusterers
-include Ai4r::Data
-
 ##
 # Running the genetic search without a fixed random seed leads to
 # different SSE results each time, which causes flaky tests in CI.
@@ -16,14 +12,14 @@ include Ai4r::Data
 # behaves deterministically across runs.
 srand 1
 
-class SeedChromosome < ChromosomeBase
+class SeedChromosome < Ai4r::GeneticAlgorithm::ChromosomeBase
   RANGE = (0..10)
-  DATA = DataSet.new(data_items: SOM_DATA.first(30))
+  DATA = Ai4r::Data::DataSet.new(data_items: SOM_DATA.first(30))
 
   def fitness
     return @fitness if @fitness
 
-    kmeans = KMeans.new.set_parameters(random_seed: @data).build(DATA, 3)
+    kmeans = Ai4r::Clusterers::KMeans.new.set_parameters(random_seed: @data).build(DATA, 3)
     @fitness = -kmeans.sse
   end
 
@@ -43,6 +39,6 @@ class SeedChromosome < ChromosomeBase
   end
 end
 
-search = GeneticSearch.new(6, 5, SeedChromosome, 0.1, 0.7)
+search = Ai4r::GeneticAlgorithm::GeneticSearch.new(6, 5, SeedChromosome, 0.1, 0.7)
 best = search.run
 puts(-best.fitness)

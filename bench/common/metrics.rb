@@ -1,3 +1,4 @@
+# Helper metrics used by benchmark scripts.
 module Bench
   module Common
     module_function
@@ -6,6 +7,7 @@ module Bench
     # @param data [Array] Array of data items or DataSet
     # @param clusters [Array<Array<Integer>>]
     # @return [Float]
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
     def sse(data, clusters)
       items = data.respond_to?(:data_items) ? data.data_items : data
       dims = items.first.size
@@ -22,12 +24,14 @@ module Bench
         end
       end
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
 
     # Compute mean silhouette coefficient for the clustering result.
     # Distances are squared Euclidean.
     # @param data [Array] Array of data items or DataSet
     # @param clusters [Array<Array<Integer>>]
     # @return [Float]
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
     def silhouette(data, clusters)
       items = data.respond_to?(:data_items) ? data.data_items : data
       total = 0.0
@@ -66,6 +70,7 @@ module Bench
 
       total / count
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
 
     # Classification metrics -------------------------------------------------
 
@@ -77,6 +82,7 @@ module Bench
       correct / truth.length.to_f
     end
 
+    # rubocop:disable Metrics/AbcSize
     def precision(truth, preds)
       labels = truth.uniq
       sum = labels.sum do |label|
@@ -95,7 +101,9 @@ module Bench
       end
       sum / labels.size.to_f
     end
+    # rubocop:enable Metrics/AbcSize
 
+    # rubocop:disable Metrics/AbcSize
     def recall(truth, preds)
       labels = truth.uniq
       sum = labels.sum do |label|
@@ -114,6 +122,7 @@ module Bench
       end
       sum / labels.size.to_f
     end
+    # rubocop:enable Metrics/AbcSize
 
     def f1(truth, preds)
       p = precision(truth, preds)

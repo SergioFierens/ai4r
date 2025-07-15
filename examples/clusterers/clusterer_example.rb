@@ -15,8 +15,6 @@
 # The cluster API is the same, so you can play around and observe different results.
 
 require 'ai4r'
-include Ai4r::Data
-include Ai4r::Clusterers
 
 # 5 Questions on a post training survey
 questions = ['The material covered was appropriate for someone with my level of ' \
@@ -46,10 +44,10 @@ answers = [[1, 2, 3, 2, 2],	# Answers of person 1
            [2, 2, 3, 2, 3],
            [3, 3, 3, 1, 1]]	# Answers of person 16
 
-data_set = DataSet.new(data_items: answers, data_labels: questions)
+data_set = Ai4r::Data::DataSet.new(data_items: answers, data_labels: questions)
 
 # Let's group answers in 4 groups
-clusterer = Diana.new.build(data_set, 4)
+clusterer = Ai4r::Clusterers::Diana.new.build(data_set, 4)
 
 clusterer.clusters.each_with_index do |cluster, index|
   puts "Group #{index + 1}"
