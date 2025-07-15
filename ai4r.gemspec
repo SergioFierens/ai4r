@@ -16,6 +16,6 @@ SPEC = Gem::Specification.new do |s|
   s.files = FileList['{examples,lib}/**/*'].to_a
   s.require_path = 'lib'
   s.has_rdoc = true
-  s.extra_rdoc_files = ['README.rdoc']
+  s.extra_rdoc_files = ['README.md']
   s.metadata['rubygems_mfa_required'] = 'true'
 end
