@@ -5,7 +5,12 @@ Benchmark scripts for selected algorithms live in the `bench/` directory. Each
 problems. Shared helpers such as the CLI, metrics and table reporter reside in
 `bench/common`.
 
-Currently the search lab is available under `bench/search`.
+Two labs ship with the library:
+
+* `bench/search` – compares graph search algorithms.
+* `bench/clusterer` – evaluates clustering methods such as k-means and hierarchical approaches.
+
+Each lab folder contains a README with quick-start examples and a description of the reported metrics.
 
 ## Adding a new lab
 

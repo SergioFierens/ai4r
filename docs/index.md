@@ -28,6 +28,7 @@ require 'ai4r'
 * **Genetic Algorithms** – optimization of the Travelling Salesman Problem.
 * **Neural Networks** – simple OCR recognition of visual patterns.
 * [Hopfield Networks](hopfield_network.md) – memory based recognition of noisy patterns.
+* [K-Means](k_means.md) – classic partitioning approach with customizable distance functions.
 * [Hierarchical Clustering](hierarchical_clustering.md) – build dendrograms from merge steps.
 * [DBSCAN](dbscan.md) – density-based clustering using a squared distance threshold.
 * **Automatic Classifiers** – identify relevant marketing targets using decision trees.
@@ -42,6 +43,7 @@ require 'ai4r'
 * [A* Search](a_star_search.md) – heuristic best-first path search.
 * [Transformer](transformer.md) – tiny encoder, decoder and seq2seq models.
 * [Decode-only Classification Example](../examples/transformer/decode_classifier_example.rb)
+* [Bench Suite Overview](benches_overview.md) – run benchmarks for search and clustering algorithms.
 
 ## Contributing
 

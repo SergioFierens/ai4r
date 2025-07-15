@@ -30,6 +30,10 @@ require 'ai4r'
 
 The `docs/` directory contains tutorials on using specific algorithms such as genetic algorithms, neural networks, clustering, and others. Examples under `examples/` showcase how to run several algorithms.
 
+For performance comparisons the project includes a small bench suite. See
+[Bench Suite Overview](docs/benches_overview.md) for instructions on running the
+search and clustering benches.
+
 All clustering algorithms expose a uniform interface:
 
 ```ruby
