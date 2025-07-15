@@ -10,7 +10,7 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'ai4r/classifiers/votes'
-require 'minitest/autorun'
+require_relative '../test_helper'
 
 class VotesTest < Minitest::Test
   def setup

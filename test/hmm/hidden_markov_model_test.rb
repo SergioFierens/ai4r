@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'minitest/autorun'
+require_relative '../test_helper'
 require 'ai4r/hmm/hidden_markov_model'
 
 class HiddenMarkovModelTest < Minitest::Test

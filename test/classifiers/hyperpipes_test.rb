@@ -10,7 +10,7 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'ai4r/classifiers/hyperpipes'
-require 'minitest/autorun'
+require_relative '../test_helper'
 require 'set'
 require 'yaml'
 

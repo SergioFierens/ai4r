@@ -17,7 +17,6 @@
 #
 
 require 'ai4r/neural_network/backpropagation'
-require 'minitest/autorun'
 require_relative '../test_helper'
 
 module Ai4r

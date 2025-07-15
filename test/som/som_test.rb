@@ -13,7 +13,6 @@
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'ai4r/som/som'
-require 'minitest/autorun'
 require 'tmpdir'
 require_relative '../test_helper'
 
