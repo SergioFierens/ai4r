@@ -142,6 +142,13 @@ module Ai4r
         end
         self
       end
+
+      # Simple Linear Regression classifiers cannot generate human readable
+      # rules. This method returns a descriptive string indicating that rule
+      # extraction is not supported.
+      def get_rules
+        'SimpleLinearRegression does not support rule extraction.'
+      end
     end
   end
 end

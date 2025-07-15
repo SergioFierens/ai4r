@@ -72,6 +72,12 @@ module Ai4r
         score >= 0 ? @classes[0] : @classes[1]
       end
 
+      # Support Vector Machine classifiers cannot generate human readable rules.
+      # This method returns a string indicating rule extraction is unsupported.
+      def get_rules
+        'SupportVectorMachine does not support rule extraction.'
+      end
+
       private
 
       def dot(a, b)
