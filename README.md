@@ -1,20 +1,14 @@
 # AI4R — Artificial Intelligence for Ruby
 
-A Ruby library of AI algorithms for learning and experimentation.
+🎓 **Welcome to AI4R**
 
----
+Your Lightweight Lab for AI and Machine Learning in Ruby.
 
-This project is an educational Ruby library for machine learning and artificial intelligence, featuring clean, minimal implementations of classical algorithms such as decision trees, neural networks, k-means and genetic algorithms. It is intentionally lightweight—no GPU support, no external dependencies, no production overhead—just a practical way to experiment, compare and learn the fundamental building blocks of AI. Ideal for small-scale explorations, course demos, or simply understanding how these algorithms work line by line.
+AI4R isn’t just another machine learning library. It’s a learning playground. No black boxes and no bulky dependencies—just clean, readable Ruby implementations of core AI algorithms so you can explore, modify and really understand how they work.
 
-Maintained over the years mostly for the joy of it (and perhaps a misplaced sense of duty to Ruby), this open-source library supports developers, students and educators who want to understand machine learning in Ruby without drowning in complexity.
-
-Over time the project has stretched beyond classical techniques. A bite-sized Transformer implementation now ships with AI4R, so you can tinker with encoder-only, decoder-only and seq2seq modes—the modern building blocks of today's language models—without leaving the comfort of Ruby.
-
-## AI4R
+## Installation
 
 AI4R is distributed as a gem and requires Ruby 3.2 or later.
-
-### Installation
 
 Install the gem using RubyGems:
 
@@ -28,109 +22,160 @@ Add the library to your code:
 require 'ai4r'
 ```
 
-OneR and Prism support numeric attributes by discretizing them into a fixed number of bins. The amount of bins can be controlled with the `bin_count` parameter.
+## 🧭 What’s Inside?
 
-### Usage examples
+A quick map to AI4R’s built‑in toolkits, grouped by type. Each folder comes with examples and benchmark runners so you can dive right in.
 
-#### Genetic algorithm
+### 🧠 Classifiers – Make Predictions
+"What’s the most likely outcome?"
 
-```ruby
-require 'ai4r/genetic_algorithm/genetic_algorithm'
-Ai4r::GeneticAlgorithm::TspChromosome.set_cost_matrix(cost_matrix)
-search = Ai4r::GeneticAlgorithm::GeneticSearch.new(
-  800, 100, Ai4r::GeneticAlgorithm::TspChromosome, 0.3, 0.4
-)
-best = search.run
-puts best.fitness
-```
+You’ll find:
 
-#### Self-Organizing Maps (SOM)
+- `ZeroR`, `OneR` – the simplest baselines
+- `LogisticRegression`, `SimpleLinearRegression`
+- `SupportVectorMachine`
+- `RandomForest`, `GradientBoosting`
+- `MultilayerPerceptron`
 
-```ruby
-layer = Ai4r::Som::TwoPhaseLayer.new(10, distance_metric: :euclidean)
-som = Ai4r::Som::Som.new(4, 8, 8, layer)
-som.initiate_map
-10.times { som.train_step(data) }
-```
+Code: `lib/ai4r/classifiers/`
 
-#### Multilayer Perceptron with Backpropagation
+Demos: `bench/classifier/`
 
-```ruby
-net = Ai4r::NeuralNetwork::Backpropagation.new([256, 3])
-inputs  = [TRIANGLE, SQUARE, CROSS].map { |m| m.flatten.map { |v| v.to_f / 10 } }
-outputs = [[1,0,0], [0,1,0], [0,0,1]]
-net.train_epochs(inputs, outputs, epochs: 100, batch_size: 1)
-```
+Try this: run `compare_all.rb` to benchmark classifiers on real datasets.
 
-#### ID3 Decision Trees
+### 🔍 Clusterers – Find Hidden Patterns
+"What belongs together?"
 
-```ruby
-items  = [['sunny', 'warm', 'yes'], ['sunny', 'cold', 'no']]
-labels = ['weather', 'temperature', 'play']
-data   = Ai4r::Data::DataSet.new(data_items: items, data_labels: labels)
-id3    = Ai4r::Classifiers::ID3.new.build(data)
-id3.eval(['sunny', 'warm'])  # => 'yes'
-```
+Includes:
 
-#### Hopfield Networks
+- `KMeans`
+- `DBSCAN`
+- `Hierarchical` clustering variants
 
-```ruby
-patterns = [[1, 1, -1, -1], [-1, -1, 1, 1]]
-data = Ai4r::Data::DataSet.new(data_items: patterns)
-net = Ai4r::NeuralNetwork::Hopfield.new.train(data)
-net.eval([1, -1, -1, -1])
-```
+Code: `lib/ai4r/clusterers/`
 
-#### Naive Bayes
+Demos: `bench/clusterer/`
 
-```ruby
-set = Ai4r::Data::DataSet.new
-set.load_csv_with_labels 'examples/classifiers/naive_bayes_data.csv'
+Try this: cluster the Iris dataset using both KMeans and DBSCAN.
 
-classifier = Ai4r::Classifiers::NaiveBayes.new
-classifier.set_parameters(m: 3).build(set)
-puts classifier.eval(['Red', 'SUV', 'Domestic'])
-```
+### 🧬 Neural Networks – Learn From Data
+"What if we build a brain?"
 
-#### Transformer
+- Backpropagation – classic feedforward network
+- Hopfield – associative memory model
+- Transformer – a tiny GPT‑style block (encoder, decoder, seq2seq)
 
-```ruby
-encoder = Ai4r::NeuralNetwork::Transformer.new(
-  vocab_size: 50,
-  max_len: 10,
-  architecture: :encoder
-)
-encoder.eval([1, 2, 3, 4])
-```
+Code: `lib/ai4r/neural_network/`
 
-Scripts under `examples/clusterers` showcase additional features such as custom distance functions and dendrogram generation. Some hierarchical algorithms cannot classify new items once built—use `supports_eval?` to verify before calling `eval`.
+Try this: open `transformer.rb` and trace each step—it’s short enough to grok in one sitting.
 
-### Documentation
+### 🔎 Search Algorithms – Explore Possibility Spaces
+"What’s the best path?"
 
-Tutorials for genetic algorithms, ID3 decision trees, Hyperpipes, neural networks, Naive Bayes, IB1, PRISM and more are available in the `docs/` directory. Examples under `examples/` demonstrate how to run several algorithms. All clustering algorithms expose a uniform interface:
+- `BreadthFirst`, `DepthFirst`, `IterativeDeepening`
+- `A*`
+- `MonteCarloTreeSearch`
 
-```ruby
-clusterer.build(data_set, number_of_clusters = nil)
-```
+Code: `lib/ai4r/search/`
 
-`number_of_clusters` is ignored by algorithms such as DBSCAN that determine the count from the data. Clusters are returned as `Ai4r::Data::DataSet` objects for consistency across implementations.
+Docs: `docs/search_algorithms.md`
 
-### Running Tests
+Demos: `bench/search/`
 
-Install development dependencies with Bundler and run the test suite:
+Try this: run A* and DFS on a maze and time the difference.
+
+### 🧪 Genetic Algorithms – Evolve a Solution
+"Let’s mutate our way to a better answer."
+
+- Generic GA framework
+- A Traveling Salesman Problem (TSP) chromosome
+
+Code: `lib/ai4r/genetic_algorithm/`
+
+Try this: tweak the mutation rate in the TSP example.
+
+### 🧭 Reinforcement Learning – Learn by Doing
+"Reward me, and I’ll improve."
+
+- Q‑Learning
+- Policy Iteration
+
+Code: `lib/ai4r/reinforcement/`
+
+Docs: `docs/reinforcement_learning.md`
+
+Try this: run a grid‑world training loop and watch the agent build its own policy.
+
+### 🕵️ Hidden Markov Models – Guess What’s Hidden
+"You can’t see the states—but you can infer them."
+
+Code: `lib/ai4r/hmm/hidden_markov_model.rb`
+
+Docs: `docs/hmm.md`
+
+Try this: model a weather prediction problem with hidden states and visible activities.
+
+### 🧠 Self‑Organizing Maps – Compress Dimensions
+"Can we project complex data onto a simpler map?"
+
+- Kohonen‑style SOM
+
+Code: `lib/ai4r/som/`
+
+Try this: reduce high‑dimensional vectors into a 2D neuron grid and color it based on class.
+
+## 🧪 Benchmarks: Experiment & Compare
+
+Each algorithm family has a benchmark runner:
+
+- `bench/classifier/`
+- `bench/clusterer/`
+- `bench/search/`
+
+Shared tools in `bench/common/` make it easy to run head‑to‑head comparisons, track runtime, accuracy and more, and output clean reports.
+
+Docs: `docs/benches_overview.md`
+
+Try this: run `bench/search/astar_vs_dfs.rb` and explain why A* usually wins.
+
+## 🛠️ Core Utilities
+
+- `DataSet` – your gateway to loading labeled data
+- `Parameterizable` – easily tweak hyperparameters
+- `Proximity` – distance functions (Euclidean, Manhattan, …)
+- `Statistics` – mean, stdev, histograms and more
+
+Everything lives under `lib/ai4r/`.
+
+## 🏁 Getting Started
 
 ```bash
+git clone https://github.com/SergioFierens/ai4r
+cd ai4r
 bundle install
-bundle exec rake test
+ruby bench/classifier/compare_all.rb
 ```
 
-### Limitations
+## 🧠 Suggested First Experiments
 
-- Not optimized for performance
-- No support for GPU, parallelism, or distributed training
-- Not intended for production deployment
+| Goal | File |
+| --- | --- |
+| Predict with classifiers | `bench/classifier/compare_all.rb` |
+| Explore clustering behavior | `bench/clusterer/kmeans_vs_dbscan.rb` |
+| Navigate with search | `bench/search/astar_vs_dfs.rb` |
+| Learn from rewards | See `docs/reinforcement_learning.md` |
+| Evolve better TSP routes | `genetic_algorithm/tsp_example.rb` |
 
-### Disclaimer
+## 📚 Want to Learn More?
 
-This software is provided "as is" and without any express or implied warranties, including, without limitation, the implied warranties of merchantibility and fitness for a particular purpose.
+- Full classifier overview: `docs/index.md`
+- Reinforcement intro: `docs/reinforcement_learning.md`
+- Search walkthrough: `docs/search_algorithms.md`
+- HMM basics: `docs/hmm.md`
+
+Every module is short, readable and ready to hack.
+
+## 💬 Feedback or Questions?
+
+This library is maintained for the joy of it (and perhaps a misplaced sense of duty to Ruby). You can do whatever you want with it—it’s unlicensed. But if you build something cool or just find it useful, [Sergio Fierens](https://github.com/SergioFierens) would love to hear from you.
 
