@@ -26,15 +26,15 @@ module Ai4r
 
       parameters_info default_class: 'Return this value when the provided ' \
                                      'dataset is empty.',
-                      tie_strategy: 'Strategy used when more than one class has the ' \
-                                    'same maximal frequency. Valid values are :first (default) ' \
-                                    'and :random.',
+                      tie_break: 'Strategy used when more than one class has the ' \
+                                 'same maximal frequency. Valid values are :first (default) ' \
+                                 'and :random.',
                       random_seed: 'Seed for tie resolution when using :random strategy.'
 
       # @return [Object]
       def initialize
         @default_class = nil
-        @tie_strategy = :first
+        @tie_break = :first
         @random_seed = nil
         @rng = nil
       end
@@ -73,7 +73,7 @@ module Ai4r
         @class_value = if tied_classes.length == 1
                          tied_classes.first
                        else
-                         case @tie_strategy
+                         case @tie_break
                          when :random
                            tied_classes.sample(random: rng)
                          else

@@ -80,10 +80,10 @@ class HyperpipesTest < Minitest::Test
     assert_equal(expected, summary)
   end
 
-  def test_tie_strategy
-    classifier = Hyperpipes.new.set_parameters(tie_strategy: :last).build(@data_set)
+  def test_tie_break
+    classifier = Hyperpipes.new.set_parameters(tie_break: :last).build(@data_set)
     assert_equal 'N', classifier.eval(['Chicago', 40, 'F'])
-    classifier = Hyperpipes.new.set_parameters(tie_strategy: :random,
+    classifier = Hyperpipes.new.set_parameters(tie_break: :random,
                                                random_seed: 2).build(@data_set)
     assert_equal 'Y', classifier.eval(['Chicago', 40, 'F'])
   end

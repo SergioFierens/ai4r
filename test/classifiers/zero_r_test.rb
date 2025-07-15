@@ -53,12 +53,12 @@ class ZeroRTest < Minitest::Test
     assert_equal('N', classifier.class_value)
   end
 
-  def test_tie_strategy
+  def test_tie_break
     data = [%w[a Y], %w[b N], %w[c Y], %w[d N]]
     data_set = DataSet.new(data_items: data)
-    classifier = ZeroR.new.set_parameters({ tie_strategy: :first }).build(data_set)
+    classifier = ZeroR.new.set_parameters({ tie_break: :first }).build(data_set)
     assert_equal('Y', classifier.class_value)
-    classifier = ZeroR.new.set_parameters(tie_strategy: :random, random_seed: 1).build(data_set)
+    classifier = ZeroR.new.set_parameters(tie_break: :random, random_seed: 1).build(data_set)
     assert_equal('N', classifier.class_value)
   end
 end
