@@ -37,6 +37,9 @@ result = search.run
 puts "COST #{-1 * result.fitness} TOUR: " \
      "#{result.data.collect { |c| data_set.data_labels[c] } * ', '}"
 
-# $7611.99 TOUR: Moscow, Kiev, Warsaw, Hamburg, Berlin, Vienna, Munich, Milan, Rome, Barcelona, Madrid, Paris, Brussels, London, Dublin
-# $7659.81 TOUR: Moscow, Kiev, Warsaw, Vienna, Munich, Berlin, Hamburg, Brussels, Dublin, London, Paris, Milan, Rome, Barcelona, Madrid
-# $7596.74 TOUR: Moscow, Kiev, Warsaw, Berlin, Hamburg, Vienna, Munich, Milan, Rome, Barcelona, Madrid, Paris, Brussels, London Dublin
+# $7611.99 TOUR: Moscow, Kiev, Warsaw, Hamburg, Berlin, Vienna, Munich, Milan,
+#               Rome, Barcelona, Madrid, Paris, Brussels, London, Dublin
+# $7659.81 TOUR: Moscow, Kiev, Warsaw, Vienna, Munich, Berlin, Hamburg, Brussels,
+#               Dublin, London, Paris, Milan, Rome, Barcelona, Madrid
+# $7596.74 TOUR: Moscow, Kiev, Warsaw, Berlin, Hamburg, Vienna, Munich, Milan,
+#               Rome, Barcelona, Madrid, Paris, Brussels, London Dublin

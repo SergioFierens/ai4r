@@ -19,7 +19,8 @@ include Ai4r::Data
 include Ai4r::Clusterers
 
 # 5 Questions on a post training survey
-questions = ['The material covered was appropriate for someone with my level of knowledge of the subject.',
+questions = ['The material covered was appropriate for someone with my level of ' \
+             'knowledge of the subject.',
              'The material was presented in a clear and logical fashion',
              'There was sufficient time in the session to cover the material that was presented',
              'The instructor was respectful of students',
