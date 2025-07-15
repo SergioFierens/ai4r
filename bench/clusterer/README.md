@@ -15,6 +15,9 @@ $ ruby bench/clusterer/cluster_bench.rb \
 
 This prints an ASCII table of metrics and saves a CSV with the same data.
 
+Run the command from the project root. The script automatically adds the
+`lib/` directory to Ruby's load path so no gem installation is required.
+
 ## Understanding the numbers
 
 * `silhouette` – average silhouette coefficient (-1..1), higher is better.

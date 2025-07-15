@@ -28,6 +28,7 @@ require 'ai4r'
 * **Genetic Algorithms** – optimization of the Travelling Salesman Problem.
 * **Neural Networks** – simple OCR recognition with a classic feed‑forward model.
 * [Hopfield Networks](hopfield_network.md) – memory based recognition of noisy patterns.
+* [Self-Organizing Maps](som.md) – unsupervised mapping from high dimensions into a grid.
 * [Hierarchical Clustering](hierarchical_clustering.md) – build dendrograms from merge steps.
 * [DBSCAN](dbscan.md) – density-based clustering using a squared distance threshold.
 * **Automatic Classifiers** – identify relevant marketing targets using decision trees.

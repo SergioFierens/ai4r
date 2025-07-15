@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+$LOAD_PATH.unshift(File.expand_path('../../lib', __dir__))
+require 'ai4r'
 require 'csv'
 require_relative '../common/cli'
 require_relative 'runners/kmeans_runner'
