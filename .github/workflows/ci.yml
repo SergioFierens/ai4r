@@ -7,15 +7,13 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        ruby-version: ['3.1', '3.2']
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ matrix.ruby-version }}
+          ruby-version: 3.2
           bundler-cache: true
       - run: bundle exec rake test
       - run: |
-          echo "Coverage $(grep -A1 '^COVERAGE' coverage/.last_run.json)"
+          coverage=$(jq '.result.line' coverage/.last_run.json || echo "unknown")
+          echo "Coverage $coverage"
