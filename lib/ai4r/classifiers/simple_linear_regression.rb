@@ -75,16 +75,8 @@ module Ai4r
           chosen = @selected_attribute
           attr_index = chosen
           x_mean = data.get_mean_or_mode[attr_index]
-          sum_x_diff_squared = 0
-          sum_y_diff_squared = 0
-          slope = 0
-          data.data_items.each do |instance|
-            x_diff = instance[attr_index] - x_mean
-            y_diff = instance[data.num_attributes - 1] - y_mean
-            slope += x_diff * y_diff
-            sum_x_diff_squared += x_diff * x_diff
-            sum_y_diff_squared += y_diff * y_diff
-          end
+          slope, sum_x_diff_squared, sum_y_diff_squared =
+            attribute_sums(data, attr_index, x_mean, y_mean)
 
           if sum_x_diff_squared.zero?
             chosen_slope = 0
@@ -101,16 +93,8 @@ module Ai4r
             next unless attr_index != data.num_attributes - 1
 
             x_mean = data.get_mean_or_mode[attr_index]
-            sum_x_diff_squared = 0
-            sum_y_diff_squared = 0
-            slope = 0
-            data.data_items.each do |instance|
-              x_diff = instance[attr_index] - x_mean
-              y_diff = instance[data.num_attributes - 1] - y_mean
-              slope += x_diff * y_diff
-              sum_x_diff_squared += x_diff * x_diff
-              sum_y_diff_squared += y_diff * y_diff
-            end
+            slope, sum_x_diff_squared, sum_y_diff_squared =
+              attribute_sums(data, attr_index, x_mean, y_mean)
 
             next if sum_x_diff_squared.zero?
 
@@ -148,6 +132,23 @@ module Ai4r
       # extraction is not supported.
       def get_rules
         'SimpleLinearRegression does not support rule extraction.'
+      end
+
+      private
+
+      # Calculate regression sums for the given attribute.
+      def attribute_sums(data, attr_index, x_mean, y_mean)
+        slope = 0
+        sum_x_diff_squared = 0
+        sum_y_diff_squared = 0
+        data.data_items.each do |instance|
+          x_diff = instance[attr_index] - x_mean
+          y_diff = instance[data.num_attributes - 1] - y_mean
+          slope += x_diff * y_diff
+          sum_x_diff_squared += x_diff * x_diff
+          sum_y_diff_squared += y_diff * y_diff
+        end
+        [slope, sum_x_diff_squared, sum_y_diff_squared]
       end
     end
   end
