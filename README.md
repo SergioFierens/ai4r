@@ -12,7 +12,7 @@ Over time the project has stretched beyond classical techniques. A bite-sized Tr
 
 ## AI4R
 
-AI4R is distributed as a gem and works with modern versions of Ruby.
+AI4R is distributed as a gem and requires Ruby 3.2 or later.
 
 ### Installation
 
@@ -123,6 +123,12 @@ Install development dependencies with Bundler and run the test suite:
 bundle install
 bundle exec rake test
 ```
+
+### Limitations
+
+- Not optimized for performance
+- No support for GPU, parallelism, or distributed training
+- Not intended for production deployment
 
 ### Disclaimer
 

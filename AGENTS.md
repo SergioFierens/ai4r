@@ -4,13 +4,14 @@ This repository contains the AI4R Ruby gem. Follow these guidelines to speed up 
 
 ## Setup
 
-1. Install dependencies using Bundler:
+1. Ensure Ruby 3.2 or later is installed.
+2. Install dependencies using Bundler:
 
    ```bash
    bundle install
    ```
 
-2. Run the test suite before submitting changes:
+3. Run the test suite before submitting changes:
 
    ```bash
    bundle exec rake test
