@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Benchmark runner for the Hyperpipes classifier.
 require_relative '../../common/base_runner'
 require_relative '../../common/metrics'
 require 'ai4r/classifiers/hyperpipes'
@@ -7,12 +8,14 @@ require 'ai4r/classifiers/hyperpipes'
 module Bench
   module Classifier
     module Runners
+      # Executes benchmarks for Hyperpipes
       class HyperpipesRunner < Bench::Common::BaseRunner
         def initialize(train_set, test_set)
           @test_set = test_set
           super(train_set)
         end
 
+        # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
         def call
           start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
           classifier = Ai4r::Classifiers::Hyperpipes.new.build(problem)
@@ -35,6 +38,7 @@ module Bench
           }
           Bench::Common::Metrics.new(algo_name, metrics)
         end
+        # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
       end
     end
   end

@@ -39,12 +39,14 @@ module Bench
       Ai4r::Data::DataSet.new(data_items: data)
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
     def run(argv)
       cli = Bench::Common::CLI.new('clusterer', RUNNERS.keys, CLUSTER_METRICS) do |opts, options|
         opts.on('--dataset FILE', 'CSV data file') { |v| options[:dataset] = v }
         opts.on('--k N', Integer, 'Number of clusters') { |v| options[:k] = v }
         opts.on('--epsilon N', Float, 'DBSCAN squared radius') { |v| options[:epsilon] = v }
-        opts.on('--min-points N', Integer, 'DBSCAN minimum neighbours') { |v| options[:min_points] = v }
+        opts.on('--min-points N', Integer,
+                'DBSCAN minimum neighbours') { |v| options[:min_points] = v }
         opts.on('--with-ground-truth', 'Use labels column') { options[:with_gt] = true }
       end
       options = cli.parse(argv)
@@ -68,6 +70,7 @@ module Bench
       end
       cli.report(results, options[:export])
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
   end
 end
 

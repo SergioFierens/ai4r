@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+# Benchmark entrypoint for running classifier algorithms.
+
 require 'csv'
 require_relative '../common/cli'
 require_relative 'runners/id3_runner'
@@ -8,7 +10,9 @@ require_relative 'runners/naive_bayes_runner'
 require_relative 'runners/ib1_runner'
 require_relative 'runners/hyperpipes_runner'
 
+# Namespace for classifier benchmarks
 module Bench
+  # Classifier benchmark runner methods
   module Classifier
     CLASS_METRICS = %i[accuracy f1 training_ms predict_ms model_size_kb].freeze
 
@@ -25,6 +29,7 @@ module Bench
       Ai4r::Data::DataSet.new.parse_csv_with_labels(path)
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def run(argv)
       cli = Bench::Common::CLI.new('classifier', RUNNERS.keys, CLASS_METRICS) do |opts, options|
         opts.on('--dataset FILE', 'CSV data file') { |v| options[:dataset] = v }
@@ -46,6 +51,7 @@ module Bench
       end
       cli.report(results, options[:export])
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
   end
 end
 
