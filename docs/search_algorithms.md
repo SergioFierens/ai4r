@@ -1,13 +1,14 @@
 # Search Algorithms
 
 `Ai4r::Search` collects a handful of classical techniques for exploring
-state spaces. The goal predicates and successor functions are tiny Ruby
-procs so you can prototype ideas in a few lines of code. Breadth-first
-search (BFS) expands the frontier level by level, whereas depth-first
-search (DFS) follows one branch as deep as it can. They both expect a
-`goal_test` and a `neighbor_fn` describing your problem space. For large
-graphs you can also try iterative deepening search (IDDFS) which mixes the
-two approaches.
+state spaces. Each algorithm only needs a `goal_test` and a `neighbor_fn`,
+so you can describe new problems in a few lines of Ruby.
+
+*Breadth-first search* (BFS) expands the frontier level by level, while
+*depth-first search* (DFS) follows one branch as deep as it can. Both
+return the path to the first goal node or `nil` when no goal is reachable.
+The search bench also provides an **iterative deepening** variant (IDDFS)
+for comparison.
 
 ```ruby
 require 'ai4r/search'
@@ -18,9 +19,6 @@ path = bfs.search(start)
 dfs = Ai4r::Search::DFS.new(goal_test, neighbor_fn)
 path = dfs.search(start)
 ```
-
-Both methods return the path from the start node to the first goal or
-`nil` when no goal is reachable.
 
 ## A tiny grid example
 
@@ -50,3 +48,9 @@ $ ruby bench/search/search_bench.rb \
 You will see an ASCII table summarizing nodes expanded and duration for
 each algorithm. The CSV export can be loaded into a spreadsheet for
 discussion.
+
+## More search strategies
+
+For heuristic path finding see [A* Search](a_star_search.md).
+For probabilistic exploration check
+[Monte Carlo Tree Search](monte_carlo_tree_search.md).

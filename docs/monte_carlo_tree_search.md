@@ -2,6 +2,9 @@
 
 `Ai4r::Search::MCTS` implements the Monte Carlo Tree Search strategy used in many modern game agents. It works anywhere you can programmatically enumerate actions, transitions and rewards. The algorithm repeatedly selects a promising node, expands one child, performs a random simulation and backpropagates the reward.
 
+See [Search Algorithms](search_algorithms.md) for BFS and DFS or
+[A* Search](a_star_search.md) for heuristic search.
+
 ```ruby
 require 'ai4r/search'
 
@@ -26,4 +29,6 @@ The callbacks are:
 Only a few dozen iterations are often enough to obtain a good action in small games.
 
 Experiment with the parameters or plug in your own environment to see how the algorithm balances exploration and exploitation. MCTS shines when the search space is enormous but simulations are cheap.
-You can run the search benchmark under `bench/search` to compare MCTS with other search strategies.
+You can run the search benchmark under
+[`bench/search`](../bench/search) to compare MCTS with other
+search strategies.

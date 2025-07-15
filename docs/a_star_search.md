@@ -6,6 +6,8 @@ function returning adjacent nodes with their transition costs, and a
 heuristic estimating the remaining distance. A good heuristic dramatically
 reduces the number of explored states.
 
+See [Search Algorithms](search_algorithms.md) for BFS and DFS.
+
 ```ruby
 require 'ai4r/search'
 
@@ -34,4 +36,5 @@ $ ruby bench/search/search_bench.rb \
 
 Observe how `nodes_expanded` drops compared to BFS or DFS while the
 solution path remains the same. Encourage students to tweak the heuristic
-or design their own problems.
+or design their own problems. For probabilistic search consider
+[Monte Carlo Tree Search](monte_carlo_tree_search.md).
