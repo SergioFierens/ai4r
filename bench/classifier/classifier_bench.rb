@@ -3,16 +3,20 @@
 
 require 'csv'
 require_relative '../common/cli'
-require_relative 'runners/logistic_regression_runner'
+require_relative 'runners/id3_runner'
 require_relative 'runners/naive_bayes_runner'
+require_relative 'runners/ib1_runner'
+require_relative 'runners/hyperpipes_runner'
 
 module Bench
   module Classifier
-    CLASS_METRICS = %i[accuracy duration_ms].freeze
+    CLASS_METRICS = %i[accuracy f1 training_ms predict_ms model_size_kb].freeze
 
     RUNNERS = {
-      'logistic_regression' => Runners::LogisticRegressionRunner,
-      'naive_bayes' => Runners::NaiveBayesRunner
+      'id3' => Runners::Id3Runner,
+      'naive_bayes' => Runners::NaiveBayesRunner,
+      'ib1' => Runners::Ib1Runner,
+      'hyperpipes' => Runners::HyperpipesRunner
     }.freeze
 
     module_function
@@ -24,17 +28,17 @@ module Bench
     def run(argv)
       cli = Bench::Common::CLI.new('classifier', RUNNERS.keys, CLASS_METRICS) do |opts, options|
         opts.on('--dataset FILE', 'CSV data file') { |v| options[:dataset] = v }
-        opts.on('--train-ratio R', Float, 'Training set ratio') { |v| options[:train_ratio] = v }
+        opts.on('--split R', Float, 'Test split ratio') { |v| options[:split] = v }
       end
       options = cli.parse(argv)
 
       raise ArgumentError, 'Please select algorithms with --algos' if options[:algos].empty?
 
-      path = options[:dataset] || File.join(__dir__, 'datasets', 'logreg.csv')
+      path = options[:dataset] || File.join(__dir__, 'datasets', 'iris.csv')
       data_set = load_dataset(path)
       data_set.shuffle!
-      train_ratio = options[:train_ratio] || 0.7
-      train_set, test_set = data_set.split(ratio: train_ratio)
+      split = options[:split] || 0.3
+      train_set, test_set = data_set.split(ratio: 1 - split)
 
       results = options[:algos].map do |name|
         runner = RUNNERS[name].new(train_set, test_set)

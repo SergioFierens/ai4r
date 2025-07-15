@@ -65,6 +65,58 @@ module Bench
       total / count
     end
 
+    # Classification metrics -------------------------------------------------
+
+    # @param truth [Array] ground truth labels
+    # @param preds [Array] predicted labels
+    # @return [Float]
+    def accuracy(truth, preds)
+      correct = truth.zip(preds).count { |t, p| t == p }
+      correct / truth.length.to_f
+    end
+
+    def precision(truth, preds)
+      labels = truth.uniq
+      sum = labels.sum do |label|
+        tp = 0
+        fp = 0
+        truth.each_index do |i|
+          next unless preds[i] == label
+          if truth[i] == label
+            tp += 1
+          else
+            fp += 1
+          end
+        end
+        tp + fp > 0 ? tp.to_f / (tp + fp) : 0.0
+      end
+      sum / labels.size.to_f
+    end
+
+    def recall(truth, preds)
+      labels = truth.uniq
+      sum = labels.sum do |label|
+        tp = 0
+        fn = 0
+        truth.each_index do |i|
+          next unless truth[i] == label
+          if preds[i] == label
+            tp += 1
+          else
+            fn += 1
+          end
+        end
+        tp + fn > 0 ? tp.to_f / (tp + fn) : 0.0
+      end
+      sum / labels.size.to_f
+    end
+
+    def f1(truth, preds)
+      p = precision(truth, preds)
+      r = recall(truth, preds)
+      p + r > 0 ? 2 * p * r / (p + r) : 0.0
+    end
+
     # Simple container for benchmark metrics.
     class Metrics
       attr_reader :algorithm, :data
