@@ -32,62 +32,75 @@ OneR and Prism support numeric attributes by discretizing them into a fixed numb
 
 ### Usage examples
 
-#### Using OneR and ZeroR
+#### Genetic algorithm
 
 ```ruby
-data = Ai4r::Data::DataSet.new.load_csv_with_labels 'examples/classifiers/zero_one_r_data.csv'
-
-# ZeroR returns the most frequent class. The `tie_break` parameter controls what happens when more than one class has the same frequency.
-zero_r = Ai4r::Classifiers::ZeroR.new
-zero_r.set_parameters(tie_break: :random)
-zero_r.build(data)
-
-# OneR selects the single attribute with the lowest prediction error. You may force the attribute with `selected_attribute` or change the tie break behaviour with `tie_break`.
-one_r = Ai4r::Classifiers::OneR.new
-one_r.set_parameters(selected_attribute: 0, tie_break: :last)
-one_r.build(data)
+require 'ai4r/genetic_algorithm/genetic_algorithm'
+Ai4r::GeneticAlgorithm::TspChromosome.set_cost_matrix(cost_matrix)
+search = Ai4r::GeneticAlgorithm::GeneticSearch.new(
+  800, 100, Ai4r::GeneticAlgorithm::TspChromosome, 0.3, 0.4
+)
+best = search.run
+puts best.fitness
 ```
 
-#### SimpleLinearRegression
-
-```ruby
-r = Ai4r::Classifiers::SimpleLinearRegression.new.build(data)
-puts r.attribute  # attribute name used for the regression
-puts r.slope      # regression slope
-puts r.intercept  # regression intercept
-```
-
-#### LogisticRegression
-
-```ruby
-reg = Ai4r::Classifiers::LogisticRegression.new
-reg.set_parameters(learning_rate: 0.5, iterations: 2000).build(data)
-reg.eval([1, 0])
-```
-
-#### DataSet normalization
-
-```ruby
-data = Ai4r::Data::DataSet.new(data_items: [[1, 10], [2, 20]])
-Ai4r::Data::DataSet.normalized(data, method: :minmax)
-data.normalize!  # in place using z-score
-```
-
-#### KMeans random seed
-
-```ruby
-data = Ai4r::Data::DataSet.new(data_items: [[1, 2], [3, 4], [5, 6]])
-data.normalize!
-kmeans = Ai4r::Clusterers::KMeans.new
-kmeans.set_parameters(random_seed: 1).build(data, 2)
-```
-
-#### SOM distance metric
+#### Self-Organizing Maps (SOM)
 
 ```ruby
 layer = Ai4r::Som::TwoPhaseLayer.new(10, distance_metric: :euclidean)
 som = Ai4r::Som::Som.new(4, 8, 8, layer)
 som.initiate_map
+10.times { som.train_step(data) }
+```
+
+#### Multilayer Perceptron with Backpropagation
+
+```ruby
+net = Ai4r::NeuralNetwork::Backpropagation.new([256, 3])
+inputs  = [TRIANGLE, SQUARE, CROSS].map { |m| m.flatten.map { |v| v.to_f / 10 } }
+outputs = [[1,0,0], [0,1,0], [0,0,1]]
+net.train_epochs(inputs, outputs, epochs: 100, batch_size: 1)
+```
+
+#### ID3 Decision Trees
+
+```ruby
+items  = [['sunny', 'warm', 'yes'], ['sunny', 'cold', 'no']]
+labels = ['weather', 'temperature', 'play']
+data   = Ai4r::Data::DataSet.new(data_items: items, data_labels: labels)
+id3    = Ai4r::Classifiers::ID3.new.build(data)
+id3.eval(['sunny', 'warm'])  # => 'yes'
+```
+
+#### Hopfield Networks
+
+```ruby
+patterns = [[1, 1, -1, -1], [-1, -1, 1, 1]]
+data = Ai4r::Data::DataSet.new(data_items: patterns)
+net = Ai4r::NeuralNetwork::Hopfield.new.train(data)
+net.eval([1, -1, -1, -1])
+```
+
+#### Naive Bayes
+
+```ruby
+set = Ai4r::Data::DataSet.new
+set.load_csv_with_labels 'examples/classifiers/naive_bayes_data.csv'
+
+classifier = Ai4r::Classifiers::NaiveBayes.new
+classifier.set_parameters(m: 3).build(set)
+puts classifier.eval(['Red', 'SUV', 'Domestic'])
+```
+
+#### Transformer
+
+```ruby
+encoder = Ai4r::NeuralNetwork::Transformer.new(
+  vocab_size: 50,
+  max_len: 10,
+  architecture: :encoder
+)
+encoder.eval([1, 2, 3, 4])
 ```
 
 Scripts under `examples/clusterers` showcase additional features such as custom distance functions and dendrogram generation. Some hierarchical algorithms cannot classify new items once built—use `supports_eval?` to verify before calling `eval`.
