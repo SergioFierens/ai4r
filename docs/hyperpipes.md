@@ -20,11 +20,6 @@ puts classifier.eval(['Chicago', 85, 'F'])
 
 See `examples/classifiers/hyperpipes_example.rb` for a runnable sample.
 
-Hyperpipes is a fast baseline algorithm that creates one "pipe" per class.
-A pipe records value ranges for numeric attributes and sets of observed values
-for nominal attributes. New records are classified by counting how many
-attributes match each pipe.
-
 ## Parameters
 
 `tie_break` – determines how to break ties when several classes receive the
@@ -51,4 +46,4 @@ classifier.build(set)
 classifier.eval(['New York', 30, 'M'])
 ```
 
-Check [Classifier Bench](classifier_bench.md) to compare Hyperpipes with other classifiers.
+Compare results in the [Classifier Bench](classifier_bench.md).

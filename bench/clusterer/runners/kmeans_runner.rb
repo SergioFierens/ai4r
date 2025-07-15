@@ -5,9 +5,10 @@ require 'ai4r/clusterers/k_means'
 module Bench
   module Clusterer
     module Runners
+      # Benchmark runner for K-Means clustering.
       class KmeansRunner < Bench::Common::BaseRunner
-        def initialize(data_set, k)
-          @k = k
+        def initialize(data_set, k_value)
+          @k = k_value
           super(data_set)
         end
 

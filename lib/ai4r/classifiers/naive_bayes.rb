@@ -55,6 +55,7 @@ module Ai4r
     #   b.eval(["Red", "SUV", "Domestic"])
     #
 
+    # Probabilistic classifier based on Bayes' theorem.
     class NaiveBayes < Classifier
       attr_reader :class_prob, :pcc, :pcp
 

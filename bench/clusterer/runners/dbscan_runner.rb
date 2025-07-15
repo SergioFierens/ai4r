@@ -7,6 +7,7 @@ require 'ai4r/clusterers/dbscan'
 module Bench
   module Clusterer
     module Runners
+      # Benchmark runner for DBSCAN clustering.
       class DbscanRunner < Bench::Common::BaseRunner
         def initialize(data_set, epsilon, min_points)
           @epsilon = epsilon

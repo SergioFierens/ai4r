@@ -11,7 +11,9 @@
 
 module Ai4r
   module Data
+    # Mix-in to declare configurable parameters for algorithms.
     module Parameterizable
+      # Class-level helpers for Parameterizable.
       module ClassMethods
         # Get info on what can be parameterized on this algorithm.
         # It returns a hash with the following format:

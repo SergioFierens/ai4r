@@ -7,6 +7,7 @@ require 'ai4r/classifiers/naive_bayes'
 module Bench
   module Classifier
     module Runners
+      # Benchmark runner for the Naive Bayes classifier.
       class NaiveBayesRunner < Bench::Common::BaseRunner
         def initialize(train_set, test_set)
           @test_set = test_set
