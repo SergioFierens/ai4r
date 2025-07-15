@@ -50,3 +50,5 @@ classifier.set_parameters(tie_break: :last, margin: 0.5)
 classifier.build(set)
 classifier.eval(['New York', 30, 'M'])
 ```
+
+Check [Classifier Bench](classifier_bench.md) to compare Hyperpipes with other classifiers.

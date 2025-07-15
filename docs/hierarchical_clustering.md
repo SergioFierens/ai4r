@@ -29,3 +29,6 @@ for these classes.
 
 The example `examples/clusterers/dendrogram_example.rb` shows how to
 plot the recorded tree using the `dendrogram` gem.
+
+You can benchmark hierarchical clustering against other methods in the
+[Clusterer Bench](clusterer_bench.md).

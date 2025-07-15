@@ -1,7 +1,8 @@
 # Clusterer Bench
 
-The clusterer bench compares algorithms such as KMeans, hierarchical linkages,
-DIANA and DBSCAN. It loads points from a CSV file and prints basic metrics
+The clusterer bench compares algorithms such as [KMeans](kmeans.md),
+[hierarchical clustering](hierarchical_clustering.md), DIANA and
+[DBSCAN](dbscan.md). It loads points from a CSV file and prints basic metrics
 for each run.
 
 ```bash

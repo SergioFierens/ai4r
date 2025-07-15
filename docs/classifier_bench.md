@@ -15,3 +15,7 @@ Results appear in an ASCII table and can be exported to CSV with `--export`.
 Metrics include accuracy, F1 score, training time, prediction speed and model
 size. An additional table highlights advantages such as interpretability or
 speed.
+
+The bench is a quick way to compare [ID3](machine_learning.md),
+[Naive Bayes](naive_bayes.md), [IB1](ib1.md) and
+[Hyperpipes](hyperpipes.md) on the same dataset.

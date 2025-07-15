@@ -25,3 +25,5 @@ require 'ai4r/reinforcement/policy_iteration'
 pi = Ai4r::Reinforcement::PolicyIteration.new
 policy = pi.policy_iteration(states, actions, transition, reward)
 ```
+
+For classical graph search techniques see [Search Algorithms](search_algorithms.md).
