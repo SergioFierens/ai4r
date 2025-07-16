@@ -45,24 +45,25 @@ class PrismTest < Minitest::Test
   def test_get_rules
     classifier = Ai4r::Classifiers::Prism.new.build(DataSet.new(data_items: DATA_EXAMPLES,
                                                                 data_labels: DATA_LABELS))
-    marketing_target = nil
-    age_range = nil # rubocop:disable Lint/UselessAssignment
-    city = 'Chicago' # rubocop:disable Lint/UselessAssignment
-    instance_eval(classifier.get_rules)
-    age_range = '<30' # rubocop:disable Lint/UselessAssignment
-    instance_eval(classifier.get_rules)
-    assert_equal('Y', marketing_target)
-    instance_eval(classifier.get_rules)
-    assert_equal('Y', marketing_target)
-    instance_eval(classifier.get_rules)
-    assert_equal('Y', marketing_target)
-    age_range = '[30-50)' # rubocop:disable Lint/UselessAssignment
-    city = 'New York' # rubocop:disable Lint/UselessAssignment
-    instance_eval(classifier.get_rules)
-    assert_equal('N', marketing_target)
-    age_range = '[50-80]' # rubocop:disable Lint/UselessAssignment
-    instance_eval(classifier.get_rules)
-    assert_equal('N', marketing_target)
+    ctx = binding
+    ctx.local_variable_set(:marketing_target, nil)
+    ctx.local_variable_set(:age_range, nil)
+    ctx.local_variable_set(:city, 'Chicago')
+    ctx.eval(classifier.get_rules)
+    ctx.local_variable_set(:age_range, '<30')
+    ctx.eval(classifier.get_rules)
+    assert_equal('Y', ctx.local_variable_get(:marketing_target))
+    ctx.eval(classifier.get_rules)
+    assert_equal('Y', ctx.local_variable_get(:marketing_target))
+    ctx.eval(classifier.get_rules)
+    assert_equal('Y', ctx.local_variable_get(:marketing_target))
+    ctx.local_variable_set(:age_range, '[30-50)')
+    ctx.local_variable_set(:city, 'New York')
+    ctx.eval(classifier.get_rules)
+    assert_equal('N', ctx.local_variable_get(:marketing_target))
+    ctx.local_variable_set(:age_range, '[50-80]')
+    ctx.eval(classifier.get_rules)
+    assert_equal('N', ctx.local_variable_get(:marketing_target))
   end
 
   def test_matches_conditions

@@ -43,19 +43,20 @@ class OneRTest < Minitest::Test
   def test_get_rules
     classifier = OneR.new.build(DataSet.new(data_items: DATA_EXAMPLES,
                                             data_labels: DATA_LABELS))
-    marketing_target = nil
-    age = nil # rubocop:disable Lint/UselessAssignment
-    instance_eval(classifier.get_rules)
-    assert_nil(marketing_target)
-    age = 20 # rubocop:disable Lint/UselessAssignment
-    instance_eval(classifier.get_rules)
-    assert_equal('Y', marketing_target)
-    age = 35 # rubocop:disable Lint/UselessAssignment
-    instance_eval(classifier.get_rules)
-    assert_equal('N', marketing_target)
-    age = 55 # rubocop:disable Lint/UselessAssignment
-    instance_eval(classifier.get_rules)
-    assert_equal('N', marketing_target)
+    ctx = binding
+    ctx.local_variable_set(:marketing_target, nil)
+    ctx.local_variable_set(:age, nil)
+    ctx.eval(classifier.get_rules)
+    assert_nil(ctx.local_variable_get(:marketing_target))
+    ctx.local_variable_set(:age, 20)
+    ctx.eval(classifier.get_rules)
+    assert_equal('Y', ctx.local_variable_get(:marketing_target))
+    ctx.local_variable_set(:age, 35)
+    ctx.eval(classifier.get_rules)
+    assert_equal('N', ctx.local_variable_get(:marketing_target))
+    ctx.local_variable_set(:age, 55)
+    ctx.eval(classifier.get_rules)
+    assert_equal('N', ctx.local_variable_get(:marketing_target))
   end
 
   def test_selected_attribute

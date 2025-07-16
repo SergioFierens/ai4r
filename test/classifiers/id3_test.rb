@@ -236,16 +236,15 @@ class ID3Test < Minitest::Test
 
   def test_rules_eval
     id3 = ID3.new.build(DataSet.new(data_items: DATA_ITEMS, data_labels: DATA_LABELS))
-    # if age_range='<30' then marketing_target='Y'
-    marketing_target = nil
-    age_range = '<30' # rubocop:disable Lint/UselessAssignment
-    eval id3.get_rules
-    assert_equal 'Y', marketing_target
-    # if age_range='[30-50)' and city='New York' then marketing_target='N'
-    age_range = '[30-50)' # rubocop:disable Lint/UselessAssignment
-    city = 'New York' # rubocop:disable Lint/UselessAssignment
-    eval id3.get_rules
-    assert_equal 'N', marketing_target
+    ctx = binding
+    ctx.local_variable_set(:marketing_target, nil)
+    ctx.local_variable_set(:age_range, '<30')
+    ctx.eval id3.get_rules
+    assert_equal 'Y', ctx.local_variable_get(:marketing_target)
+    ctx.local_variable_set(:age_range, '[30-50)')
+    ctx.local_variable_set(:city, 'New York')
+    ctx.eval id3.get_rules
+    assert_equal 'N', ctx.local_variable_get(:marketing_target)
   end
 
   def test_numeric_attribute
