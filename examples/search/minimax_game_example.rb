@@ -69,11 +69,11 @@ class TicTacToeState < Ai4r::Search::GameState
     end
 
     # Check diagonals
-    diagonal1 = [@board[0][0], @board[1][1], @board[2][2]]
-    return diagonal1[0] if diagonal1.all? { |cell| cell == diagonal1[0] && !cell.nil? }
+    main_diagonal = [@board[0][0], @board[1][1], @board[2][2]]
+    return main_diagonal[0] if main_diagonal.all? { |cell| cell == main_diagonal[0] && !cell.nil? }
 
-    diagonal2 = [@board[0][2], @board[1][1], @board[2][0]]
-    return diagonal2[0] if diagonal2.all? { |cell| cell == diagonal2[0] && !cell.nil? }
+    anti_diagonal = [@board[0][2], @board[1][1], @board[2][0]]
+    return anti_diagonal[0] if anti_diagonal.all? { |cell| cell == anti_diagonal[0] && !cell.nil? }
 
     nil
   end

@@ -132,10 +132,10 @@ puts 'Algorithm              | Accuracy | Test Size'
 puts '-----------------------|----------|----------'
 results.each_value do |result|
   evaluation = result[:evaluation]
-  puts format('%-22s | %8.4f | %9d',
-              result[:name],
-              evaluation[:accuracy],
-              evaluation[:test_size])
+  puts format('%-<name>22s | %<accuracy>8.4f | %<size>9d',
+              name: result[:name],
+              accuracy: evaluation[:accuracy],
+              size: evaluation[:test_size])
 end
 
 puts "\n#{'=' * 60}\n"

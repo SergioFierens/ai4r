@@ -88,7 +88,7 @@ RSpec.describe Ai4r::Classifiers::Hyperpipes do
 
         # Should be able to classify
         result = classifier.eval([2.0, 3.0, 4.0])
-        expect(%w[A B C]).to include(result)
+        expect(result).to be_in(%w[A B C])
       end
 
       it 'test_build_overlapping_rectangles' do
@@ -96,7 +96,7 @@ RSpec.describe Ai4r::Classifiers::Hyperpipes do
 
         # Should handle overlapping class regions
         result = classifier.eval([2.0, 1.5])
-        expect(%w[class1 class2]).to include(result)
+        expect(result).to be_in(%w[class1 class2])
       end
 
       it 'test_build_mixed_features' do

@@ -80,10 +80,10 @@ module Ai4r
       #  * 1 if both atts are missing
       #  * normalized numeric att value if other att value is missing and > 0.5
       #  * 1.0-normalized numeric att value if other att value is missing and < 0.5
-      def distance(a, b)
+      def distance(instance_a, instance_b)
         d = 0
-        a.each_with_index do |att_a, i|
-          att_b = b[i]
+        instance_a.each_with_index do |att_a, i|
+          att_b = instance_b[i]
           if att_a.nil?
             if att_b.is_a? Numeric
               diff = norm(att_b, i)

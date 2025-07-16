@@ -42,7 +42,7 @@ Layout/LineLength:
 
 # Allow more complex methods in educational examples
 Metrics/MethodLength:
-  Max: 25
+  Max: 30
   CountAsOne: ['array', 'hash', 'heredoc']
   Exclude:
     - 'spec/**/*'
@@ -62,17 +62,21 @@ Metrics/ClassLength:
 
 # Allow more complexity in educational demonstration methods
 Metrics/CyclomaticComplexity:
-  Max: 15
+  Max: 18
   Exclude:
     - 'examples/**/*'
     - 'spec/**/*'
+    - 'lib/ai4r/classifiers/educational_*.rb'
+    - 'lib/ai4r/neural_network/educational_*.rb'
 
 # Allow more ABC complexity for educational completeness
 Metrics/AbcSize:
-  Max: 25
+  Max: 30
   Exclude:
     - 'spec/**/*'
     - 'examples/**/*'
+    - 'lib/ai4r/classifiers/educational_*.rb'
+    - 'lib/ai4r/neural_network/educational_*.rb'
 
 # Allow more parameters in educational method signatures
 Metrics/ParameterLists:

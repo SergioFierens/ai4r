@@ -59,10 +59,10 @@ end
 
 # Test with sample points
 puts "\nTesting distance metrics with sample points:"
-point1 = [1.0, 2.0]
-point2 = [4.0, 5.0]
-puts "Point 1: #{point1}"
-puts "Point 2: #{point2}"
+first_point = [1.0, 2.0]
+second_point = [4.0, 5.0]
+puts "Point 1: #{first_point}"
+puts "Point 2: #{second_point}"
 puts
 puts 'Distance calculations:'
 puts 'Metric               | Distance'
@@ -71,8 +71,8 @@ puts '---------------------|----------'
 %i[euclidean manhattan cosine chebyshev].each do |metric_name|
   metric_info = metrics[metric_name]
   if metric_info
-    distance = metric_info[:function].call(point1, point2)
-    puts format('%-20s | %8.4f', metric_info[:name], distance)
+    distance = metric_info[:function].call(first_point, second_point)
+    puts format('%-<name>20s | %<distance>8.4f', name: metric_info[:name], distance: distance)
   end
 end
 
@@ -117,11 +117,11 @@ puts 'Algorithm           | Silhouette | WCSS     | BCSS'
 puts '--------------------|------------|----------|----------'
 results.each_value do |result|
   quality = result[:quality]
-  puts format('%-19s | %10.4f | %8.2f | %8.2f',
-              result[:name],
-              quality[:silhouette_score],
-              quality[:within_cluster_sum_of_squares],
-              quality[:between_cluster_sum_of_squares])
+  puts format('%-<name>19s | %<silhouette>10.4f | %<within>8.2f | %<between>8.2f',
+              name: result[:name],
+              silhouette: quality[:silhouette_score],
+              within: quality[:within_cluster_sum_of_squares],
+              between: quality[:between_cluster_sum_of_squares])
 end
 
 puts "\n#{'=' * 60}\n"
