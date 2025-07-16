@@ -11,6 +11,7 @@
 
 module Ai4r
   module Classifiers
+    # Utility class to count votes from ensemble classifiers.
     class Votes
       # @return [Object]
       def initialize

@@ -27,6 +27,7 @@ module Ai4r
     # * instantiated_weight => the values of the first instantiation of weights. these values are
     # never changed
 
+    # Node in a self-organizing map.
     class Node
       include Ai4r::Data::Parameterizable
 

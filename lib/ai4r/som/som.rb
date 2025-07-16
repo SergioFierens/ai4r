@@ -51,6 +51,7 @@ module Ai4r
     # License::   MPL 1.1
     # Url::       https://github.com/SergioFierens/ai4r
 
+    # Implementation of a self-organizing map (SOM).
     class Som
       include Ai4r::Data::Parameterizable
 

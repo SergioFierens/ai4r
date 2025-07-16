@@ -158,7 +158,9 @@ module Ai4r
         rules = rules.collect do |rule|
           "#{rule[0..-2].join(' and ')} then #{rule.last}"
         end
-        "if #{rules.join("\nelsif ")}\nelse raise 'There was not enough information during training to do a proper induction for this data element' end"
+        rules_str = rules.join("\nelsif ")
+        "if #{rules_str}\nelse raise 'There was not enough information " \
+        "during training to do a proper induction for this data element' end"
       end
       # rubocop:enable Naming/AccessorMethodName
 
@@ -294,6 +296,8 @@ module Ai4r
 
         Math.log(z) / LOG2
       end
+
+      private_class_method :sum, :log2
 
       # @param examples [Object]
       # @param domain [Object]
@@ -493,6 +497,8 @@ module Ai4r
       # @param node [Object]
       # @param examples [Object]
       # @return [Object]
+      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity,
+      # rubocop:disable Metrics/PerceivedComplexity
       def prune_node(node, examples)
         return node if node.is_a?(CategoryNode) || node.is_a?(ErrorNode)
 
@@ -524,6 +530,8 @@ module Ai4r
           node
         end
       end
+      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
+      # rubocop:enable Metrics/PerceivedComplexity
 
       # @param node [Object]
       # @param examples [Object]

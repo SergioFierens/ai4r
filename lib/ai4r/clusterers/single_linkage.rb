@@ -38,6 +38,7 @@ module Ai4r
 
       # @return [Object]
       def initialize
+        super()
         @distance_function = lambda do |a, b|
           Ai4r::Data::Proximity.squared_euclidean_distance(
             a.select { |att_a| att_a.is_a? Numeric },
@@ -112,6 +113,7 @@ module Ai4r
       # Compute mean silhouette coefficient of the clustering result.
       # Returns a float between -1 and 1. Only valid after build.
       # @return [Object]
+      # rubocop:disable Metrics/MethodLength
       def silhouette
         return nil unless @index_clusters && @data_set
 
@@ -148,6 +150,7 @@ module Ai4r
 
         total / count
       end
+      # rubocop:enable Metrics/MethodLength
 
       protected
 

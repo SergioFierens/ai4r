@@ -89,6 +89,7 @@ module Ai4r
       # @param data_set [Ai4r::Data::DataSet] data to evaluate
       # @param k [Integer] number of folds
       # @return [Ai4r::Data::DataSet]
+      # rubocop:disable Metrics/MethodLength
       def cross_validate(data_set, k:)
         folds = Split.split(data_set, k: k)
         times = Array.new(@classifiers.length, 0.0)
@@ -122,6 +123,7 @@ module Ai4r
           data_labels: ['Classifier', 'Avg. Time', 'Avg. Success rate']
         )
       end
+      # rubocop:enable Metrics/MethodLength
 
       private
 

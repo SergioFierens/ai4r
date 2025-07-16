@@ -95,6 +95,7 @@ module Ai4r
         probs
       end
 
+      # rubocop:disable Metrics/MethodLength
       def viterbi(sequence)
         v = []
         bptr = []
@@ -132,6 +133,7 @@ module Ai4r
         end
         path
       end
+      # rubocop:enable Metrics/MethodLength
     end
   end
 end

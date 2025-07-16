@@ -222,7 +222,9 @@ module Ai4r
       # @param input_values [Object]
       # @return [Object]
       def eval_result(input_values)
+        # rubocop:disable Security/Eval
         result = eval(input_values)
+        # rubocop:enable Security/Eval
         result.index(result.max)
       end
 
@@ -237,7 +239,9 @@ module Ai4r
       # @param outputs [Object]
       # @return [Object]
       def train(inputs, outputs)
+        # rubocop:disable Security/Eval
         eval(inputs)
+        # rubocop:enable Security/Eval
         backpropagate(outputs)
         calculate_loss(outputs, @activation_nodes.last)
       end
@@ -265,7 +269,9 @@ module Ai4r
         batch_inputs.each_index do |idx|
           inputs = batch_inputs[idx]
           outputs = batch_outputs[idx]
+          # rubocop:disable Security/Eval
           eval(inputs)
+          # rubocop:enable Security/Eval
           calculate_output_deltas(outputs)
           calculate_internal_deltas
 
@@ -335,7 +341,9 @@ module Ai4r
             if block.arity >= 3
               correct = 0
               data_inputs.each_index do |i|
+                # rubocop:disable Security/Eval
                 output = eval(data_inputs[i])
+                # rubocop:enable Security/Eval
                 predicted = output.index(output.max)
                 expected = data_outputs[i].index(data_outputs[i].max)
                 correct += 1 if predicted == expected

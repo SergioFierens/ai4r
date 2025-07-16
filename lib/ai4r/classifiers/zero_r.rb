@@ -33,6 +33,7 @@ module Ai4r
 
       # @return [Object]
       def initialize
+        super()
         @default_class = nil
         @tie_break = :first
         @random_seed = nil
@@ -44,6 +45,7 @@ module Ai4r
       # the item class.
       # @param data_set [Object]
       # @return [Object]
+      # rubocop:disable Metrics/MethodLength
       def build(data_set)
         @data_set = data_set
 
@@ -83,6 +85,7 @@ module Ai4r
 
         self
       end
+      # rubocop:enable Metrics/MethodLength
 
       # You can evaluate new data, predicting its class.
       # e.g.

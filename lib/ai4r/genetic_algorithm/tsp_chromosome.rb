@@ -13,7 +13,7 @@ module Ai4r
         last_token = @data[0]
         cost = 0
         @data[1..].each do |token|
-          cost += @@costs[last_token][token]
+          cost += @costs[last_token][token]
           last_token = token
         end
         @fitness = -1 * cost
@@ -41,7 +41,7 @@ module Ai4r
       # @param crossover_rate [Object]
       # @return [Object]
       def self.reproduce(a, b, crossover_rate = 0.4)
-        data_size = @@costs[0].length
+        data_size = @costs[0].length
         available = []
         0.upto(data_size - 1) { |n| available << n }
         token = a.data[0]
@@ -65,7 +65,7 @@ module Ai4r
 
       # @return [Object]
       def self.seed
-        data_size = @@costs[0].length
+        data_size = @costs[0].length
         available = []
         0.upto(data_size - 1) { |n| available << n }
         seed = []
@@ -76,7 +76,11 @@ module Ai4r
       # @param costs [Object]
       # @return [Object]
       def self.set_cost_matrix(costs)
-        @@costs = costs
+        @costs = costs
+      end
+
+      class << self
+        attr_accessor :costs
       end
     end
   end

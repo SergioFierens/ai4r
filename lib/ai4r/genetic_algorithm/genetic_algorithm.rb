@@ -55,7 +55,8 @@ module Ai4r
       #     2. Evaluate the fitness of each individual in the population
       #     3. Repeat
       #           1. Select best-ranking individuals to reproduce
-      #           2. Breed new generation through crossover and mutation (genetic operations) and give birth to offspring
+      #           2. Breed new generation through crossover and mutation
+      #              (genetic operations) and give birth to offspring
       #           3. Evaluate the individual fitnesses of the offspring
       #           4. Replace worst ranked part of population with offspring
       #     4. Until termination
@@ -107,9 +108,14 @@ module Ai4r
       #
       # 1. The fitness function is evaluated for each individual, providing fitness values
       # 2. The population is sorted by descending fitness values.
-      # 3. The fitness values ar then normalized. (Highest fitness gets 1, lowest fitness gets 0). The normalized value is stored in the "normalized_fitness" attribute of the chromosomes.
-      # 4. A random number R is chosen. R is between 0 and the accumulated normalized value (all the normalized fitness values added togheter).
-      # 5. The selected individual is the first one whose accumulated normalized value (its is normalized value plus the normalized values of the chromosomes prior it) greater than R.
+      # 3. The fitness values are then normalized. Highest fitness gets 1,
+      #    lowest fitness gets 0. The normalized value is stored in the
+      #    "normalized_fitness" attribute of the chromosomes.
+      # 4. A random number R is chosen. R is between 0 and the accumulated
+      #    normalized value (all the normalized fitness values added together).
+      # 5. The selected individual is the first one whose accumulated normalized
+      #    value (its normalized value plus the values of prior chromosomes)
+      #    exceeds R.
       # 6. We repeat steps 4 and 5, 2/3 times the population size.
       # @return [Object]
       def selection

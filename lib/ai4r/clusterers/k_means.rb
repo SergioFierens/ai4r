@@ -55,6 +55,7 @@ module Ai4r
 
       # @return [Object]
       def initialize
+        super()
         @distance_function = nil
         @max_iterations = nil
         @centroid_function = lambda do |data_sets|
@@ -75,6 +76,7 @@ module Ai4r
       # @param data_set [Object]
       # @param number_of_clusters [Object]
       # @return [Object]
+      # rubocop:disable Metrics/MethodLength
       def build(data_set, number_of_clusters)
         @data_set = data_set
         @number_of_clusters = number_of_clusters
@@ -129,6 +131,7 @@ module Ai4r
         @iterations = best_iterations
         self
       end
+      # rubocop:enable Metrics/MethodLength
 
       # Classifies the given data item, returning the cluster index it belongs
       # to (0-based).
@@ -206,12 +209,14 @@ module Ai4r
         @assignments = Array.new(@data_set.data_items.length)
 
         @data_set.data_items.each_with_index do |data_item, data_index|
+          # rubocop:disable Security/Eval
           c = eval(data_item)
+          # rubocop:enable Security/Eval
           @clusters[c] << data_item
           @cluster_indices[c] << data_index if @on_empty == 'outlier'
           @assignments[data_index] = c
         end
-        manage_empty_clusters if has_empty_cluster?
+        manage_empty_clusters if empty_cluster?
       end
 
       # @return [Object]
@@ -222,6 +227,7 @@ module Ai4r
       end
 
       # @return [Object]
+      # rubocop:disable Metrics/MethodLength
       def kmeans_plus_plus_init
         chosen_indices = []
         first_index = (0...@data_set.data_items.length).to_a.sample(random: @rng)
@@ -253,14 +259,17 @@ module Ai4r
         end
         @number_of_clusters = @centroids.length
       end
+      # rubocop:enable Metrics/MethodLength
 
       # @param populate_method [Object]
       # @param number_of_clusters [Object]
       # @return [Object]
+      # rubocop:disable Metrics/MethodLength, Metrics/BlockNesting
       def populate_centroids(populate_method, number_of_clusters = @number_of_clusters)
         tried_indexes = []
         case populate_method
-        when 'random' # for initial assignment (without the :centroid_indices option) and for reassignment of empty cluster centroids (with :on_empty option 'random')
+        when 'random' # for initial assignment (without the :centroid_indices option)
+          # and for reassignment of empty cluster centroids (with :on_empty option 'random')
           while @centroids.length < number_of_clusters &&
                 tried_indexes.length < @data_set.data_items.length
             random_index = (0...@data_set.data_items.length).to_a.sample(random: @rng)
@@ -300,6 +309,7 @@ module Ai4r
         end
         @number_of_clusters = @centroids.length
       end
+      # rubocop:enable Metrics/MethodLength, Metrics/BlockNesting
 
       # Sort cluster points by distance to assigned centroid.  Utilizes @cluster_indices.
       # Returns indices, sorted in order from the nearest to furthest.
@@ -314,12 +324,13 @@ module Ai4r
             h[data_index] = dist_to_centroid
           end
         end
-        # sort hash of {index => dist to centroid} by dist to centroid (ascending) and then return an array of only the indices
+        # sort hash of {index => distance to centroid} by distance to centroid
+        # (ascending) and return an array of the indices only
         h.sort_by { |_k, v| v }.collect { |a, _b| a }
       end
 
       # @return [Object]
-      def has_empty_cluster?
+      def empty_cluster?
         found_empty = false
         @number_of_clusters.times do |c|
           found_empty = true if @clusters[c].data_items.empty?
@@ -329,7 +340,9 @@ module Ai4r
 
       # @return [Object]
       def manage_empty_clusters
-        # Do nothing to terminate with error. (The empty cluster will be assigned a nil centroid, and then calculating the distance from this centroid to another point will raise an exception.)
+        # Do nothing to terminate with error. The empty cluster will be assigned
+        # a nil centroid, and then calculating the distance from this centroid to
+        # another point will raise an exception.
         return if on_empty == 'terminate'
 
         initial_number_of_clusters = @number_of_clusters

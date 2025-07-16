@@ -32,6 +32,7 @@ module Ai4r
 
       # @return [Object]
       def initialize
+        super()
         @selected_attribute = nil
         @tie_break = :first
         @bin_count = 10
@@ -120,6 +121,7 @@ module Ai4r
       # @param attr_index [Object]
       # @param domains [Object]
       # @return [Object]
+      # rubocop:disable Metrics/MethodLength
       def build_rule(data_examples, attr_index, domains)
         domain = domains[attr_index]
         bins = nil
@@ -153,6 +155,7 @@ module Ai4r
         end
         { attr_index: attr_index, rule: rule, correct: correct_instances, bins: bins }
       end
+      # rubocop:enable Metrics/MethodLength
 
       # @param range [Object]
       # @param bins [Object]

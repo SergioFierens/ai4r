@@ -31,6 +31,7 @@ module Ai4r
     #   c.eval([1,158,105.8,192.7,71.4,55.7,2844,136,3.19,3.4,8.5,110,5500,19,25])
     #
 
+    # Basic one-variable linear regression classifier.
     class SimpleLinearRegression < Classifier
       attr_reader :attribute, :attribute_index, :slope, :intercept
 
@@ -38,6 +39,7 @@ module Ai4r
 
       # @return [Object]
       def initialize
+        super()
         @attribute = nil
         @attribute_index = 0
         @slope = 0
@@ -60,6 +62,7 @@ module Ai4r
       # Parameter data has to be an instance of DataSet
       # @param data [Object]
       # @return [Object]
+      # rubocop:disable Metrics/MethodLength
       def build(data)
         raise 'Error instance must be passed' unless data.is_a?(Ai4r::Data::DataSet)
         raise 'Data should not be empty' if data.data_items.empty?
@@ -112,20 +115,15 @@ module Ai4r
           end
         end
 
-        if chosen == -1
-          raise 'no useful attribute found'
-          @attribute = nil
-          @attribute_index = 0
-          @slope = 0
-          @intercept = y_mean
-        else
-          @attribute = data.data_labels[chosen]
-          @attribute_index = chosen
-          @slope = chosen_slope
-          @intercept = chosen_intercept
-        end
+        raise 'no useful attribute found' if chosen == -1
+
+        @attribute = data.data_labels[chosen]
+        @attribute_index = chosen
+        @slope = chosen_slope
+        @intercept = chosen_intercept
         self
       end
+      # rubocop:enable Metrics/MethodLength
 
       # Simple Linear Regression classifiers cannot generate human readable
       # rules. This method returns a descriptive string indicating that rule

@@ -21,6 +21,7 @@ module Ai4r
                       distance_function: 'Optional closure computing distance; defaults to squared Euclidean.'
 
       def initialize
+        super()
         @distance_function = nil
         @epsilon = nil
         @min_points = 5

@@ -13,15 +13,18 @@ require_relative 'votes'
 
 module Ai4r
   module Classifiers
+    # Random forest classifier built from multiple decision trees.
     class RandomForest < Classifier
       parameters_info n_trees: 'Number of trees to build. Default 10.',
                       sample_size: 'Number of data items for each tree (with replacement). Default: data set size.',
-                      feature_fraction: 'Fraction of attributes sampled for each tree. Default: sqrt(num_attributes)/num_attributes.',
+                      feature_fraction: 'Fraction of attributes sampled for each tree. ' \
+                                       'Default: sqrt(num_attributes)/num_attributes.',
                       random_seed: 'Seed for reproducible randomness.'
 
       attr_reader :trees, :features
 
       def initialize
+        super()
         @n_trees = 10
         @sample_size = nil
         @feature_fraction = nil
