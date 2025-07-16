@@ -29,6 +29,12 @@ class BFSTest < Minitest::Test
     assert_equal %i[a b d], path
   end
 
+  def test_search_uses_initialized_start
+    bfs = BFS.new(method(:goal_test), method(:neighbor_fn), :a)
+    path = bfs.search
+    assert_equal %i[a b d], path
+  end
+
   def goal_test_unreach(node)
     node == :x
   end
