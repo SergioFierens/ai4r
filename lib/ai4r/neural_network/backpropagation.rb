@@ -90,7 +90,6 @@ module Ai4r
     class Backpropagation
       include Ai4r::Data::Parameterizable
 
-
       attr_accessor :structure, :weights, :activation_nodes, :last_changes
 
       # When the activation parameter changes, update internal lambdas for each

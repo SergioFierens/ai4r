@@ -31,9 +31,7 @@ module Ai4r
         def parameters_info(params_info)
           @_params_info_ = get_parameters_info.merge(params_info)
           params_info.each_key do |param|
-            unless method_defined?(param) || method_defined?("#{param}=")
-              attr_accessor param
-            end
+            attr_accessor param unless method_defined?(param) || method_defined?("#{param}=")
           end
         end
       end

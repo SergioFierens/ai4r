@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "ai4r/version"
+require_relative 'ai4r/version'
 
 # Data
 require_relative 'ai4r/data/data_set'
