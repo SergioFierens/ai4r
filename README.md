@@ -22,6 +22,12 @@ Add the library to your code:
 require 'ai4r'
 ```
 
+## Where to start?
+- [Beginner Track](docs/learning_path_1_beginner.md) – Build core intuition for AI—step by step, in Ruby.
+- [Intermediate Track](docs/learning_path_2_intermediate.md) – From "I can run a model" to "I can tune, extend, and build smart stuff that actually works."
+- [Advanced Track](docs/learning_path_3_advanced.md) – Time to stop following recipes and start writing your own.
+
+
 ## 🧭 What’s Inside?
 
 A quick map to AI4R’s built‑in toolkits, grouped by type. Each folder comes with examples and benchmark runners so you can dive right in.
@@ -156,16 +162,6 @@ Docs: `docs/benches_overview.md`
 
 Try this: run `bench/search/astar_vs_dfs.rb` and explain why A* usually wins.
 
-## 🛠️ Core Utilities
-
-- `DataSet` – your gateway to loading labeled data
-- `Parameterizable` – easily tweak hyperparameters
-- `Proximity` – distance functions (Euclidean, Manhattan, …)
-- `Statistics` – mean, stdev, histograms and more
-
-Everything lives under `lib/ai4r/`.
-
-## 🏁 Getting Started
 
 ```bash
 git clone https://github.com/SergioFierens/ai4r
@@ -174,29 +170,9 @@ bundle install
 ruby bench/classifier/compare_all.rb
 ```
 
-## 🧠 Suggested First Experiments
 
-| Goal | File |
-| --- | --- |
-| Predict with classifiers | `bench/classifier/compare_all.rb` |
-| Explore clustering behavior | `bench/clusterer/kmeans_vs_dbscan.rb` |
-| Navigate with search | `bench/search/astar_vs_dfs.rb` |
-| Learn from rewards | See `docs/reinforcement_learning.md` |
-| Evolve better TSP routes | `genetic_algorithm/tsp_example.rb` |
 
-## 📚 Want to Learn More?
+## 💬 Feedback?
 
-- Full classifier overview: `docs/index.md`
-- Reinforcement intro: `docs/reinforcement_learning.md`
-- Search walkthrough: `docs/search_algorithms.md`
-- HMM basics: `docs/hmm.md`
-- [Beginner Track](docs/learning_path_1_beginner.md) – Build core intuition for AI—step by step, in Ruby.
-- [Intermediate Track](docs/learning_path_2_intermediate.md) – From "I can run a model" to "I can tune, extend, and build smart stuff that actually works."
-- [Advanced Track](docs/learning_path_3_advanced.md) – Time to stop following recipes and start writing your own.
-
-Every module is short, readable and ready to hack.
-
-## 💬 Feedback or Questions?
-
-This library is maintained for the joy of it (and perhaps a misplaced sense of duty to Ruby). You can do whatever you want with it—it’s unlicensed. But if you build something cool or just find it useful, [Sergio Fierens](https://github.com/SergioFierens) would love to hear from you.
+This library is maintained for the joy of it (and perhaps a misplaced sense of duty to Ruby). You can do whatever you want with it—it’s unlicensed. If you build something cool or just find it useful, drop a note in the [project's comments](https://github.com/SergioFierens/ai4r/discussions).
 
