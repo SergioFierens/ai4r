@@ -79,9 +79,7 @@ module Ai4r
       def build(data_set, number_of_clusters)
         @data_set = data_set
         @number_of_clusters = number_of_clusters
-        if @number_of_clusters > @data_set.data_items.length
-          raise ArgumentError, 'Number of clusters larger than data items'
-        end
+        raise ArgumentError, 'Number of clusters larger than data items' if @number_of_clusters > @data_set.data_items.length
 
         unless @centroid_indices.empty? || @centroid_indices.length == @number_of_clusters
           raise ArgumentError,
@@ -268,9 +266,7 @@ module Ai4r
             next if tried_indexes.include?(random_index)
 
             tried_indexes << random_index
-            unless @centroids.include? @data_set.data_items[random_index]
-              @centroids << @data_set.data_items[random_index]
-            end
+            @centroids << @data_set.data_items[random_index] unless @centroids.include? @data_set.data_items[random_index]
           end
         when 'indices' # for initial assignment only (with the :centroid_indices option)
           @centroid_indices.each do |index|
@@ -292,9 +288,7 @@ module Ai4r
             outlier_index = sorted_data_indices[i]
             unless tried_indexes.include?(outlier_index)
               tried_indexes << outlier_index
-              unless @centroids.include? @data_set.data_items[outlier_index]
-                @centroids << @data_set.data_items[outlier_index]
-              end
+              @centroids << @data_set.data_items[outlier_index] unless @centroids.include? @data_set.data_items[outlier_index]
             end
             i.positive? ? i -= 1 : break
           end

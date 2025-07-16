@@ -65,9 +65,7 @@ module Ai4r
         domains = @data_set.build_domains
         @attr_bins = {}
         domains[0...-1].each_with_index do |domain, i|
-          if domain.is_a?(Array) && domain.length == 2 && domain.all? { |v| v.is_a? Numeric }
-            @attr_bins[@data_set.data_labels[i]] = discretize_range(domain, @bin_count)
-          end
+          @attr_bins[@data_set.data_labels[i]] = discretize_range(domain, @bin_count) if domain.is_a?(Array) && domain.length == 2 && domain.all? { |v| v.is_a? Numeric }
         end
         instances = @data_set.data_items.collect { |data| data }
         @rules = []

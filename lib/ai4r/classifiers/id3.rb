@@ -220,9 +220,7 @@ module Ai4r
                                             domain))
         end
 
-        if @max_depth && depth >= @max_depth
-          return CategoryNode.new(@data_set.category_label, most_freq(data_examples, domain))
-        end
+        return CategoryNode.new(@data_set.category_label, most_freq(data_examples, domain)) if @max_depth && depth >= @max_depth
 
         best_index = nil
         best_entropy = nil
