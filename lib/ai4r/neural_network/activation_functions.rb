@@ -136,6 +136,7 @@ module Ai4r
         attr_reader :alpha
 
         def initialize(alpha = 0.01)
+          super()
           @alpha = alpha
         end
 
@@ -177,6 +178,7 @@ module Ai4r
         attr_reader :alpha
 
         def initialize(alpha = 1.0)
+          super()
           @alpha = alpha
         end
 
@@ -216,6 +218,7 @@ module Ai4r
         attr_reader :beta
 
         def initialize(beta = 1.0)
+          super()
           @beta = beta
         end
 

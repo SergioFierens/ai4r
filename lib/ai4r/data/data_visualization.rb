@@ -385,8 +385,6 @@ module Ai4r
           distances = {}
 
           distance_methods.each do |method, name|
-            if method == :cosine_distance
-            end
             distances[name] = Proximity.send(method, point1, point2)
           rescue StandardError
             distances[name] = 'Error'

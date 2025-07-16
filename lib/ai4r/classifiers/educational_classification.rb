@@ -17,6 +17,7 @@ module Ai4r
       attr_reader :algorithm, :monitor, :configuration, :training_history, :model_info
 
       def initialize(algorithm_type = :id3, config = {})
+        super()
         @algorithm_type = algorithm_type
         @configuration = ClassificationConfiguration.new(config)
         @monitor = ClassificationMonitor.new
@@ -369,7 +370,7 @@ module Ai4r
         puts '-----|------------'
 
         @training_progress.each_with_index do |step, index|
-          puts format('%4d | %s', index + 1, step[:description])
+          puts format('%<idx>4d | %<desc>s', idx: index + 1, desc: step[:description])
         end
 
         puts "\nTotal training time: #{@training_time.round(3)} seconds"
@@ -591,12 +592,12 @@ module Ai4r
         puts '------------|-----------|----------|----------|--------'
 
         class_metrics.each do |class_name, metrics|
-          puts format('%-11s | %9.4f | %8.4f | %8.4f | %7d',
-                      class_name,
-                      metrics[:precision],
-                      metrics[:recall],
-                      metrics[:f1_score],
-                      metrics[:support])
+          puts format('%<name>-11s | %<prec>9.4f | %<rec>8.4f | %<f1>8.4f | %<sup>7d',
+                      name: class_name,
+                      prec: metrics[:precision],
+                      rec: metrics[:recall],
+                      f1: metrics[:f1_score],
+                      sup: metrics[:support])
         end
       end
 
@@ -642,7 +643,7 @@ module Ai4r
         puts '-----|------------'
 
         @training_history.each_with_index do |step, index|
-          puts format('%4d | %s', index + 1, step[:description])
+          puts format('%<idx>4d | %<desc>s', idx: index + 1, desc: step[:description])
         end
       end
 
@@ -750,12 +751,12 @@ module Ai4r
         puts '-' * 40
         puts 'Metric          | Algorithm 1 | Algorithm 2'
         puts '-' * 40
-        puts format('%-15s | %10.4f | %10.4f', 'Accuracy', eval1[:accuracy], eval2[:accuracy])
+        puts format('%<metric>-15s | %<alg1>10.4f | %<alg2>10.4f', metric: 'Accuracy', alg1: eval1[:accuracy], alg2: eval2[:accuracy])
 
         # Compare average F1-scores
         avg_f1_1 = eval1[:class_metrics].values.sum { |m| m[:f1_score] } / eval1[:class_metrics].length
         avg_f1_2 = eval2[:class_metrics].values.sum { |m| m[:f1_score] } / eval2[:class_metrics].length
-        puts format('%-15s | %10.4f | %10.4f', 'Avg F1-Score', avg_f1_1, avg_f1_2)
+        puts format('%<metric>-15s | %<alg1>10.4f | %<alg2>10.4f', metric: 'Avg F1-Score', alg1: avg_f1_1, alg2: avg_f1_2)
 
         {
           algorithm1: @classifier1.algorithm_type,

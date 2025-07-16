@@ -44,7 +44,7 @@ Layout/LineLength:
 
 # Allow more complex methods in educational examples
 Metrics/MethodLength:
-  Max: 30
+  Max: 40
   CountAsOne: ['array', 'hash', 'heredoc']
   Exclude:
     - 'spec/**/*'
@@ -64,7 +64,7 @@ Metrics/ClassLength:
 
 # Allow more complexity in educational demonstration methods
 Metrics/CyclomaticComplexity:
-  Max: 18
+  Max: 20
   Exclude:
     - 'examples/**/*'
     - 'spec/**/*'
@@ -73,7 +73,16 @@ Metrics/CyclomaticComplexity:
 
 # Allow more ABC complexity for educational completeness
 Metrics/AbcSize:
-  Max: 30
+  Max: 40
+  Exclude:
+    - 'spec/**/*'
+    - 'examples/**/*'
+    - 'lib/ai4r/classifiers/educational_*.rb'
+    - 'lib/ai4r/neural_network/educational_*.rb'
+
+# Allow higher perceived complexity for educational algorithms
+Metrics/PerceivedComplexity:
+  Max: 20
   Exclude:
     - 'spec/**/*'
     - 'examples/**/*'
@@ -139,8 +148,9 @@ Layout/SpaceInsideHashLiteralBraces:
 # ==============================================================================
 
 # Use descriptive names for educational clarity
+# Allow numbered variables for mathematical/scientific contexts
 Naming/VariableNumber:
-  EnforcedStyle: snake_case
+  Enabled: false
 
 # Allow longer method names for educational descriptiveness
 Naming/MethodName:
@@ -149,6 +159,46 @@ Naming/MethodName:
     - '^is_'
     - '^has_'
     - '^can_'
+
+# Allow single letter parameters in mathematical/scientific contexts
+Naming/MethodParameterName:
+  MinNameLength: 1
+  AllowedNames:
+    - a
+    - b
+    - c
+    - d
+    - e
+    - f
+    - g
+    - h
+    - i
+    - j
+    - k
+    - l
+    - m
+    - n
+    - o
+    - p
+    - q
+    - r
+    - s
+    - t
+    - u
+    - v
+    - w
+    - x
+    - y
+    - z
+    - io
+    - id
+    - to
+    - by
+    - on
+    - in
+    - at
+    - ip
+    - db
 
 # Allow educational prefixes in method names
 Naming/PredicatePrefix:

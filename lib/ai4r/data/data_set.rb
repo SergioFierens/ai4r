@@ -52,8 +52,8 @@ module Ai4r
           selected_items = @data_items[index]
         end
 
-        return DataSet.new(:data_items => selected_items,
-                           :data_labels => @data_labels)
+        return DataSet.new(data_items: selected_items,
+                           data_labels: @data_labels)
       end
 
       # Load data items from csv file
@@ -184,17 +184,15 @@ module Ai4r
           raise ArgumentError, "Index #{index} out of bounds" if index < 0 || index >= first_item.length
         end
 
-        if first_item[index].is_a?(Numeric)
-          return [Statistics.min(self, index), Statistics.max(self, index)]
-        else
-          domain = Set.new
-          @data_items.each do |item|
-            next if item.nil? || item.length <= index
+        return [Statistics.min(self, index), Statistics.max(self, index)] if first_item[index].is_a?(Numeric)
 
-            domain << item[index] if item[index]
-          end
-          return domain
+        domain = Set.new
+        @data_items.each do |item|
+          next if item.nil? || item.length <= index
+
+          domain << item[index] if item[index]
         end
+        return domain
       end
 
       # Returns attributes number, including class attribute
@@ -228,7 +226,7 @@ module Ai4r
       end
 
       # Add a data item to the data set
-      def << data_item
+      def <<(data_item)
         if data_item.nil? || !data_item.is_a?(Enumerable) || data_item.empty?
           raise ArgumentError, 'Data must not be an non empty array.'
         elsif @data_items.empty?
@@ -289,11 +287,11 @@ module Ai4r
       end
 
       def check_data_labels(labels)
-        if !@data_items.empty?
-          if labels.length != @data_items.first.length
-            raise ArgumentError,
-                  "Number of labels and attributes do not match. #{labels.length} labels and #{@data_items.first.length} attributes found."
-          end
+        return if @data_items.empty?
+
+        if labels.length != @data_items.first.length
+          raise ArgumentError,
+                "Number of labels and attributes do not match. #{labels.length} labels and #{@data_items.first.length} attributes found."
         end
       end
 

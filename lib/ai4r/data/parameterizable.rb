@@ -11,7 +11,10 @@
 
 module Ai4r
   module Data
+    # Module for adding parameter support to AI algorithms
+    # Provides a consistent interface for setting and getting parameters
     module Parameterizable
+      # Class methods added when Parameterizable is included
       module ClassMethods
         # Get info on what can be parameterized on this algorithm.
         # It returns a hash with the following format:

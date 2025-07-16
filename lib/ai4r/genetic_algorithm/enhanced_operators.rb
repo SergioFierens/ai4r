@@ -130,7 +130,7 @@ module Ai4r
         def description
           'Adaptive selection that starts with low pressure (high temperature) and ' \
             'gradually increases pressure (cooling) as evolution progresses. ' \
-            "Current temperature: #{@temperature.round(2)}"
+            'Current temperature: ' + @temperature.round(2).to_s
         end
 
         def select(population, count)
@@ -241,7 +241,7 @@ module Ai4r
 
         def description
           'Performs arithmetic combination of parent genes: offspring = α*parent1 + (1-α)*parent2. ' \
-            "Alpha parameter: #{@alpha}. Good for real-valued optimization."
+            'Alpha parameter: ' + @alpha.to_s + '. Good for real-valued optimization.'
         end
 
         def crossover(parent1, parent2)

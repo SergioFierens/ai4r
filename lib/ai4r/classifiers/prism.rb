@@ -38,10 +38,10 @@ module Ai4r
         instances = @data_set.data_items.collect { |data| data }
         @rules = []
         domains.last.each do |class_value|
-          while has_class_value(instances, class_value)
+          while has_class_value?(instances, class_value)
             rule = build_rule(class_value, instances)
             @rules << rule
-            instances = instances.reject { |data| matches_conditions(data, rule[:conditions]) }
+            instances = instances.reject { |data| matches_conditions?(data, rule[:conditions]) }
           end
         end
         return self
@@ -52,7 +52,7 @@ module Ai4r
       #   classifier.eval(['New York',  '<30', 'F'])  # => 'Y'
       def eval(instace)
         @rules.each do |rule|
-          return rule[:class_value] if matches_conditions(instace, rule[:conditions])
+          return rule[:class_value] if matches_conditions?(instace, rule[:conditions])
         end
         return nil
       end
@@ -89,20 +89,20 @@ module Ai4r
         data[@data_set.get_index(attr)]
       end
 
-      def has_class_value(instances, class_value)
+      def has_class_value?(instances, class_value)
         instances.each { |data| return true if data.last == class_value }
         return false
       end
 
-      def is_perfect(instances, rule)
+      def perfect?(instances, rule)
         class_value = rule[:class_value]
         instances.each do |data|
-          return false if (data.last != class_value) && matches_conditions(data, rule[:conditions])
+          return false if (data.last != class_value) && matches_conditions?(data, rule[:conditions])
         end
         return true
       end
 
-      def matches_conditions(data, conditions)
+      def matches_conditions?(data, conditions)
         conditions.each_pair do |attr_label, attr_value|
           return false if get_attr_value(data, attr_label) != attr_value
         end
@@ -113,12 +113,12 @@ module Ai4r
         rule = { class_value: class_value, conditions: {} }
         rule_instances = instances.collect { |data| data }
         attributes = @data_set.data_labels[0...-1].collect { |label| label }
-        until is_perfect(instances, rule) || attributes.empty?
+        until perfect?(instances, rule) || attributes.empty?
           freq_table = build_freq_table(rule_instances, attributes, class_value)
           condition = get_condition(freq_table)
           rule[:conditions].merge!(condition)
           rule_instances = rule_instances.select do |data|
-            matches_conditions(data, condition)
+            matches_conditions?(data, condition)
           end
         end
         return rule
@@ -155,7 +155,7 @@ module Ai4r
         condition = nil
         freq_table.each do |attr_label, attr_freqs|
           attr_freqs.each do |attr_value, pt|
-            if better_pt(pt, best_pt)
+            if better_pt?(pt, best_pt)
               condition = { attr_label => attr_value }
               best_pt = pt
             end
@@ -170,7 +170,7 @@ module Ai4r
       # a pt is better if:
       #   1- its ratio is higher
       #   2- its ratio is equal, and has a higher p
-      def better_pt(pt, best_pt)
+      def better_pt?(pt, best_pt)
         return false if pt[1] == 0
         return true if best_pt[1] == 0
 

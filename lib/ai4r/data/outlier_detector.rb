@@ -57,7 +57,7 @@ module Ai4r
           percentile: 'Simple method using percentile cutoffs (e.g., <5th or >95th percentile). ' \
                       'Easy to understand and implement. Threshold is percentile value (0.01-0.1).',
 
-          tukey: "Tukey's method using Q1-1.5*IQR and Q3+1.5*IQR boundaries. " \
+          tukey: 'Tukey\'s method using Q1-1.5*IQR and Q3+1.5*IQR boundaries. ' \
                  'Similar to IQR but with specific multiplier. Classic statistical approach.'
         }
 

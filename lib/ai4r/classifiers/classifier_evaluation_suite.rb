@@ -965,11 +965,11 @@ module Ai4r
 
         results.each do |result|
           gap = result[:train_accuracy] - result[:test_accuracy]
-          puts format('%11d | %8.1f%% | %9.1f%% | %3.1f%%',
-                      result[:sample_size],
-                      result[:test_accuracy] * 100,
-                      result[:train_accuracy] * 100,
-                      gap * 100)
+          puts format('%<size>11d | %<test>8.1f%% | %<train>9.1f%% | %<gap>3.1f%%',
+                      size: result[:sample_size],
+                      test: result[:test_accuracy] * 100,
+                      train: result[:train_accuracy] * 100,
+                      gap: gap * 100)
         end
       end
 

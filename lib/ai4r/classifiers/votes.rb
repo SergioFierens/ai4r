@@ -11,6 +11,8 @@
 
 module Ai4r
   module Classifiers
+    # Utility class for handling voting in ensemble classifiers
+    # Manages vote counting and winner determination
     class Votes
       def initialize
         self.tally_sheet = Hash.new(0)

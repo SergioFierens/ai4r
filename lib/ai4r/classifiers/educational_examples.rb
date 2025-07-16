@@ -12,6 +12,8 @@ require_relative '../data/data_set'
 
 module Ai4r
   module Classifiers
+    # Educational examples for demonstrating classifier algorithms
+    # Provides sample datasets and usage examples for learning
     module EducationalExamples
       # Generate different types of datasets for educational purposes
       class DatasetGenerator

@@ -43,12 +43,13 @@ module Ai4r
                                         'the initial centroids.  Otherwise, the initial centroids will be ' \
                                         'assigned randomly from the data set.',
                       on_empty: 'Action to take if a cluster becomes empty, with values ' \
-                                "'eliminate' (the default action, eliminate the empty cluster), " \
-                                "'terminate' (terminate with error), 'random' (relocate the " \
-                                "empty cluster to a random point), 'outlier' (relocate the " \
+                                '"eliminate" (the default action, eliminate the empty cluster), ' \
+                                '"terminate" (terminate with error), "random" (relocate the ' \
+                                'empty cluster to a random point), "outlier" (relocate the ' \
                                 'empty cluster to the point furthest from its centroid).'
 
       def initialize
+        super
         @distance_function = nil
         @max_iterations = 1000
         @centroid_function = ->(data_sets) do

@@ -37,6 +37,7 @@ module Ai4r
       COVARIANCE_SPHERICAL = 'spherical' # Spherical covariance (scalar * identity)
 
       def initialize
+        super
         @n_components = 3
         @max_iterations = 100
         @tolerance = 1e-6

@@ -33,6 +33,7 @@ module Ai4r
                                          'euclidean distance of numeric attributes to the power of 2.'
 
       def initialize
+        super
         @distance_function = ->(a, b) do
           Ai4r::Data::Proximity.squared_euclidean_distance(
             a.select { |att_a| att_a.is_a? Numeric },

@@ -20,6 +20,7 @@ module Ai4r
       attr_reader :algorithm, :monitor, :configuration, :history
 
       def initialize(algorithm_type = :k_means, config = {})
+        super()
         @algorithm_type = algorithm_type
         @configuration = ClusteringConfiguration.new(config)
         @monitor = ClusteringMonitor.new

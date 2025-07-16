@@ -33,6 +33,7 @@ module Ai4r
         attr_reader :rate, :mask
 
         def initialize(rate = 0.5)
+          super()
           @rate = rate
           @mask = nil
           @training = true
@@ -108,6 +109,7 @@ module Ai4r
         attr_reader :lambda
 
         def initialize(lambda = 0.01)
+          super()
           @lambda = lambda
         end
 
@@ -169,6 +171,7 @@ module Ai4r
         attr_reader :lambda
 
         def initialize(lambda = 0.01)
+          super()
           @lambda = lambda
         end
 
@@ -231,6 +234,7 @@ module Ai4r
         attr_reader :l1_ratio, :lambda
 
         def initialize(lambda = 0.01, l1_ratio = 0.5)
+          super()
           @lambda = lambda
           @l1_ratio = l1_ratio
           @l2_ratio = 1.0 - l1_ratio
@@ -368,6 +372,7 @@ module Ai4r
         attr_reader :momentum, :epsilon, :gamma, :beta, :running_mean, :running_var
 
         def initialize(num_features, momentum = 0.9, epsilon = 1e-5)
+          super()
           @num_features = num_features
           @momentum = momentum
           @epsilon = epsilon
@@ -514,6 +519,7 @@ module Ai4r
       # Data Augmentation (conceptual implementation)
       class DataAugmentation < RegularizationTechnique
         def initialize(augmentation_types = [:noise])
+          super()
           @augmentation_types = augmentation_types
         end
 

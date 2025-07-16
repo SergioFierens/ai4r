@@ -570,8 +570,6 @@ module Ai4r
 
       def calculate_neighbor_weight(neighbor)
         case @weighting_scheme
-        when :uniform
-          1.0
         when :distance
           # Higher weight for closer neighbors
           max_distance = @distance_calculations&.last&.[](:distance) || 1.0
@@ -581,6 +579,7 @@ module Ai4r
           distance = neighbor[:distance]
           distance == 0.0 ? Float::INFINITY : 1.0 / distance
         else
+          # Default to uniform weighting
           1.0
         end
       end

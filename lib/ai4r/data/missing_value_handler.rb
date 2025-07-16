@@ -57,7 +57,7 @@ module Ai4r
                           'Pros: Retains all rows. Cons: Loses features, reduces model input.',
 
           mean: 'Fill missing values with column mean (numeric only). ' \
-                "Pros: Preserves distribution center. Cons: Reduces variance, doesn't work for non-numeric.",
+                'Pros: Preserves distribution center. Cons: Reduces variance, doesn\'t work for non-numeric.',
 
           median: 'Fill missing values with column median (numeric only). ' \
                   'Pros: Robust to outliers. Cons: Still reduces variance, mode may be better for skewed data.',
