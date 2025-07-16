@@ -2,6 +2,8 @@
 
 🎓 **Welcome to AI4R**
 
+Current version: 2.0
+
 Your Lightweight Lab for AI and Machine Learning in Ruby.
 
 AI4R isn’t just another machine learning library. It’s a learning playground. No black boxes and no bulky dependencies—just clean, readable Ruby implementations of core AI algorithms so you can explore, modify and really understand how they work.
