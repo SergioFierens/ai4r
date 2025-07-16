@@ -27,8 +27,6 @@ module Ai4r
                       architecture: 'Architecture (:encoder, :decoder or :seq2seq).',
                       seed: 'Deterministic random seed for initialization.'
 
-      attr_accessor :embed_dim, :num_heads, :ff_dim, :vocab_size, :max_len,
-                    :architecture, :seed
 
       # Initialize the Transformer with given hyperparameters.
       def initialize(vocab_size:, max_len:, embed_dim: 8, num_heads: 2, ff_dim: 32,

@@ -50,15 +50,17 @@ class HyperpipesTest < Minitest::Test
 
   def test_get_rules
     classifier = Hyperpipes.new.build(@data_set)
-    age = 28 # rubocop:disable Lint/UselessAssignment
-    gender = 'M' # rubocop:disable Lint/UselessAssignment
-    marketing_target = nil
-    instance_eval classifier.get_rules
-    assert_equal 'Y', marketing_target
-    age = 44 # rubocop:disable Lint/UselessAssignment
-    city = 'New York' # rubocop:disable Lint/UselessAssignment
-    instance_eval classifier.get_rules
-    assert_equal 'N', marketing_target
+    ctx = binding
+    ctx.local_variable_set(:city, 'New York')
+    ctx.local_variable_set(:age, 28)
+    ctx.local_variable_set(:gender, 'M')
+    ctx.local_variable_set(:marketing_target, nil)
+    ctx.eval classifier.get_rules
+    assert_equal 'Y', ctx.local_variable_get(:marketing_target)
+    ctx.local_variable_set(:age, 44)
+    ctx.local_variable_set(:city, 'New York')
+    ctx.eval classifier.get_rules
+    assert_equal 'N', ctx.local_variable_get(:marketing_target)
   end
 
   def test_pipes_summary

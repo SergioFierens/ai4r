@@ -41,9 +41,6 @@ module Ai4r
     class HiddenMarkovModel
       include Ai4r::Data::Parameterizable
 
-      attr_accessor :states, :observations, :start_prob,
-                    :transition_prob, :emission_prob
-
       parameters_info states: 'Array of hidden states',
                       observations: 'Array of observation symbols',
                       start_prob: 'Initial state probabilities',
