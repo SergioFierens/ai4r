@@ -43,8 +43,8 @@ AI4R ships with a bite-sized, dependency-free Transformer implementation that su
 - **Decoder-only** mode (like GPT)
 - **Seq2Seq** mode (like T5)
 
-📂 Code: `lib/ai4r/neural_network/transformer.rb`  
-🧪 Demos: See inline examples in the source file itself
+📂 Code: `lib/ai4r/neural_network/transformer.rb`
+Docs: [Transformer guide](docs/transformer.md)
 
 💡 **Try this**:  
 Load up the transformer and walk through a simple forward pass.  
@@ -53,7 +53,7 @@ Everything from attention weights to layer normalization is short enough to read
 ### 🧠 Classifiers – Make Predictions
 "What’s the most likely outcome?"
 
-You’ll find:
+You’ll find in [lib/ai4r/classifiers/](lib/ai4r/classifiers/):
 
 - `ZeroR`, `OneR` – the simplest baselines
 - `LogisticRegression`, `SimpleLinearRegression`
@@ -61,24 +61,20 @@ You’ll find:
 - `RandomForest`, `GradientBoosting`
 - `MultilayerPerceptron`
 
-Code: `lib/ai4r/classifiers/`
-
-Demos: `bench/classifier/`
+Docs: [logistic_regression.md](docs/logistic_regression.md), [random_forest.md](docs/random_forest.md)
 
 Try this: run `compare_all.rb` to benchmark classifiers on real datasets.
 
 ### 🔍 Clusterers – Find Hidden Patterns
 "What belongs together?"
 
-Includes:
+Includes in [lib/ai4r/clusterers/](lib/ai4r/clusterers/):
 
 - `KMeans`
 - `DBSCAN`
 - `Hierarchical` clustering variants
 
-Code: `lib/ai4r/clusterers/`
-
-Demos: `bench/clusterer/`
+Docs: [kmeans.md](docs/kmeans.md), [dbscan.md](docs/dbscan.md)
 
 Try this: cluster the Iris dataset using both KMeans and DBSCAN.
 
@@ -96,15 +92,13 @@ Try this: open `transformer.rb` and trace each step—it’s short enough to gro
 ### 🔎 Search Algorithms – Explore Possibility Spaces
 "What’s the best path?"
 
+You’ll find in [lib/ai4r/search/](lib/ai4r/search/):
+
 - `BreadthFirst`, `DepthFirst`, `IterativeDeepening`
 - `A*`
 - `MonteCarloTreeSearch`
 
-Code: `lib/ai4r/search/`
-
-Docs: `docs/search_algorithms.md`
-
-Demos: `bench/search/`
+Docs: [search_algorithms.md](docs/search_algorithms.md)
 
 Try this: run A* and DFS on a maze and time the difference.
 
