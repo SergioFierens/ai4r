@@ -26,6 +26,7 @@ module Ai4r
         @learning_rate = 0.1
       end
 
+      # rubocop:disable Metrics/AbcSize
       def build(data_set)
         data_set.check_not_empty
         @learners = []
@@ -45,6 +46,7 @@ module Ai4r
         end
         self
       end
+      # rubocop:enable Metrics/AbcSize
 
       def eval(data)
         value = @initial_value

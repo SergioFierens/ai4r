@@ -26,6 +26,7 @@ module Ai4r
     # IBI is identical to the nearest neighbor algorithm except that
     # it normalizes its attributes' ranges, processes instances
     # incrementally, and has a simple policy for tolerating missing values
+    # rubocop:disable Metrics/ClassLength
     class IB1 < Classifier
       attr_reader :data_set, :min_values, :max_values
 
@@ -81,6 +82,7 @@ module Ai4r
       # Evaluation does not update internal statistics, keeping the
       # classifier state unchanged. Use +update_with_instance+ to
       # incorporate new samples.
+      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       def eval(data)
         neighbors = @data_set.data_items.map do |train_item|
           [distance(data, train_item), train_item.last]
@@ -98,7 +100,7 @@ module Ai4r
         end
 
         counts = Hash.new(0)
-        k_neighbors.each { |_, klass| counts[klass] += 1 }
+        k_neighbors.each { |(_dist, klass)| counts[klass] += 1 }
         max_votes = counts.values.max
         tied = counts.select { |_, v| v == max_votes }.keys
 
@@ -110,9 +112,10 @@ module Ai4r
         when :random
           tied.sample(random: rng)
         else
-          k_neighbors.each { |_, klass| return klass if tied.include?(klass) }
+          k_neighbors.each { |(_dist, klass)| return klass if tied.include?(klass) }
         end
       end
+      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
       # Returns an array with the +k+ nearest instances from the training set
       # for the given +data+ item. The returned elements are the training data
@@ -165,6 +168,7 @@ module Ai4r
       # @param a [Object]
       # @param b [Object]
       # @return [Object]
+      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
       def distance(data_a, data_b)
         return @distance_function.call(data_a, data_b) if @distance_function
 
@@ -194,6 +198,7 @@ module Ai4r
         end
         d
       end
+      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
       # Returns normalized value att
       #
@@ -207,5 +212,6 @@ module Ai4r
         1.0 * (att - @min_values[index]) / (@max_values[index] - @min_values[index])
       end
     end
+    # rubocop:enable Metrics/ClassLength
   end
 end

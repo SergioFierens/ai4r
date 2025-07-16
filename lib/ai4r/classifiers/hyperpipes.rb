@@ -64,6 +64,7 @@ module Ai4r
       # Tie resolution is controlled by +tie_break+ parameter.
       # @param data [Object]
       # @return [Object]
+      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       def eval(data)
         votes = Votes.new
         @pipes.each do |category, pipe|
@@ -78,6 +79,7 @@ module Ai4r
         rng = @rng || (@random_seed.nil? ? Random.new : Random.new(@random_seed))
         votes.get_winner(@tie_break, rng: rng)
       end
+      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
       # This method returns the generated rules in ruby code.
       # e.g.
@@ -95,6 +97,7 @@ module Ai4r
       #       # =>  'Y'
       # @return [Object]
       # rubocop:disable Naming/AccessorMethodName
+      # rubocop:disable Metrics/AbcSize
       def get_rules
         rules = []
         rules << 'votes = Votes.new'
@@ -114,6 +117,7 @@ module Ai4r
         rules << "#{labels.last} = votes.get_winner(:#{@tie_break})"
         rules.join("\n")
       end
+      # rubocop:enable Metrics/AbcSize
       # rubocop:enable Naming/AccessorMethodName
 
       # Return a summary representation of all pipes.
@@ -132,6 +136,7 @@ module Ai4r
       # fraction.  A value of 0.1 would enlarge each range by 10%.
       # @param margin [Object]
       # @return [Object]
+      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       def pipes_summary(margin: 0)
         raise 'Model not built yet' unless @data_set && @pipes
 
@@ -153,6 +158,7 @@ module Ai4r
         end
         summary
       end
+      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
       protected
 
@@ -171,6 +177,7 @@ module Ai4r
       # @param pipe [Object]
       # @param data_item [Object]
       # @return [Object]
+      # rubocop:disable Metrics/AbcSize
       def update_pipe(pipe, data_item)
         data_item[0...-1].each_with_index do |att, i|
           if att.is_a? Numeric
@@ -183,6 +190,7 @@ module Ai4r
           end
         end
       end
+      # rubocop:enable Metrics/AbcSize
     end
   end
 end

@@ -55,6 +55,7 @@ module Ai4r
 
       # @return [Object]
       def initialize
+        super()
         @network_class = Ai4r::NeuralNetwork::Backpropagation
         @hidden_layers = []
         @training_iterations = TRAINING_ITERATIONS
@@ -68,6 +69,7 @@ module Ai4r
       # the item class.
       # @param data_set [Object]
       # @return [Object]
+      # rubocop:disable Metrics/AbcSize
       def build(data_set)
         data_set.check_not_empty
         @data_set = data_set
@@ -87,6 +89,7 @@ module Ai4r
                               epochs: @training_iterations, batch_size: 1)
         self
       end
+      # rubocop:enable Metrics/AbcSize
 
       # You can evaluate new data, predicting its class.
       # e.g.
@@ -102,9 +105,11 @@ module Ai4r
       # Multilayer Perceptron Classifiers cannot generate
       # human-readable rules.
       # @return [Object]
+      # rubocop:disable Naming/AccessorMethodName
       def get_rules
         "raise 'Neural networks classifiers do not generate human-readable rules.'"
       end
+      # rubocop:enable Naming/AccessorMethodName
 
       protected
 

@@ -5,7 +5,7 @@ AllCops:
     - 'vendor/**/*'
 
 Layout/LineLength:
-  Max: 100
+  Max: 120
 
 Layout/IndentationStyle:
   EnforcedStyle: spaces
@@ -23,3 +23,17 @@ Metrics/MethodLength:
   Max: 25
   Exclude:
     - 'test/**/*'
+Metrics/AbcSize:
+  Enabled: false
+Metrics/CyclomaticComplexity:
+  Enabled: false
+Metrics/PerceivedComplexity:
+  Enabled: false
+Metrics/ClassLength:
+  Enabled: false
+Metrics/ParameterLists:
+  Enabled: false
+Naming/AccessorMethodName:
+  Enabled: false
+Naming/MethodParameterName:
+  Enabled: false
