@@ -1,14 +1,14 @@
-# AI4R - Artificial Intelligence for Ruby 🧠
+# AI4R - Artificial Intelligence for Ruby
 
-*"The AI library that makes algorithms click, not just compute."*
+*A comprehensive AI library where algorithms are transparent, not black boxes.*
 
 ---
 
-## 🚀 What Makes AI4R Special
+## What Makes AI4R Different
 
-**AI4R isn't just another library** - it's an educational playground where AI concepts come alive. Built for students, teachers, and curious minds who want to understand how AI really works.
+AI4R provides readable, educational implementations of AI algorithms. Built for understanding first, performance second. Perfect for students learning AI, teachers demonstrating concepts, and researchers prototyping ideas.
 
-### ⚡ Quick Start
+### Quick Start
 ```ruby
 gem install ai4r
 ```
@@ -16,71 +16,71 @@ gem install ai4r
 ```ruby
 require 'ai4r'
 
-# Build your first neural network in 30 seconds
+# Neural network learns XOR in seconds
 brain = Ai4r::NeuralNetwork::Backpropagation.new([2, 4, 1])
 brain.train([[0,0], [0]], [[1,0], [1]], [[0,1], [1]], [[1,1], [0]])
 
-puts brain.eval([1, 0])  # => It learned XOR! 🤯
+brain.eval([1, 0])  # => [0.99] - it learned!
 ```
 
 ---
 
-## 🎯 Choose Your Learning Path
+## Learning Paths
 
-### 🌱 [Beginner Track](docs/tutorials/beginner-track.md) - "Your First Steps into AI"
-Perfect for newcomers. Learn classification, pathfinding, and algorithm comparison through hands-on experiments.
+### 🎯 [Beginner Track](docs/tutorials/beginner-track.md)
+Foundation concepts through hands-on experiments. Classification, pathfinding, and algorithm comparison.
 
-### ⚡ [Intermediate Track](docs/tutorials/intermediate-track.md) - "Level Up Your AI Game"  
-Neural networks, strategic search, optimization, and ensemble methods. For developers ready to dive deeper.
+### 📈 [Intermediate Track](docs/tutorials/intermediate-track.md)  
+Neural networks, game-playing AI, optimization techniques, and ensemble methods.
 
-### 🎓 [Advanced Track](docs/tutorials/advanced-track.md) - "Research-Level AI Engineering"
-Transformer architectures, distributed systems, meta-learning, and cutting-edge research techniques.
+### 🔬 [Advanced Track](docs/tutorials/advanced-track.md)
+Transformer architectures, distributed systems, meta-learning, and research-grade implementations.
 
-**→ [Start Your Journey](docs/tutorials/)**
+**→ [Browse All Tutorials](docs/tutorials/)**
 
 ---
 
-## 🔥 Coolest Implementations
+## Key Implementations
 
-### 🧬 Genetic Algorithms
+### Genetic Algorithms
 ```ruby
-# Evolution solves the Traveling Salesman Problem
+# Evolution tackles the Traveling Salesman Problem
 ga = Ai4r::GeneticAlgorithm::GeneticSearch.new(cities)
-best_route = ga.run  # Watch evolution find optimal paths!
+best_route = ga.run  # Observe natural selection optimize routes
 ```
 
-### 🤖 Transformer Architecture
+### Transformer Architecture
 ```ruby
-# Build GPT-style models with educational insights
+# Build modern transformer models with educational transparency
 transformer = Ai4r::NeuralNetwork::Transformer.new(
-  mode: :decoder_only,  # GPT-style
+  mode: :decoder_only,
   vocab_size: 1000,
   d_model: 512,
   n_heads: 8
 )
 ```
 
-### 🎯 Hidden Markov Models
+### Hidden Markov Models
 ```ruby
-# Sequence modeling with step-by-step learning
+# Sequence prediction with observable internals
 hmm = Ai4r::MachineLearning::HiddenMarkovModel.new(states, observations)
-predicted_sequence = hmm.viterbi(observations)
+predicted = hmm.viterbi(observed_sequence)
 ```
 
-### 🔍 A* Pathfinding
+### A* Pathfinding
 ```ruby
-# Smart navigation with multiple heuristics
+# Intelligent navigation with multiple heuristics
 astar = Ai4r::Search::AStar.new(maze, heuristic: :manhattan)
-path = astar.find_path(start, goal)
+optimal_path = astar.find_path(start, goal)
 ```
 
 ---
 
-## ⚖️ The Ultimate AI Showdown - Algorithm Benches
+## Algorithm Benchmarking
 
-**Compare algorithms like a pro researcher!**
+Compare algorithms systematically with built-in benchmarking tools.
 
-### 🥊 Classification Bench
+### Classification Bench
 ```ruby
 bench = Ai4r::Experiment::ClassifierBench.new(verbose: true)
 bench.add_classifier(:decision_tree, Ai4r::Classifiers::ID3.new)
@@ -89,115 +89,124 @@ bench.add_classifier(:naive_bayes, Ai4r::Classifiers::NaiveBayes.new)
 
 results = bench.run(iris_dataset)
 bench.display_results(results)
-# See which algorithm wins on your data!
 ```
 
-### 🔍 Search Bench
+### Search Algorithm Bench
 ```ruby
 bench = Ai4r::Experiment::SearchBench.new(verbose: true)
 bench.add_algorithm(:astar_manhattan, Ai4r::Search::AStar.new(maze, heuristic: :manhattan))
-bench.add_algorithm(:astar_euclidean, Ai4r::Search::AStar.new(maze, heuristic: :euclidean))
 bench.add_algorithm(:minimax, Ai4r::Search::Minimax.new(max_depth: 6))
 
 results = bench.run()
-# Race pathfinding algorithms head-to-head!
+bench.export_results(:html, "search_comparison.html")
 ```
 
-**Perfect for:**
-- 🎓 **Students**: See algorithm trade-offs in action
-- 👨‍🏫 **Teachers**: Live demos that make concepts clear  
-- 🔬 **Researchers**: Rapid prototyping and baseline comparisons
+**Applications:**
+- **Education**: Demonstrate algorithm trade-offs empirically
+- **Research**: Establish baselines, compare variations
+- **Development**: Select optimal algorithms for production
 
 ---
 
-## 🎪 Core Algorithm Arsenal
+## Algorithm Categories
+
+Browse our comprehensive collection of **50+ algorithms** across all major AI domains:
 
 | **Neural Networks** | **Search & Optimization** | **Machine Learning** |
 |:---:|:---:|:---:|
-| 🧠 Backpropagation | 🔍 A* Search | 🎯 Decision Trees |
-| 🌐 Hopfield Networks | 🎮 Minimax | 📊 K-Means Clustering |
-| 🤖 Transformers | 🧬 Genetic Algorithms | 🔮 Naive Bayes |
-| 🗺️ Self-Organizing Maps | 🎯 Particle Swarm | 📈 Hidden Markov Models |
+| Backpropagation | A* Search | Decision Trees (ID3, PRISM) |
+| Hopfield Networks | Minimax with α-β Pruning | K-Means & Hierarchical Clustering |
+| Transformer Models | Genetic Algorithms | Naive Bayes & SVM |
+| Self-Organizing Maps | Particle Swarm | Hidden Markov Models |
 
-| **Data Science** | **Evaluation** | **Educational** |
+| **Data Processing** | **Evaluation** | **Educational Tools** |
 |:---:|:---:|:---:|
-| 📊 Statistics | ⚖️ Cross-Validation | 🎓 Step-by-step Tutorials |
-| 🔧 Preprocessing | 📈 Performance Metrics | 🔬 Interactive Experiments |
-| 📈 Visualization | 📊 Confusion Matrices | 🎯 Benchmarking Frameworks |
+| Statistical Analysis | Cross-Validation | Step-by-step Execution |
+| Data Normalization | Confusion Matrices | Algorithm Visualization |
+| Feature Engineering | ROC/AUC Analysis | Comparative Benchmarks |
+
+**→ [View Complete Algorithm Catalog](docs/algorithm-catalog.md)** - Detailed list with direct links to implementations
 
 ---
 
-## 🌟 Why Students & Teachers Love AI4R
+## Why Choose AI4R
 
-### 🎓 **For Students:**
-- **"I can actually see what's happening!"** - Clear, readable implementations
-- **"It runs on my laptop!"** - No GPU requirements
-- **"The examples just work!"** - Copy, paste, learn, experiment
+### For Students
+- **Readable code**: Every algorithm is implemented clearly
+- **No prerequisites**: Runs on any machine, no GPU required
+- **Working examples**: Learn by experimentation
 
-### 👨‍🏫 **For Teachers:**
-- **"Perfect for live coding demos"** - Algorithms in action
-- **"Students ask better questions"** - Understanding breeds curiosity
-- **"Covers my entire AI curriculum"** - Comprehensive coverage
+### For Educators
+- **Live demonstrations**: Show algorithms in action
+- **Modifiable**: Adjust implementations during lectures
+- **Comprehensive**: Covers standard AI curriculum
 
-### 🔬 **For Researchers:**
-- **"Rapid prototyping paradise"** - Test ideas quickly
-- **"Clean baselines for comparison"** - Pure algorithm implementations
-- **"Easy to modify and extend"** - Ruby's flexibility shines
-
----
-
-## 🚀 Real Examples That Inspire
-
-### 🧠 **XOR Neural Network**
-See how a simple network learns the "impossible" XOR function that stumped early AI!
-
-### 🗺️ **Evolution Finds Routes**
-Watch genetic algorithms solve traveling salesman problems in real-time!
-
-### 🌸 **Iris Classification Showdown**
-Compare 5 different algorithms on the classic flower dataset!
-
-### 🤖 **Strategic Game AI**
-Build Minimax algorithms that think several moves ahead!
+### For Researchers
+- **Rapid prototyping**: Test hypotheses quickly
+- **Pure implementations**: No framework overhead
+- **Extensible**: Ruby's flexibility enables experimentation
 
 ---
 
-## 🎯 Get Started Now
+## Development Tools
+
+### Run Tests
+```bash
+bundle exec rspec
+```
+
+### Generate Coverage Report
+```bash
+bundle exec rake coverage
+# Open coverage/index.html for detailed report
+```
+
+### Code Quality
+```bash
+bundle exec rubocop        # Check code style
+bundle exec rake quality   # Run all quality checks
+```
+
+### Interactive Console
+```bash
+bundle exec rake console   # Ruby console with AI4R loaded
+```
+
+---
+
+## Getting Started
 
 ```bash
 # Install
 gem install ai4r
 
-# Your first experiment
-require 'ai4r'
+# Run benchmarks
+bundle exec rake benchmark:classifiers
+bundle exec rake benchmark:search
 
-# Compare algorithms on the iris dataset
-bench = Ai4r::Experiment::ClassifierBench.new
-bench.add_classifier(:tree, Ai4r::Classifiers::ID3.new)
-bench.add_classifier(:bayes, Ai4r::Classifiers::NaiveBayes.new)
-
-results = bench.run(iris_data)
-bench.display_results(results)
+# Explore examples
+ruby examples/neural_network/backpropagation_example.rb
+ruby examples/genetic_algorithm/traveling_salesman_example.rb
 ```
 
-**→ [Complete Tutorial Tracks](docs/tutorials/)**  
-**→ [API Documentation](docs/)**  
-**→ [Working Examples](examples/)**
+**→ [Complete Documentation](docs/)**  
+**→ [API Reference](docs/api/)**  
+**→ [Example Gallery](examples/)**
 
 ---
 
-## 🤝 Join the Community
+## Contributing
 
-- 🐛 **Found a bug?** → [Open an issue](https://github.com/SergioFierens/ai4r/issues)
-- 💡 **Cool example idea?** → [Share it with us](https://github.com/SergioFierens/ai4r/discussions)
-- 📚 **Teaching with AI4R?** → [Tell us your story](https://github.com/SergioFierens/ai4r/discussions)
+- **Report Issues** → [GitHub Issues](https://github.com/SergioFierens/ai4r/issues)
+- **Discuss Ideas** → [GitHub Discussions](https://github.com/SergioFierens/ai4r/discussions)
+- **Submit Code** → Fork, branch, test, pull request
 
 ---
 
-## 📄 License
+## License
 
-**Public Domain** - Use it anywhere, anytime, for any purpose. See [UNLICENSE](UNLICENSE) for details.
+**Public Domain** - No restrictions. See [UNLICENSE](UNLICENSE).
 
-**Made with ❤️ for curious minds everywhere**
+---
 
-[⭐ **Star this repo**](https://github.com/SergioFierens/ai4r) if AI4R sparks your curiosity!
+[⭐ **Star on GitHub**](https://github.com/SergioFierens/ai4r) | [📚 **Documentation**](docs/) | [💬 **Discussions**](https://github.com/SergioFierens/ai4r/discussions)

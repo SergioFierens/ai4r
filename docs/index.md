@@ -25,6 +25,7 @@ This documentation is specifically designed for:
 - [**Clustering Tutorial**](tutorials/clustering-tutorial.md) - Unsupervised learning and pattern discovery
 
 ### 📋 Reference Guides
+- [**Algorithm Catalog**](algorithm-catalog.md) - Complete list of 50+ implemented algorithms with source links
 - [**Genetic Algorithms Guide**](guides/genetic-algorithms.md) - Algorithm details and implementation
 - [**Neural Networks Guide**](guides/neural-networks.md) - Network architectures and training methods
 - [**Machine Learning Guide**](guides/machine-learning.md) - ML algorithms and techniques
