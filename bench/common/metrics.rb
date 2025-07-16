@@ -8,7 +8,6 @@ module Bench
     # @param data [Array] Array of data items or DataSet
     # @param clusters [Array<Array<Integer>>]
     # @return [Float]
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
     def sse(data, clusters)
       items = data.respond_to?(:data_items) ? data.data_items : data
       dims = items.first.size
@@ -32,7 +31,7 @@ module Bench
     # @param data [Array] Array of data items or DataSet
     # @param clusters [Array<Array<Integer>>]
     # @return [Float]
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
     def silhouette(data, clusters)
       items = data.respond_to?(:data_items) ? data.data_items : data
       total = 0.0

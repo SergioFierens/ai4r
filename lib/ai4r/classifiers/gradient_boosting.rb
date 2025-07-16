@@ -26,7 +26,6 @@ module Ai4r
         @learning_rate = 0.1
       end
 
-      # rubocop:disable Metrics/AbcSize
       def build(data_set)
         data_set.check_not_empty
         @learners = []
@@ -56,7 +55,6 @@ module Ai4r
         value
       end
 
-      # rubocop:disable Naming/AccessorMethodName
       def get_rules
         'GradientBoosting does not support rule extraction.'
       end

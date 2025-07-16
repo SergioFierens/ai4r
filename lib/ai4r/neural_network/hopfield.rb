@@ -215,9 +215,7 @@ module Ai4r
         allowed = [@active_node_value, @inactive_node_value]
         @data_set.data_items.each_with_index do |item, row|
           item.each_with_index do |v, col|
-            unless allowed.include?(v)
-              raise ArgumentError, "Invalid value #{v} in item #{row}, position #{col}"
-            end
+            raise ArgumentError, "Invalid value #{v} in item #{row}, position #{col}" unless allowed.include?(v)
           end
         end
       end

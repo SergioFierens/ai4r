@@ -204,9 +204,7 @@ module Ai4r
       # @return [Object]
       def build_domain(attr)
         index = get_index(attr)
-        if @data_items.first[index].is_a?(Numeric)
-          return [Statistics.min(self, index), Statistics.max(self, index)]
-        end
+        return [Statistics.min(self, index), Statistics.max(self, index)] if @data_items.first[index].is_a?(Numeric)
 
         @data_items.inject(Set.new) { |domain, x| domain << x[index] }
       end

@@ -92,14 +92,12 @@ module Ai4r
     # Author::    Sergio Fierens
     # License::   MPL 1.1
     # Url::       https://github.com/SergioFierens/ai4r
-    # rubocop:disable Metrics/ClassLength
     class ID3 < Classifier
       attr_reader :data_set, :majority_class, :validation_set
 
       parameters_info max_depth: 'Maximum recursion depth. Default is nil (no limit).',
                       min_gain: 'Minimum information gain required to split. Default is 0.',
                       on_unknown: 'Behaviour when evaluating unseen attribute values: '
-                                  ':raise (default), :most_frequent or :nil.'
 
       # @return [Object]
       def initialize
@@ -154,15 +152,13 @@ module Ai4r
       #     puts marketing_target
       #       # =>  'Y'
       # @return [Object]
-      # rubocop:disable Naming/AccessorMethodName
       def get_rules
         # return "Empty ID3 tree" if !@tree
         rules = @tree.get_rules
         rules = rules.collect do |rule|
           "#{rule[0..-2].join(' and ')} then #{rule.last}"
         end
-        'if ' + rules.join("\nelsif ") +
-          "\nelse raise 'There was not enough information during training to do a proper induction for this data element' end"
+        "if #{rules.join("\nelsif ")}\nelse raise 'There was not enough information during training to do a proper induction for this data element' end"
       end
       # rubocop:enable Naming/AccessorMethodName
 
@@ -212,7 +208,7 @@ module Ai4r
       # @param flag_att [Object]
       # @param depth [Object]
       # @return [Object]
-      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+      # rubocop:disable Metrics/MethodLength
       def build_node(data_examples, flag_att = [], depth = 0)
         return ErrorNode.new if data_examples.empty?
 
@@ -255,10 +251,10 @@ module Ai4r
               best_index = index
               best_split = split_data_examples(data_examples, domain, index)
               numeric = false
-  end
-  end
-  # rubocop:enable Metrics/ClassLength
-end
+            end
+          end
+          # rubocop:enable Metrics/ClassLength
+        end
 
         gain = information_gain(data_examples, domain, best_index)
         if gain < @min_gain
@@ -554,7 +550,7 @@ end
       # @param numeric [Object]
       # @param majority [Object]
       # @return [Object]
-      # rubocop:disable Metrics/ParameterLists, Style/OptionalBooleanParameter
+      # rubocop:disable Style/OptionalBooleanParameter
       def initialize(data_labels, index, values_or_threshold, nodes, numeric = false,
                      majority = nil)
         @index = index

@@ -12,7 +12,6 @@ module Bench
           super(data_set)
         end
 
-        # rubocop:disable Metrics/AbcSize
         def call
           start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
           clusterer = Ai4r::Clusterers::KMeans.new.build(problem, @k)

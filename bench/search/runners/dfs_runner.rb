@@ -7,7 +7,6 @@ module Bench
       class DfsRunner < Bench::Common::BaseRunner
         private
 
-        # rubocop:disable Metrics/AbcSize
         def run
           start = problem.start_state
           stack = [[start, [start]]]

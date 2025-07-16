@@ -7,7 +7,6 @@ module Bench
       class IddfsRunner < Bench::Common::BaseRunner
         private
 
-        # rubocop:disable Metrics/AbcSize
         def run
           depth = 0
           loop do

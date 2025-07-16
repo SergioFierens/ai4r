@@ -24,9 +24,7 @@ module Ai4r
       # @param mutation_rate [Object]
       # @return [Object]
       def self.mutate(chromosome, mutation_rate = 0.3)
-        unless chromosome.normalized_fitness && rand < ((1 - chromosome.normalized_fitness) * mutation_rate)
-          return
-        end
+        return unless chromosome.normalized_fitness && rand < ((1 - chromosome.normalized_fitness) * mutation_rate)
 
         data = chromosome.data
         # Swapping the first two cities can sometimes keep the fitness
@@ -50,13 +48,13 @@ module Ai4r
         spawn = [token]
         available.delete(token)
         while available.length.positive?
-          if token != b.data.last && available.include?(b.data[b.data.index(token) + 1])
-            next_token = b.data[b.data.index(token) + 1]
-          elsif token != a.data.last && available.include?(a.data[a.data.index(token) + 1])
-            next_token = a.data[a.data.index(token) + 1]
-          else
-            next_token = available.sample
-          end
+          next_token = if token != b.data.last && available.include?(b.data[b.data.index(token) + 1])
+                         b.data[b.data.index(token) + 1]
+                       elsif token != a.data.last && available.include?(a.data[a.data.index(token) + 1])
+                         a.data[a.data.index(token) + 1]
+                       else
+                         available.sample
+                       end
           token = next_token
           available.delete(token)
           spawn << next_token

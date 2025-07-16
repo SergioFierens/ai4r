@@ -9,7 +9,6 @@ module Bench
         @metrics = [:algorithm] + metrics
       end
 
-      # rubocop:disable Metrics/AbcSize
       def print_table
         widths = @metrics.map do |m|
           [m.to_s.length, *@results.map { |r| r[m].to_s.length }].max
@@ -37,7 +36,7 @@ module Bench
 
       private
 
-      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       def compute_badges
         return nil if @results.empty?
 

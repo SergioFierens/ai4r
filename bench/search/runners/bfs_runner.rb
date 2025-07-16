@@ -7,7 +7,6 @@ module Bench
       class BfsRunner < Bench::Common::BaseRunner
         private
 
-        # rubocop:disable Metrics/AbcSize
         def run
           start = problem.start_state
           queue = [[start, [start]]]

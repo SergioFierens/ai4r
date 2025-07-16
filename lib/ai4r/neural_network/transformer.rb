@@ -45,9 +45,7 @@ module Ai4r
           raise ArgumentError,
                 'embed_dim must be divisible by num_heads'
         end
-        unless %i[encoder decoder seq2seq].include?(@architecture)
-          raise ArgumentError, 'invalid architecture'
-        end
+        raise ArgumentError, 'invalid architecture' unless %i[encoder decoder seq2seq].include?(@architecture)
 
         init_weights
         build_positional_encoding

@@ -31,7 +31,6 @@ module Bench
 
     module_function
 
-    # rubocop:disable Metrics/AbcSize
     def run(argv)
       cli = Bench::Common::CLI.new('search', RUNNERS.keys, SEARCH_METRICS) do |opts, options|
         opts.on('--problem NAME', PROBLEMS.keys, 'Problem name') { |v| options[:problem] = v }

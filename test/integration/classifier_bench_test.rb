@@ -18,7 +18,7 @@ class ClassifierBenchTest < Minitest::Test
       naive_bayes: NaiveBayesRunner,
       ib1: Ib1Runner,
       hyperpipes: HyperpipesRunner
-    }.each do |_, klass|
+    }.each_value do |klass|
       result = klass.new(@data, @data).call
       assert result[:accuracy] >= 0.6, "#{klass} accuracy too low"
     end

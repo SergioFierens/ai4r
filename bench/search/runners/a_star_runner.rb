@@ -8,7 +8,6 @@ module Bench
       class AStarRunner < Bench::Common::BaseRunner
         private
 
-        # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
         def run
           start = problem.start_state
           open_set = [start]

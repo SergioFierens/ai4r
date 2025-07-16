@@ -26,7 +26,6 @@ module Ai4r
     # IBI is identical to the nearest neighbor algorithm except that
     # it normalizes its attributes' ranges, processes instances
     # incrementally, and has a simple policy for tolerating missing values
-    # rubocop:disable Metrics/ClassLength
     class IB1 < Classifier
       attr_reader :data_set, :min_values, :max_values
 
@@ -82,7 +81,6 @@ module Ai4r
       # Evaluation does not update internal statistics, keeping the
       # classifier state unchanged. Use +update_with_instance+ to
       # incorporate new samples.
-      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       def eval(data)
         neighbors = @data_set.data_items.map do |train_item|
           [distance(data, train_item), train_item.last]
