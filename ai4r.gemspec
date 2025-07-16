@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
+require_relative 'lib/ai4r/version'
 require 'rake'
 
 SPEC = Gem::Specification.new do |s|
   s.name = 'ai4r'
-  s.version = '2.0'
+  s.version = Ai4r::VERSION
   s.author = 'Sergio Fierens'
   s.homepage = 'https://github.com/SergioFierens/ai4r'
   s.platform = Gem::Platform::RUBY
