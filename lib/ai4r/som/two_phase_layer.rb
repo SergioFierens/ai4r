@@ -31,6 +31,7 @@ module Ai4r
     # * phase_one_learning_rate  => sets the learning rate for phase one
     # * phase_two_learning_rate  => sets the learning rate for phase two
 
+    # Layer that trains in two distinct phases with different learning rates.
     class TwoPhaseLayer < Layer
       # @return [Object]
       def initialize(nodes, learning_rate = 0.9, phase_one = 150, phase_two = 100,
