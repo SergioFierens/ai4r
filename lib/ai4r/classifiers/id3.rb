@@ -158,7 +158,8 @@ module Ai4r
         rules = rules.collect do |rule|
           "#{rule[0..-2].join(' and ')} then #{rule.last}"
         end
-        "if #{rules.join("\nelsif ")}\nelse raise 'There was not enough information during training to do a proper induction for this data element' end"
+        error_msg = 'There was not enough information during training to do a proper induction for this data element'
+        "if #{rules.join("\nelsif ")}\nelse raise '#{error_msg}' end"
       end
       # rubocop:enable Naming/AccessorMethodName
 
@@ -294,6 +295,7 @@ module Ai4r
 
         Math.log(z) / LOG2
       end
+
 
       # @param examples [Object]
       # @param domain [Object]
@@ -496,33 +498,38 @@ module Ai4r
       def prune_node(node, examples)
         return node if node.is_a?(CategoryNode) || node.is_a?(ErrorNode)
 
-        if node.numeric
-          subsets = Array.new(2) { [] }
-          examples.each do |ex|
-            idx = ex[node.index] <= node.threshold ? 0 : 1
-            subsets[idx] << ex
-          end
-        else
-          subsets = Array.new(node.values.length) { [] }
-          examples.each do |ex|
-            idx = node.values.index(ex[node.index])
-            subsets[idx] << ex if idx
-          end
-        end
+        subsets = split_examples(node, examples)
 
         node.nodes.each_with_index do |child, i|
           node.nodes[i] = prune_node(child, subsets[i])
         end
 
-        before = accuracy_for_node(node, examples)
         leaf = CategoryNode.new(@data_set.category_label, node.majority)
-        after = accuracy_for_node(leaf, examples)
+        replace_with_leaf?(leaf, node, examples) ? leaf : node
+      end
 
-        if after && before && after >= before
-          leaf
+      def split_examples(node, examples)
+        if node.numeric
+          Array.new(2) { [] }.tap do |subsets|
+            examples.each do |ex|
+              idx = ex[node.index] <= node.threshold ? 0 : 1
+              subsets[idx] << ex
+            end
+          end
         else
-          node
+          Array.new(node.values.length) { [] }.tap do |subsets|
+            examples.each do |ex|
+              idx = node.values.index(ex[node.index])
+              subsets[idx] << ex if idx
+            end
+          end
         end
+      end
+
+      def replace_with_leaf?(leaf, node, examples)
+        before = accuracy_for_node(node, examples)
+        after  = accuracy_for_node(leaf, examples)
+        after && before && after >= before
       end
 
       # @param node [Object]

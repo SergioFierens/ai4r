@@ -32,6 +32,7 @@ module Ai4r
 
       # @return [Object]
       def initialize
+        super()
         @selected_attribute = nil
         @tie_break = :first
         @bin_count = 10
@@ -122,36 +123,40 @@ module Ai4r
       # @return [Object]
       def build_rule(data_examples, attr_index, domains)
         domain = domains[attr_index]
-        bins = nil
-        value_freq = {}
+        bins, value_freq = build_frequency(domain, data_examples, attr_index)
+        rule, correct_instances = rule_from_frequency(value_freq)
+        { attr_index: attr_index, rule: rule, correct: correct_instances, bins: bins }
+      end
+
+      def build_frequency(domain, data_examples, attr_index)
         if domain.is_a?(Array) && domain.length == 2 && domain.all? { |v| v.is_a? Numeric }
           bins = discretize_range(domain, @bin_count)
-          bins.each { |b| value_freq[b] = Hash.new { |h, k| h[k] = 0 } }
+          value_freq = bins.each_with_object({}) { |b, h| h[b] = Hash.new(0) }
           data_examples.each do |data|
             bin = bins.find { |b| b.include?(data[attr_index]) }
-            value_freq[bin][data.last] = value_freq[bin][data.last] + 1
+            value_freq[bin][data.last] += 1
           end
         else
-          domain.each do |attr_value|
-            value_freq[attr_value] = Hash.new { |hash, key| hash[key] = 0 }
-          end
+          bins = nil
+          value_freq = domain.each_with_object({}) { |v, h| h[v] = Hash.new(0) }
           data_examples.each do |data|
-            value_freq[data[attr_index]][data.last] = value_freq[data[attr_index]][data.last] + 1
+            value_freq[data[attr_index]][data.last] += 1
           end
         end
+        [bins, value_freq]
+      end
+
+      def rule_from_frequency(value_freq)
         rule = {}
         correct_instances = 0
         value_freq.each_pair do |attr, class_freq_hash|
-          max_freq = 0
-          class_freq_hash.each_pair do |class_value, freq|
-            if max_freq < freq
-              rule[attr] = class_value
-              max_freq = freq
-            end
-          end
+          pair = class_freq_hash.max_by { |_k, v| v }
+          next unless pair
+
+          rule[attr], max_freq = pair
           correct_instances += max_freq
         end
-        { attr_index: attr_index, rule: rule, correct: correct_instances, bins: bins }
+        [rule, correct_instances]
       end
 
       # @param range [Object]

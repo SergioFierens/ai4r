@@ -66,6 +66,7 @@ module Ai4r
 
       # @return [Object]
       def initialize
+        super()
         @m = 0
         @unknown_value_strategy = :ignore
         @class_counts = []
