@@ -144,7 +144,7 @@ module Ai4r
       #         # eval gives [0.83, 0.03]
       #         # =>  0
       def eval_result(input_values)
-        result = eval(input_values)
+        result = self.eval(input_values)
         result.index(result.max)
       end
 
@@ -157,7 +157,7 @@ module Ai4r
       # This method returns the network error:
       # => 0.5 * sum( (expected_value[i] - output_value[i])**2 )
       def train(inputs, outputs)
-        eval(inputs)
+        self.eval(inputs)
         backpropagate(outputs)
         calculate_error(outputs)
       end

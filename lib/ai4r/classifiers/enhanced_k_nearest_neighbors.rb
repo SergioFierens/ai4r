@@ -346,10 +346,10 @@ module Ai4r
 
       private
 
-      def set_k_value(k)
-        raise ArgumentError, 'k must be a positive integer' unless k.is_a?(Integer) && k > 0
+      def set_k_value(k_value)
+        raise ArgumentError, 'k must be a positive integer' unless k_value.is_a?(Integer) && k_value > 0
 
-        @k = k
+        @k = k_value
       end
 
       def set_distance_metric(metric, params = {})

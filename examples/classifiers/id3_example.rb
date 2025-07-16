@@ -16,11 +16,11 @@ data_filename = "#{File.dirname(__FILE__)}/id3_data.csv"
 data_set = Ai4r::Data::DataSet.new.load_csv_with_labels data_filename
 
 # Build ID3 tree
-id3 = Ai4r::Classifiers::ID3.new.build(data_set)
+id3_classifier = Ai4r::Classifiers::ID3.new.build(data_set)
 
 # Show rules
 puts 'Discovered rules are:'
-puts id3.get_rules
+puts id3_classifier.get_rules
 puts
 
 # Try to predict some values

@@ -130,7 +130,7 @@ module Ai4r
         @cluster_indices = Array.new(@number_of_clusters) { [] }
 
         @data_set.data_items.each_with_index do |data_item, data_index|
-          c = eval(data_item)
+          c = self.eval(data_item)
           @clusters[c] << data_item
           @cluster_indices[c] << data_index if @on_empty == 'outlier'
         end

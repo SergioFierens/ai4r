@@ -359,10 +359,10 @@ RSpec.describe 'Factory Bot Factories' do
 
     it 'creates consistent data' do
       # Test that the same factory with same parameters produces consistent results
-      dataset1 = build(:educational_dataset, seed: 123)
-      dataset2 = build(:educational_dataset, seed: 123)
+      first_dataset = build(:educational_dataset, seed: 123)
+      second_dataset = build(:educational_dataset, seed: 123)
 
-      expect(dataset1[:data_items]).to eq(dataset2[:data_items])
+      expect(first_dataset[:data_items]).to eq(second_dataset[:data_items])
     end
 
     it 'respects parameter constraints' do

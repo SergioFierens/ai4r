@@ -229,9 +229,7 @@ module Ai4r
         elsif @data_items.empty?
           set_data_items([data_item])
         elsif data_item.length != num_attributes
-          raise ArgumentError, "Number of attributes do not match. " +
-                  "#{data_item.length} attributes provided, " +
-                  "#{num_attributes} attributes expected."
+          raise ArgumentError, "Number of attributes do not match. #{data_item.length} attributes provided, #{num_attributes} attributes expected."
         else
           @data_items << data_item
         end
@@ -258,7 +256,9 @@ module Ai4r
       end
 
       # Returns label of category
-      def category_label = data_labels.last
+      def category_label
+        data_labels.last
+      end
 
       protected
 
@@ -276,9 +276,7 @@ module Ai4r
         data_items.each_index do |index|
           if data_items[index].length != attributes_num
             raise ArgumentError,
-                  "Quantity of attributes is inconsistent. " +
-                          "The first item has #{attributes_num} attributes "+
-                          "and row #{index} has #{data_items[index].length} attributes"
+                  "Quantity of attributes is inconsistent. The first item has #{attributes_num} attributes and row #{index} has #{data_items[index].length} attributes"
           end
         end
       end
@@ -287,9 +285,7 @@ module Ai4r
         if !@data_items.empty?
           if labels.length != @data_items.first.length
             raise ArgumentError,
-                  "Number of labels and attributes do not match. " +
-                          "#{labels.length} labels and " +
-                          "#{@data_items.first.length} attributes found."
+                  "Number of labels and attributes do not match. #{labels.length} labels and #{@data_items.first.length} attributes found."
           end
         end
       end

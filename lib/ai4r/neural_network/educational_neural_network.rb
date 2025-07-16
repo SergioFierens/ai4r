@@ -487,7 +487,7 @@ module Ai4r
       end
 
       def get_layer_activations(input)
-        eval(input) # This populates @activation_nodes
+        self.eval(input) # This populates @activation_nodes
         @activation_nodes.map(&:dup)
       end
 

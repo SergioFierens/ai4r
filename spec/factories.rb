@@ -99,7 +99,7 @@ FactoryBot.define do
   end
 
   # Outlier detection test data
-  factory :outlier_test_data, class: Array do
+  factory :outlier_test_data, class: 'Array' do
     transient do
       size { 100 }
       outlier_percentage { 0.1 }
@@ -124,7 +124,7 @@ FactoryBot.define do
   end
 
   # Normalization test data
-  factory :normalization_test_data, class: Array do
+  factory :normalization_test_data, class: 'Array' do
     transient do
       size { 50 }
       distribution { :normal }
@@ -217,7 +217,7 @@ FactoryBot.define do
   end
 
   # Time series test data
-  factory :time_series_data, class: Array do
+  factory :time_series_data, class: 'Array' do
     transient do
       length { 100 }
       trend { 0.1 }

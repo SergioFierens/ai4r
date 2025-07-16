@@ -85,11 +85,11 @@ RSpec.describe Ai4r::Classifiers::ZeroR do
 
         # When classes have equal frequency, should pick one deterministically
         selected_class = classifier.class_value
-        expect(%w[class1 class2]).to include(selected_class)
+        expect(selected_class).to be_in(%w[class1 class2])
 
         # Should be consistent
-        classifier2 = described_class.new.build(tie_dataset)
-        expect(classifier2.class_value).to eq(selected_class)
+        second_classifier = described_class.new.build(tie_dataset)
+        expect(second_classifier.class_value).to eq(selected_class)
       end
     end
 

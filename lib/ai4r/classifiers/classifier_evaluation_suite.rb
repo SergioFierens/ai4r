@@ -667,12 +667,12 @@ module Ai4r
       def calculate_macro_average(metrics, classes)
         macro_precision = classes.sum { |c| metrics[c][:precision] } / classes.length
         macro_recall = classes.sum { |c| metrics[c][:recall] } / classes.length
-        macro_f1 = classes.sum { |c| metrics[c][:f1_score] } / classes.length
+        macro_f1_score = classes.sum { |c| metrics[c][:f1_score] } / classes.length
 
         {
           precision: macro_precision,
           recall: macro_recall,
-          f1_score: macro_f1,
+          f1_score: macro_f1_score,
           support: classes.sum { |c| metrics[c][:support] }
         }
       end
@@ -684,16 +684,16 @@ module Ai4r
 
         micro_precision = (total_tp + total_fp) > 0 ? total_tp.to_f / (total_tp + total_fp) : 0.0
         micro_recall = (total_tp + total_fn) > 0 ? total_tp.to_f / (total_tp + total_fn) : 0.0
-        micro_f1 = if (micro_precision + micro_recall) > 0
-                     2 * (micro_precision * micro_recall) / (micro_precision + micro_recall)
-                   else
-                     0.0
-                   end
+        micro_f1_score = if (micro_precision + micro_recall) > 0
+                            2 * (micro_precision * micro_recall) / (micro_precision + micro_recall)
+                          else
+                            0.0
+                          end
 
         {
           precision: micro_precision,
           recall: micro_recall,
-          f1_score: micro_f1,
+          f1_score: micro_f1_score,
           support: classes.sum { |c| metrics[c][:support] }
         }
       end

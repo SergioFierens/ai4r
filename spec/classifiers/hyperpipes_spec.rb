@@ -104,7 +104,7 @@ RSpec.describe Ai4r::Classifiers::Hyperpipes do
 
         # Should handle mixed categorical and continuous features
         result = classifier.eval(['sunny', 20.0, 'high'])
-        expect(%w[yes no]).to include(result)
+        expect(result).to be_in(%w[yes no])
       end
 
       it 'test_build_single_instance_per_class' do
@@ -120,7 +120,7 @@ RSpec.describe Ai4r::Classifiers::Hyperpipes do
 
         # Should handle identical points gracefully
         result = classifier.eval([1.0, 1.0])
-        expect(%w[same different]).to include(result)
+        expect(result).to be_in(%w[same different])
       end
     end
 

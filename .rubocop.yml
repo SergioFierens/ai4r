@@ -1,8 +1,10 @@
 # RuboCop configuration for AI4R Educational Framework
 # Tailored for educational Ruby projects with focus on readability and learning
 
-plugins:
+require:
   - rubocop-rspec
+
+plugins:
   - rubocop-performance
   - rubocop-rake
 
@@ -84,8 +86,7 @@ Metrics/ParameterLists:
   CountKeywordArgs: false
 
 # Allow more instance variables in educational classes
-Metrics/InstanceVariable:
-  Max: 12
+# Note: This metric is now part of rubocop-rspec
 
 # ==============================================================================
 # LAYOUT AND FORMATTING

@@ -163,10 +163,10 @@ module Ai4r
         values.sum
       end
 
-      def self.log2(z)
-        return 0.0 if z == 0
+      def self.log2(value)
+        return 0.0 if value == 0
 
-        Math.log(z) / LOG2
+        Math.log(value) / LOG2
       end
 
       def most_freq(examples, domain)
