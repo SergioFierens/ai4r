@@ -27,6 +27,7 @@ module Ai4r
     # * instantiated_weight => the values of the first instantiation of weights. these values are
     # never changed
 
+    # Represents a node in the self-organizing map grid.
     class Node
       include Ai4r::Data::Parameterizable
 

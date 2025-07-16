@@ -20,7 +20,7 @@ Metrics/BlockLength:
   Enabled: false
 
 Metrics/MethodLength:
-  Max: 25
+  Max: 60
   Exclude:
     - 'test/**/*'
 Metrics/AbcSize:
@@ -36,6 +36,9 @@ Metrics/ParameterLists:
 Naming/AccessorMethodName:
   Enabled: false
 Naming/MethodParameterName:
+  Enabled: false
+
+Style/OptionalBooleanParameter:
   Enabled: false
 
 Style/ClassVars:

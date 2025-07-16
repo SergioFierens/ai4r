@@ -51,6 +51,7 @@ module Ai4r
     # License::   MPL 1.1
     # Url::       https://github.com/SergioFierens/ai4r
 
+    # Encapsulates a self-organizing map composed of interconnected nodes.
     class Som
       include Ai4r::Data::Parameterizable
 

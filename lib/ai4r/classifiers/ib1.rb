@@ -113,7 +113,6 @@ module Ai4r
           k_neighbors.each { |(_dist, klass)| return klass if tied.include?(klass) }
         end
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
       # Returns an array with the +k+ nearest instances from the training set
       # for the given +data+ item. The returned elements are the training data
@@ -166,7 +165,6 @@ module Ai4r
       # @param a [Object]
       # @param b [Object]
       # @return [Object]
-      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
       def distance(data_a, data_b)
         return @distance_function.call(data_a, data_b) if @distance_function
 
@@ -196,7 +194,6 @@ module Ai4r
         end
         d
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
       # Returns normalized value att
       #
@@ -210,6 +207,5 @@ module Ai4r
         1.0 * (att - @min_values[index]) / (@max_values[index] - @min_values[index])
       end
     end
-    # rubocop:enable Metrics/ClassLength
   end
 end
