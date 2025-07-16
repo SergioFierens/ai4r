@@ -64,7 +64,6 @@ module Ai4r
       # Tie resolution is controlled by +tie_break+ parameter.
       # @param data [Object]
       # @return [Object]
-      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       def eval(data)
         votes = Votes.new
         @pipes.each do |category, pipe|
@@ -96,7 +95,6 @@ module Ai4r
       #     puts marketing_target
       #       # =>  'Y'
       # @return [Object]
-      # rubocop:disable Naming/AccessorMethodName
       # rubocop:disable Metrics/AbcSize
       def get_rules
         rules = []

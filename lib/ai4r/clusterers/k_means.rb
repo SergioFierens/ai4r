@@ -281,9 +281,7 @@ module Ai4r
             next if tried_indexes.include?(index)
 
             tried_indexes << index
-            unless @centroids.include? @data_set.data_items[index]
-              @centroids << @data_set.data_items[index]
-            end
+            @centroids << @data_set.data_items[index] unless @centroids.include? @data_set.data_items[index]
           end
         when 'outlier' # for reassignment of empty cluster centroids only (with :on_empty option 'outlier')
           sorted_data_indices = sort_data_indices_by_dist_to_centroid

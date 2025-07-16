@@ -38,7 +38,6 @@ module Ai4r
       end
 
       # Train the logistic regression classifier using the provided dataset.
-      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       def build(data_set)
         raise 'Error instance must be passed' unless data_set.is_a?(Ai4r::Data::DataSet)
 
@@ -81,7 +80,6 @@ module Ai4r
       #
       # This method returns a string explaining that rule extraction is not
       # supported for this algorithm.
-      # rubocop:disable Naming/AccessorMethodName
       def get_rules
         'LogisticRegression does not support rule extraction.'
       end

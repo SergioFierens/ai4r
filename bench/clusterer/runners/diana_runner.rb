@@ -14,7 +14,6 @@ module Bench
           super(data_set)
         end
 
-        # rubocop:disable Metrics/AbcSize
         def call
           start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
           data_copy = Ai4r::Data::DataSet.new(

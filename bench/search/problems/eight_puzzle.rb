@@ -14,7 +14,6 @@ module Bench
           state == GOAL
         end
 
-        # rubocop:disable Metrics/AbcSize
         def neighbors(state)
           idx = state.index('0')
           x = idx % 3
