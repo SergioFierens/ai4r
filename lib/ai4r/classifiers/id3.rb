@@ -161,7 +161,6 @@ module Ai4r
         error_msg = 'There was not enough information during training to do a proper induction for this data element'
         "if #{rules.join("\nelsif ")}\nelse raise '#{error_msg}' end"
       end
-      # rubocop:enable Naming/AccessorMethodName
 
       # Return a nested Hash representation of the decision tree.  This
       # structure can easily be converted to JSON or other formats.
@@ -207,7 +206,6 @@ module Ai4r
       # @param flag_att [Object]
       # @param depth [Object]
       # @return [Object]
-      # rubocop:disable Metrics/MethodLength
       def build_node(data_examples, flag_att = [], depth = 0)
         return ErrorNode.new if data_examples.empty?
 
@@ -250,7 +248,6 @@ module Ai4r
               numeric = false
             end
           end
-          # rubocop:enable Metrics/ClassLength
         end
 
         gain = information_gain(data_examples, domain, best_index)
@@ -276,7 +273,6 @@ module Ai4r
                              majority)
         end
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
       # @param values [Object]
       # @return [Object]
@@ -554,7 +550,6 @@ module Ai4r
       # @param numeric [Object]
       # @param majority [Object]
       # @return [Object]
-      # rubocop:disable Style/OptionalBooleanParameter
       def initialize(data_labels, index, values_or_threshold, nodes, numeric = false,
                      majority = nil)
         @index = index
@@ -569,7 +564,6 @@ module Ai4r
         @majority = majority
         @data_labels = data_labels
       end
-      # rubocop:enable Metrics/ParameterLists, Style/OptionalBooleanParameter
 
       # @param data [Object]
       # @param classifier [Object]
@@ -591,7 +585,6 @@ module Ai4r
       end
 
       # @return [Object]
-      # rubocop:disable Naming/AccessorMethodName
       def get_rules
         rule_set = []
         @nodes.each_with_index do |child_node, child_node_index|
@@ -609,7 +602,6 @@ module Ai4r
         end
         rule_set
       end
-      # rubocop:enable Naming/AccessorMethodName
 
       # @return [Object]
       def to_h
@@ -655,11 +647,9 @@ module Ai4r
       end
 
       # @return [Object]
-      # rubocop:disable Naming/AccessorMethodName
       def get_rules
         [["#{@label}='#{@value}'"]]
       end
-      # rubocop:enable Naming/AccessorMethodName
 
       # @return [Object]
       def to_h
@@ -694,11 +684,9 @@ module Ai4r
       end
 
       # @return [Object]
-      # rubocop:disable Naming/AccessorMethodName
       def get_rules
         []
       end
-      # rubocop:enable Naming/AccessorMethodName
 
       # @return [Object]
       def to_h

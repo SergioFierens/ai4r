@@ -65,7 +65,6 @@ module Ai4r
         end
         self
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
       # Predict the class (0 or 1) for the given data array.
       def eval(data)
@@ -92,7 +91,6 @@ module Ai4r
       def get_rules
         'LogisticRegression does not support rule extraction.'
       end
-      # rubocop:enable Naming/AccessorMethodName
     end
   end
 end
