@@ -1,0 +1,21 @@
+Algorithm,Problem,Success,Time(s),Nodes,Solution Cost,Error
+A* Manhattan,Simple 5x5 Maze,true,0.000516,7,6,
+A* Manhattan,Complex 10x10 Maze,true,0.000436,26,15,
+A* Manhattan,Sparse 8x8 Maze,true,0.000635,11,11,
+A* Manhattan,Tic-Tac-Toe Mid-Game,false,0.0,0,,Algorithm type pathfinding not compatible with problem type game
+A* Euclidean,Simple 5x5 Maze,true,0.000826,7,6,
+A* Euclidean,Complex 10x10 Maze,true,0.00177,30,15,
+A* Euclidean,Sparse 8x8 Maze,true,0.000216,13,9,
+A* Euclidean,Tic-Tac-Toe Mid-Game,false,0.0,0,,Algorithm type pathfinding not compatible with problem type game
+A* Diagonal,Simple 5x5 Maze,true,6.0e-05,7,6,
+A* Diagonal,Complex 10x10 Maze,true,0.000315,30,15,
+A* Diagonal,Sparse 8x8 Maze,true,0.000207,13,9,
+A* Diagonal,Tic-Tac-Toe Mid-Game,false,0.0,0,,Algorithm type pathfinding not compatible with problem type game
+Minimax Depth 3,Simple 5x5 Maze,false,0.0,0,,Algorithm type game_tree not compatible with problem type pathfinding
+Minimax Depth 3,Complex 10x10 Maze,false,0.0,0,,Algorithm type game_tree not compatible with problem type pathfinding
+Minimax Depth 3,Sparse 8x8 Maze,false,0.0,0,,Algorithm type game_tree not compatible with problem type pathfinding
+Minimax Depth 3,Tic-Tac-Toe Mid-Game,true,0.00053,110,1,
+Minimax Depth 5,Simple 5x5 Maze,false,0.0,0,,Algorithm type game_tree not compatible with problem type pathfinding
+Minimax Depth 5,Complex 10x10 Maze,false,0.0,0,,Algorithm type game_tree not compatible with problem type pathfinding
+Minimax Depth 5,Sparse 8x8 Maze,false,0.0,0,,Algorithm type game_tree not compatible with problem type pathfinding
+Minimax Depth 5,Tic-Tac-Toe Mid-Game,true,0.002021,441,1,

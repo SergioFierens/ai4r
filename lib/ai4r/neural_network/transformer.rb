@@ -363,10 +363,12 @@ module Ai4r
           # Stop if end token generated (would need to define this)
           break if next_token == 0 # Assuming 0 is end token
           
-          educational_output("🎲 Generation Step #{step + 1}", <<~MSG)
-            Generated token: #{next_token}
-            Total length: #{generated.length}
-          MSG if @verbose_mode && step < 5
+          if @verbose_mode && step < 5
+            educational_output("🎲 Generation Step #{step + 1}", <<~MSG)
+              Generated token: #{next_token}
+              Total length: #{generated.length}
+            MSG
+          end
         end
         
         generated

@@ -1,0 +1,211 @@
+{
+  "metadata": {
+    "timestamp": "2025-07-16T07:19:57-03:00",
+    "algorithms": [
+      "astar_manhattan",
+      "astar_euclidean",
+      "astar_diagonal",
+      "minimax_depth_3",
+      "minimax_depth_5"
+    ],
+    "problems": [
+      "simple_maze",
+      "complex_maze",
+      "sparse_maze",
+      "tic_tac_toe"
+    ],
+    "timeout": 30
+  },
+  "results": [
+    {
+      "algorithm": "A* Manhattan",
+      "type": "pathfinding",
+      "problems": [
+        {
+          "problem": "Simple 5x5 Maze",
+          "success": true,
+          "search_time": 0.000516,
+          "nodes_explored": 7,
+          "solution_cost": 6,
+          "error": null
+        },
+        {
+          "problem": "Complex 10x10 Maze",
+          "success": true,
+          "search_time": 0.000436,
+          "nodes_explored": 26,
+          "solution_cost": 15,
+          "error": null
+        },
+        {
+          "problem": "Sparse 8x8 Maze",
+          "success": true,
+          "search_time": 0.000635,
+          "nodes_explored": 11,
+          "solution_cost": 11,
+          "error": null
+        },
+        {
+          "problem": "Tic-Tac-Toe Mid-Game",
+          "success": false,
+          "search_time": 0.0,
+          "nodes_explored": 0,
+          "solution_cost": null,
+          "error": "Algorithm type pathfinding not compatible with problem type game"
+        }
+      ]
+    },
+    {
+      "algorithm": "A* Euclidean",
+      "type": "pathfinding",
+      "problems": [
+        {
+          "problem": "Simple 5x5 Maze",
+          "success": true,
+          "search_time": 0.000826,
+          "nodes_explored": 7,
+          "solution_cost": 6,
+          "error": null
+        },
+        {
+          "problem": "Complex 10x10 Maze",
+          "success": true,
+          "search_time": 0.00177,
+          "nodes_explored": 30,
+          "solution_cost": 15,
+          "error": null
+        },
+        {
+          "problem": "Sparse 8x8 Maze",
+          "success": true,
+          "search_time": 0.000216,
+          "nodes_explored": 13,
+          "solution_cost": 9,
+          "error": null
+        },
+        {
+          "problem": "Tic-Tac-Toe Mid-Game",
+          "success": false,
+          "search_time": 0.0,
+          "nodes_explored": 0,
+          "solution_cost": null,
+          "error": "Algorithm type pathfinding not compatible with problem type game"
+        }
+      ]
+    },
+    {
+      "algorithm": "A* Diagonal",
+      "type": "pathfinding",
+      "problems": [
+        {
+          "problem": "Simple 5x5 Maze",
+          "success": true,
+          "search_time": 6.0e-05,
+          "nodes_explored": 7,
+          "solution_cost": 6,
+          "error": null
+        },
+        {
+          "problem": "Complex 10x10 Maze",
+          "success": true,
+          "search_time": 0.000315,
+          "nodes_explored": 30,
+          "solution_cost": 15,
+          "error": null
+        },
+        {
+          "problem": "Sparse 8x8 Maze",
+          "success": true,
+          "search_time": 0.000207,
+          "nodes_explored": 13,
+          "solution_cost": 9,
+          "error": null
+        },
+        {
+          "problem": "Tic-Tac-Toe Mid-Game",
+          "success": false,
+          "search_time": 0.0,
+          "nodes_explored": 0,
+          "solution_cost": null,
+          "error": "Algorithm type pathfinding not compatible with problem type game"
+        }
+      ]
+    },
+    {
+      "algorithm": "Minimax Depth 3",
+      "type": "game_tree",
+      "problems": [
+        {
+          "problem": "Simple 5x5 Maze",
+          "success": false,
+          "search_time": 0.0,
+          "nodes_explored": 0,
+          "solution_cost": null,
+          "error": "Algorithm type game_tree not compatible with problem type pathfinding"
+        },
+        {
+          "problem": "Complex 10x10 Maze",
+          "success": false,
+          "search_time": 0.0,
+          "nodes_explored": 0,
+          "solution_cost": null,
+          "error": "Algorithm type game_tree not compatible with problem type pathfinding"
+        },
+        {
+          "problem": "Sparse 8x8 Maze",
+          "success": false,
+          "search_time": 0.0,
+          "nodes_explored": 0,
+          "solution_cost": null,
+          "error": "Algorithm type game_tree not compatible with problem type pathfinding"
+        },
+        {
+          "problem": "Tic-Tac-Toe Mid-Game",
+          "success": true,
+          "search_time": 0.00053,
+          "nodes_explored": 110,
+          "solution_cost": 1,
+          "error": null
+        }
+      ]
+    },
+    {
+      "algorithm": "Minimax Depth 5",
+      "type": "game_tree",
+      "problems": [
+        {
+          "problem": "Simple 5x5 Maze",
+          "success": false,
+          "search_time": 0.0,
+          "nodes_explored": 0,
+          "solution_cost": null,
+          "error": "Algorithm type game_tree not compatible with problem type pathfinding"
+        },
+        {
+          "problem": "Complex 10x10 Maze",
+          "success": false,
+          "search_time": 0.0,
+          "nodes_explored": 0,
+          "solution_cost": null,
+          "error": "Algorithm type game_tree not compatible with problem type pathfinding"
+        },
+        {
+          "problem": "Sparse 8x8 Maze",
+          "success": false,
+          "search_time": 0.0,
+          "nodes_explored": 0,
+          "solution_cost": null,
+          "error": "Algorithm type game_tree not compatible with problem type pathfinding"
+        },
+        {
+          "problem": "Tic-Tac-Toe Mid-Game",
+          "success": true,
+          "search_time": 0.002021,
+          "nodes_explored": 441,
+          "solution_cost": 1,
+          "error": null
+        }
+      ]
+    }
+  ]
+}
