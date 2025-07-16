@@ -211,7 +211,7 @@ RSpec.describe 'AI4R Complete Code Coverage' do
           begin
             grid = [[0, 0], [0, 0]]
             astar = Ai4r::Search::AStar.new(grid)
-            astar.search([0, 0], [1, 1])
+            astar.find_path([0, 0], [1, 1])
           rescue StandardError
           end
           

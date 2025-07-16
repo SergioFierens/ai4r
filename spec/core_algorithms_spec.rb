@@ -218,7 +218,7 @@ RSpec.describe 'AI4R Core Algorithms' do
       ]
       
       astar = Ai4r::Search::AStar.new(grid)
-      path = astar.search([0, 0], [2, 2])
+      path = astar.find_path([0, 0], [2, 2])
       
       expect(path).to be_an(Array)
       expect(path.first).to eq([0, 0])
