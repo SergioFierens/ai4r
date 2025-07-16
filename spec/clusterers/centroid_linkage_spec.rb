@@ -21,38 +21,38 @@ RSpec.describe Ai4r::Clusterers::CentroidLinkage do
   let(:centroid_dataset) do
     Ai4r::Data::DataSet.new(
       data_items: centroid_test_data,
-      data_labels: ['x', 'y']
+      data_labels: %w[x y]
     )
   end
 
-  describe "CentroidLinkage Specific Tests" do
-    it "test_centroid_distance" do
+  describe 'CentroidLinkage Specific Tests' do
+    it 'test_centroid_distance' do
       # Centroid linkage uses distance between cluster centroids
       clusterer = described_class.new.build(centroid_dataset, 2)
-      
+
       expect(clusterer.clusters.length).to eq(2)
-      
+
       # Should separate based on centroid distances
-      total_points = clusterer.clusters.map { |c| c.data_items.length }.sum
+      total_points = clusterer.clusters.sum { |c| c.data_items.length }
       expect(total_points).to eq(centroid_test_data.length)
     end
 
-    it "test_centroid_update" do
+    it 'test_centroid_update' do
       # When clusters merge, new centroid should be calculated correctly
       clusterer = described_class.new.build(centroid_dataset, 1)
-      
+
       expect(clusterer.clusters.length).to eq(1)
       expect(clusterer.clusters[0].data_items.length).to eq(8)
     end
   end
 
-  describe "Integration Tests" do
-    it "maintains clustering validity" do
+  describe 'Integration Tests' do
+    it 'maintains clustering validity' do
       clusterer = described_class.new.build(centroid_dataset, 2)
-      
+
       expect(clusterer).to be_a(described_class)
       expect(clusterer.number_of_clusters).to eq(2)
-      
+
       clusterer.clusters.each do |cluster|
         expect(cluster).to be_a(Ai4r::Data::DataSet)
         expect(cluster.data_items).not_to be_empty

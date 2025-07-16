@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Author::    Thomas Kern
 # License::   MPL 1.1
 # Project::   ai4r
@@ -7,13 +9,11 @@
 # the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../data/parameterizable'
-require File.dirname(__FILE__) + '/layer'
+require "#{File.dirname(__FILE__)}/../data/parameterizable"
+require "#{File.dirname(__FILE__)}/layer"
 
 module Ai4r
-
   module Som
-
     # this class is used for the individual node and will be (nodes * nodes)-time instantiated
     #
     # = attributes
@@ -24,17 +24,16 @@ module Ai4r
     # * weights => values of the current weights are stored in an array of dimension 'dimensions'.
     # Weights are of type float
     # * instantiated_weight => the values of the first instantiation of weights. these values are
-    # never changed 
+    # never changed
 
     class Node
-
       include Ai4r::Data::Parameterizable
 
-      parameters_info :weights => "holds the current weight",
-                      :instantiated_weight => "holds the very first weight",
-                      :x => "holds the row ID of the unit in the map",
-                      :y => "holds the column ID of the unit in the map",
-                      :id => "id of the node"      
+      parameters_info weights: 'holds the current weight',
+                      instantiated_weight: 'holds the very first weight',
+                      x: 'holds the row ID of the unit in the map',
+                      y: 'holds the column ID of the unit in the map',
+                      id: 'id of the node'
 
       # creates an instance of Node and instantiates the weights
       # the parameters is a uniq and sequential ID as well as the number of total nodes
@@ -53,7 +52,7 @@ module Ai4r
       def instantiate_weight(dimensions)
         @weights = Array.new dimensions
         @instantiated_weight = Array.new dimensions
-        @weights.each_with_index do |weight, index|
+        @weights.each_with_index do |_weight, index|
           @weights[index] = rand
           @instantiated_weight[index] = @weights[index]
         end
@@ -65,7 +64,7 @@ module Ai4r
       def distance_to_input(input)
         dist = 0
         input.each_with_index do |i, index|
-          dist += (i - @weights[index]) ** 2
+          dist += (i - @weights[index])**2
         end
 
         Math.sqrt(dist)
@@ -80,17 +79,14 @@ module Ai4r
       # 2 2 2 2 2
       # 0 being the current node
       def distance_to_node(node)
-        max((self.x - node.x).abs, (self.y - node.y).abs)
+        max((x - node.x).abs, (y - node.y).abs)
       end
 
       private
 
       def max(a, b)
-        a > b ? a : b
+        [a, b].max
       end
-
     end
-
   end
-
 end

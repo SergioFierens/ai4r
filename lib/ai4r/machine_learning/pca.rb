@@ -67,8 +67,8 @@ module Ai4r
     class PCA
       # Analysis results and statistics
       attr_reader :components, :explained_variance, :explained_variance_ratio
-      attr_reader :singular_values, :mean_values, :std_values, :n_samples, :n_features
-      attr_reader :cumulative_variance, :feature_names, :standardized_data, :covariance_matrix
+      attr_reader :singular_values, :mean_values, :std_values, :n_samples, :n_features, :cumulative_variance,
+                  :feature_names, :standardized_data, :covariance_matrix
 
       # Educational configuration
       attr_accessor :verbose_mode, :standardize, :store_covariance
@@ -128,7 +128,7 @@ module Ai4r
       def fit(data, feature_names = nil)
         validate_input_data(data)
 
-        educational_output("📊 PCA Fitting Starting", <<~MSG)
+        educational_output('📊 PCA Fitting Starting', <<~MSG)
           Data shape: #{data.length} samples × #{data[0].length} features
           N components: #{@n_components}
           Standardize: #{@standardize}
@@ -142,7 +142,7 @@ module Ai4r
         # Determine actual number of components
         @n_components = determine_n_components(@n_components, @n_features)
 
-        educational_output("🔧 Data Preparation", <<~MSG)
+        educational_output('🔧 Data Preparation', <<~MSG)
           Actual components to extract: #{@n_components}
           Feature names: #{@feature_names.join(', ')}
         MSG
@@ -150,34 +150,34 @@ module Ai4r
         # Standardize data if requested
         if @standardize
           @standardized_data = standardize_data(data)
-          educational_output("📏 Data Standardization", "Data standardized (mean=0, std=1)")
+          educational_output('📏 Data Standardization', 'Data standardized (mean=0, std=1)')
         else
           @standardized_data = center_data(data)
-          educational_output("📏 Data Centering", "Data centered (mean=0)")
+          educational_output('📏 Data Centering', 'Data centered (mean=0)')
         end
 
         # Compute covariance matrix
         @covariance_matrix = compute_covariance_matrix(@standardized_data)
-        educational_output("🔢 Covariance Matrix", "Covariance matrix computed (#{@n_features}×#{@n_features})")
+        educational_output('🔢 Covariance Matrix', "Covariance matrix computed (#{@n_features}×#{@n_features})")
 
         # Find eigenvalues and eigenvectors
         eigenvalues, eigenvectors = compute_eigendecomposition(@covariance_matrix)
-        educational_output("🔍 Eigendecomposition", "Found #{eigenvalues.length} eigenvalues/eigenvectors")
+        educational_output('🔍 Eigendecomposition', "Found #{eigenvalues.length} eigenvalues/eigenvectors")
 
         # Sort by eigenvalue magnitude (descending)
         sorted_indices = eigenvalues.each_with_index.sort_by { |val, _| -val.abs }.map(&:last)
-        
+
         # Select top components
         @components = sorted_indices.first(@n_components).map { |i| eigenvectors[i] }
         @explained_variance = sorted_indices.first(@n_components).map { |i| eigenvalues[i] }
         @singular_values = @explained_variance.map { |var| Math.sqrt(var.abs * (@n_samples - 1)) }
 
         # Calculate explained variance ratios
-        total_variance = eigenvalues.sum { |val| val.abs }
+        total_variance = eigenvalues.sum(&:abs)
         @explained_variance_ratio = @explained_variance.map { |var| var.abs / total_variance }
         @cumulative_variance = calculate_cumulative_variance(@explained_variance_ratio)
 
-        educational_output("📈 Variance Analysis", <<~MSG)
+        educational_output('📈 Variance Analysis', <<~MSG)
           Total variance: #{total_variance.round(4)}
           Explained variance: #{@explained_variance.map { |v| v.round(4) }}
           Explained variance ratio: #{@explained_variance_ratio.map { |v| v.round(4) }}
@@ -185,7 +185,7 @@ module Ai4r
         MSG
 
         @fitted = true
-        educational_output("✅ PCA Fitting Complete", "Model ready for transformation")
+        educational_output('✅ PCA Fitting Complete', 'Model ready for transformation')
 
         self
       end
@@ -201,11 +201,11 @@ module Ai4r
         raise ArgumentError, "Data must have #{@n_features} features" unless data[0].length == @n_features
 
         # Standardize new data using stored parameters
-        if @standardize
-          standardized_data = standardize_new_data(data)
-        else
-          standardized_data = center_new_data(data)
-        end
+        standardized_data = if @standardize
+                              standardize_new_data(data)
+                            else
+                              center_new_data(data)
+                            end
 
         # Project data onto principal components
         transformed_data = []
@@ -216,7 +216,7 @@ module Ai4r
           transformed_data << transformed_sample
         end
 
-        educational_output("🔄 Data Transformation", <<~MSG)
+        educational_output('🔄 Data Transformation', <<~MSG)
           Transformed #{data.length} samples
           Original dimensions: #{@n_features}
           Reduced dimensions: #{@n_components}
@@ -244,30 +244,32 @@ module Ai4r
       def inverse_transform(transformed_data)
         validate_fitted
         validate_input_data(transformed_data)
-        raise ArgumentError, "Data must have #{@n_components} components" unless transformed_data[0].length == @n_components
+        unless transformed_data[0].length == @n_components
+          raise ArgumentError, "Data must have #{@n_components} components"
+        end
 
         # Reconstruct in standardized space
         reconstructed_data = []
         transformed_data.each do |sample|
           reconstructed_sample = Array.new(@n_features, 0.0)
-          
+
           sample.each_with_index do |component_value, comp_idx|
             @components[comp_idx].each_with_index do |weight, feature_idx|
               reconstructed_sample[feature_idx] += component_value * weight
             end
           end
-          
+
           reconstructed_data << reconstructed_sample
         end
 
         # Reverse standardization
-        if @standardize
-          reconstructed_data = destandardize_data(reconstructed_data)
-        else
-          reconstructed_data = decenter_data(reconstructed_data)
-        end
+        reconstructed_data = if @standardize
+                               destandardize_data(reconstructed_data)
+                             else
+                               decenter_data(reconstructed_data)
+                             end
 
-        educational_output("🔄 Data Reconstruction", <<~MSG)
+        educational_output('🔄 Data Reconstruction', <<~MSG)
           Reconstructed #{transformed_data.length} samples
           Reduced dimensions: #{@n_components}
           Original dimensions: #{@n_features}
@@ -318,16 +320,16 @@ module Ai4r
         # Calculate errors
         errors = []
         mse_per_sample = []
-        
+
         original_data.each_with_index do |original_sample, sample_idx|
           reconstructed_sample = reconstructed_data[sample_idx]
-          
+
           sample_error = original_sample.zip(reconstructed_sample).map do |orig, recon|
-            (orig - recon) ** 2
+            (orig - recon)**2
           end
-          
+
           errors.concat(sample_error)
-          mse_per_sample << sample_error.sum / sample_error.length
+          mse_per_sample << (sample_error.sum / sample_error.length)
         end
 
         # Calculate metrics
@@ -360,7 +362,7 @@ module Ai4r
             feature_name = @feature_names[feature_idx]
             contributions[feature_name] = weight.abs
           end
-          
+
           # Sort by contribution magnitude
           sorted_contributions = contributions.sort_by { |_, contrib| -contrib }
           feature_contributions << {
@@ -398,7 +400,7 @@ module Ai4r
         validate_fitted
 
         visualization = "\n📊 PCA Analysis Visualization\n"
-        visualization += "=" * 50 + "\n\n"
+        visualization += "#{'=' * 50}\n\n"
 
         # Data summary
         visualization += "📈 Data Summary:\n"
@@ -411,7 +413,7 @@ module Ai4r
         visualization += "🔍 Explained Variance:\n"
         @explained_variance_ratio.each_with_index do |ratio, idx|
           bar_length = (ratio * 50).to_i
-          bar = "█" * bar_length
+          bar = '█' * bar_length
           visualization += "  PC#{idx + 1}: #{(ratio * 100).round(2)}% #{bar}\n"
         end
         visualization += "  Cumulative: #{(@cumulative_variance[@n_components - 1] * 100).round(2)}%\n\n"
@@ -432,13 +434,13 @@ module Ai4r
         # Recommendations
         visualization += "💡 Recommendations:\n"
         total_variance = @cumulative_variance[@n_components - 1]
-        if total_variance >= 0.95
-          visualization += "  • Excellent: #{(total_variance * 100).round(2)}% variance retained\n"
-        elsif total_variance >= 0.90
-          visualization += "  • Good: #{(total_variance * 100).round(2)}% variance retained\n"
-        else
-          visualization += "  • Consider more components: Only #{(total_variance * 100).round(2)}% variance retained\n"
-        end
+        visualization += if total_variance >= 0.95
+                           "  • Excellent: #{(total_variance * 100).round(2)}% variance retained\n"
+                         elsif total_variance >= 0.90
+                           "  • Good: #{(total_variance * 100).round(2)}% variance retained\n"
+                         else
+                           "  • Consider more components: Only #{(total_variance * 100).round(2)}% variance retained\n"
+                         end
 
         visualization
       end
@@ -449,33 +451,37 @@ module Ai4r
       def validate_n_components(n_components)
         case n_components
         when Integer
-          raise ArgumentError, "n_components must be positive" if n_components <= 0
+          raise ArgumentError, 'n_components must be positive' if n_components <= 0
+
           n_components
         when Float
-          raise ArgumentError, "n_components as float must be between 0 and 1" unless n_components > 0 && n_components <= 1
+          unless n_components > 0 && n_components <= 1
+            raise ArgumentError, 'n_components as float must be between 0 and 1'
+          end
+
           n_components
         else
-          raise ArgumentError, "n_components must be Integer or Float"
+          raise ArgumentError, 'n_components must be Integer or Float'
         end
       end
 
       # Validate input data
       def validate_input_data(data)
-        raise ArgumentError, "Data cannot be empty" if data.empty?
-        raise ArgumentError, "Data must be 2D array" unless data.all? { |row| row.is_a?(Array) }
-        
+        raise ArgumentError, 'Data cannot be empty' if data.empty?
+        raise ArgumentError, 'Data must be 2D array' unless data.all?(Array)
+
         first_row_length = data[0].length
         unless data.all? { |row| row.length == first_row_length }
-          raise ArgumentError, "All samples must have the same number of features"
+          raise ArgumentError, 'All samples must have the same number of features'
         end
-        
-        raise ArgumentError, "Data must have at least 2 features" if first_row_length < 2
-        raise ArgumentError, "Data must have at least 2 samples" if data.length < 2
+
+        raise ArgumentError, 'Data must have at least 2 features' if first_row_length < 2
+        raise ArgumentError, 'Data must have at least 2 samples' if data.length < 2
       end
 
       # Validate that model is fitted
       def validate_fitted
-        raise RuntimeError, "PCA model must be fitted before use" unless @fitted
+        raise 'PCA model must be fitted before use' unless @fitted
       end
 
       # Determine actual number of components
@@ -504,7 +510,7 @@ module Ai4r
         @std_values = Array.new(@n_features, 0.0)
         data.each do |sample|
           sample.each_with_index do |value, idx|
-            @std_values[idx] += (value - @mean_values[idx]) ** 2
+            @std_values[idx] += (value - @mean_values[idx])**2
           end
         end
         @std_values.map! { |sum| Math.sqrt(sum / (@n_samples - 1)) }
@@ -513,13 +519,11 @@ module Ai4r
         @std_values.map! { |std| std < @tolerance ? 1.0 : std }
 
         # Standardize
-        standardized_data = data.map do |sample|
+        data.map do |sample|
           sample.each_with_index.map do |value, idx|
             (value - @mean_values[idx]) / @std_values[idx]
           end
         end
-
-        standardized_data
       end
 
       # Center data (mean=0)
@@ -537,13 +541,11 @@ module Ai4r
         @std_values = Array.new(@n_features, 1.0)
 
         # Center
-        centered_data = data.map do |sample|
+        data.map do |sample|
           sample.each_with_index.map do |value, idx|
             value - @mean_values[idx]
           end
         end
-
-        centered_data
       end
 
       # Standardize new data using stored parameters
@@ -568,7 +570,7 @@ module Ai4r
       def destandardize_data(data)
         data.map do |sample|
           sample.each_with_index.map do |value, idx|
-            value * @std_values[idx] + @mean_values[idx]
+            (value * @std_values[idx]) + @mean_values[idx]
           end
         end
       end
@@ -610,14 +612,14 @@ module Ai4r
 
         (0...@n_features).each do |_|
           eigenvalue, eigenvector = power_iteration(matrix_copy)
-          
-          if eigenvalue.abs > @tolerance
-            eigenvalues << eigenvalue
-            eigenvectors << eigenvector
-            
-            # Deflate matrix to find next eigenvalue
-            matrix_copy = deflate_matrix(matrix_copy, eigenvalue, eigenvector)
-          end
+
+          next unless eigenvalue.abs > @tolerance
+
+          eigenvalues << eigenvalue
+          eigenvectors << eigenvector
+
+          # Deflate matrix to find next eigenvalue
+          matrix_copy = deflate_matrix(matrix_copy, eigenvalue, eigenvector)
         end
 
         [eigenvalues, eigenvectors]
@@ -627,23 +629,23 @@ module Ai4r
       def power_iteration(matrix, max_iterations = 1000)
         # Initialize random vector
         vector = Array.new(@n_features) { rand - 0.5 }
-        
+
         max_iterations.times do
           # Matrix-vector multiplication
           new_vector = matrix_vector_multiply(matrix, vector)
-          
+
           # Normalize
           norm = Math.sqrt(new_vector.sum { |v| v * v })
           norm = 1.0 if norm < @tolerance
-          
+
           new_vector.map! { |v| v / norm }
-          
+
           # Check convergence
           if vectors_close?(vector, new_vector, @tolerance)
             eigenvalue = dot_product(new_vector, matrix_vector_multiply(matrix, new_vector))
             return [eigenvalue, new_vector]
           end
-          
+
           vector = new_vector
         end
 
@@ -656,26 +658,26 @@ module Ai4r
       def deflate_matrix(matrix, eigenvalue, eigenvector)
         # Subtract eigenvalue * eigenvector * eigenvector^T from matrix
         deflated = matrix.map(&:dup)
-        
+
         (0...@n_features).each do |i|
           (0...@n_features).each do |j|
             deflated[i][j] -= eigenvalue * eigenvector[i] * eigenvector[j]
           end
         end
-        
+
         deflated
       end
 
       # Matrix-vector multiplication
       def matrix_vector_multiply(matrix, vector)
         result = Array.new(@n_features, 0.0)
-        
+
         (0...@n_features).each do |i|
           (0...@n_features).each do |j|
             result[i] += matrix[i][j] * vector[j]
           end
         end
-        
+
         result
       end
 
@@ -693,12 +695,12 @@ module Ai4r
       def calculate_cumulative_variance(variance_ratios)
         cumulative = []
         sum = 0.0
-        
+
         variance_ratios.each do |ratio|
           sum += ratio
           cumulative << sum
         end
-        
+
         cumulative
       end
 

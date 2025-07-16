@@ -29,17 +29,17 @@
 #   # Define model structure
 #   states = [:sunny, :rainy]
 #   observations = [:walk, :shop, :clean]
-#   
+#
 #   # Create HMM
 #   hmm = HiddenMarkovModel.new(states, observations)
-#   
+#
 #   # Train on sequences
 #   sequences = [
 #     { observations: [:walk, :shop, :clean], states: [:sunny, :sunny, :rainy] },
 #     { observations: [:clean, :clean, :walk], states: [:rainy, :rainy, :sunny] }
 #   ]
 #   hmm.train(sequences)
-#   
+#
 #   # Predict state sequence
 #   predicted_states = hmm.viterbi([:walk, :shop])
 #   puts "Most likely states: #{predicted_states}"
@@ -70,8 +70,8 @@ module Ai4r
     class HiddenMarkovModel
       # Model parameters and results
       attr_reader :states, :observations, :transition_matrix, :emission_matrix
-      attr_reader :initial_distribution, :state_to_index, :observation_to_index
-      attr_reader :training_sequences, :log_likelihood, :iterations
+      attr_reader :initial_distribution, :state_to_index, :observation_to_index, :training_sequences, :log_likelihood,
+                  :iterations
 
       # Educational configuration
       attr_accessor :verbose_mode, :max_iterations, :convergence_threshold
@@ -90,20 +90,20 @@ module Ai4r
       def initialize(states, observations, **options)
         @states = validate_states(states)
         @observations = validate_observations(observations)
-        
+
         # Create index mappings
         @state_to_index = @states.each_with_index.to_h
         @observation_to_index = @observations.each_with_index.to_h
-        
+
         # Educational configuration
         @verbose_mode = options.fetch(:verbose, false)
         @max_iterations = options.fetch(:max_iterations, DEFAULT_MAX_ITERATIONS)
         @convergence_threshold = options.fetch(:convergence_threshold, DEFAULT_CONVERGENCE_THRESHOLD)
         @smoothing = options.fetch(:smoothing, DEFAULT_SMOOTHING)
-        
+
         # Initialize model parameters
         initialize_parameters
-        
+
         # Training results
         @training_sequences = []
         @log_likelihood = []
@@ -126,27 +126,27 @@ module Ai4r
       def train(sequences, supervised: false)
         validate_training_sequences(sequences)
         @training_sequences = sequences
-        
-        educational_output("🎓 HMM Training Starting", <<~MSG)
+
+        educational_output('🎓 HMM Training Starting', <<~MSG)
           States: #{@states.length} (#{@states.join(', ')})
           Observations: #{@observations.length} (#{@observations.join(', ')})
           Sequences: #{sequences.length}
           Mode: #{supervised ? 'Supervised' : 'Unsupervised (Baum-Welch)'}
         MSG
-        
+
         if supervised
           train_supervised(sequences)
         else
           train_unsupervised(sequences)
         end
-        
+
         @trained = true
-        educational_output("✅ HMM Training Complete", <<~MSG)
+        educational_output('✅ HMM Training Complete', <<~MSG)
           Iterations: #{@iterations}
           Final log-likelihood: #{@log_likelihood.last&.round(4)}
           Converged: #{@iterations < @max_iterations}
         MSG
-        
+
         self
       end
 
@@ -162,17 +162,17 @@ module Ai4r
       #
       def forward(observation_sequence)
         validate_observation_sequence(observation_sequence)
-        
+
         sequence_length = observation_sequence.length
         num_states = @states.length
-        
+
         # Initialize forward probabilities
         alpha = Array.new(sequence_length) { Array.new(num_states, 0.0) }
-        
+
         # Initialize first time step
         observation_sequence.each_with_index do |obs, t|
           obs_idx = @observation_to_index[obs]
-          
+
           if t == 0
             # Initial step: π(i) * b(i, obs)
             num_states.times do |i|
@@ -183,24 +183,24 @@ module Ai4r
             num_states.times do |i|
               sum = 0.0
               num_states.times do |j|
-                sum += alpha[t-1][j] * @transition_matrix[j][i]
+                sum += alpha[t - 1][j] * @transition_matrix[j][i]
               end
               alpha[t][i] = sum * @emission_matrix[i][obs_idx]
             end
           end
-          
-          educational_step_output("Forward", t, alpha[t]) if @verbose_mode
+
+          educational_step_output('Forward', t, alpha[t]) if @verbose_mode
         end
-        
+
         # Sum final probabilities
-        probability = alpha[sequence_length-1].sum
-        
-        educational_output("🔮 Forward Algorithm Result", <<~MSG)
+        probability = alpha[sequence_length - 1].sum
+
+        educational_output('🔮 Forward Algorithm Result', <<~MSG)
           Observation sequence: #{observation_sequence.join(' → ')}
           Probability: #{probability}
           Log probability: #{Math.log(probability + @smoothing).round(4)}
         MSG
-        
+
         probability
       end
 
@@ -216,69 +216,69 @@ module Ai4r
       #
       def viterbi(observation_sequence)
         validate_observation_sequence(observation_sequence)
-        
+
         sequence_length = observation_sequence.length
         num_states = @states.length
-        
+
         # Initialize Viterbi probabilities and path
         delta = Array.new(sequence_length) { Array.new(num_states, 0.0) }
         psi = Array.new(sequence_length) { Array.new(num_states, 0) }
-        
+
         # Initialize first time step
         obs_idx = @observation_to_index[observation_sequence[0]]
         num_states.times do |i|
           delta[0][i] = @initial_distribution[i] * @emission_matrix[i][obs_idx]
           psi[0][i] = 0
         end
-        
-        educational_step_output("Viterbi", 0, delta[0]) if @verbose_mode
-        
+
+        educational_step_output('Viterbi', 0, delta[0]) if @verbose_mode
+
         # Recursive step
         (1...sequence_length).each do |t|
           obs_idx = @observation_to_index[observation_sequence[t]]
-          
+
           num_states.times do |i|
             # Find maximum probability and best previous state
             max_prob = -Float::INFINITY
             best_prev_state = 0
-            
+
             num_states.times do |j|
-              prob = delta[t-1][j] * @transition_matrix[j][i]
+              prob = delta[t - 1][j] * @transition_matrix[j][i]
               if prob > max_prob
                 max_prob = prob
                 best_prev_state = j
               end
             end
-            
+
             delta[t][i] = max_prob * @emission_matrix[i][obs_idx]
             psi[t][i] = best_prev_state
           end
-          
-          educational_step_output("Viterbi", t, delta[t]) if @verbose_mode
+
+          educational_step_output('Viterbi', t, delta[t]) if @verbose_mode
         end
-        
+
         # Backtrack to find best path
         best_path = Array.new(sequence_length)
-        
+
         # Find best final state
-        best_final_prob = delta[sequence_length-1].max
-        best_path[sequence_length-1] = delta[sequence_length-1].index(best_final_prob)
-        
+        best_final_prob = delta[sequence_length - 1].max
+        best_path[sequence_length - 1] = delta[sequence_length - 1].index(best_final_prob)
+
         # Backtrack through path
-        (sequence_length-2).downto(0) do |t|
-          best_path[t] = psi[t+1][best_path[t+1]]
+        (sequence_length - 2).downto(0) do |t|
+          best_path[t] = psi[t + 1][best_path[t + 1]]
         end
-        
+
         # Convert indices back to states
         state_sequence = best_path.map { |state_idx| @states[state_idx] }
-        
-        educational_output("🎯 Viterbi Algorithm Result", <<~MSG)
+
+        educational_output('🎯 Viterbi Algorithm Result', <<~MSG)
           Observation sequence: #{observation_sequence.join(' → ')}
           Most likely states: #{state_sequence.join(' → ')}
           Probability: #{best_final_prob}
           Log probability: #{Math.log(best_final_prob + @smoothing).round(4)}
         MSG
-        
+
         state_sequence
       end
 
@@ -289,34 +289,32 @@ module Ai4r
       # @return [Array, Hash] Generated sequence(s)
       #
       def generate(length, include_states: false)
-        raise RuntimeError, "Model must be trained before generating sequences" unless @trained
-        
+        raise 'Model must be trained before generating sequences' unless @trained
+
         observations = []
         states = []
-        
+
         # Sample initial state
         current_state_idx = sample_from_distribution(@initial_distribution)
-        
+
         length.times do |t|
           # Record current state
           states << @states[current_state_idx]
-          
+
           # Generate observation from current state
           obs_idx = sample_from_distribution(@emission_matrix[current_state_idx])
           observations << @observations[obs_idx]
-          
+
           # Transition to next state (except for last step)
-          if t < length - 1
-            current_state_idx = sample_from_distribution(@transition_matrix[current_state_idx])
-          end
+          current_state_idx = sample_from_distribution(@transition_matrix[current_state_idx]) if t < length - 1
         end
-        
-        educational_output("🎲 Sequence Generation", <<~MSG)
+
+        educational_output('🎲 Sequence Generation', <<~MSG)
           Length: #{length}
           Generated observations: #{observations.join(' → ')}
           Generated states: #{states.join(' → ')}
         MSG
-        
+
         if include_states
           { observations: observations, states: states }
         else
@@ -331,44 +329,42 @@ module Ai4r
       #
       def evaluate(test_sequences)
         validate_training_sequences(test_sequences)
-        
+
         total_log_likelihood = 0.0
         state_accuracy = 0.0
         total_positions = 0
-        
+
         test_sequences.each do |sequence|
           obs_seq = sequence[:observations]
-          
+
           # Calculate log-likelihood
           prob = forward(obs_seq)
           total_log_likelihood += Math.log(prob + @smoothing)
-          
+
           # Calculate state prediction accuracy if true states provided
-          if sequence[:states]
-            predicted_states = viterbi(obs_seq)
-            correct_predictions = predicted_states.zip(sequence[:states]).count { |pred, true_state| pred == true_state }
-            state_accuracy += correct_predictions
-            total_positions += sequence[:states].length
-          end
+          next unless sequence[:states]
+
+          predicted_states = viterbi(obs_seq)
+          correct_predictions = predicted_states.zip(sequence[:states]).count { |pred, true_state| pred == true_state }
+          state_accuracy += correct_predictions
+          total_positions += sequence[:states].length
         end
-        
+
         results = {
           avg_log_likelihood: total_log_likelihood / test_sequences.length,
           perplexity: Math.exp(-total_log_likelihood / test_sequences.length),
           num_sequences: test_sequences.length
         }
-        
-        if total_positions > 0
-          results[:state_accuracy] = state_accuracy.to_f / total_positions
-        end
-        
-        educational_output("📊 Model Evaluation", <<~MSG)
+
+        results[:state_accuracy] = state_accuracy.to_f / total_positions if total_positions > 0
+
+        educational_output('📊 Model Evaluation', <<~MSG)
           Test sequences: #{test_sequences.length}
           Average log-likelihood: #{results[:avg_log_likelihood].round(4)}
           Perplexity: #{results[:perplexity].round(4)}
           State accuracy: #{results[:state_accuracy]&.round(4) || 'N/A'}
         MSG
-        
+
         results
       end
 
@@ -377,8 +373,8 @@ module Ai4r
       # @return [Hash] Model analysis results
       #
       def analyze_model
-        raise RuntimeError, "Model must be trained before analysis" unless @trained
-        
+        raise 'Model must be trained before analysis' unless @trained
+
         # Find most likely transitions
         top_transitions = []
         @transition_matrix.each_with_index do |row, from_idx|
@@ -391,7 +387,7 @@ module Ai4r
           end
         end
         top_transitions.sort_by! { |t| -t[:probability] }
-        
+
         # Find most likely emissions
         top_emissions = []
         @emission_matrix.each_with_index do |row, state_idx|
@@ -404,17 +400,17 @@ module Ai4r
           end
         end
         top_emissions.sort_by! { |e| -e[:probability] }
-        
+
         # Analyze state characteristics
         state_analysis = {}
         @states.each_with_index do |state, idx|
           # Most likely observations from this state
           state_emissions = @emission_matrix[idx]
           most_likely_obs = state_emissions.each_with_index.max_by { |prob, _| prob }
-          
+
           # Self-transition probability
           self_transition = @transition_matrix[idx][idx]
-          
+
           state_analysis[state] = {
             most_likely_observation: @observations[most_likely_obs[1]],
             observation_probability: most_likely_obs[0],
@@ -422,7 +418,7 @@ module Ai4r
             initial_probability: @initial_distribution[idx]
           }
         end
-        
+
         {
           top_transitions: top_transitions.first(10),
           top_emissions: top_emissions.first(10),
@@ -436,30 +432,30 @@ module Ai4r
       # @return [String] ASCII visualization
       #
       def visualize_model
-        raise RuntimeError, "Model must be trained before visualization" unless @trained
-        
+        raise 'Model must be trained before visualization' unless @trained
+
         visualization = "\n🔍 Hidden Markov Model Visualization\n"
-        visualization += "=" * 50 + "\n\n"
-        
+        visualization += "#{'=' * 50}\n\n"
+
         # Model summary
         visualization += "📊 Model Summary:\n"
         visualization += "  • States: #{@states.length} (#{@states.join(', ')})\n"
         visualization += "  • Observations: #{@observations.length} (#{@observations.join(', ')})\n"
         visualization += "  • Training sequences: #{@training_sequences.length}\n"
         visualization += "  • Final log-likelihood: #{@log_likelihood.last&.round(4)}\n\n"
-        
+
         # Initial distribution
         visualization += "🎯 Initial State Distribution:\n"
         @states.each_with_index do |state, idx|
           prob = @initial_distribution[idx]
-          bar = "█" * (prob * 50).to_i
+          bar = '█' * (prob * 50).to_i
           visualization += "  #{state}: #{prob.round(4)} #{bar}\n"
         end
         visualization += "\n"
-        
+
         # Transition matrix
         visualization += "🔄 Transition Matrix:\n"
-        visualization += "     " + @states.map { |s| s.to_s.rjust(8) }.join(" ") + "\n"
+        visualization += '     ' + @states.map { |s| s.to_s.rjust(8) }.join(' ') + "\n"
         @states.each_with_index do |from_state, from_idx|
           visualization += "#{from_state.to_s.rjust(4)} "
           @states.each_with_index do |_, to_idx|
@@ -469,10 +465,10 @@ module Ai4r
           visualization += "\n"
         end
         visualization += "\n"
-        
+
         # Emission matrix
         visualization += "📡 Emission Matrix:\n"
-        visualization += "     " + @observations.map { |o| o.to_s.rjust(8) }.join(" ") + "\n"
+        visualization += '     ' + @observations.map { |o| o.to_s.rjust(8) }.join(' ') + "\n"
         @states.each_with_index do |state, state_idx|
           visualization += "#{state.to_s.rjust(4)} "
           @observations.each_with_index do |_, obs_idx|
@@ -481,7 +477,7 @@ module Ai4r
           end
           visualization += "\n"
         end
-        
+
         visualization
       end
 
@@ -489,56 +485,51 @@ module Ai4r
 
       # Validate states parameter
       def validate_states(states)
-        raise ArgumentError, "States cannot be empty" if states.empty?
-        raise ArgumentError, "States must be unique" if states.uniq.length != states.length
+        raise ArgumentError, 'States cannot be empty' if states.empty?
+        raise ArgumentError, 'States must be unique' if states.uniq.length != states.length
+
         states
       end
 
       # Validate observations parameter
       def validate_observations(observations)
-        raise ArgumentError, "Observations cannot be empty" if observations.empty?
-        raise ArgumentError, "Observations must be unique" if observations.uniq.length != observations.length
+        raise ArgumentError, 'Observations cannot be empty' if observations.empty?
+        raise ArgumentError, 'Observations must be unique' if observations.uniq.length != observations.length
+
         observations
       end
 
       # Validate training sequences
       def validate_training_sequences(sequences)
-        raise ArgumentError, "Training sequences cannot be empty" if sequences.empty?
-        
+        raise ArgumentError, 'Training sequences cannot be empty' if sequences.empty?
+
         sequences.each_with_index do |seq, idx|
           raise ArgumentError, "Sequence #{idx} must have :observations key" unless seq.key?(:observations)
           raise ArgumentError, "Sequence #{idx} observations cannot be empty" if seq[:observations].empty?
-          
+
           # Validate observations are known
           seq[:observations].each do |obs|
-            unless @observations.include?(obs)
-              raise ArgumentError, "Unknown observation: #{obs}"
-            end
+            raise ArgumentError, "Unknown observation: #{obs}" unless @observations.include?(obs)
           end
-          
+
           # Validate states if provided
-          if seq[:states]
-            unless seq[:states].length == seq[:observations].length
-              raise ArgumentError, "Sequence #{idx} states and observations must have same length"
-            end
-            
-            seq[:states].each do |state|
-              unless @states.include?(state)
-                raise ArgumentError, "Unknown state: #{state}"
-              end
-            end
+          next unless seq[:states]
+          unless seq[:states].length == seq[:observations].length
+            raise ArgumentError, "Sequence #{idx} states and observations must have same length"
+          end
+
+          seq[:states].each do |state|
+            raise ArgumentError, "Unknown state: #{state}" unless @states.include?(state)
           end
         end
       end
 
       # Validate observation sequence
       def validate_observation_sequence(sequence)
-        raise ArgumentError, "Observation sequence cannot be empty" if sequence.empty?
-        
+        raise ArgumentError, 'Observation sequence cannot be empty' if sequence.empty?
+
         sequence.each do |obs|
-          unless @observations.include?(obs)
-            raise ArgumentError, "Unknown observation: #{obs}"
-          end
+          raise ArgumentError, "Unknown observation: #{obs}" unless @observations.include?(obs)
         end
       end
 
@@ -546,21 +537,21 @@ module Ai4r
       def initialize_parameters
         num_states = @states.length
         num_observations = @observations.length
-        
+
         # Initialize transition matrix
         @transition_matrix = Array.new(num_states) do
           row = Array.new(num_states) { rand }
           row_sum = row.sum
           row.map { |val| val / row_sum }
         end
-        
+
         # Initialize emission matrix
         @emission_matrix = Array.new(num_states) do
           row = Array.new(num_observations) { rand }
           row_sum = row.sum
           row.map { |val| val / row_sum }
         end
-        
+
         # Initialize initial distribution
         @initial_distribution = Array.new(num_states) { rand }
         init_sum = @initial_distribution.sum
@@ -573,23 +564,23 @@ module Ai4r
         transition_counts = Array.new(@states.length) { Array.new(@states.length, 0.0) }
         emission_counts = Array.new(@states.length) { Array.new(@observations.length, 0.0) }
         initial_counts = Array.new(@states.length, 0.0)
-        
+
         sequences.each do |sequence|
           obs_seq = sequence[:observations]
           state_seq = sequence[:states]
-          
+
           # Count initial state
           initial_state_idx = @state_to_index[state_seq[0]]
           initial_counts[initial_state_idx] += 1
-          
+
           # Count transitions and emissions
           state_seq.each_with_index do |state, t|
             state_idx = @state_to_index[state]
             obs_idx = @observation_to_index[obs_seq[t]]
-            
+
             # Count emission
             emission_counts[state_idx][obs_idx] += 1
-            
+
             # Count transition (except for last position)
             if t < state_seq.length - 1
               next_state_idx = @state_to_index[state_seq[t + 1]]
@@ -597,10 +588,10 @@ module Ai4r
             end
           end
         end
-        
+
         # Normalize counts to probabilities
         normalize_counts(transition_counts, emission_counts, initial_counts)
-        
+
         @iterations = 1
         @log_likelihood = [compute_total_log_likelihood(sequences)]
       end
@@ -609,48 +600,46 @@ module Ai4r
       def train_unsupervised(sequences)
         @iterations = 0
         @log_likelihood = []
-        
+
         prev_log_likelihood = -Float::INFINITY
-        
+
         @max_iterations.times do |iteration|
           @iterations = iteration + 1
-          
+
           # E-step: Calculate expected counts
           transition_counts = Array.new(@states.length) { Array.new(@states.length, 0.0) }
           emission_counts = Array.new(@states.length) { Array.new(@observations.length, 0.0) }
           initial_counts = Array.new(@states.length, 0.0)
-          
+
           sequences.each do |sequence|
             obs_seq = sequence[:observations]
-            
+
             # Forward-backward algorithm
             alpha = forward_probabilities(obs_seq)
             beta = backward_probabilities(obs_seq)
-            
+
             # Calculate xi (transition) and gamma (state) probabilities
             xi, gamma = calculate_xi_gamma(obs_seq, alpha, beta)
-            
+
             # Accumulate expected counts
             accumulate_counts(obs_seq, xi, gamma, transition_counts, emission_counts, initial_counts)
           end
-          
+
           # M-step: Update parameters
           normalize_counts(transition_counts, emission_counts, initial_counts)
-          
+
           # Calculate log-likelihood
           current_log_likelihood = compute_total_log_likelihood(sequences)
           @log_likelihood << current_log_likelihood
-          
+
           educational_output("📈 Iteration #{@iterations}", <<~MSG)
             Log-likelihood: #{current_log_likelihood.round(4)}
             Improvement: #{(current_log_likelihood - prev_log_likelihood).round(6)}
           MSG
-          
+
           # Check convergence
-          if (current_log_likelihood - prev_log_likelihood).abs < @convergence_threshold
-            break
-          end
-          
+          break if (current_log_likelihood - prev_log_likelihood).abs < @convergence_threshold
+
           prev_log_likelihood = current_log_likelihood
         end
       end
@@ -660,25 +649,25 @@ module Ai4r
         sequence_length = obs_seq.length
         num_states = @states.length
         alpha = Array.new(sequence_length) { Array.new(num_states, 0.0) }
-        
+
         # Initialize
         obs_idx = @observation_to_index[obs_seq[0]]
         num_states.times do |i|
           alpha[0][i] = @initial_distribution[i] * @emission_matrix[i][obs_idx]
         end
-        
+
         # Forward pass
         (1...sequence_length).each do |t|
           obs_idx = @observation_to_index[obs_seq[t]]
           num_states.times do |i|
             sum = 0.0
             num_states.times do |j|
-              sum += alpha[t-1][j] * @transition_matrix[j][i]
+              sum += alpha[t - 1][j] * @transition_matrix[j][i]
             end
             alpha[t][i] = sum * @emission_matrix[i][obs_idx]
           end
         end
-        
+
         alpha
       end
 
@@ -687,22 +676,22 @@ module Ai4r
         sequence_length = obs_seq.length
         num_states = @states.length
         beta = Array.new(sequence_length) { Array.new(num_states, 0.0) }
-        
+
         # Initialize
-        num_states.times { |i| beta[sequence_length-1][i] = 1.0 }
-        
+        num_states.times { |i| beta[sequence_length - 1][i] = 1.0 }
+
         # Backward pass
-        (sequence_length-2).downto(0) do |t|
-          obs_idx = @observation_to_index[obs_seq[t+1]]
+        (sequence_length - 2).downto(0) do |t|
+          obs_idx = @observation_to_index[obs_seq[t + 1]]
           num_states.times do |i|
             sum = 0.0
             num_states.times do |j|
-              sum += @transition_matrix[i][j] * @emission_matrix[j][obs_idx] * beta[t+1][j]
+              sum += @transition_matrix[i][j] * @emission_matrix[j][obs_idx] * beta[t + 1][j]
             end
             beta[t][i] = sum
           end
         end
-        
+
         beta
       end
 
@@ -710,39 +699,40 @@ module Ai4r
       def calculate_xi_gamma(obs_seq, alpha, beta)
         sequence_length = obs_seq.length
         num_states = @states.length
-        
+
         # Calculate xi (transition probabilities)
-        xi = Array.new(sequence_length-1) { Array.new(num_states) { Array.new(num_states, 0.0) } }
-        
-        (0...sequence_length-1).each do |t|
-          obs_idx = @observation_to_index[obs_seq[t+1]]
+        xi = Array.new(sequence_length - 1) { Array.new(num_states) { Array.new(num_states, 0.0) } }
+
+        (0...(sequence_length - 1)).each do |t|
+          obs_idx = @observation_to_index[obs_seq[t + 1]]
           total = 0.0
-          
+
           # Calculate denominator
           num_states.times do |i|
             num_states.times do |j|
-              total += alpha[t][i] * @transition_matrix[i][j] * @emission_matrix[j][obs_idx] * beta[t+1][j]
+              total += alpha[t][i] * @transition_matrix[i][j] * @emission_matrix[j][obs_idx] * beta[t + 1][j]
             end
           end
-          
+
           # Calculate xi
           num_states.times do |i|
             num_states.times do |j|
-              xi[t][i][j] = (alpha[t][i] * @transition_matrix[i][j] * @emission_matrix[j][obs_idx] * beta[t+1][j]) / (total + @smoothing)
+              xi[t][i][j] =
+                (alpha[t][i] * @transition_matrix[i][j] * @emission_matrix[j][obs_idx] * beta[t + 1][j]) / (total + @smoothing)
             end
           end
         end
-        
+
         # Calculate gamma (state probabilities)
         gamma = Array.new(sequence_length) { Array.new(num_states, 0.0) }
-        
+
         sequence_length.times do |t|
           total = alpha[t].zip(beta[t]).sum { |a, b| a * b }
           num_states.times do |i|
             gamma[t][i] = (alpha[t][i] * beta[t][i]) / (total + @smoothing)
           end
         end
-        
+
         [xi, gamma]
       end
 
@@ -750,19 +740,19 @@ module Ai4r
       def accumulate_counts(obs_seq, xi, gamma, transition_counts, emission_counts, initial_counts)
         sequence_length = obs_seq.length
         num_states = @states.length
-        
+
         # Initial state counts
         num_states.times { |i| initial_counts[i] += gamma[0][i] }
-        
+
         # Transition counts
-        (0...sequence_length-1).each do |t|
+        (0...(sequence_length - 1)).each do |t|
           num_states.times do |i|
             num_states.times do |j|
               transition_counts[i][j] += xi[t][i][j]
             end
           end
         end
-        
+
         # Emission counts
         sequence_length.times do |t|
           obs_idx = @observation_to_index[obs_seq[t]]
@@ -776,24 +766,24 @@ module Ai4r
       def normalize_counts(transition_counts, emission_counts, initial_counts)
         num_states = @states.length
         num_observations = @observations.length
-        
+
         # Normalize initial distribution
-        init_sum = initial_counts.sum + @smoothing * num_states
+        init_sum = initial_counts.sum + (@smoothing * num_states)
         num_states.times do |i|
           @initial_distribution[i] = (initial_counts[i] + @smoothing) / init_sum
         end
-        
+
         # Normalize transition matrix
         num_states.times do |i|
-          row_sum = transition_counts[i].sum + @smoothing * num_states
+          row_sum = transition_counts[i].sum + (@smoothing * num_states)
           num_states.times do |j|
             @transition_matrix[i][j] = (transition_counts[i][j] + @smoothing) / row_sum
           end
         end
-        
+
         # Normalize emission matrix
         num_states.times do |i|
-          row_sum = emission_counts[i].sum + @smoothing * num_observations
+          row_sum = emission_counts[i].sum + (@smoothing * num_observations)
           num_observations.times do |j|
             @emission_matrix[i][j] = (emission_counts[i][j] + @smoothing) / row_sum
           end
@@ -803,12 +793,12 @@ module Ai4r
       # Compute total log-likelihood
       def compute_total_log_likelihood(sequences)
         total_log_likelihood = 0.0
-        
+
         sequences.each do |sequence|
           prob = forward(sequence[:observations])
           total_log_likelihood += Math.log(prob + @smoothing)
         end
-        
+
         total_log_likelihood
       end
 
@@ -816,31 +806,31 @@ module Ai4r
       def sample_from_distribution(distribution)
         cumulative = 0.0
         rand_val = rand
-        
+
         distribution.each_with_index do |prob, idx|
           cumulative += prob
           return idx if rand_val <= cumulative
         end
-        
-        distribution.length - 1  # Fallback
+
+        distribution.length - 1 # Fallback
       end
 
       # Calculate model entropy
       def calculate_model_entropy
         total_entropy = 0.0
-        
+
         # Transition entropy
         @transition_matrix.each do |row|
           entropy = -row.sum { |p| p > 0 ? p * Math.log(p) : 0 }
           total_entropy += entropy
         end
-        
+
         # Emission entropy
         @emission_matrix.each do |row|
           entropy = -row.sum { |p| p > 0 ? p * Math.log(p) : 0 }
           total_entropy += entropy
         end
-        
+
         total_entropy
       end
 

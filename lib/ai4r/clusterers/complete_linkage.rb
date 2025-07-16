@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Author::    Sergio Fierens (implementation)
 # License::   MPL 1.1
 # Project::   ai4r
@@ -7,12 +9,11 @@
 # the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../data/data_set'
-require File.dirname(__FILE__) + '/../clusterers/single_linkage'
+require "#{File.dirname(__FILE__)}/../data/data_set"
+require "#{File.dirname(__FILE__)}/../clusterers/single_linkage"
 
 module Ai4r
   module Clusterers
-
     # Implementation of a Hierarchical clusterer with complete linkage (Everitt
     # et al., 2001 ; Jain and Dubes, 1988 ; Sorensen, 1948 ).
     # Hierarchical clusterer create one cluster per element, and then
@@ -23,13 +24,10 @@ module Ai4r
     #
     #   D(cx, (ci U cj) = max(D(cx, ci), D(cx, cj))
     class CompleteLinkage < SingleLinkage
-
-      parameters_info :distance_function =>
-          "Custom implementation of distance function. " +
-          "It must be a closure receiving two data items and return the " +
-          "distance between them. By default, this algorithm uses " +
-          "euclidean distance of numeric attributes to the power of 2."
-
+      parameters_info distance_function: 'Custom implementation of distance function. ' \
+                                         'It must be a closure receiving two data items and return the ' \
+                                         'distance between them. By default, this algorithm uses ' \
+                                         'euclidean distance of numeric attributes to the power of 2.'
 
       # Build a new clusterer, using data examples found in data_set.
       # Items will be clustered in "number_of_clusters" different
@@ -40,9 +38,6 @@ module Ai4r
 
       # Classifies the given data item, returning the cluster index it belongs
       # to (0-based).
-      def eval(data_item)
-        super
-      end
 
       protected
 
@@ -50,7 +45,7 @@ module Ai4r
       # using complete linkage
       def linkage_distance(cx, ci, cj)
         [read_distance_matrix(cx, ci),
-          read_distance_matrix(cx, cj)].max
+         read_distance_matrix(cx, cj)].max
       end
 
       def distance_between_item_and_cluster(data_item, cluster)
@@ -61,7 +56,6 @@ module Ai4r
         end
         return max_dist
       end
-
     end
   end
 end

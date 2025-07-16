@@ -21,28 +21,28 @@ RSpec.describe Ai4r::Clusterers::MedianLinkage do
   let(:median_dataset) do
     Ai4r::Data::DataSet.new(
       data_items: median_test_data,
-      data_labels: ['x', 'y']
+      data_labels: %w[x y]
     )
   end
 
-  describe "MedianLinkage Specific Tests" do
-    it "test_median_calculation" do
+  describe 'MedianLinkage Specific Tests' do
+    it 'test_median_calculation' do
       # Median linkage uses weighted median point for cluster distance
       clusterer = described_class.new.build(median_dataset, 2)
-      
+
       expect(clusterer.clusters.length).to eq(2)
-      
+
       # Should use median-based distance calculation
-      total_points = clusterer.clusters.map { |c| c.data_items.length }.sum
+      total_points = clusterer.clusters.sum { |c| c.data_items.length }
       expect(total_points).to eq(median_test_data.length)
     end
 
-    it "test_median_vs_centroid" do
+    it 'test_median_vs_centroid' do
       # Median linkage should give different results than centroid linkage
       clusterer = described_class.new.build(median_dataset, 2)
-      
+
       expect(clusterer.clusters.length).to eq(2)
-      
+
       # Should separate the two groups
       clusterer.clusters.each do |cluster|
         expect(cluster.data_items.length).to be >= 1
@@ -50,13 +50,13 @@ RSpec.describe Ai4r::Clusterers::MedianLinkage do
     end
   end
 
-  describe "Integration Tests" do
-    it "maintains clustering validity" do
+  describe 'Integration Tests' do
+    it 'maintains clustering validity' do
       clusterer = described_class.new.build(median_dataset, 2)
-      
+
       expect(clusterer).to be_a(described_class)
       expect(clusterer.number_of_clusters).to eq(2)
-      
+
       clusterer.clusters.each do |cluster|
         expect(cluster).to be_a(Ai4r::Data::DataSet)
         expect(cluster.data_items).not_to be_empty

@@ -21,10 +21,10 @@ FactoryBot.define do
         when :numeric
           Array.new(columns) { rand(-100.0..100.0) }
         when :categorical
-          categories = ['A', 'B', 'C', 'D']
+          categories = %w[A B C D]
           Array.new(columns) { categories.sample }
         when :mixed
-          Array.new(columns) { |i| i.even? ? rand(-100.0..100.0) : ['A', 'B', 'C'].sample }
+          Array.new(columns) { |i| i.even? ? rand(-100.0..100.0) : %w[A B C].sample }
         when :outlier_prone
           normal_data = Array.new(columns * 0.8) { rand(-10.0..10.0) }
           outlier_data = Array.new(columns * 0.2) { rand > 0.5 ? rand(50.0..100.0) : rand(-100.0..-50.0) }
@@ -51,7 +51,7 @@ FactoryBot.define do
 
     data_items do
       Random.srand(seed)
-      
+
       base_data = Array.new(rows) do
         Array.new(columns) { rand(-50.0..50.0) }
       end
@@ -78,7 +78,7 @@ FactoryBot.define do
       # Add correlations if requested
       if has_correlations && columns >= 2
         base_data.each do |row|
-          row[1] = row[0] * 2 + rand(-5.0..5.0)  # Strong correlation with noise
+          row[1] = (row[0] * 2) + rand(-5.0..5.0) # Strong correlation with noise
         end
       end
 
@@ -109,13 +109,16 @@ FactoryBot.define do
     initialize_with do
       normal_size = (size * (1 - outlier_percentage)).to_i
       outlier_size = size - normal_size
-      
+
       normal_data = Array.new(normal_size) { rand(-10.0..10.0) }
       outlier_data = Array.new(outlier_size) do
-        rand > 0.5 ? rand(10.0 * outlier_magnitude..20.0 * outlier_magnitude) : 
-                     rand(-20.0 * outlier_magnitude..-10.0 * outlier_magnitude)
+        if rand > 0.5
+          rand((10.0 * outlier_magnitude)..(20.0 * outlier_magnitude))
+        else
+          rand((-20.0 * outlier_magnitude)..(-10.0 * outlier_magnitude))
+        end
       end
-      
+
       (normal_data + outlier_data).shuffle
     end
   end
@@ -132,7 +135,7 @@ FactoryBot.define do
     initialize_with do
       case distribution
       when :normal
-        Array.new(size) { mean + std * rand(-3.0..3.0) }
+        Array.new(size) { mean + (std * rand(-3.0..3.0)) }
       when :uniform
         Array.new(size) { rand(-100.0..100.0) }
       when :skewed
@@ -150,25 +153,25 @@ FactoryBot.define do
     transient do
       samples_per_class { 20 }
       features { 3 }
-      classes { ['A', 'B', 'C'] }
+      classes { %w[A B C] }
       noise_level { 0.1 }
     end
 
     data_items do
       all_data = []
-      
+
       classes.each_with_index do |class_label, class_idx|
         # Create cluster center
-        center = Array.new(features) { class_idx * 10 + rand(-2.0..2.0) }
-        
+        center = Array.new(features) { (class_idx * 10) + rand(-2.0..2.0) }
+
         # Generate samples around center
         samples_per_class.times do
-          sample = center.map { |c| c + rand(-5.0..5.0) * (1 + noise_level) }
+          sample = center.map { |c| c + (rand(-5.0..5.0) * (1 + noise_level)) }
           sample << class_label
           all_data << sample
         end
       end
-      
+
       all_data.shuffle
     end
 
@@ -191,18 +194,18 @@ FactoryBot.define do
 
     data_items do
       all_data = []
-      
+
       clusters.times do |cluster_idx|
         # Create cluster center
-        center = Array.new(dimensions) { cluster_idx * cluster_separation + rand(-5.0..5.0) }
-        
+        center = Array.new(dimensions) { (cluster_idx * cluster_separation) + rand(-5.0..5.0) }
+
         # Generate points around center
         points_per_cluster.times do
           point = center.map { |c| c + rand(-cluster_tightness..cluster_tightness) }
           all_data << point
         end
       end
-      
+
       all_data.shuffle
     end
 

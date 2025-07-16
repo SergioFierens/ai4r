@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Author::    Thomas Kern
 # License::   MPL 1.1
 # Project::   ai4r
@@ -7,13 +9,12 @@
 # the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../data/parameterizable'
-require File.dirname(__FILE__) + '/layer'
-require File.dirname(__FILE__) + '/two_phase_layer'
-require File.dirname(__FILE__) + '/node'
+require "#{File.dirname(__FILE__)}/../data/parameterizable"
+require "#{File.dirname(__FILE__)}/layer"
+require "#{File.dirname(__FILE__)}/two_phase_layer"
+require "#{File.dirname(__FILE__)}/node"
 
 module Ai4r
-
   # A self-organizing map (SOM) or self-organizing feature map (SOFM) is a type
   # of artificial neural network that is trained using unsupervised learning to
   # produce a low-dimensional (typically two-dimensional), discretized
@@ -24,7 +25,6 @@ module Ai4r
   # 'Neural Networks for Applied Sciences and Engineering'
 
   module Som
-
     # = Introduction
     #
     # This is an implementation of a Kohonen Self-Organizing Maps
@@ -50,13 +50,12 @@ module Ai4r
     # Url::       https://github.com/SergioFierens/ai4r
 
     class Som
-
       include Ai4r::Data::Parameterizable
 
-      parameters_info :nodes  => "sets the architecture of the map (nodes x nodes)",
-                      :dimension => "sets the dimension of the input",
-                      :layer => "instance of a layer, defines how the training algorithm works",
-                      :epoch => "number of finished epochs"
+      parameters_info nodes: 'sets the architecture of the map (nodes x nodes)',
+                      dimension: 'sets the dimension of the input',
+                      layer: 'instance of a layer, defines how the training algorithm works',
+                      epoch: 'number of finished epochs'
 
       def initialize(dim, number_of_nodes, layer)
         @layer = layer
@@ -71,13 +70,14 @@ module Ai4r
       # returns an array of length 2 => [node, distance] (distance is of eucledian type, not
       # a neighborhood distance)
       def find_bmu(input)
-        raise ArgumentError, "Nodes array is empty" if @nodes.empty?
+        raise ArgumentError, 'Nodes array is empty' if @nodes.empty?
+
         bmu = @nodes.first
         dist = bmu.distance_to_input input
-        
+
         # Only process remaining nodes if there are more than 1
         if @nodes.length > 1
-          @nodes[1..-1].each do |node|
+          @nodes[1..].each do |node|
             tmp_dist = node.distance_to_input(input)
             if tmp_dist <= dist
               dist = tmp_dist
@@ -96,7 +96,7 @@ module Ai4r
 
           influence = @layer.influence_decay dist, radius
           node.weights.each_with_index do |weight, index|
-            node.weights[index] +=  influence * learning_rate * (input[index] - weight)
+            node.weights[index] += influence * learning_rate * (input[index] - weight)
           end
         end
       end
@@ -104,14 +104,14 @@ module Ai4r
       # main method for the som. trains the map with the passed data vector
       # calls train_step as long as train_step returns false
       def train(data)
-        while !train_step(data)
+        until train_step(data)
         end
       end
 
       # calculates the global distance error for all data entries
       def global_error(data)
-        data.inject(0) {|sum,entry| sum + find_bmu(entry)[1]**2 }
-       end
+        data.inject(0) { |sum, entry| sum + (find_bmu(entry)[1]**2) }
+      end
 
       # trains the map with the data as long as the @epoch is smaller than the epoch-value of
       # @layer
@@ -134,15 +134,17 @@ module Ai4r
 
       # returns the node at position (x,y) in the square map
       def get_node(x, y)
-        raise(ArgumentError, "Invalid node coordinates: x=#{x}, y=#{y}") if check_param_for_som(x,y)
-        index = y + x * @number_of_nodes
+        raise(ArgumentError, "Invalid node coordinates: x=#{x}, y=#{y}") if check_param_for_som(x, y)
+
+        index = y + (x * @number_of_nodes)
         raise(ArgumentError, "Calculated index #{index} is out of bounds for nodes array") if index >= @nodes.length
+
         @nodes[index]
       end
 
       # intitiates the map by creating (@number_of_nodes * @number_of_nodes) nodes
       def initiate_map
-        @nodes.each_with_index do |node, i|
+        @nodes.each_with_index do |_node, i|
           @nodes[i] = Node.create i, @number_of_nodes, @dimension
         end
       end
@@ -152,11 +154,8 @@ module Ai4r
       # checks whether or not there is a node in the map at the coordinates (x,y).
       # x is the row, y the column indicator
       def check_param_for_som(x, y)
-        y > @number_of_nodes - 1 || x > @number_of_nodes - 1  || x < 0 || y < 0
+        y > @number_of_nodes - 1 || x > @number_of_nodes - 1 || x < 0 || y < 0
       end
-
     end
-
   end
-
 end

@@ -54,7 +54,7 @@ RSpec.describe Ai4r::Search::AStar do
     context 'with valid parameters' do
       it 'creates AStar instance with default heuristic' do
         astar = described_class.new(simple_grid)
-        
+
         expect(astar).to be_a(described_class)
         expect(astar.heuristic_function).to eq(:manhattan)
         expect(astar.step_by_step_mode).to be false
@@ -64,17 +64,17 @@ RSpec.describe Ai4r::Search::AStar do
 
       it 'creates AStar instance with custom heuristic' do
         astar = described_class.new(simple_grid, heuristic: :euclidean)
-        
+
         expect(astar.heuristic_function).to eq(:euclidean)
       end
 
       it 'creates AStar instance with custom options' do
-        astar = described_class.new(simple_grid, 
+        astar = described_class.new(simple_grid,
                                     heuristic: :chebyshev,
                                     step_by_step: true,
                                     verbose: true,
                                     max_iterations: 5_000)
-        
+
         expect(astar.heuristic_function).to eq(:chebyshev)
         expect(astar.step_by_step_mode).to be true
         expect(astar.verbose_mode).to be true
@@ -84,21 +84,21 @@ RSpec.describe Ai4r::Search::AStar do
 
     context 'with invalid parameters' do
       it 'raises error for nil grid' do
-        expect {
+        expect do
           described_class.new(nil)
-        }.to raise_error(ArgumentError, 'Grid cannot be nil')
+        end.to raise_error(ArgumentError, 'Grid cannot be nil')
       end
 
       it 'raises error for empty grid' do
-        expect {
+        expect do
           described_class.new([])
-        }.to raise_error(ArgumentError, 'Grid cannot be empty')
+        end.to raise_error(ArgumentError, 'Grid cannot be empty')
       end
 
       it 'raises error for grid with empty rows' do
-        expect {
+        expect do
           described_class.new([[]])
-        }.to raise_error(ArgumentError, 'Grid rows cannot be empty')
+        end.to raise_error(ArgumentError, 'Grid rows cannot be empty')
       end
 
       it 'raises error for non-rectangular grid' do
@@ -107,10 +107,10 @@ RSpec.describe Ai4r::Search::AStar do
           [0, 0],
           [0, 0, 0]
         ]
-        
-        expect {
+
+        expect do
           described_class.new(invalid_grid)
-        }.to raise_error(ArgumentError, 'Grid must be rectangular')
+        end.to raise_error(ArgumentError, 'Grid must be rectangular')
       end
 
       it 'raises error for invalid cell values' do
@@ -119,16 +119,16 @@ RSpec.describe Ai4r::Search::AStar do
           [0, 2, 0],
           [0, 0, 0]
         ]
-        
-        expect {
+
+        expect do
           described_class.new(invalid_grid)
-        }.to raise_error(ArgumentError, /Invalid cell value 2 at position/)
+        end.to raise_error(ArgumentError, /Invalid cell value 2 at position/)
       end
 
       it 'raises error for invalid heuristic' do
-        expect {
+        expect do
           described_class.new(simple_grid, heuristic: :invalid)
-        }.to raise_error(ArgumentError, /Invalid heuristic: invalid/)
+        end.to raise_error(ArgumentError, /Invalid heuristic: invalid/)
       end
     end
   end
@@ -139,7 +139,7 @@ RSpec.describe Ai4r::Search::AStar do
 
       it 'finds direct path in simple grid' do
         path = astar.find_path([0, 0], [2, 2])
-        
+
         expect(path).not_to be_nil
         expect(path.first).to eq([0, 0])
         expect(path.last).to eq([2, 2])
@@ -148,13 +148,13 @@ RSpec.describe Ai4r::Search::AStar do
 
       it 'finds path to same position' do
         path = astar.find_path([1, 1], [1, 1])
-        
+
         expect(path).to eq([[1, 1]])
       end
 
       it 'finds path to adjacent cell' do
         path = astar.find_path([0, 0], [0, 1])
-        
+
         expect(path).to eq([[0, 0], [0, 1]])
       end
     end
@@ -164,11 +164,11 @@ RSpec.describe Ai4r::Search::AStar do
 
       it 'finds path around obstacles' do
         path = astar.find_path([0, 0], [4, 4])
-        
+
         expect(path).not_to be_nil
         expect(path.first).to eq([0, 0])
         expect(path.last).to eq([4, 4])
-        
+
         # Verify path doesn't go through obstacles
         path.each do |pos|
           row, col = pos
@@ -179,11 +179,11 @@ RSpec.describe Ai4r::Search::AStar do
       it 'finds optimal path through maze' do
         maze_astar = described_class.new(maze_grid)
         path = maze_astar.find_path([0, 0], [6, 6])
-        
+
         expect(path).not_to be_nil
         expect(path.first).to eq([0, 0])
         expect(path.last).to eq([6, 6])
-        
+
         # Verify path validity
         path.each do |pos|
           row, col = pos
@@ -197,7 +197,7 @@ RSpec.describe Ai4r::Search::AStar do
 
       it 'returns nil when no path exists' do
         path = astar.find_path([0, 0], [2, 2])
-        
+
         expect(path).to be_nil
       end
 
@@ -207,10 +207,10 @@ RSpec.describe Ai4r::Search::AStar do
           [0, 0, 0],
           [0, 0, 0]
         ]
-        
-        expect {
+
+        expect do
           described_class.new(blocked_grid).find_path([0, 0], [2, 2])
-        }.to raise_error(ArgumentError, /start position.*is invalid/)
+        end.to raise_error(ArgumentError, /start position.*is invalid/)
       end
 
       it 'returns nil when goal position is blocked' do
@@ -219,10 +219,10 @@ RSpec.describe Ai4r::Search::AStar do
           [0, 0, 0],
           [0, 0, 1]
         ]
-        
-        expect {
+
+        expect do
           described_class.new(blocked_grid).find_path([0, 0], [2, 2])
-        }.to raise_error(ArgumentError, /goal position.*is invalid/)
+        end.to raise_error(ArgumentError, /goal position.*is invalid/)
       end
     end
 
@@ -230,14 +230,14 @@ RSpec.describe Ai4r::Search::AStar do
       it 'handles single cell grid' do
         astar = described_class.new(single_cell_grid)
         path = astar.find_path([0, 0], [0, 0])
-        
+
         expect(path).to eq([[0, 0]])
       end
 
       it 'handles maximum iterations limit' do
         astar = described_class.new(maze_grid, max_iterations: 5)
         path = astar.find_path([0, 0], [6, 6])
-        
+
         expect(path).to be_nil
       end
     end
@@ -248,53 +248,53 @@ RSpec.describe Ai4r::Search::AStar do
 
     context 'start position validation' do
       it 'raises error for invalid start position format' do
-        expect {
+        expect do
           astar.find_path('invalid', [2, 2])
-        }.to raise_error(ArgumentError, 'start must be [row, col] array')
+        end.to raise_error(ArgumentError, 'start must be [row, col] array')
       end
 
       it 'raises error for start position with wrong length' do
-        expect {
+        expect do
           astar.find_path([0], [2, 2])
-        }.to raise_error(ArgumentError, 'start must be [row, col] array')
+        end.to raise_error(ArgumentError, 'start must be [row, col] array')
       end
 
       it 'raises error for start position with non-integer coordinates' do
-        expect {
+        expect do
           astar.find_path([0.5, 1], [2, 2])
-        }.to raise_error(ArgumentError, 'start coordinates must be integers')
+        end.to raise_error(ArgumentError, 'start coordinates must be integers')
       end
 
       it 'raises error for start position out of bounds' do
-        expect {
+        expect do
           astar.find_path([5, 5], [2, 2])
-        }.to raise_error(ArgumentError, /start position.*is invalid/)
+        end.to raise_error(ArgumentError, /start position.*is invalid/)
       end
     end
 
     context 'goal position validation' do
       it 'raises error for invalid goal position format' do
-        expect {
+        expect do
           astar.find_path([0, 0], 'invalid')
-        }.to raise_error(ArgumentError, 'goal must be [row, col] array')
+        end.to raise_error(ArgumentError, 'goal must be [row, col] array')
       end
 
       it 'raises error for goal position with wrong length' do
-        expect {
+        expect do
           astar.find_path([0, 0], [2])
-        }.to raise_error(ArgumentError, 'goal must be [row, col] array')
+        end.to raise_error(ArgumentError, 'goal must be [row, col] array')
       end
 
       it 'raises error for goal position with non-integer coordinates' do
-        expect {
+        expect do
           astar.find_path([0, 0], [2, 2.5])
-        }.to raise_error(ArgumentError, 'goal coordinates must be integers')
+        end.to raise_error(ArgumentError, 'goal coordinates must be integers')
       end
 
       it 'raises error for goal position out of bounds' do
-        expect {
+        expect do
           astar.find_path([0, 0], [5, 5])
-        }.to raise_error(ArgumentError, /goal position.*is invalid/)
+        end.to raise_error(ArgumentError, /goal position.*is invalid/)
       end
     end
   end
@@ -354,7 +354,7 @@ RSpec.describe Ai4r::Search::AStar do
       it 'calculates diagonal distance for mixed movement' do
         distance = astar.heuristic_cost([0, 0], [3, 1])
         # 1 diagonal move + 2 orthogonal moves
-        expected = Math.sqrt(2) * 1 + (3 - 1)
+        expected = (Math.sqrt(2) * 1) + (3 - 1)
         expect(distance).to be_within(0.001).of(expected)
       end
     end
@@ -372,10 +372,10 @@ RSpec.describe Ai4r::Search::AStar do
       it 'raises error for invalid heuristic function' do
         astar = described_class.new(simple_grid)
         astar.instance_variable_set(:@heuristic_function, :invalid)
-        
-        expect {
+
+        expect do
           astar.heuristic_cost([0, 0], [2, 2])
-        }.to raise_error(ArgumentError, 'Unknown heuristic: invalid')
+        end.to raise_error(ArgumentError, 'Unknown heuristic: invalid')
       end
     end
   end
@@ -385,36 +385,36 @@ RSpec.describe Ai4r::Search::AStar do
 
     it 'generates correct neighbors for center position' do
       neighbors = astar.get_neighbors([1, 1])
-      
+
       expected = [
         [0, 0], [0, 1], [0, 2],
-        [1, 0],          [1, 2],
+        [1, 0], [1, 2],
         [2, 0], [2, 1], [2, 2]
       ]
-      
+
       expect(neighbors.sort).to eq(expected.sort)
     end
 
     it 'generates correct neighbors for corner position' do
       neighbors = astar.get_neighbors([0, 0])
-      
+
       expected = [[0, 1], [1, 0], [1, 1]]
-      
+
       expect(neighbors.sort).to eq(expected.sort)
     end
 
     it 'generates correct neighbors for edge position' do
       neighbors = astar.get_neighbors([0, 1])
-      
+
       expected = [[0, 0], [0, 2], [1, 0], [1, 1], [1, 2]]
-      
+
       expect(neighbors.sort).to eq(expected.sort)
     end
 
     it 'excludes obstacles from neighbors' do
       obstacle_astar = described_class.new(obstacle_grid)
       neighbors = obstacle_astar.get_neighbors([1, 0])
-      
+
       # Should not include [1, 1] because it's an obstacle
       expect(neighbors).not_to include([1, 1])
       expect(neighbors).to include([0, 0])
@@ -446,7 +446,7 @@ RSpec.describe Ai4r::Search::AStar do
 
     it 'tracks search statistics' do
       astar.find_path([0, 0], [4, 4])
-      
+
       expect(astar.nodes_explored).to be > 0
       expect(astar.nodes_generated).to be > 0
       expect(astar.path_cost).to be > 0
@@ -457,10 +457,10 @@ RSpec.describe Ai4r::Search::AStar do
     it 'resets statistics between searches' do
       astar.find_path([0, 0], [2, 2])
       first_nodes_explored = astar.nodes_explored
-      
+
       astar.find_path([0, 0], [4, 4])
       second_nodes_explored = astar.nodes_explored
-      
+
       # Second search should have different (likely higher) node count
       expect(second_nodes_explored).not_to eq(first_nodes_explored)
     end
@@ -471,7 +471,7 @@ RSpec.describe Ai4r::Search::AStar do
 
     it 'generates grid visualization without path' do
       visualization = astar.visualize_grid
-      
+
       expect(visualization).to be_a(String)
       expect(visualization).to include('Grid Visualization')
       expect(visualization).to include('·') # Empty spaces
@@ -480,7 +480,7 @@ RSpec.describe Ai4r::Search::AStar do
     it 'generates grid visualization with path' do
       path = [[0, 0], [1, 1], [2, 2]]
       visualization = astar.visualize_grid(path)
-      
+
       expect(visualization).to be_a(String)
       expect(visualization).to include('●') # Path markers
     end
@@ -488,7 +488,7 @@ RSpec.describe Ai4r::Search::AStar do
     it 'shows obstacles in visualization' do
       obstacle_astar = described_class.new(obstacle_grid)
       visualization = obstacle_astar.visualize_grid
-      
+
       expect(visualization).to include('■') # Obstacle markers
     end
   end
@@ -499,11 +499,11 @@ RSpec.describe Ai4r::Search::AStar do
 
       it 'compares different heuristics' do
         results = astar.compare_heuristics([0, 0], [4, 4])
-        
+
         expect(results).to be_a(Hash)
         expect(results.keys).to match_array(described_class::HEURISTIC_FUNCTIONS)
-        
-        results.each do |heuristic, data|
+
+        results.each_value do |data|
           expect(data).to have_key(:path_found)
           expect(data).to have_key(:path_length)
           expect(data).to have_key(:path_cost)
@@ -514,9 +514,9 @@ RSpec.describe Ai4r::Search::AStar do
 
       it 'shows different performance characteristics' do
         results = astar.compare_heuristics([0, 0], [4, 4])
-        
+
         # All heuristics should find path in this case
-        results.each do |heuristic, data|
+        results.each_value do |data|
           expect(data[:path_found]).to be true
           expect(data[:path_length]).to be > 0
           expect(data[:nodes_explored]).to be > 0
@@ -529,11 +529,11 @@ RSpec.describe Ai4r::Search::AStar do
 
       it 'tracks step history when enabled' do
         allow(astar).to receive(:gets) # Mock user input
-        
+
         astar.find_path([0, 0], [2, 2])
-        
+
         expect(astar.step_history).not_to be_empty
-        
+
         step = astar.step_history.first
         expect(step).to have_key(:iteration)
         expect(step).to have_key(:current_node)
@@ -557,7 +557,7 @@ RSpec.describe Ai4r::Search::AStar do
     it 'checks position equality correctly' do
       other_node = described_class::Node.new([1, 1], 1.0, 1.0, 0.0, nil)
       different_node = described_class::Node.new([2, 2], 1.0, 1.0, 0.0, nil)
-      
+
       expect(node.same_position?(other_node)).to be true
       expect(node.same_position?(different_node)).to be false
     end
@@ -565,7 +565,7 @@ RSpec.describe Ai4r::Search::AStar do
     it 'provides meaningful string representation' do
       node.calculate_f_cost
       string_repr = node.to_s
-      
+
       expect(string_repr).to include('Node')
       expect(string_repr).to include('[1, 1]')
       expect(string_repr).to include('g=2.0')
@@ -598,12 +598,12 @@ RSpec.describe Ai4r::Search::AStar do
         end
         maze
       end
-      
+
       let(:astar) { described_class.new(complex_maze) }
 
       it 'finds path in complex maze' do
         path = astar.find_path([0, 0], [19, 19])
-        
+
         expect(path).not_to be_nil
         expect(path.first).to eq([0, 0])
         expect(path.last).to eq([19, 19])
@@ -619,10 +619,10 @@ RSpec.describe Ai4r::Search::AStar do
         grid = Array.new(3) { Array.new(3, 1) }
         grid[0][0] = 0 # Start
         grid[2][2] = 0 # Goal
-        
+
         astar = described_class.new(grid)
         path = astar.find_path([0, 0], [2, 2])
-        
+
         expect(path).to be_nil
       end
 
@@ -634,10 +634,10 @@ RSpec.describe Ai4r::Search::AStar do
           [0, 1, 1, 1, 0],
           [0, 0, 0, 0, 0]
         ]
-        
+
         astar = described_class.new(edge_grid)
         path = astar.find_path([0, 0], [0, 4])
-        
+
         expect(path).not_to be_nil
         expect(path.first).to eq([0, 0])
         expect(path.last).to eq([0, 4])
@@ -649,14 +649,14 @@ RSpec.describe Ai4r::Search::AStar do
         # This test ensures the algorithm doesn't accumulate excessive memory
         large_grid = Array.new(30) { Array.new(30, 0) }
         astar = described_class.new(large_grid)
-        
+
         # Run multiple searches
         5.times do
           start = [rand(30), rand(30)]
           goal = [rand(30), rand(30)]
           astar.find_path(start, goal)
         end
-        
+
         # If we get here without memory issues, the test passes
         expect(true).to be true
       end

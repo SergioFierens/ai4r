@@ -158,7 +158,7 @@ module Ai4r
         start_node = create_node(start, 0, heuristic_cost(start, goal))
         open_list << start_node
 
-        educational_output("🎯 A* Search Starting", <<~MSG)
+        educational_output('🎯 A* Search Starting', <<~MSG)
           Start: #{start.inspect}
           Goal: #{goal.inspect}
           Heuristic: #{@heuristic_function}
@@ -187,7 +187,7 @@ module Ai4r
             path = reconstruct_path(current_node)
             @path_cost = current_node.g_cost
 
-            educational_output("🎉 Path Found!", <<~MSG)
+            educational_output('🎉 Path Found!', <<~MSG)
               Path length: #{path.length} steps
               Path cost: #{@path_cost}
               Nodes explored: #{@nodes_explored}
@@ -203,7 +203,7 @@ module Ai4r
 
         # No path found
         @search_time = Time.now - @search_start_time
-        educational_output("❌ No Path Found", <<~MSG)
+        educational_output('❌ No Path Found', <<~MSG)
           Nodes explored: #{@nodes_explored}
           Search time: #{@search_time.round(4)} seconds
           Reason: #{iteration >= @max_iterations ? 'Max iterations reached' : 'No path exists'}
@@ -261,9 +261,7 @@ module Ai4r
             new_col = col + d_col
 
             # Check bounds and obstacles
-            if valid_position?([new_row, new_col])
-              neighbors << [new_row, new_col]
-            end
+            neighbors << [new_row, new_col] if valid_position?([new_row, new_col])
           end
         end
 
@@ -310,13 +308,13 @@ module Ai4r
           visualization += "#{row_idx.to_s.rjust(2)} "
           row.each_with_index do |cell, col_idx|
             position = [row_idx, col_idx]
-            if path_positions.include?(position)
-              visualization += ' ● ' # Path marker
-            elsif cell == 1
-              visualization += ' ■ ' # Obstacle
-            else
-              visualization += ' · ' # Empty space
-            end
+            visualization += if path_positions.include?(position)
+                               ' ● ' # Path marker
+                             elsif cell == 1
+                               ' ■ ' # Obstacle
+                             else
+                               ' · ' # Empty space
+                             end
           end
           visualization += "\n"
         end
@@ -363,15 +361,13 @@ module Ai4r
 
         # Check for rectangular grid
         first_row_length = grid[0].length
-        unless grid.all? { |row| row.length == first_row_length }
-          raise ArgumentError, 'Grid must be rectangular'
-        end
+        raise ArgumentError, 'Grid must be rectangular' unless grid.all? { |row| row.length == first_row_length }
 
         # Validate cell values
         grid.each_with_index do |row, row_idx|
           row.each_with_index do |cell, col_idx|
             unless [0, 1].include?(cell)
-              raise ArgumentError, 
+              raise ArgumentError,
                     "Invalid cell value #{cell} at position [#{row_idx}, #{col_idx}]. Must be 0 or 1."
             end
           end
@@ -383,7 +379,7 @@ module Ai4r
       # Validate heuristic function
       def validate_heuristic(heuristic)
         unless HEURISTIC_FUNCTIONS.include?(heuristic)
-          raise ArgumentError, 
+          raise ArgumentError,
                 "Invalid heuristic: #{heuristic}. Must be one of: #{HEURISTIC_FUNCTIONS.join(', ')}"
         end
         heuristic
@@ -391,18 +387,12 @@ module Ai4r
 
       # Validate position coordinates
       def validate_position(position, name)
-        unless position.is_a?(Array) && position.length == 2
-          raise ArgumentError, "#{name} must be [row, col] array"
-        end
+        raise ArgumentError, "#{name} must be [row, col] array" unless position.is_a?(Array) && position.length == 2
 
         row, col = position
-        unless row.is_a?(Integer) && col.is_a?(Integer)
-          raise ArgumentError, "#{name} coordinates must be integers"
-        end
+        raise ArgumentError, "#{name} coordinates must be integers" unless row.is_a?(Integer) && col.is_a?(Integer)
 
-        unless valid_position?(position)
-          raise ArgumentError, "#{name} position #{position.inspect} is invalid"
-        end
+        raise ArgumentError, "#{name} position #{position.inspect} is invalid" unless valid_position?(position)
       end
 
       # Check if position is valid (within bounds and not an obstacle)
@@ -478,7 +468,7 @@ module Ai4r
 
       # Euclidean distance heuristic
       def euclidean_distance(from, to)
-        Math.sqrt((from[0] - to[0])**2 + (from[1] - to[1])**2)
+        Math.sqrt(((from[0] - to[0])**2) + ((from[1] - to[1])**2))
       end
 
       # Chebyshev distance heuristic
@@ -490,7 +480,7 @@ module Ai4r
       def diagonal_distance(from, to)
         dx = (from[0] - to[0]).abs
         dy = (from[1] - to[1]).abs
-        Math.sqrt(2) * [dx, dy].min + ([dx, dy].max - [dx, dy].min)
+        (Math.sqrt(2) * [dx, dy].min) + ([dx, dy].max - [dx, dy].min)
       end
 
       # Educational output helper
@@ -522,7 +512,7 @@ module Ai4r
         puts "  Current: #{current_node}"
         puts "  Open list: #{open_list.length} nodes"
         puts "  Closed list: #{closed_list.length} nodes"
-        puts "  Press Enter to continue..." if @step_by_step_mode
+        puts '  Press Enter to continue...' if @step_by_step_mode
         gets if @step_by_step_mode
       end
     end

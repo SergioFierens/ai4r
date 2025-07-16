@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 # this example shows the impact of the size of a som on the global error distance
-require File.dirname(__FILE__) + '/../../lib/ai4r/som/som'
-require File.dirname(__FILE__) + '/som_data'
+require "#{File.dirname(__FILE__)}/../../lib/ai4r/som/som"
+require "#{File.dirname(__FILE__)}/som_data"
 require 'benchmark'
 
 10.times do |t|

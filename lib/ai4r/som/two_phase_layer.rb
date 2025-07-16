@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Author::    Thomas Kern
 # License::   MPL 1.1
 # Project::   ai4r
@@ -7,13 +9,11 @@
 # the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../data/parameterizable'
-require File.dirname(__FILE__) + '/layer'
+require "#{File.dirname(__FILE__)}/../data/parameterizable"
+require "#{File.dirname(__FILE__)}/layer"
 
 module Ai4r
-
   module Som
-
     # responsible for the implementation of the algorithm's decays, extends the class Layer.
     # currently overrides the radius and learning rate decay methods of Layer.
     # Has two phases, phase one has a decay in both the learning rate and the radius. The number
@@ -32,10 +32,9 @@ module Ai4r
     # * phase_two_learning_rate  => sets the learning rate for phase two
 
     class TwoPhaseLayer < Layer
-
       def initialize(nodes, learning_rate = 0.9, phase_one = 150, phase_two = 100,
-              phase_one_learning_rate = 0.1, phase_two_learning_rate = 0)
-        super nodes, nodes, phase_one + phase_two, learning_rate
+                     phase_one_learning_rate = 0.1, phase_two_learning_rate = 0)
+        super(nodes, nodes, phase_one + phase_two, learning_rate)
         @phase_one = phase_one
         @phase_two = phase_two
         @lr = @initial_learning_rate
@@ -43,9 +42,9 @@ module Ai4r
         @phase_one_learning_rate = phase_one_learning_rate
         @phase_two_learning_rate = phase_two_learning_rate
 
-        denominator = nodes/2.0 - 1
-        @radius_reduction = denominator == 0 ? 1 : @phase_one / denominator + 1
-        @delta_lr = @phase_one == 0 ? 0 : (@lr - @phase_one_learning_rate)/ @phase_one
+        denominator = (nodes / 2.0) - 1
+        @radius_reduction = denominator == 0 ? 1 : (@phase_one / denominator) + 1
+        @delta_lr = @phase_one == 0 ? 0 : (@lr - @phase_one_learning_rate) / @phase_one
         @radius = (nodes / 2.0).to_i
       end
 
@@ -53,15 +52,10 @@ module Ai4r
       # in phase one, the radius will incrementially reduced by 1 every @radius_reduction time
       # in phase two, the radius is fixed to 1
       def radius_decay(epoch)
-        if epoch > @phase_one
-          return 1
-        else
-          if @radius_reduction > 0 && (epoch % @radius_reduction) == 0
-            @radius -= 1
-          end
-          @radius < 0 ? 0 : @radius
-        end
+        return 1 if epoch > @phase_one
 
+        @radius -= 1 if @radius_reduction > 0 && (epoch % @radius_reduction) == 0
+        [@radius, 0].max
       end
 
       # two different values will be returned, depending on the phase
@@ -76,16 +70,12 @@ module Ai4r
           return @lr
         elsif epoch == @phase_one
           @lr = @phase_one_learning_rate
-          @delta_lr = @phase_two == 0 ? 0 : (@phase_one_learning_rate - @phase_two_learning_rate)/@phase_two
+          @delta_lr = @phase_two == 0 ? 0 : (@phase_one_learning_rate - @phase_two_learning_rate) / @phase_two
           return @lr
         else
           @lr -= @delta_lr
         end
       end
-
     end
-
   end
-
 end
-

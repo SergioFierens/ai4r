@@ -95,49 +95,49 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
 
     context 'with invalid parameters' do
       it 'raises error for invalid n_trees' do
-        expect {
+        expect do
           described_class.new(n_trees: 0)
-        }.to raise_error(ArgumentError, 'n_trees must be a positive integer, got: 0')
+        end.to raise_error(ArgumentError, 'n_trees must be a positive integer, got: 0')
 
-        expect {
+        expect do
           described_class.new(n_trees: -1)
-        }.to raise_error(ArgumentError, 'n_trees must be a positive integer, got: -1')
+        end.to raise_error(ArgumentError, 'n_trees must be a positive integer, got: -1')
 
-        expect {
+        expect do
           described_class.new(n_trees: 'invalid')
-        }.to raise_error(ArgumentError, 'n_trees must be a positive integer, got: invalid')
+        end.to raise_error(ArgumentError, 'n_trees must be a positive integer, got: invalid')
       end
 
       it 'raises error for invalid max_depth' do
-        expect {
+        expect do
           described_class.new(max_depth: 0)
-        }.to raise_error(ArgumentError, 'max_depth must be a positive integer, got: 0')
+        end.to raise_error(ArgumentError, 'max_depth must be a positive integer, got: 0')
 
-        expect {
+        expect do
           described_class.new(max_depth: -1)
-        }.to raise_error(ArgumentError, 'max_depth must be a positive integer, got: -1')
+        end.to raise_error(ArgumentError, 'max_depth must be a positive integer, got: -1')
       end
 
       it 'raises error for invalid min_samples_split' do
-        expect {
+        expect do
           described_class.new(min_samples_split: 1)
-        }.to raise_error(ArgumentError, 'min_samples_split must be an integer >= 2, got: 1')
+        end.to raise_error(ArgumentError, 'min_samples_split must be an integer >= 2, got: 1')
 
-        expect {
+        expect do
           described_class.new(min_samples_split: 0)
-        }.to raise_error(ArgumentError, 'min_samples_split must be an integer >= 2, got: 0')
+        end.to raise_error(ArgumentError, 'min_samples_split must be an integer >= 2, got: 0')
       end
 
       it 'raises error for invalid max_features string' do
-        expect {
+        expect do
           described_class.new(max_features: 'invalid')
-        }.to raise_error(ArgumentError, 'Invalid max_features string: invalid')
+        end.to raise_error(ArgumentError, 'Invalid max_features string: invalid')
       end
 
       it 'raises error for invalid max_features type' do
-        expect {
+        expect do
           described_class.new(max_features: 1.5)
-        }.to raise_error(ArgumentError, 'max_features must be Integer, String, or nil')
+        end.to raise_error(ArgumentError, 'max_features must be Integer, String, or nil')
       end
     end
   end
@@ -148,24 +148,24 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
 
       it 'trains successfully on iris dataset' do
         expect { rf.train(iris_data) }.not_to raise_error
-        
+
         expect(rf.trees.length).to eq(3)
         expect(rf.training_time).to be > 0
         expect(rf.n_features).to eq(4)
-        expect(rf.class_labels).to match_array(['setosa', 'versicolor', 'virginica'])
+        expect(rf.class_labels).to match_array(%w[setosa versicolor virginica])
       end
 
       it 'trains successfully on binary dataset' do
         expect { rf.train(binary_data) }.not_to raise_error
-        
+
         expect(rf.trees.length).to eq(3)
         expect(rf.n_features).to eq(2)
-        expect(rf.class_labels).to match_array(['A', 'B'])
+        expect(rf.class_labels).to match_array(%w[A B])
       end
 
       it 'calculates feature importances' do
         rf.train(iris_data)
-        
+
         expect(rf.feature_importances).to be_a(Hash)
         expect(rf.feature_importances.keys.length).to eq(4)
         expect(rf.feature_importances.values.all? { |v| v >= 0 }).to be true
@@ -175,22 +175,22 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
       it 'creates bootstrap samples when enabled' do
         rf_bootstrap = described_class.new(n_trees: 3, bootstrap: true)
         rf_bootstrap.train(iris_data)
-        
+
         expect(rf_bootstrap.bootstrap_samples.length).to eq(3)
         expect(rf_bootstrap.bootstrap_samples.all? { |sample| sample.length == iris_data.length }).to be true
       end
 
       it 'creates feature subsets for each tree' do
         rf.train(iris_data)
-        
+
         expect(rf.feature_subsets.length).to eq(3)
-        expect(rf.feature_subsets.all? { |subset| subset.is_a?(Array) }).to be true
+        expect(rf.feature_subsets.all?(Array)).to be true
         expect(rf.feature_subsets.all? { |subset| subset.length <= 4 }).to be true
       end
 
       it 'calculates out-of-bag error' do
         rf.train(iris_data)
-        
+
         expect(rf.oob_error).to be_a(Float)
         expect(rf.oob_error).to be >= 0
         expect(rf.oob_error).to be <= 1
@@ -198,7 +198,7 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
 
       it 'tracks diversity metrics' do
         rf.train(iris_data)
-        
+
         expect(rf.diversity_metrics).to be_a(Hash)
         expect(rf.diversity_metrics).to have_key(:diversity_index)
         expect(rf.diversity_metrics).to have_key(:average_agreement)
@@ -210,27 +210,27 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
       let(:rf) { described_class.new }
 
       it 'raises error for empty data' do
-        expect {
+        expect do
           rf.train([])
-        }.to raise_error(ArgumentError, 'Training data cannot be empty')
+        end.to raise_error(ArgumentError, 'Training data cannot be empty')
       end
 
       it 'raises error for non-2D data' do
-        expect {
+        expect do
           rf.train([1, 2, 3])
-        }.to raise_error(ArgumentError, 'Training data must be 2D array')
+        end.to raise_error(ArgumentError, 'Training data must be 2D array')
       end
 
       it 'raises error for inconsistent row lengths' do
-        expect {
+        expect do
           rf.train([[1, 2, 'A'], [3, 4, 5, 'B']])
-        }.to raise_error(ArgumentError, 'All training samples must have the same number of features')
+        end.to raise_error(ArgumentError, 'All training samples must have the same number of features')
       end
 
       it 'raises error for insufficient columns' do
-        expect {
+        expect do
           rf.train([['A'], ['B']])
-        }.to raise_error(ArgumentError, 'Training data must have at least 2 columns (features + target)')
+        end.to raise_error(ArgumentError, 'Training data must have at least 2 columns (features + target)')
       end
     end
   end
@@ -245,16 +245,16 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
     context 'single prediction' do
       it 'makes prediction for valid input' do
         prediction = rf.predict([5.0, 3.0, 1.5, 0.2])
-        
+
         expect(prediction).to be_a(String)
-        expect(['setosa', 'versicolor', 'virginica']).to include(prediction)
+        expect(%w[setosa versicolor virginica]).to include(prediction)
       end
 
       it 'makes consistent predictions' do
         sample = [5.0, 3.0, 1.5, 0.2]
         prediction1 = rf.predict(sample)
         prediction2 = rf.predict(sample)
-        
+
         expect(prediction1).to eq(prediction2)
       end
 
@@ -275,11 +275,11 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
           [6.0, 3.0, 4.0, 1.0],
           [7.0, 3.0, 5.0, 2.0]
         ]
-        
+
         predictions = rf.predict_batch(samples)
-        
+
         expect(predictions.length).to eq(3)
-        expect(predictions.all? { |p| p.is_a?(String) }).to be true
+        expect(predictions.all?(String)).to be true
       end
 
       it 'handles empty batch' do
@@ -291,37 +291,37 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
     context 'probability prediction' do
       it 'calculates class probabilities' do
         probabilities = rf.predict_proba([5.0, 3.0, 1.5, 0.2])
-        
+
         expect(probabilities).to be_a(Hash)
-        expect(probabilities.keys.all? { |k| k.is_a?(String) }).to be true
-        expect(probabilities.values.all? { |v| v >= 0 && v <= 1 }).to be true
+        expect(probabilities.keys.all?(String)).to be true
+        expect(probabilities.values.all? { |v| v.between?(0, 1) }).to be true
         expect(probabilities.values.sum).to be_within(0.001).of(1.0)
       end
 
       it 'returns all possible classes in probabilities' do
         probabilities = rf.predict_proba([5.0, 3.0, 1.5, 0.2])
-        
+
         # Should have probabilities for classes that trees can predict
         expect(probabilities.keys.length).to be >= 1
-        expect(probabilities.keys.all? { |k| ['setosa', 'versicolor', 'virginica'].include?(k) }).to be true
+        expect(probabilities.keys.all? { |k| %w[setosa versicolor virginica].include?(k) }).to be true
       end
     end
 
     context 'input validation' do
       it 'raises error for non-array input' do
-        expect {
+        expect do
           rf.predict('invalid')
-        }.to raise_error(ArgumentError, 'Sample must be an array')
+        end.to raise_error(ArgumentError, 'Sample must be an array')
       end
 
       it 'raises error for wrong number of features' do
-        expect {
+        expect do
           rf.predict([1, 2, 3]) # Should be 4 features
-        }.to raise_error(ArgumentError, 'Sample must have 4 features, got 3')
+        end.to raise_error(ArgumentError, 'Sample must have 4 features, got 3')
 
-        expect {
+        expect do
           rf.predict([1, 2, 3, 4, 5]) # Should be 4 features
-        }.to raise_error(ArgumentError, 'Sample must have 4 features, got 5')
+        end.to raise_error(ArgumentError, 'Sample must have 4 features, got 5')
       end
     end
   end
@@ -366,7 +366,7 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
     it 'creates bootstrap sample with replacement' do
       data = [[1, 'A'], [2, 'B'], [3, 'C']]
       bootstrap_sample = rf.send(:create_bootstrap_sample, data)
-      
+
       expect(bootstrap_sample.length).to eq(3)
       expect(bootstrap_sample.all? { |sample| data.include?(sample) }).to be true
     end
@@ -375,7 +375,7 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
       rf_no_bootstrap = described_class.new(bootstrap: false)
       data = [[1, 'A'], [2, 'B'], [3, 'C']]
       sample = rf_no_bootstrap.send(:create_bootstrap_sample, data)
-      
+
       expect(sample).to eq(data)
       expect(sample.object_id).not_to eq(data.object_id)
     end
@@ -391,7 +391,7 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
 
     it 'selects random subset of features' do
       subset = rf.send(:select_random_features)
-      
+
       expect(subset.length).to eq(2)
       expect(subset.all? { |idx| idx >= 0 && idx < 5 }).to be true
       expect(subset.uniq.length).to eq(2) # No duplicates
@@ -401,7 +401,7 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
     it 'selects different subsets on multiple calls' do
       subset1 = rf.send(:select_random_features)
       subset2 = rf.send(:select_random_features)
-      
+
       # With randomness, they should sometimes be different
       # Run multiple times to increase probability
       different = false
@@ -413,7 +413,7 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
           break
         end
       end
-      
+
       expect(different).to be true
     end
   end
@@ -425,7 +425,7 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
       it 'analyzes feature importance' do
         rf.train(iris_data)
         importance = rf.feature_importance_analysis
-        
+
         expect(importance).to be_a(Hash)
         expect(importance.keys.length).to eq(4)
         expect(importance.values.all? { |v| v >= 0 }).to be true
@@ -436,7 +436,7 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
         rf.train(iris_data)
         importance1 = rf.feature_importance_analysis
         importance2 = rf.feature_importance_analysis
-        
+
         expect(importance1).to eq(importance2)
       end
     end
@@ -447,7 +447,7 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
       it 'estimates OOB error' do
         rf.train(iris_data)
         oob_error = rf.oob_error_estimate
-        
+
         expect(oob_error).to be_a(Float)
         expect(oob_error).to be >= 0
         expect(oob_error).to be <= 1
@@ -460,12 +460,12 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
       it 'analyzes ensemble diversity' do
         rf.train(iris_data)
         diversity = rf.diversity_analysis
-        
+
         expect(diversity).to be_a(Hash)
         expect(diversity).to have_key(:diversity_index)
         expect(diversity).to have_key(:average_agreement)
         expect(diversity).to have_key(:prediction_variance)
-        
+
         expect(diversity[:diversity_index]).to be >= 0
         expect(diversity[:diversity_index]).to be <= 1
         expect(diversity[:average_agreement]).to be >= 0
@@ -478,14 +478,14 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
 
       it 'compares performance with single tree' do
         rf.train(iris_data)
-        
+
         # Use same data for testing (not ideal but for demonstration)
         comparison = rf.compare_with_single_tree(iris_data)
-        
+
         expect(comparison).to have_key(:random_forest)
         expect(comparison).to have_key(:single_tree)
         expect(comparison).to have_key(:improvement)
-        
+
         expect(comparison[:random_forest][:accuracy]).to be >= 0
         expect(comparison[:random_forest][:accuracy]).to be <= 1
         expect(comparison[:single_tree][:accuracy]).to be >= 0
@@ -499,7 +499,7 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
       it 'generates forest visualization' do
         rf.train(iris_data)
         visualization = rf.visualize_forest
-        
+
         expect(visualization).to be_a(String)
         expect(visualization).to include('Random Forest Visualization')
         expect(visualization).to include('Forest Statistics')
@@ -516,8 +516,8 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
       it 'trains efficiently on moderate dataset' do
         # Create larger dataset
         large_data = []
-        100.times do |i|
-          large_data << [rand, rand, rand, rand, ['A', 'B', 'C'].sample]
+        100.times do |_i|
+          large_data << [rand, rand, rand, rand, %w[A B C].sample]
         end
 
         benchmark_performance('Random Forest training') do
@@ -528,7 +528,7 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
 
       it 'predicts efficiently on multiple samples' do
         rf.train(iris_data)
-        
+
         # Create test samples
         test_samples = Array.new(100) { [rand * 10, rand * 10, rand * 10, rand * 10] }
 
@@ -557,7 +557,7 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
       it 'handles single sample dataset' do
         single_sample = [[1, 2, 3, 'A']]
         rf = described_class.new(n_trees: 1, max_depth: 1)
-        
+
         expect { rf.train(single_sample) }.not_to raise_error
         expect(rf.predict([1, 2, 3])).to eq('A')
       end
@@ -569,7 +569,7 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
           [5, 6, 'A']
         ]
         rf = described_class.new(n_trees: 3, max_depth: 3)
-        
+
         expect { rf.train(single_class) }.not_to raise_error
         expect(rf.predict([2, 3])).to eq('A')
       end
@@ -578,7 +578,7 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
         # This would need special handling in a production system
         # For now, test that it doesn't crash
         rf = described_class.new(n_trees: 2, max_depth: 2)
-        
+
         expect { rf.train(binary_data) }.not_to raise_error
       end
     end
@@ -586,21 +586,21 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
     context 'extreme configurations' do
       it 'handles very small max_depth' do
         rf = described_class.new(n_trees: 3, max_depth: 1)
-        
+
         expect { rf.train(iris_data) }.not_to raise_error
         expect(rf.predict([5.0, 3.0, 1.5, 0.2])).to be_a(String)
       end
 
       it 'handles very small number of trees' do
         rf = described_class.new(n_trees: 1, max_depth: 5)
-        
+
         expect { rf.train(iris_data) }.not_to raise_error
         expect(rf.trees.length).to eq(1)
       end
 
       it 'handles max_features equal to n_features' do
         rf = described_class.new(n_trees: 3, max_features: 4)
-        
+
         expect { rf.train(iris_data) }.not_to raise_error
         expect(rf.feature_subsets.all? { |subset| subset.length <= 4 }).to be true
       end
@@ -640,9 +640,9 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
 
       tree.train(simple_data)
       prediction = tree.predict([2, 3])
-      
+
       expect(prediction).to be_a(String)
-      expect(['A', 'B']).to include(prediction)
+      expect(%w[A B]).to include(prediction)
     end
 
     it 'calculates feature importances' do
@@ -654,7 +654,7 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
       ]
 
       tree.train(simple_data)
-      
+
       expect(tree.feature_importances).to be_a(Hash)
       expect(tree.feature_importances.values.all? { |v| v >= 0 }).to be true
     end
@@ -668,7 +668,7 @@ RSpec.describe Ai4r::MachineLearning::RandomForest do
       ]
 
       tree.train(simple_data)
-      
+
       expect(tree.depth).to be_a(Integer)
       expect(tree.depth).to be >= 0
       expect(tree.depth).to be <= 3

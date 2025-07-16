@@ -65,8 +65,8 @@ module Ai4r
     class RandomForest
       # Training and prediction statistics
       attr_reader :trees, :feature_importances, :oob_error, :training_time
-      attr_reader :n_features, :feature_names, :class_labels, :tree_predictions
-      attr_reader :bootstrap_samples, :feature_subsets, :diversity_metrics
+      attr_reader :n_features, :feature_names, :class_labels, :tree_predictions, :bootstrap_samples, :feature_subsets,
+                  :diversity_metrics
 
       # Educational configuration
       attr_accessor :verbose_mode, :track_oob, :calculate_importance
@@ -134,7 +134,7 @@ module Ai4r
       def train(data, feature_names = nil)
         validate_training_data(data)
 
-        educational_output("🌳 Random Forest Training Starting", <<~MSG)
+        educational_output('🌳 Random Forest Training Starting', <<~MSG)
           Number of trees: #{@n_trees}
           Max depth: #{@max_depth}
           Bootstrap sampling: #{@bootstrap}
@@ -152,7 +152,7 @@ module Ai4r
         # Determine number of features per tree
         @max_features = calculate_max_features(@max_features, @n_features)
 
-        educational_output("📊 Data Preparation Complete", <<~MSG)
+        educational_output('📊 Data Preparation Complete', <<~MSG)
           Features: #{@n_features}
           Classes: #{@class_labels.length} (#{@class_labels.join(', ')})
           Max features per tree: #{@max_features}
@@ -186,7 +186,7 @@ module Ai4r
         calculate_oob_error if @track_oob
         analyze_diversity
 
-        educational_output("🎉 Random Forest Training Complete", <<~MSG)
+        educational_output('🎉 Random Forest Training Complete', <<~MSG)
           Training time: #{@training_time.round(4)} seconds
           OOB error: #{@oob_error.round(4)}
           Average tree depth: #{average_tree_depth.round(2)}
@@ -336,7 +336,7 @@ module Ai4r
       #
       def visualize_forest
         visualization = "\n🌲 Random Forest Visualization\n"
-        visualization += "=" * 40 + "\n\n"
+        visualization += "#{'=' * 40}\n\n"
 
         visualization += "📊 Forest Statistics:\n"
         visualization += "  • Trees: #{@n_trees}\n"
@@ -348,7 +348,7 @@ module Ai4r
         visualization += "🎯 Feature Importance (Top 5):\n"
         top_features = @feature_importances.sort_by { |_, importance| -importance }.first(5)
         top_features.each_with_index do |(feature, importance), idx|
-          bar = "█" * (importance * 50).to_i
+          bar = '█' * (importance * 50).to_i
           visualization += "  #{idx + 1}. #{feature}: #{importance.round(4)} #{bar}\n"
         end
 
@@ -369,6 +369,7 @@ module Ai4r
         unless n_trees.is_a?(Integer) && n_trees > 0
           raise ArgumentError, "n_trees must be a positive integer, got: #{n_trees}"
         end
+
         n_trees
       end
 
@@ -377,6 +378,7 @@ module Ai4r
         unless max_depth.is_a?(Integer) && max_depth > 0
           raise ArgumentError, "max_depth must be a positive integer, got: #{max_depth}"
         end
+
         max_depth
       end
 
@@ -385,26 +387,29 @@ module Ai4r
         unless min_samples_split.is_a?(Integer) && min_samples_split >= 2
           raise ArgumentError, "min_samples_split must be an integer >= 2, got: #{min_samples_split}"
         end
+
         min_samples_split
       end
 
       # Validate training data
       def validate_training_data(data)
-        raise ArgumentError, "Training data cannot be empty" if data.empty?
-        raise ArgumentError, "Training data must be 2D array" unless data.all? { |row| row.is_a?(Array) }
-        
+        raise ArgumentError, 'Training data cannot be empty' if data.empty?
+        raise ArgumentError, 'Training data must be 2D array' unless data.all?(Array)
+
         first_row_length = data[0].length
         unless data.all? { |row| row.length == first_row_length }
-          raise ArgumentError, "All training samples must have the same number of features"
+          raise ArgumentError, 'All training samples must have the same number of features'
         end
-        
-        raise ArgumentError, "Training data must have at least 2 columns (features + target)" if first_row_length < 2
+
+        raise ArgumentError, 'Training data must have at least 2 columns (features + target)' if first_row_length < 2
       end
 
       # Validate prediction input
       def validate_prediction_input(sample)
-        raise ArgumentError, "Sample must be an array" unless sample.is_a?(Array)
-        raise ArgumentError, "Sample must have #{@n_features} features, got #{sample.length}" unless sample.length == @n_features
+        raise ArgumentError, 'Sample must be an array' unless sample.is_a?(Array)
+        unless sample.length == @n_features
+          raise ArgumentError, "Sample must have #{@n_features} features, got #{sample.length}"
+        end
       end
 
       # Calculate optimal number of features per tree
@@ -427,7 +432,7 @@ module Ai4r
           # Default: sqrt for classification
           Math.sqrt(n_features).ceil
         else
-          raise ArgumentError, "max_features must be Integer, String, or nil"
+          raise ArgumentError, 'max_features must be Integer, String, or nil'
         end
       end
 
@@ -489,9 +494,7 @@ module Ai4r
 
         # Normalize importances
         total_importance = @feature_importances.values.sum
-        if total_importance > 0
-          @feature_importances.transform_values! { |importance| importance / total_importance }
-        end
+        @feature_importances.transform_values! { |importance| importance / total_importance } if total_importance > 0
       end
 
       # Calculate out-of-bag error
@@ -501,13 +504,11 @@ module Ai4r
         correct_predictions = 0
         total_predictions = 0
 
-        @training_data.each_with_index do |sample, sample_idx|
+        @training_data.each_with_index do |sample, _sample_idx|
           # Find trees that didn't use this sample in training
           oob_trees = []
           @bootstrap_samples.each_with_index do |bootstrap_sample, tree_idx|
-            unless bootstrap_sample.include?(sample)
-              oob_trees << tree_idx
-            end
+            oob_trees << tree_idx unless bootstrap_sample.include?(sample)
           end
 
           next if oob_trees.empty?
@@ -524,9 +525,7 @@ module Ai4r
           oob_prediction = aggregate_predictions(oob_predictions)
 
           # Check if prediction is correct
-          if oob_prediction == sample.last
-            correct_predictions += 1
-          end
+          correct_predictions += 1 if oob_prediction == sample.last
           total_predictions += 1
         end
 
@@ -542,8 +541,8 @@ module Ai4r
         tree_pairs = (0...@n_trees).to_a.combination(2).to_a
 
         tree_pairs.each do |i, j|
-          agreement = calculate_tree_agreement(@trees[i], @trees[j], 
-                                             @feature_subsets[i], @feature_subsets[j])
+          agreement = calculate_tree_agreement(@trees[i], @trees[j],
+                                               @feature_subsets[i], @feature_subsets[j])
           agreements << agreement
         end
 
@@ -562,10 +561,10 @@ module Ai4r
 
         total_samples.times do |i|
           sample = @training_data[i]
-          
+
           pred1 = tree1.predict(features1.map { |idx| sample[idx] })
           pred2 = tree2.predict(features2.map { |idx| sample[idx] })
-          
+
           agreements += 1 if pred1 == pred2
         end
 
@@ -581,7 +580,7 @@ module Ai4r
 
         sample_size.times do |i|
           sample = @training_data[i]
-          
+
           # Get predictions from all trees
           predictions = @trees.map.with_index do |tree, tree_idx|
             features = @feature_subsets[tree_idx].map { |idx| sample[idx] }
@@ -589,11 +588,11 @@ module Ai4r
           end
 
           # Calculate variance for this sample
-          if predictions.all? { |p| p.is_a?(Numeric) }
-            mean = predictions.sum.to_f / predictions.length
-            variance = predictions.map { |p| (p - mean) ** 2 }.sum / predictions.length
-            variances << variance
-          end
+          next unless predictions.all?(Numeric)
+
+          mean = predictions.sum.to_f / predictions.length
+          variance = predictions.sum { |p| (p - mean)**2 } / predictions.length
+          variances << variance
         end
 
         variances.any? ? variances.sum / variances.length : 0.0
@@ -603,7 +602,7 @@ module Ai4r
       def aggregate_predictions(predictions)
         return nil if predictions.empty?
 
-        if predictions.all? { |p| p.is_a?(Numeric) }
+        if predictions.all?(Numeric)
           # Regression: average predictions
           predictions.sum.to_f / predictions.length
         else
@@ -650,8 +649,8 @@ module Ai4r
 
     # Simple Decision Tree implementation for Random Forest
     class DecisionTree
-      attr_reader :max_depth, :min_samples_split, :feature_subset, :tree_id
-      attr_reader :root, :feature_importances, :training_time, :depth
+      attr_reader :max_depth, :min_samples_split, :feature_subset, :tree_id, :root, :feature_importances,
+                  :training_time, :depth
 
       def initialize(max_depth:, min_samples_split:, feature_subset:, tree_id:)
         @max_depth = max_depth
@@ -672,7 +671,7 @@ module Ai4r
 
       def predict(sample)
         return nil unless @root
-        
+
         traverse_tree(@root, sample)
       end
 
@@ -687,7 +686,7 @@ module Ai4r
 
         # Create internal node
         left_data, right_data = split_data(data, best_split)
-        
+
         node = {
           feature_idx: best_split[:feature_idx],
           threshold: best_split[:threshold],
@@ -698,7 +697,7 @@ module Ai4r
 
         # Update feature importance
         @feature_importances[best_split[:feature_idx]] += best_split[:importance]
-        
+
         node
       end
 
@@ -707,7 +706,7 @@ module Ai4r
         return true if current_depth >= @max_depth
         return true if data.length < @min_samples_split
         return true if data.map(&:last).uniq.length == 1 # Pure node
-        
+
         false
       end
 
@@ -720,20 +719,20 @@ module Ai4r
         (0...n_features).each do |feature_idx|
           # Get unique values for this feature
           feature_values = data.map { |row| row[feature_idx] }.uniq.sort
-          
+
           # Try each threshold
           feature_values.each do |threshold|
             gini = calculate_split_gini(data, feature_idx, threshold)
-            
-            if gini < best_gini
-              best_gini = gini
-              best_split = {
-                feature_idx: feature_idx,
-                threshold: threshold,
-                gini: gini,
-                importance: calculate_importance_gain(data, feature_idx, threshold)
-              }
-            end
+
+            next unless gini < best_gini
+
+            best_gini = gini
+            best_split = {
+              feature_idx: feature_idx,
+              threshold: threshold,
+              gini: gini,
+              importance: calculate_importance_gain(data, feature_idx, threshold)
+            }
           end
         end
 
@@ -743,7 +742,7 @@ module Ai4r
       # Calculate Gini impurity for a split
       def calculate_split_gini(data, feature_idx, threshold)
         left_data, right_data = split_data(data, { feature_idx: feature_idx, threshold: threshold })
-        
+
         return Float::INFINITY if left_data.empty? || right_data.empty?
 
         total_samples = data.length
@@ -751,8 +750,8 @@ module Ai4r
         right_gini = calculate_gini(right_data)
 
         # Weighted average
-        (left_data.length.to_f / total_samples) * left_gini + 
-        (right_data.length.to_f / total_samples) * right_gini
+        ((left_data.length.to_f / total_samples) * left_gini) +
+          ((right_data.length.to_f / total_samples) * right_gini)
       end
 
       # Calculate Gini impurity for a dataset
@@ -765,7 +764,7 @@ module Ai4r
         gini = 1.0
         total = data.length
 
-        label_counts.each do |_, count|
+        label_counts.each_value do |count|
           probability = count.to_f / total
           gini -= probability * probability
         end
@@ -777,7 +776,7 @@ module Ai4r
       def calculate_importance_gain(data, feature_idx, threshold)
         parent_gini = calculate_gini(data)
         split_gini = calculate_split_gini(data, feature_idx, threshold)
-        
+
         parent_gini - split_gini
       end
 

@@ -71,21 +71,21 @@ RSpec.describe Ai4r::Search::Minimax do
 
     context 'with invalid parameters' do
       it 'raises error for invalid max_depth' do
-        expect {
+        expect do
           described_class.new(max_depth: 0)
-        }.to raise_error(ArgumentError, 'max_depth must be a positive integer, got: 0')
+        end.to raise_error(ArgumentError, 'max_depth must be a positive integer, got: 0')
       end
 
       it 'raises error for non-integer max_depth' do
-        expect {
+        expect do
           described_class.new(max_depth: 'invalid')
-        }.to raise_error(ArgumentError, 'max_depth must be a positive integer, got: invalid')
+        end.to raise_error(ArgumentError, 'max_depth must be a positive integer, got: invalid')
       end
 
       it 'raises error for negative max_depth' do
-        expect {
+        expect do
           described_class.new(max_depth: -1)
-        }.to raise_error(ArgumentError, 'max_depth must be a positive integer, got: -1')
+        end.to raise_error(ArgumentError, 'max_depth must be a positive integer, got: -1')
       end
     end
   end
@@ -95,9 +95,9 @@ RSpec.describe Ai4r::Search::Minimax do
 
     context 'with valid game state' do
       it 'validates game state with all required methods' do
-        expect {
+        expect do
           minimax.find_best_move(simple_game_state)
-        }.not_to raise_error
+        end.not_to raise_error
       end
     end
 
@@ -107,9 +107,9 @@ RSpec.describe Ai4r::Search::Minimax do
         allow(invalid_state).to receive(:respond_to?).with(:get_possible_moves).and_return(false)
         allow(invalid_state).to receive(:respond_to?).and_return(true)
 
-        expect {
+        expect do
           minimax.find_best_move(invalid_state)
-        }.to raise_error(ArgumentError, /game_state must implement required methods/)
+        end.to raise_error(ArgumentError, /game_state must implement required methods/)
       end
 
       it 'raises error for missing make_move method' do
@@ -117,9 +117,9 @@ RSpec.describe Ai4r::Search::Minimax do
         allow(invalid_state).to receive(:respond_to?).with(:make_move).and_return(false)
         allow(invalid_state).to receive(:respond_to?).and_return(true)
 
-        expect {
+        expect do
           minimax.find_best_move(invalid_state)
-        }.to raise_error(ArgumentError, /game_state must implement required methods/)
+        end.to raise_error(ArgumentError, /game_state must implement required methods/)
       end
 
       it 'raises error for missing evaluate method' do
@@ -127,9 +127,9 @@ RSpec.describe Ai4r::Search::Minimax do
         allow(invalid_state).to receive(:respond_to?).with(:evaluate).and_return(false)
         allow(invalid_state).to receive(:respond_to?).and_return(true)
 
-        expect {
+        expect do
           minimax.find_best_move(invalid_state)
-        }.to raise_error(ArgumentError, /game_state must implement required methods/)
+        end.to raise_error(ArgumentError, /game_state must implement required methods/)
       end
     end
   end
@@ -206,7 +206,7 @@ RSpec.describe Ai4r::Search::Minimax do
         )
 
         # Mock recursive states
-        allow(deep_state).to receive(:make_move) do |move|
+        allow(deep_state).to receive(:make_move) do |_move|
           next_state = double('GameState')
           allow(next_state).to receive_messages(
             current_player: :min,
@@ -214,8 +214,8 @@ RSpec.describe Ai4r::Search::Minimax do
             game_over?: false,
             evaluate: 5
           )
-          
-          allow(next_state).to receive(:make_move) do |move|
+
+          allow(next_state).to receive(:make_move) do |_move|
             terminal = double('GameState')
             allow(terminal).to receive_messages(
               current_player: :max,
@@ -225,7 +225,7 @@ RSpec.describe Ai4r::Search::Minimax do
             )
             terminal
           end
-          
+
           next_state
         end
 
@@ -329,7 +329,7 @@ RSpec.describe Ai4r::Search::Minimax do
       end
 
       it 'tracks pruning statistics' do
-        result = minimax.find_best_move(simple_game_state)
+        minimax.find_best_move(simple_game_state)
 
         expect(minimax.nodes_pruned).to be >= 0
         expect(minimax.nodes_explored).to be > 0
@@ -432,7 +432,7 @@ RSpec.describe Ai4r::Search::Minimax do
 
     it 'resets statistics between searches' do
       minimax.find_best_move(simple_game_state)
-      first_nodes = minimax.nodes_explored
+      minimax.nodes_explored
 
       minimax.find_best_move(simple_game_state)
       second_nodes = minimax.nodes_explored
@@ -618,7 +618,7 @@ RSpec.describe Ai4r::Search::Minimax do
       it 'does not leak memory in deep searches' do
         # Create a deeper game tree
         minimax = described_class.new(max_depth: 4)
-        
+
         # Run multiple searches to test memory efficiency
         5.times do
           minimax.find_best_move(simple_game_state)

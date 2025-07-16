@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Author::    Thomas Kern
 # License::   MPL 1.1
 # Project::   ai4r
@@ -7,12 +9,10 @@
 # the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../data/parameterizable'
+require "#{File.dirname(__FILE__)}/../data/parameterizable"
 
 module Ai4r
-
   module Som
-
     # responsible for the implementation of the algorithm's decays
     # currently has methods for the decay of the radius, influence and learning rate.
     # Has only one phase, which ends after the number of epochs is passed by the Som-class.
@@ -24,16 +24,15 @@ module Ai4r
     # * epochs => number of epochs the algorithm runs, has to be an integer. By default it is set to 100
     # * learning_rate => sets the initial learning rate
     class Layer
-
       include Ai4r::Data::Parameterizable
 
-      parameters_info :nodes => "number of nodes, has to be equal to the som",
-                      :epochs => "number of epochs the algorithm has to run",
-                      :radius => "sets the initial neighborhoud radius"
+      parameters_info nodes: 'number of nodes, has to be equal to the som',
+                      epochs: 'number of epochs the algorithm has to run',
+                      radius: 'sets the initial neighborhoud radius'
 
       def initialize(nodes, radius, epochs = 100, learning_rate = 0.7)
-        raise("Too few nodes") if nodes < 3
-        
+        raise('Too few nodes') if nodes < 3
+
         @nodes = nodes
         @epochs = epochs
         @radius = radius
@@ -49,25 +48,25 @@ module Ai4r
       def influence_decay(distance, radius)
         radius_squared = radius.to_f**2
         return 0.0 if radius_squared == 0.0
-        Math.exp(- (distance.to_f**2 / 2.0 / radius_squared))
+
+        Math.exp(- ((distance.to_f**2) / 2.0 / radius_squared))
       end
 
       # calculates the radius decay for the current epoch. Uses @time_for_epoch
       # which has to be higher than the number  of epochs, otherwise the decay will be - Infinity
       def radius_decay(epoch)
         return 0 if @time_for_epoch == 0.0
-        (@radius * ( 1 - epoch/ @time_for_epoch)).round
+
+        (@radius * (1 - (epoch / @time_for_epoch))).round
       end
 
       # calculates the learning rate decay. uses @time_for_epoch again and same rule applies:
       # @time_for_epoch has to be higher than the number  of epochs, otherwise the decay will be - Infinity
       def learning_rate_decay(epoch)
         return 0.0 if @time_for_epoch == 0.0
-        @initial_learning_rate * ( 1 - epoch / @time_for_epoch)
+
+        @initial_learning_rate * (1 - (epoch / @time_for_epoch))
       end
-
     end
-
   end
-
 end

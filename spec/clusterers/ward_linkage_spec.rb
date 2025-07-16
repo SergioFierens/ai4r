@@ -23,75 +23,75 @@ RSpec.describe Ai4r::Clusterers::WardLinkage do
   let(:variance_dataset) do
     Ai4r::Data::DataSet.new(
       data_items: variance_test_data,
-      data_labels: ['x', 'y']
+      data_labels: %w[x y]
     )
   end
 
-  describe "WardLinkage Specific Tests" do
-    it "test_variance_minimization" do
+  describe 'WardLinkage Specific Tests' do
+    it 'test_variance_minimization' do
       # Ward linkage minimizes within-cluster sum of squares (variance)
       clusterer = described_class.new.build(variance_dataset, 3)
-      
+
       expect(clusterer.clusters.length).to eq(3)
-      
+
       # Should create clusters that minimize internal variance
       clusterer.clusters.each do |cluster|
         expect(cluster.data_items.length).to be >= 1
-        
+
         # Calculate within-cluster variance
-        if cluster.data_items.length > 1
-          points = cluster.data_items
-          centroid = calculate_centroid(points)
-          
-          variance = points.map do |point|
-            euclidean_distance_squared(point, centroid)
-          end.sum
-          
-          # Variance should be reasonable (not infinite)
-          expect(variance).to be_finite
-          expect(variance).to be >= 0
+        next unless cluster.data_items.length > 1
+
+        points = cluster.data_items
+        centroid = calculate_centroid(points)
+
+        variance = points.sum do |point|
+          euclidean_distance_squared(point, centroid)
         end
+
+        # Variance should be reasonable (not infinite)
+        expect(variance).to be_finite
+        expect(variance).to be >= 0
       end
     end
 
-    it "test_ward_formula" do
+    it 'test_ward_formula' do
       # Ward uses specific distance formula for merging
       clusterer = described_class.new.build(variance_dataset, 2)
-      
+
       expect(clusterer.clusters.length).to eq(2)
-      
+
       # Should merge clusters to minimize increase in total within-cluster variance
-      total_points = clusterer.clusters.map { |c| c.data_items.length }.sum
+      total_points = clusterer.clusters.sum { |c| c.data_items.length }
       expect(total_points).to eq(variance_test_data.length)
     end
   end
 
-  describe "Variance Properties" do
-    it "creates compact clusters" do
+  describe 'Variance Properties' do
+    it 'creates compact clusters' do
       clusterer = described_class.new.build(variance_dataset, 3)
-      
+
       # Ward linkage should produce compact clusters
       clusterer.clusters.each do |cluster|
         next if cluster.data_items.length <= 1
-        
+
         points = cluster.data_items
         centroid = calculate_centroid(points)
-        
+
         # All points should be reasonably close to centroid
         max_distance_to_centroid = points.map do |point|
           euclidean_distance(point, centroid)
         end.max
-        
-        expect(max_distance_to_centroid).to be < 5.0  # Reasonable bound
+
+        expect(max_distance_to_centroid).to be < 5.0 # Reasonable bound
       end
     end
 
-    it "maintains clustering validity" do
+    it 'maintains clustering validity' do
       clusterer = described_class.new.build(variance_dataset, 3)
-      
+
       expect(clusterer).to be_a(described_class)
       expect(clusterer.number_of_clusters).to eq(3)
-      
+
       clusterer.clusters.each do |cluster|
         expect(cluster).to be_a(Ai4r::Data::DataSet)
         expect(cluster.data_items).not_to be_empty
@@ -102,10 +102,10 @@ RSpec.describe Ai4r::Clusterers::WardLinkage do
   # Helper methods
   def calculate_centroid(points)
     return [0, 0] if points.empty?
-    
-    sum_x = points.map { |p| p[0] }.sum.to_f
-    sum_y = points.map { |p| p[1] }.sum.to_f
-    
+
+    sum_x = points.sum { |p| p[0] }.to_f
+    sum_y = points.sum { |p| p[1] }.to_f
+
     [sum_x / points.length, sum_y / points.length]
   end
 
@@ -114,6 +114,6 @@ RSpec.describe Ai4r::Clusterers::WardLinkage do
   end
 
   def euclidean_distance_squared(point_a, point_b)
-    point_a.zip(point_b).map { |a, b| (a - b) ** 2 }.sum
+    point_a.zip(point_b).sum { |a, b| (a - b)**2 }
   end
 end

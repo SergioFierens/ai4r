@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Author::    Thomas Kern
 # License::   MPL 1.1
 # Project::   ai4r
@@ -12,8 +14,6 @@ require_relative 'classifier'
 
 module Ai4r
   module Classifiers
-
-
     # = Introduction
     #
     # This is an implementation of a Naive Bayesian Classifier without any
@@ -21,7 +21,7 @@ module Ai4r
     # Probabilities P(a_i | v_j) are estimated using m-estimates, hence the
     # m parameter as second parameter when isntantiating the class.
     # The estimation looks like this:
-    #(n_c + mp) / (n + m)
+    # (n_c + mp) / (n + m)
     #
     # the variables are:
     # n = the number of training examples for which v = v_j
@@ -54,12 +54,11 @@ module Ai4r
     #     build data
     #   b.eval(["Red", "SUV", "Domestic"])
     #
-    
-    class NaiveBayes < Classifier
 
-      parameters_info :m => 'Default value is set to 0. It may be set to a value greater than ' +
-        '0 when the size of the dataset is relatively small'
-          
+    class NaiveBayes < Classifier
+      parameters_info m: 'Default value is set to 0. It may be set to a value greater than ' \
+                         '0 when the size of the dataset is relatively small'
+
       def initialize
         @m = 0
         @class_counts = []
@@ -69,7 +68,7 @@ module Ai4r
         @klass_index = {} # hashmap for quick lookup of all the used klasses and their indice
         @values = {} # hashmap for quick lookup of all the values
       end
-      
+
       # You can evaluate new data, predicting its category.
       # e.g.
       #   b.eval(["Red", "SUV", "Domestic"])
@@ -82,7 +81,7 @@ module Ai4r
 
       # Calculates the probabilities for the data entry Data.
       # data has to be an array of the same dimension as the training data minus the
-      # class column. 
+      # class column.
       # Returns a map containint all classes as keys:
       # {Class_1 => probability, Class_2 => probability2 ... }
       # Probability is <= 1 and of type Float.
@@ -104,7 +103,7 @@ module Ai4r
       # Parameter data has to be an instance of CsvDataSet
       def build(data)
         raise 'Error instance must be passed' unless data.is_a?(Ai4r::Data::DataSet)
-        raise 'Data should not be empty' if data.data_items.length == 0
+        raise 'Data should not be empty' if data.data_items.empty?
 
         initialize_domain_data(data)
         initialize_klass_index
@@ -123,7 +122,6 @@ module Ai4r
         @klasses = @domains.last.to_a
       end
 
-
       # calculates the klass probability of a data entry
       # as usual, the probability of the value is multiplied with every conditional
       # probability of every attribute in condition to a specific class
@@ -132,19 +130,22 @@ module Ai4r
         0.upto(prob.length - 1) do |prob_index|
           data.each_with_index do |att, index|
             next if value_index(att, index).nil?
+
             prob[prob_index] *= @pcp[index][value_index(att, index)][prob_index]
           end
         end
-        
+
         prob
       end
 
       # normalises the array of probabilities so the sum of the array equals 1
       def normalize_class_probability(prob)
         prob_sum = sum(prob)
-        prob_sum > 0 ?
-          prob.map { |prob_entry| prob_entry / prob_sum } :
+        if prob_sum > 0
+          prob.map { |prob_entry| prob_entry / prob_sum }
+        else
           prob
+        end
       end
 
       # sums an array up; returns a number of type Float
@@ -154,7 +155,7 @@ module Ai4r
 
       # returns the name of the class when the index is found
       def index_to_klass(index)
-        @klass_index.has_value?(index) ? @klass_index.key(index) : nil
+        @klass_index.value?(index) ? @klass_index.key(index) : nil
       end
 
       # initializes @values and @klass_index; maps a certain value to a uniq index
@@ -235,16 +236,17 @@ module Ai4r
           attributes.each_with_index do |values, v_index|
             values.each_with_index do |klass, k_index|
               denominator = @class_counts[k_index] + @m
-              @pcp[a_index][v_index][k_index] = denominator == 0 ? 0.0 : (klass.to_f + @m * @class_prob[k_index]) / denominator
+              @pcp[a_index][v_index][k_index] =
+                denominator == 0 ? 0.0 : (klass.to_f + (@m * @class_prob[k_index])) / denominator
             end
           end
         end
       end
 
-      #DataEntry stores the instance of the data entry
-      #the data is accessible via entries
-      #stores the class-column in the attribute klass and
-      #removes the column for the class-entry
+      # DataEntry stores the instance of the data entry
+      # the data is accessible via entries
+      # stores the class-column in the attribute klass and
+      # removes the column for the class-entry
       class DataEntry
         attr_accessor :klass, :entries
 
@@ -258,8 +260,6 @@ module Ai4r
           @entries[index]
         end
       end
-
     end
   end
 end
-

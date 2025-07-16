@@ -1,5 +1,7 @@
-require File.dirname(__FILE__) + '/../../lib/ai4r/som/som'
-require File.dirname(__FILE__) + '/som_data'
+# frozen_string_literal: true
+
+require "#{File.dirname(__FILE__)}/../../lib/ai4r/som/som"
+require "#{File.dirname(__FILE__)}/som_data"
 require 'benchmark'
 
 som = Ai4r::Som::Som.new 4, 8, Ai4r::Som::TwoPhaseLayer.new(10)

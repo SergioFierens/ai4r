@@ -1,7 +1,7 @@
 # RuboCop configuration for AI4R Educational Framework
 # Tailored for educational Ruby projects with focus on readability and learning
 
-require:
+plugins:
   - rubocop-rspec
   - rubocop-performance
   - rubocop-rake
@@ -9,6 +9,7 @@ require:
 AllCops:
   NewCops: enable
   TargetRubyVersion: 2.7
+  SuggestExtensions: false
   Include:
     - 'lib/**/*.rb'
     - 'spec/**/*.rb'
@@ -138,7 +139,6 @@ Naming/VariableNumber:
 
 # Allow longer method names for educational descriptiveness
 Naming/MethodName:
-  MinNameLength: 2
   AllowedPatterns:
     - '^[a-z_][a-zA-Z0-9_]*[!?]?$'
     - '^is_'
@@ -146,7 +146,7 @@ Naming/MethodName:
     - '^can_'
 
 # Allow educational prefixes in method names
-Naming/PredicateName:
+Naming/PredicatePrefix:
   ForbiddenPrefixes:
     - is_
   AllowedMethods:
@@ -237,6 +237,7 @@ RSpec/VariableName:
 # Allow educational instance variables in tests
 RSpec/InstanceVariable:
   Enabled: false
+  AssignmentOnly: false
 
 # Allow let definitions for educational setup
 RSpec/MultipleMemoizedHelpers:

@@ -98,31 +98,31 @@ RSpec.describe Ai4r::MachineLearning::PCA do
 
     context 'with invalid parameters' do
       it 'raises error for zero n_components' do
-        expect {
+        expect do
           described_class.new(n_components: 0)
-        }.to raise_error(ArgumentError, 'n_components must be positive')
+        end.to raise_error(ArgumentError, 'n_components must be positive')
       end
 
       it 'raises error for negative n_components' do
-        expect {
+        expect do
           described_class.new(n_components: -1)
-        }.to raise_error(ArgumentError, 'n_components must be positive')
+        end.to raise_error(ArgumentError, 'n_components must be positive')
       end
 
       it 'raises error for invalid float n_components' do
-        expect {
+        expect do
           described_class.new(n_components: 1.5)
-        }.to raise_error(ArgumentError, 'n_components as float must be between 0 and 1')
+        end.to raise_error(ArgumentError, 'n_components as float must be between 0 and 1')
 
-        expect {
+        expect do
           described_class.new(n_components: 0.0)
-        }.to raise_error(ArgumentError, 'n_components as float must be between 0 and 1')
+        end.to raise_error(ArgumentError, 'n_components as float must be between 0 and 1')
       end
 
       it 'raises error for invalid n_components type' do
-        expect {
+        expect do
           described_class.new(n_components: 'invalid')
-        }.to raise_error(ArgumentError, 'n_components must be Integer or Float')
+        end.to raise_error(ArgumentError, 'n_components must be Integer or Float')
       end
     end
   end
@@ -133,7 +133,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
 
       it 'fits successfully on simple data' do
         expect { pca.fit(simple_data) }.not_to raise_error
-        
+
         expect(pca.instance_variable_get(:@fitted)).to be true
         expect(pca.n_samples).to eq(10)
         expect(pca.n_features).to eq(2)
@@ -144,7 +144,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
       it 'fits successfully on iris data' do
         pca_iris = described_class.new(n_components: 3)
         expect { pca_iris.fit(iris_data) }.not_to raise_error
-        
+
         expect(pca_iris.n_samples).to eq(15)
         expect(pca_iris.n_features).to eq(4)
         expect(pca_iris.components.length).to eq(3)
@@ -154,21 +154,21 @@ RSpec.describe Ai4r::MachineLearning::PCA do
       it 'limits n_components to n_features' do
         pca_limited = described_class.new(n_components: 10)
         pca_limited.fit(simple_data)
-        
+
         expect(pca_limited.components.length).to eq(2) # Limited to n_features
       end
 
       it 'calculates explained variance ratios' do
         pca.fit(simple_data)
-        
+
         expect(pca.explained_variance_ratio.length).to eq(2)
-        expect(pca.explained_variance_ratio.all? { |ratio| ratio >= 0 && ratio <= 1 }).to be true
+        expect(pca.explained_variance_ratio.all? { |ratio| ratio.between?(0, 1) }).to be true
         expect(pca.explained_variance_ratio.sum).to be_within(0.01).of(1.0)
       end
 
       it 'calculates cumulative variance' do
         pca.fit(simple_data)
-        
+
         expect(pca.cumulative_variance.length).to eq(2)
         expect(pca.cumulative_variance.first).to eq(pca.explained_variance_ratio.first)
         expect(pca.cumulative_variance.last).to be_within(0.01).of(pca.explained_variance_ratio.sum)
@@ -176,31 +176,31 @@ RSpec.describe Ai4r::MachineLearning::PCA do
 
       it 'stores mean and std values for standardization' do
         pca.fit(simple_data)
-        
+
         expect(pca.mean_values.length).to eq(2)
         expect(pca.std_values.length).to eq(2)
-        expect(pca.mean_values.all? { |mean| mean.is_a?(Float) }).to be true
+        expect(pca.mean_values.all?(Float)).to be true
         expect(pca.std_values.all? { |std| std > 0 }).to be true
       end
 
       it 'stores covariance matrix when requested' do
         pca.fit(simple_data)
-        
+
         expect(pca.covariance_matrix.length).to eq(2)
         expect(pca.covariance_matrix.all? { |row| row.length == 2 }).to be true
       end
 
       it 'handles feature names' do
-        feature_names = ['feature1', 'feature2']
+        feature_names = %w[feature1 feature2]
         pca.fit(simple_data, feature_names)
-        
+
         expect(pca.feature_names).to eq(feature_names)
       end
 
       it 'generates default feature names' do
         pca.fit(simple_data)
-        
-        expect(pca.feature_names).to eq(['feature_0', 'feature_1'])
+
+        expect(pca.feature_names).to eq(%w[feature_0 feature_1])
       end
     end
 
@@ -208,7 +208,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
       it 'standardizes data when standardize=true' do
         pca_std = described_class.new(n_components: 2, standardize: true)
         pca_std.fit(simple_data)
-        
+
         # Check that standardized data has approximately zero mean and unit variance
         standardized = pca_std.standardized_data
         means = Array.new(2, 0.0)
@@ -216,16 +216,16 @@ RSpec.describe Ai4r::MachineLearning::PCA do
           sample.each_with_index { |val, idx| means[idx] += val }
         end
         means.map! { |sum| sum / standardized.length }
-        
+
         expect(means.all? { |mean| mean.abs < 0.01 }).to be true
       end
 
       it 'only centers data when standardize=false' do
         pca_center = described_class.new(n_components: 2, standardize: false)
         pca_center.fit(simple_data)
-        
+
         # Check that std_values are all 1.0 (no scaling)
-        expect(pca_center.std_values.all? { |std| std == 1.0 }).to be true
+        expect(pca_center.std_values.all?(1.0)).to be true
       end
     end
 
@@ -233,33 +233,33 @@ RSpec.describe Ai4r::MachineLearning::PCA do
       let(:pca) { described_class.new }
 
       it 'raises error for empty data' do
-        expect {
+        expect do
           pca.fit([])
-        }.to raise_error(ArgumentError, 'Data cannot be empty')
+        end.to raise_error(ArgumentError, 'Data cannot be empty')
       end
 
       it 'raises error for non-2D data' do
-        expect {
+        expect do
           pca.fit([1, 2, 3])
-        }.to raise_error(ArgumentError, 'Data must be 2D array')
+        end.to raise_error(ArgumentError, 'Data must be 2D array')
       end
 
       it 'raises error for inconsistent row lengths' do
-        expect {
+        expect do
           pca.fit([[1, 2], [3, 4, 5]])
-        }.to raise_error(ArgumentError, 'All samples must have the same number of features')
+        end.to raise_error(ArgumentError, 'All samples must have the same number of features')
       end
 
       it 'raises error for insufficient features' do
-        expect {
+        expect do
           pca.fit([[1], [2]])
-        }.to raise_error(ArgumentError, 'Data must have at least 2 features')
+        end.to raise_error(ArgumentError, 'Data must have at least 2 features')
       end
 
       it 'raises error for insufficient samples' do
-        expect {
+        expect do
           pca.fit([[1, 2]])
-        }.to raise_error(ArgumentError, 'Data must have at least 2 samples')
+        end.to raise_error(ArgumentError, 'Data must have at least 2 samples')
       end
     end
   end
@@ -274,16 +274,16 @@ RSpec.describe Ai4r::MachineLearning::PCA do
     context 'transform method' do
       it 'transforms data successfully' do
         transformed = pca.transform(simple_data)
-        
+
         expect(transformed.length).to eq(simple_data.length)
         expect(transformed.all? { |sample| sample.length == 2 }).to be true
-        expect(transformed.all? { |sample| sample.all? { |val| val.is_a?(Float) } }).to be true
+        expect(transformed.all? { |sample| sample.all?(Float) }).to be true
       end
 
       it 'transforms new data with same dimensions' do
         new_data = [[1.5, 1.8], [2.0, 2.5]]
         transformed = pca.transform(new_data)
-        
+
         expect(transformed.length).to eq(2)
         expect(transformed.all? { |sample| sample.length == 2 }).to be true
       end
@@ -291,7 +291,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
       it 'produces consistent transformations' do
         transformed1 = pca.transform(simple_data)
         transformed2 = pca.transform(simple_data)
-        
+
         expect(transformed1).to eq(transformed2)
       end
     end
@@ -300,7 +300,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
       it 'fits and transforms in one step' do
         pca_new = described_class.new(n_components: 2)
         transformed = pca_new.fit_transform(simple_data)
-        
+
         expect(transformed.length).to eq(simple_data.length)
         expect(transformed.all? { |sample| sample.length == 2 }).to be true
         expect(pca_new.instance_variable_get(:@fitted)).to be true
@@ -310,22 +310,22 @@ RSpec.describe Ai4r::MachineLearning::PCA do
     context 'input validation' do
       it 'raises error when not fitted' do
         unfitted_pca = described_class.new
-        
-        expect {
+
+        expect do
           unfitted_pca.transform(simple_data)
-        }.to raise_error(RuntimeError, 'PCA model must be fitted before use')
+        end.to raise_error(RuntimeError, 'PCA model must be fitted before use')
       end
 
       it 'raises error for wrong number of features' do
-        expect {
+        expect do
           pca.transform([[1, 2, 3]])
-        }.to raise_error(ArgumentError, 'Data must have 2 features')
+        end.to raise_error(ArgumentError, 'Data must have 2 features')
       end
 
       it 'raises error for invalid data format' do
-        expect {
+        expect do
           pca.transform([1, 2, 3])
-        }.to raise_error(ArgumentError, 'Data must be 2D array')
+        end.to raise_error(ArgumentError, 'Data must be 2D array')
       end
     end
   end
@@ -341,7 +341,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
       it 'reconstructs data from transformed data' do
         transformed = pca.transform(simple_data)
         reconstructed = pca.inverse_transform(transformed)
-        
+
         expect(reconstructed.length).to eq(simple_data.length)
         expect(reconstructed.all? { |sample| sample.length == 2 }).to be true
       end
@@ -349,13 +349,13 @@ RSpec.describe Ai4r::MachineLearning::PCA do
       it 'reconstructs approximately original data' do
         transformed = pca.transform(simple_data)
         reconstructed = pca.inverse_transform(transformed)
-        
+
         # Check that reconstruction is reasonably close to original
         # (Perfect reconstruction only if all components are retained)
         reconstruction_errors = simple_data.zip(reconstructed).map do |original, reconstructed_sample|
           original.zip(reconstructed_sample).map { |orig, recon| (orig - recon).abs }.max
         end
-        
+
         # For 2D data with 2 components, reconstruction should be very close
         expect(reconstruction_errors.all? { |error| error < 0.1 }).to be true
       end
@@ -371,7 +371,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
       it 'reconstructs from reduced dimensions' do
         transformed = pca_reduced.transform(simple_data)
         reconstructed = pca_reduced.inverse_transform(transformed)
-        
+
         expect(reconstructed.length).to eq(simple_data.length)
         expect(reconstructed.all? { |sample| sample.length == 2 }).to be true
       end
@@ -379,12 +379,12 @@ RSpec.describe Ai4r::MachineLearning::PCA do
       it 'has reconstruction error with reduced dimensions' do
         transformed = pca_reduced.transform(simple_data)
         reconstructed = pca_reduced.inverse_transform(transformed)
-        
+
         # With only 1 component, there should be some reconstruction error
         reconstruction_errors = simple_data.zip(reconstructed).map do |original, reconstructed_sample|
-          original.zip(reconstructed_sample).map { |orig, recon| (orig - recon).abs }.sum
+          original.zip(reconstructed_sample).sum { |orig, recon| (orig - recon).abs }
         end
-        
+
         expect(reconstruction_errors.any? { |error| error > 0.01 }).to be true
       end
     end
@@ -392,16 +392,16 @@ RSpec.describe Ai4r::MachineLearning::PCA do
     context 'input validation' do
       it 'raises error when not fitted' do
         unfitted_pca = described_class.new
-        
-        expect {
+
+        expect do
           unfitted_pca.inverse_transform([[1, 2]])
-        }.to raise_error(RuntimeError, 'PCA model must be fitted before use')
+        end.to raise_error(RuntimeError, 'PCA model must be fitted before use')
       end
 
       it 'raises error for wrong number of components' do
-        expect {
+        expect do
           pca.inverse_transform([[1, 2, 3]])
-        }.to raise_error(ArgumentError, 'Data must have 2 components')
+        end.to raise_error(ArgumentError, 'Data must have 2 components')
       end
     end
   end
@@ -415,7 +415,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
 
     it 'analyzes explained variance' do
       analysis = pca.explained_variance_analysis
-      
+
       expect(analysis).to have_key(:explained_variance)
       expect(analysis).to have_key(:explained_variance_ratio)
       expect(analysis).to have_key(:cumulative_variance)
@@ -426,7 +426,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
 
     it 'calculates information metrics' do
       analysis = pca.explained_variance_analysis
-      
+
       expect(analysis[:information_retained]).to be >= 0
       expect(analysis[:information_retained]).to be <= 1
       expect(analysis[:information_lost]).to be >= 0
@@ -436,14 +436,14 @@ RSpec.describe Ai4r::MachineLearning::PCA do
 
     it 'calculates dimensionality reduction ratio' do
       analysis = pca.explained_variance_analysis
-      
-      expected_reduction = (4 - 3).to_f / 4  # 4 original features, 3 components
+
+      expected_reduction = (4 - 3).to_f / 4 # 4 original features, 3 components
       expect(analysis[:dimensionality_reduction]).to be_within(0.01).of(expected_reduction)
     end
 
     it 'finds components needed for threshold' do
       analysis = pca.explained_variance_analysis(0.90)
-      
+
       expect(analysis[:components_for_threshold]).to be_a(Integer)
       expect(analysis[:components_for_threshold]).to be >= 1
       expect(analysis[:components_for_threshold]).to be <= 3
@@ -459,7 +459,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
 
     it 'calculates reconstruction error metrics' do
       error_analysis = pca.reconstruction_error(iris_data)
-      
+
       expect(error_analysis).to have_key(:mean_squared_error)
       expect(error_analysis).to have_key(:root_mean_squared_error)
       expect(error_analysis).to have_key(:mean_absolute_error)
@@ -470,7 +470,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
 
     it 'provides meaningful error values' do
       error_analysis = pca.reconstruction_error(iris_data)
-      
+
       expect(error_analysis[:mean_squared_error]).to be >= 0
       expect(error_analysis[:root_mean_squared_error]).to be >= 0
       expect(error_analysis[:mean_absolute_error]).to be >= 0
@@ -479,7 +479,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
 
     it 'calculates per-sample errors' do
       error_analysis = pca.reconstruction_error(iris_data)
-      
+
       expect(error_analysis[:mse_per_sample].length).to eq(iris_data.length)
       expect(error_analysis[:mse_per_sample].all? { |error| error >= 0 }).to be true
     end
@@ -489,12 +489,12 @@ RSpec.describe Ai4r::MachineLearning::PCA do
     let(:pca) { described_class.new(n_components: 2) }
 
     before do
-      pca.fit(iris_data, ['sepal_length', 'sepal_width', 'petal_length', 'petal_width'])
+      pca.fit(iris_data, %w[sepal_length sepal_width petal_length petal_width])
     end
 
     it 'analyzes component contributions' do
       analysis = pca.component_analysis
-      
+
       expect(analysis).to have_key(:component_contributions)
       expect(analysis).to have_key(:feature_importance)
       expect(analysis).to have_key(:most_important_features)
@@ -503,7 +503,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
     it 'provides component-specific analysis' do
       analysis = pca.component_analysis
       contributions = analysis[:component_contributions]
-      
+
       expect(contributions.length).to eq(2)
       contributions.each do |comp_analysis|
         expect(comp_analysis).to have_key(:component)
@@ -516,10 +516,10 @@ RSpec.describe Ai4r::MachineLearning::PCA do
     it 'ranks features by importance' do
       analysis = pca.component_analysis
       importance = analysis[:feature_importance]
-      
+
       expect(importance.length).to eq(4)
       expect(importance.all? { |feature, score| feature.is_a?(String) && score >= 0 }).to be true
-      
+
       # Check that importance is sorted (descending)
       scores = importance.map { |_, score| score }
       expect(scores).to eq(scores.sort.reverse)
@@ -528,7 +528,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
     it 'identifies most important features' do
       analysis = pca.component_analysis
       most_important = analysis[:most_important_features]
-      
+
       expect(most_important.length).to be <= 5
       expect(most_important.all? { |feature, score| feature.is_a?(String) && score >= 0 }).to be true
     end
@@ -543,7 +543,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
 
     it 'generates visualization string' do
       visualization = pca.visualize_analysis
-      
+
       expect(visualization).to be_a(String)
       expect(visualization).to include('PCA Analysis Visualization')
       expect(visualization).to include('Data Summary')
@@ -554,7 +554,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
 
     it 'includes dimensionality reduction information' do
       visualization = pca.visualize_analysis
-      
+
       expect(visualization).to include('Original dimensions: 4')
       expect(visualization).to include('Reduced dimensions: 2')
       expect(visualization).to include('Dimensionality reduction:')
@@ -562,7 +562,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
 
     it 'shows variance information' do
       visualization = pca.visualize_analysis
-      
+
       expect(visualization).to include('PC1:')
       expect(visualization).to include('PC2:')
       expect(visualization).to include('Cumulative:')
@@ -577,7 +577,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
         vector1 = [1, 2, 3]
         vector2 = [4, 5, 6]
         result = pca.send(:dot_product, vector1, vector2)
-        
+
         expect(result).to eq(32) # 1*4 + 2*5 + 3*6 = 32
       end
 
@@ -585,7 +585,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
         vector1 = [0, 0, 0]
         vector2 = [1, 2, 3]
         result = pca.send(:dot_product, vector1, vector2)
-        
+
         expect(result).to eq(0)
       end
     end
@@ -595,7 +595,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
         matrix = [[1, 2], [3, 4]]
         vector = [5, 6]
         result = pca.send(:matrix_vector_multiply, matrix, vector)
-        
+
         expect(result).to eq([17, 39]) # [1*5+2*6, 3*5+4*6] = [17, 39]
       end
     end
@@ -605,7 +605,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
         vector1 = [1.0, 2.0, 3.0]
         vector2 = [1.001, 2.001, 3.001]
         result = pca.send(:vectors_close?, vector1, vector2, 0.01)
-        
+
         expect(result).to be true
       end
 
@@ -613,7 +613,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
         vector1 = [1.0, 2.0, 3.0]
         vector2 = [1.1, 2.1, 3.1]
         result = pca.send(:vectors_close?, vector1, vector2, 0.01)
-        
+
         expect(result).to be false
       end
     end
@@ -635,7 +635,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
 
       it 'transforms data efficiently' do
         pca.fit(iris_data)
-        
+
         # Create test data
         test_data = Array.new(100) { Array.new(4) { rand * 10 } }
 
@@ -649,7 +649,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
     context 'memory efficiency' do
       it 'handles multiple fit cycles' do
         pca = described_class.new(n_components: 2)
-        
+
         # Fit multiple times to test memory efficiency
         5.times do
           pca.fit(simple_data)
@@ -663,7 +663,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
     context 'boundary conditions' do
       it 'handles data with perfect correlation' do
         pca = described_class.new(n_components: 2)
-        
+
         expect { pca.fit(correlated_data) }.not_to raise_error
         expect(pca.components.length).to eq(2)
       end
@@ -675,7 +675,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
           [3, 2, 1],
           [4, 2, 1]
         ]
-        
+
         pca = described_class.new(n_components: 2)
         expect { pca.fit(zero_variance_data) }.not_to raise_error
       end
@@ -685,7 +685,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
           [1, 2],
           [3, 4]
         ]
-        
+
         pca = described_class.new(n_components: 1)
         expect { pca.fit(minimal_data) }.not_to raise_error
       end
@@ -698,7 +698,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
           [3e-10, 4e-10],
           [5e-10, 6e-10]
         ]
-        
+
         pca = described_class.new(n_components: 1)
         expect { pca.fit(small_data) }.not_to raise_error
       end
@@ -709,7 +709,7 @@ RSpec.describe Ai4r::MachineLearning::PCA do
           [3e10, 4e10],
           [5e10, 6e10]
         ]
-        
+
         pca = described_class.new(n_components: 1)
         expect { pca.fit(large_data) }.not_to raise_error
       end

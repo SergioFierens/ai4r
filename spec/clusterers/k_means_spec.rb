@@ -14,7 +14,7 @@ RSpec.describe Ai4r::Clusterers::KMeans do
     [
       # Cluster 1 around (0, 0)
       [0.1, 0.2], [0.3, 0.1], [-0.1, 0.0],
-      # Cluster 2 around (5, 5)  
+      # Cluster 2 around (5, 5)
       [5.1, 4.9], [4.8, 5.2], [5.0, 5.0],
       # Cluster 3 around (10, 0)
       [10.2, 0.1], [9.9, -0.1], [10.0, 0.0]
@@ -24,7 +24,7 @@ RSpec.describe Ai4r::Clusterers::KMeans do
   let(:simple_clusters_dataset) do
     Ai4r::Data::DataSet.new(
       data_items: simple_clusters_data,
-      data_labels: ['x', 'y']
+      data_labels: %w[x y]
     )
   end
 
@@ -36,10 +36,10 @@ RSpec.describe Ai4r::Clusterers::KMeans do
     30.times { items << [10 + rand(2.0) - 1.0, 10 + rand(2.0) - 1.0] }
     # 30 points around (20, 0)
     30.times { items << [20 + rand(2.0) - 1.0, rand(2.0) - 1.0] }
-    
+
     Ai4r::Data::DataSet.new(
       data_items: items,
-      data_labels: ['x', 'y']
+      data_labels: %w[x y]
     )
   end
 
@@ -47,7 +47,7 @@ RSpec.describe Ai4r::Clusterers::KMeans do
   let(:identical_points_dataset) do
     Ai4r::Data::DataSet.new(
       data_items: identical_points_data,
-      data_labels: ['x', 'y']
+      data_labels: %w[x y]
     )
   end
 
@@ -67,18 +67,18 @@ RSpec.describe Ai4r::Clusterers::KMeans do
     )
   end
 
-  describe "Build Tests" do
-    context "normal clustering" do
-      it "test_build_3_clusters" do
+  describe 'Build Tests' do
+    context 'normal clustering' do
+      it 'test_build_3_clusters' do
         clusterer = described_class.new.build(large_dataset, 3)
-        
+
         expect(clusterer).to be_a(described_class)
         expect(clusterer.number_of_clusters).to eq(3)
         expect(clusterer.clusters).to be_an(Array)
         expect(clusterer.clusters.length).to eq(3)
         expect(clusterer.centroids).to be_an(Array)
         expect(clusterer.centroids.length).to eq(3)
-        
+
         # Each cluster should have points assigned
         clusterer.clusters.each do |cluster|
           expect(cluster.data_items).not_to be_empty
@@ -86,67 +86,67 @@ RSpec.describe Ai4r::Clusterers::KMeans do
       end
     end
 
-    context "edge cases" do
-      it "test_build_k_greater_than_n" do
+    context 'edge cases' do
+      it 'test_build_k_greater_than_n' do
         # k=10, n=5 points - should handle gracefully
         small_data = [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5]]
         small_dataset = Ai4r::Data::DataSet.new(
           data_items: small_data,
-          data_labels: ['x', 'y']
+          data_labels: %w[x y]
         )
-        
+
         clusterer = described_class.new
         clusterer.set_parameters(on_empty: 'eliminate')
         clusterer.build(small_dataset, 10)
-        
+
         # Should create clusters, some may be eliminated if empty
         expect(clusterer.clusters.length).to be <= 5
         expect(clusterer.clusters.length).to be > 0
       end
 
-      it "test_build_k_equals_1" do
+      it 'test_build_k_equals_1' do
         # Single cluster - all points in one cluster
         clusterer = described_class.new.build(simple_clusters_dataset, 1)
-        
+
         expect(clusterer.number_of_clusters).to eq(1)
         expect(clusterer.clusters.length).to eq(1)
         expect(clusterer.clusters[0].data_items.length).to eq(simple_clusters_data.length)
       end
 
-      it "test_all_points_identical" do
+      it 'test_all_points_identical' do
         # All points are identical - degenerate case
         clusterer = described_class.new.build(identical_points_dataset, 3)
-        
+
         expect(clusterer).to be_a(described_class)
         # Should handle identical points gracefully
         expect(clusterer.centroids).to be_an(Array)
-        
+
         # All centroids should be the same or clusters eliminated
         expect(clusterer.clusters.length).to be >= 1
       end
 
-      it "test_high_dimensional_data" do
+      it 'test_high_dimensional_data' do
         # 100+ dimensions - scalability test
         clusterer = described_class.new
-        clusterer.set_parameters(max_iterations: 10)  # Limit for performance
+        clusterer.set_parameters(max_iterations: 10) # Limit for performance
         clusterer.build(high_dimensional_dataset, 5)
-        
+
         expect(clusterer.clusters.length).to be <= 5
         expect(clusterer.centroids).to be_an(Array)
-        
+
         # Each centroid should have correct dimensionality
         clusterer.centroids.each do |centroid|
           expect(centroid.length).to eq(100)
         end
       end
 
-      it "test_single_dimension_data" do
+      it 'test_single_dimension_data' do
         # 1D clustering
         clusterer = described_class.new.build(single_dimension_dataset, 2)
-        
+
         expect(clusterer.clusters.length).to be <= 2
         expect(clusterer.centroids).to be_an(Array)
-        
+
         # Should work with 1D data
         clusterer.centroids.each do |centroid|
           expect(centroid.length).to eq(1)
@@ -154,65 +154,65 @@ RSpec.describe Ai4r::Clusterers::KMeans do
       end
     end
 
-    context "validation tests" do
-      it "test_build_k_equals_0" do
-        expect {
+    context 'validation tests' do
+      it 'test_build_k_equals_0' do
+        expect do
           described_class.new.build(simple_clusters_dataset, 0)
-        }.to raise_error
+        end.to raise_error
       end
 
-      it "test_build_empty_dataset" do
+      it 'test_build_empty_dataset' do
         empty_dataset = Ai4r::Data::DataSet.new(data_items: [], data_labels: [])
-        
-        expect {
+
+        expect do
           described_class.new.build(empty_dataset, 3)
-        }.to raise_error
+        end.to raise_error
       end
 
-      it "test_nan_values" do
+      it 'test_nan_values' do
         nan_data = [[1.0, 2.0], [Float::NAN, 3.0], [4.0, 5.0]]
         nan_dataset = Ai4r::Data::DataSet.new(
           data_items: nan_data,
-          data_labels: ['x', 'y']
+          data_labels: %w[x y]
         )
-        
-        expect {
+
+        expect do
           described_class.new.build(nan_dataset, 2)
-        }.to raise_error(StandardError)
+        end.to raise_error(StandardError)
       end
     end
   end
 
-  describe "Convergence Tests" do
-    it "test_convergence_stable_centroids" do
+  describe 'Convergence Tests' do
+    it 'test_convergence_stable_centroids' do
       clusterer = described_class.new
       clusterer.set_parameters(max_iterations: 100)
       clusterer.build(simple_clusters_dataset, 3)
-      
+
       # Should converge (iterations < max_iterations for well-separated data)
       expect(clusterer.iterations).to be < 100
       expect(clusterer.iterations).to be > 0
     end
 
-    it "test_convergence_max_iterations" do
+    it 'test_convergence_max_iterations' do
       # Force many iterations with poorly separated data
       clusterer = described_class.new
       clusterer.set_parameters(max_iterations: 5)
       clusterer.build(identical_points_dataset, 3)
-      
+
       # Should stop at max iterations
       expect(clusterer.iterations).to eq(5)
     end
   end
 
-  describe "Centroid Tests" do
+  describe 'Centroid Tests' do
     let(:trained_clusterer) { described_class.new.build(simple_clusters_dataset, 3) }
 
-    it "test_centroid_calculation" do
+    it 'test_centroid_calculation' do
       # Centroids should be means of assigned points
       expect(trained_clusterer.centroids).to be_an(Array)
       expect(trained_clusterer.centroids.length).to eq(3)
-      
+
       # Each centroid should be a valid point
       trained_clusterer.centroids.each do |centroid|
         expect(centroid).to be_an(Array)
@@ -224,12 +224,12 @@ RSpec.describe Ai4r::Clusterers::KMeans do
       end
     end
 
-    it "test_empty_cluster_handling" do
+    it 'test_empty_cluster_handling' do
       # Test with eliminate strategy (default)
       clusterer = described_class.new
       clusterer.set_parameters(on_empty: 'eliminate')
-      clusterer.build(simple_clusters_dataset, 10)  # More clusters than reasonable
-      
+      clusterer.build(simple_clusters_dataset, 10) # More clusters than reasonable
+
       # Should handle empty clusters by eliminating them
       expect(clusterer.clusters.length).to be <= simple_clusters_data.length
       clusterer.clusters.each do |cluster|
@@ -237,72 +237,72 @@ RSpec.describe Ai4r::Clusterers::KMeans do
       end
     end
 
-    it "test_centroid_initialization_deterministic" do
+    it 'test_centroid_initialization_deterministic' do
       # Test with fixed seed for deterministic results
       clusterer1 = described_class.new
       clusterer1.set_parameters(centroid_indices: [0, 3, 6])
       result1 = clusterer1.build(simple_clusters_dataset, 3)
-      
+
       clusterer2 = described_class.new
       clusterer2.set_parameters(centroid_indices: [0, 3, 6])
       result2 = clusterer2.build(simple_clusters_dataset, 3)
-      
+
       # Same initial centroids should give same results
       expect(result1.centroids).to eq(result2.centroids)
     end
   end
 
-  describe "Distance Tests" do
-    it "test_euclidean_distance" do
+  describe 'Distance Tests' do
+    it 'test_euclidean_distance' do
       clusterer = described_class.new.build(simple_clusters_dataset, 3)
-      
+
       # Default should use euclidean distance
       dist = clusterer.distance([0, 0], [3, 4])
-      expect(dist).to eq(25.0)  # 3^2 + 4^2 = 25 (squared euclidean)
+      expect(dist).to eq(25.0) # 3^2 + 4^2 = 25 (squared euclidean)
     end
   end
 
-  describe "Eval Tests" do
+  describe 'Eval Tests' do
     let(:trained_clusterer) { described_class.new.build(simple_clusters_dataset, 3) }
 
-    it "test_eval_assigns_cluster" do
+    it 'test_eval_assigns_cluster' do
       # Should return cluster index (0-based)
       cluster_index = trained_clusterer.eval([0.0, 0.0])
-      
+
       expect(cluster_index).to be_a(Integer)
       expect(cluster_index).to be >= 0
       expect(cluster_index).to be < trained_clusterer.clusters.length
     end
 
-    it "test_eval_new_point" do
+    it 'test_eval_new_point' do
       # Point not in training data
       new_point = [2.5, 2.5]
       cluster_index = trained_clusterer.eval(new_point)
-      
+
       expect(cluster_index).to be_a(Integer)
       expect(cluster_index).to be >= 0
       expect(cluster_index).to be < trained_clusterer.clusters.length
     end
 
-    it "test_eval_dimension_mismatch" do
+    it 'test_eval_dimension_mismatch' do
       # Wrong number of dimensions
-      expect {
-        trained_clusterer.eval([1.0])  # Should be 2D
-      }.to raise_error
+      expect do
+        trained_clusterer.eval([1.0]) # Should be 2D
+      end.to raise_error
     end
 
-    it "test_eval_before_build" do
+    it 'test_eval_before_build' do
       # No model built yet
       unbuild_clusterer = described_class.new
-      
-      expect {
+
+      expect do
         unbuild_clusterer.eval([1.0, 2.0])
-      }.to raise_error
+      end.to raise_error
     end
   end
 
-  describe "Performance Tests" do
-    it "handles large datasets efficiently" do
+  describe 'Performance Tests' do
+    it 'handles large datasets efficiently' do
       # Generate larger dataset
       large_items = []
       1000.times do |i|
@@ -311,25 +311,25 @@ RSpec.describe Ai4r::Clusterers::KMeans do
         center_y = cluster_id * 3
         large_items << [center_x + rand(2.0) - 1.0, center_y + rand(2.0) - 1.0]
       end
-      
+
       large_dataset = Ai4r::Data::DataSet.new(
         data_items: large_items,
-        data_labels: ['x', 'y']
+        data_labels: %w[x y]
       )
-      
-      benchmark_performance("KMeans clustering 1000 points") do
+
+      benchmark_performance('KMeans clustering 1000 points') do
         clusterer = described_class.new
         clusterer.set_parameters(max_iterations: 50)
         clusterer.build(large_dataset, 4)
-        
+
         expect(clusterer.clusters.length).to eq(4)
       end
     end
 
-    it "evaluation performance is reasonable" do
+    it 'evaluation performance is reasonable' do
       clusterer = described_class.new.build(simple_clusters_dataset, 3)
-      
-      benchmark_performance("KMeans evaluation speed") do
+
+      benchmark_performance('KMeans evaluation speed') do
         100.times do
           cluster_index = clusterer.eval([rand(15.0), rand(10.0)])
           expect(cluster_index).to be >= 0
@@ -338,55 +338,55 @@ RSpec.describe Ai4r::Clusterers::KMeans do
     end
   end
 
-  describe "Integration Tests" do
-    it "works with different distance functions" do
+  describe 'Integration Tests' do
+    it 'works with different distance functions' do
       # Test custom distance function (Manhattan distance)
       clusterer = described_class.new
       clusterer.set_parameters(
-        distance_function: lambda { |a, b| 
-          a.zip(b).map { |ai, bi| (ai - bi).abs }.sum 
+        distance_function: ->(a, b) {
+          a.zip(b).sum { |ai, bi| (ai - bi).abs }
         }
       )
       clusterer.build(simple_clusters_dataset, 3)
-      
+
       expect(clusterer.clusters.length).to be <= 3
       expect(clusterer.centroids).to be_an(Array)
     end
 
-    it "handles different empty cluster strategies" do
-      strategies = ['eliminate', 'random', 'outlier']
-      
+    it 'handles different empty cluster strategies' do
+      strategies = %w[eliminate random outlier]
+
       strategies.each do |strategy|
         clusterer = described_class.new
         clusterer.set_parameters(on_empty: strategy, max_iterations: 10)
-        
-        expect {
-          clusterer.build(simple_clusters_dataset, 8)  # Force empty clusters
-        }.not_to raise_error
-        
+
+        expect do
+          clusterer.build(simple_clusters_dataset, 8) # Force empty clusters
+        end.not_to raise_error
+
         expect(clusterer.clusters).to be_an(Array)
       end
     end
 
-    it "maintains state consistency" do
+    it 'maintains state consistency' do
       clusterer = described_class.new.build(simple_clusters_dataset, 3)
-      
+
       # Multiple evaluations should be consistent
       test_point = [5.0, 5.0]
       result1 = clusterer.eval(test_point)
       result2 = clusterer.eval(test_point)
-      
+
       expect(result1).to eq(result2)
     end
 
-    it "clusters are valid and complete" do
+    it 'clusters are valid and complete' do
       clusterer = described_class.new.build(simple_clusters_dataset, 3)
-      
+
       # All clusters should be valid
       assert_valid_clusters(clusterer.clusters, clusterer.number_of_clusters)
-      
+
       # All original points should be assigned to exactly one cluster
-      total_points = clusterer.clusters.map { |c| c.data_items.length }.sum
+      total_points = clusterer.clusters.sum { |c| c.data_items.length }
       expect(total_points).to eq(simple_clusters_data.length)
     end
   end
@@ -396,7 +396,7 @@ RSpec.describe Ai4r::Clusterers::KMeans do
     expect(clusters).to be_an(Array)
     expect(clusters.length).to be <= expected_count
     expect(clusters.length).to be > 0
-    
+
     clusters.each do |cluster|
       expect(cluster.data_items).to be_an(Array)
       expect(cluster.data_items).not_to be_empty
@@ -407,18 +407,16 @@ RSpec.describe Ai4r::Clusterers::KMeans do
     # Point should be in exactly one cluster
     found_in_clusters = 0
     clusters.each do |cluster|
-      if cluster.data_items.include?(point)
-        found_in_clusters += 1
-      end
+      found_in_clusters += 1 if cluster.data_items.include?(point)
     end
     expect(found_in_clusters).to eq(1)
   end
 
   def assert_centroids_stable(old_centroids, new_centroids, epsilon = 0.001)
     expect(old_centroids.length).to eq(new_centroids.length)
-    
+
     old_centroids.zip(new_centroids).each do |old, new|
-      distance = old.zip(new).map { |a, b| (a - b) ** 2 }.sum ** 0.5
+      distance = old.zip(new).sum { |a, b| (a - b)**2 }**0.5
       expect(distance).to be < epsilon
     end
   end

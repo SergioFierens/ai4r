@@ -1,21 +1,22 @@
+# frozen_string_literal: true
+
 # Author::    Sergio Fierens (Implementation only)
 # License::   MPL 1.1
 # Project::   ai4r
 # Url::       https://github.com/SergioFierens/ai4r
 #
-# You can redistribute it and/or modify it under the terms of 
-# the Mozilla Public License version 1.1  as published by the 
+# You can redistribute it and/or modify it under the terms of
+# the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
 require 'set'
-require File.dirname(__FILE__) + '/../data/data_set'
-require File.dirname(__FILE__) + '/../classifiers/classifier'
+require "#{File.dirname(__FILE__)}/../data/data_set"
+require "#{File.dirname(__FILE__)}/../classifiers/classifier"
 
 module Ai4r
   module Classifiers
-
     # = Introduction
-    # 
+    #
     # IB1 algorithm implementation.
     # IB1 is the simplest instance-based learning (IBL) algorithm.
     #
@@ -26,11 +27,10 @@ module Ai4r
     # it normalizes its attributes' ranges, processes instances
     # incrementally, and has a simple policy for tolerating missing values
     class IB1 < Classifier
-      
       attr_reader :data_set
 
       # Build a new IB1 classifier. You must provide a DataSet instance
-      # as parameter. The last attribute of each item is considered as 
+      # as parameter. The last attribute of each item is considered as
       # the item class.
       def build(data_set)
         data_set.check_not_empty
@@ -40,13 +40,13 @@ module Ai4r
         data_set.data_items.each { |data_item| update_min_max(data_item[0...-1]) }
         return self
       end
-      
+
       # You can evaluate new data, predicting its class.
       # e.g.
-      #   classifier.eval(['New York',  '<30', 'F'])  # => 'Y'      
+      #   classifier.eval(['New York',  '<30', 'F'])  # => 'Y'
       def eval(data)
         update_min_max(data)
-        min_distance = 1.0/0
+        min_distance = 1.0 / 0
         klass = nil
         @data_set.data_items.each do |train_item|
           d = distance(data, train_item)
@@ -57,14 +57,14 @@ module Ai4r
         end
         return klass
       end
-      
+
       protected
 
       # We keep in the state the min and max value of each attribute,
       # to provide normalized distances between to values of a numeric attribute
       def update_min_max(atts)
         atts.each_with_index do |att, i|
-          if att && att.is_a?(Numeric)
+          if att.is_a?(Numeric)
             @min_values[i] = att if @min_values[i].nil? || @min_values[i] > att
             @max_values[i] = att if @max_values[i].nil? || @max_values[i] < att
           end
@@ -93,7 +93,7 @@ module Ai4r
             end
           elsif att_a.is_a? Numeric
             if att_b.is_a? Numeric
-              diff = norm(att_a, i) - norm(att_b, i);
+              diff = norm(att_a, i) - norm(att_b, i)
             else
               diff = norm(att_a, i)
               diff = 1.0 - diff if diff < 0.5
@@ -113,10 +113,10 @@ module Ai4r
       # index is the index of the attribute in the instance.
       def norm(att, index)
         return 0 if @min_values[index].nil?
+
         range = @max_values[index] - @min_values[index]
-        return range == 0 ? 0.0 : 1.0*(att - @min_values[index]) / range
+        return range == 0 ? 0.0 : 1.0 * (att - @min_values[index]) / range
       end
-      
     end
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Author::    Sergio Fierens (implementation)
 # License::   MPL 1.1
 # Project::   ai4r
@@ -7,12 +9,11 @@
 # the Mozilla Public License version 1.1  as published by the
 # Mozilla Foundation at http://www.mozilla.org/MPL/MPL-1.1.txt
 
-require File.dirname(__FILE__) + '/../data/data_set'
-require File.dirname(__FILE__) + '/../clusterers/single_linkage'
+require "#{File.dirname(__FILE__)}/../data/data_set"
+require "#{File.dirname(__FILE__)}/../clusterers/single_linkage"
 
 module Ai4r
   module Clusterers
-
     # Implementation of an Agglomerative Hierarchical clusterer with
     # Ward's method linkage algorithm, aka the minimum variance method (Everitt
     # et al., 2001 ; Jain and Dubes, 1988 ; Ward, 1963 ).
@@ -25,12 +26,10 @@ module Ai4r
     #                       (nj/(ni+nj+nx))*D(cx, cj) -
     #                       (nx/(ni+nj)^2)*D(ci, cj)
     class WardLinkage < SingleLinkage
-
-    parameters_info :distance_function =>
-          "Custom implementation of distance function. " +
-          "It must be a closure receiving two data items and return the " +
-          "distance between them. By default, this algorithm uses " +
-          "euclidean distance of numeric attributes to the power of 2."
+      parameters_info distance_function: 'Custom implementation of distance function. ' \
+                                         'It must be a closure receiving two data items and return the ' \
+                                         'distance between them. By default, this algorithm uses ' \
+                                         'euclidean distance of numeric attributes to the power of 2.'
 
       # Build a new clusterer, using data examples found in data_set.
       # Items will be clustered in "number_of_clusters" different
@@ -41,8 +40,8 @@ module Ai4r
 
       # This algorithms does not allow classification of new data items
       # once it has been built. Rebuild the cluster including you data element.
-      def eval(data_item)
-        raise "Eval of new data is not supported by this algorithm."
+      def eval(_data_item)
+        raise 'Eval of new data is not supported by this algorithm.'
       end
 
       protected
@@ -55,11 +54,11 @@ module Ai4r
         nx = @index_clusters[cx].length
         denominator = ni + nj + nx
         return 0.0 if denominator == 0
-        ( ( ( 1.0* (ni+nx) * read_distance_matrix(cx, ci) ) +
-            ( 1.0* (nj+nx) * read_distance_matrix(cx, cj) ) ) / denominator  -
-            ( 1.0 * nx * read_distance_matrix(ci, cj) / (ni+nj) ) )
-      end
 
+        ((((1.0 * (ni + nx) * read_distance_matrix(cx, ci)) +
+            (1.0 * (nj + nx) * read_distance_matrix(cx, cj))) / denominator) -
+            (1.0 * nx * read_distance_matrix(ci, cj) / (ni + nj)))
+      end
     end
   end
 end

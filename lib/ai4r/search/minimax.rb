@@ -26,7 +26,7 @@
 # Example Usage:
 #   # Create a simple game state
 #   game_state = TicTacToeState.new(board, :x)
-#   
+#
 #   # Find best move using minimax
 #   minimax = Minimax.new(max_depth: 6, alpha_beta: true)
 #   best_move = minimax.find_best_move(game_state)
@@ -101,12 +101,12 @@ module Ai4r
       #
       def find_best_move(game_state)
         validate_game_state(game_state)
-        
+
         # Reset statistics for new search
         reset_statistics
         @search_start_time = Time.now
 
-        educational_output("🎮 Minimax Search Starting", <<~MSG)
+        educational_output('🎮 Minimax Search Starting', <<~MSG)
           Current player: #{game_state.current_player}
           Max depth: #{@max_depth}
           Alpha-Beta pruning: #{@alpha_beta_enabled ? 'Enabled' : 'Disabled'}
@@ -114,9 +114,9 @@ module Ai4r
 
         # Get all possible moves
         possible_moves = game_state.get_possible_moves
-        
+
         if possible_moves.empty?
-          educational_output("⚠️  No moves available", "Game may be over")
+          educational_output('⚠️  No moves available', 'Game may be over')
           return nil
         end
 
@@ -130,12 +130,12 @@ module Ai4r
         possible_moves.each_with_index do |move, move_index|
           # Make the move and get resulting state
           new_state = game_state.make_move(move)
-          
+
           # Evaluate this move using minimax
           move_value = minimax_value(new_state, @max_depth - 1, alpha, beta, false)
-          
+
           educational_step_output(move, move_value, move_index + 1, possible_moves.length)
-          
+
           # Update best move if this is better
           if move_value > best_value
             best_value = move_value
@@ -143,16 +143,14 @@ module Ai4r
           end
 
           # Update alpha for alpha-beta pruning
-          if @alpha_beta_enabled
-            alpha = [alpha, move_value].max
-          end
+          alpha = [alpha, move_value].max if @alpha_beta_enabled
         end
 
         # Calculate final statistics
         @search_time = Time.now - @search_start_time
         @branching_factor = calculate_branching_factor
 
-        educational_output("🏆 Best Move Found", <<~MSG)
+        educational_output('🏆 Best Move Found', <<~MSG)
           Best move: #{best_move}
           Expected value: #{best_value}
           Nodes explored: #{@nodes_explored}
@@ -207,50 +205,50 @@ module Ai4r
         if maximizing_player
           # MAX player: Try to maximize the score
           max_value = -Float::INFINITY
-          
+
           possible_moves.each do |move|
             # Make move and recurse
             new_state = game_state.make_move(move)
             value = minimax_value(new_state, depth - 1, alpha, beta, false)
-            
+
             # Update maximum value
             max_value = [max_value, value].max
-            
+
             # Alpha-beta pruning
-            if @alpha_beta_enabled
-              alpha = [alpha, value].max
-              if beta <= alpha
-                @nodes_pruned += 1
-                pruning_output("MAX", alpha, beta, depth)
-                break # Beta cutoff
-              end
-            end
+            next unless @alpha_beta_enabled
+
+            alpha = [alpha, value].max
+            next unless beta <= alpha
+
+            @nodes_pruned += 1
+            pruning_output('MAX', alpha, beta, depth)
+            break # Beta cutoff
           end
-          
+
           max_value
         else
           # MIN player: Try to minimize the score
           min_value = Float::INFINITY
-          
+
           possible_moves.each do |move|
             # Make move and recurse
             new_state = game_state.make_move(move)
             value = minimax_value(new_state, depth - 1, alpha, beta, true)
-            
+
             # Update minimum value
             min_value = [min_value, value].min
-            
+
             # Alpha-beta pruning
-            if @alpha_beta_enabled
-              beta = [beta, value].min
-              if beta <= alpha
-                @nodes_pruned += 1
-                pruning_output("MIN", alpha, beta, depth)
-                break # Alpha cutoff
-              end
-            end
+            next unless @alpha_beta_enabled
+
+            beta = [beta, value].min
+            next unless beta <= alpha
+
+            @nodes_pruned += 1
+            pruning_output('MIN', alpha, beta, depth)
+            break # Alpha cutoff
           end
-          
+
           min_value
         end
       end
@@ -296,7 +294,7 @@ module Ai4r
         # Calculate improvement
         nodes_saved = results[:without_pruning][:nodes_explored] - results[:with_pruning][:nodes_explored]
         time_saved = results[:without_pruning][:search_time] - results[:with_pruning][:search_time]
-        
+
         results[:improvement] = {
           nodes_saved: nodes_saved,
           nodes_percentage: (nodes_saved.to_f / results[:without_pruning][:nodes_explored] * 100).round(2),
@@ -323,7 +321,7 @@ module Ai4r
         }
 
         analyze_tree_recursive(game_state, 0, max_analysis_depth, analysis)
-        
+
         # Calculate average branching factor
         total_branching = analysis[:depth_info].values.sum { |info| info[:total_branching] }
         total_non_leaf = analysis[:depth_info].values.sum { |info| info[:non_leaf_nodes] }
@@ -339,6 +337,7 @@ module Ai4r
         unless max_depth.is_a?(Integer) && max_depth > 0
           raise ArgumentError, "max_depth must be a positive integer, got: #{max_depth}"
         end
+
         max_depth
       end
 
@@ -349,7 +348,8 @@ module Ai4r
                game_state.respond_to?(:evaluate) &&
                game_state.respond_to?(:game_over?) &&
                game_state.respond_to?(:current_player)
-          raise ArgumentError, "game_state must implement required methods: get_possible_moves, make_move, evaluate, game_over?, current_player"
+          raise ArgumentError,
+                'game_state must implement required methods: get_possible_moves, make_move, evaluate, game_over?, current_player'
         end
       end
 
@@ -366,6 +366,7 @@ module Ai4r
       # Calculate effective branching factor
       def calculate_branching_factor
         return 0 if @nodes_explored <= 1
+
         Math.log(@nodes_explored) / Math.log(@max_depth_reached + 1)
       end
 
@@ -387,19 +388,19 @@ module Ai4r
         possible_moves = game_state.get_possible_moves
         branching_factor = possible_moves.length
 
-        if branching_factor > 0 && current_depth < max_depth
-          analysis[:depth_info][current_depth][:total_branching] += branching_factor
-          analysis[:depth_info][current_depth][:non_leaf_nodes] += 1
-          
-          # Update min/max branching factors
-          analysis[:max_branching_factor] = [analysis[:max_branching_factor], branching_factor].max
-          analysis[:min_branching_factor] = [analysis[:min_branching_factor], branching_factor].min
+        return unless branching_factor > 0 && current_depth < max_depth
 
-          # Recurse for each move
-          possible_moves.each do |move|
-            new_state = game_state.make_move(move)
-            analyze_tree_recursive(new_state, current_depth + 1, max_depth, analysis)
-          end
+        analysis[:depth_info][current_depth][:total_branching] += branching_factor
+        analysis[:depth_info][current_depth][:non_leaf_nodes] += 1
+
+        # Update min/max branching factors
+        analysis[:max_branching_factor] = [analysis[:max_branching_factor], branching_factor].max
+        analysis[:min_branching_factor] = [analysis[:min_branching_factor], branching_factor].min
+
+        # Recurse for each move
+        possible_moves.each do |move|
+          new_state = game_state.make_move(move)
+          analyze_tree_recursive(new_state, current_depth + 1, max_depth, analysis)
         end
       end
 
@@ -420,12 +421,12 @@ module Ai4r
         puts "   Minimax value: #{value}"
         puts "   Nodes explored so far: #{@nodes_explored}"
         puts "   Nodes pruned so far: #{@nodes_pruned}" if @alpha_beta_enabled
-        puts "   Press Enter to continue..." if @step_by_step_mode
+        puts '   Press Enter to continue...' if @step_by_step_mode
         gets if @step_by_step_mode
       end
 
       # Evaluation output for terminal states
-      def educational_evaluation_output(game_state, evaluation, depth)
+      def educational_evaluation_output(_game_state, evaluation, depth)
         return unless @verbose_mode && depth == 0
 
         puts "📊 Leaf evaluation: #{evaluation} (depth #{@max_depth - depth})"
@@ -456,6 +457,7 @@ module Ai4r
       # Calculate pruning efficiency
       def pruning_efficiency
         return 0 if tree_size == 0
+
         (nodes_pruned.to_f / tree_size * 100).round(2)
       end
 
@@ -486,32 +488,32 @@ module Ai4r
       # Get all possible moves from this state
       # @return [Array] Array of possible moves
       def get_possible_moves
-        raise NotImplementedError, "Subclasses must implement get_possible_moves"
+        raise NotImplementedError, 'Subclasses must implement get_possible_moves'
       end
 
       # Make a move and return the resulting game state
       # @param move [Object] The move to make
       # @return [GameState] New game state after the move
       def make_move(move)
-        raise NotImplementedError, "Subclasses must implement make_move"
+        raise NotImplementedError, 'Subclasses must implement make_move'
       end
 
       # Evaluate the current game state
       # @return [Float] Evaluation score (positive favors current player)
       def evaluate
-        raise NotImplementedError, "Subclasses must implement evaluate"
+        raise NotImplementedError, 'Subclasses must implement evaluate'
       end
 
       # Check if the game is over
       # @return [Boolean] True if game is over
       def game_over?
-        raise NotImplementedError, "Subclasses must implement game_over?"
+        raise NotImplementedError, 'Subclasses must implement game_over?'
       end
 
       # Get the current player
       # @return [Object] Current player identifier
       def current_player
-        raise NotImplementedError, "Subclasses must implement current_player"
+        raise NotImplementedError, 'Subclasses must implement current_player'
       end
 
       # Get the winner if game is over
@@ -523,7 +525,7 @@ module Ai4r
       # Create a deep copy of the game state
       # @return [GameState] Deep copy of this state
       def deep_copy
-        raise NotImplementedError, "Subclasses must implement deep_copy"
+        raise NotImplementedError, 'Subclasses must implement deep_copy'
       end
 
       # Educational string representation
