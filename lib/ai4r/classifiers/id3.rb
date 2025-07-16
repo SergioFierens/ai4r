@@ -296,7 +296,6 @@ module Ai4r
 
       private
 
-
       # @param examples [Object]
       # @param domain [Object]
       # @return [Object]

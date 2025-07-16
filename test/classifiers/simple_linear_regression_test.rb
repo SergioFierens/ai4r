@@ -4,10 +4,9 @@ require 'ai4r/classifiers/simple_linear_regression'
 require 'ai4r/data/data_set'
 require_relative '../test_helper'
 
-include Ai4r::Classifiers
-include Ai4r::Data
-
 class SimpleLinearRegressionTest < Minitest::Test
+  include Ai4r::Classifiers
+  include Ai4r::Data
   @@data_labels = %w[symboling normalized-losses wheel-base length width height curb-weight
                      engine-size bore stroke compression-ratio horsepower peak-rpm city-mpg
                      highway-mpg class]

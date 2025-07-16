@@ -4,10 +4,9 @@ require 'ai4r/classifiers/gradient_boosting'
 require 'ai4r/data/data_set'
 require_relative '../test_helper'
 
-include Ai4r::Classifiers
-include Ai4r::Data
-
 class GradientBoostingTest < Minitest::Test
+  include Ai4r::Classifiers
+  include Ai4r::Data
   DATA_LABELS = %w[x target].freeze
   DATA_ITEMS = [[1, 2], [2, 4], [3, 6], [4, 8]].freeze
 

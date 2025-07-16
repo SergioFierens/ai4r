@@ -17,6 +17,7 @@ class MockClassifier < Ai4r::Classifiers::Classifier
   attr_accessor :built
 
   def initialize(class_value)
+    super()
     @built = false
     @class_value = class_value
   end

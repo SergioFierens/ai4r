@@ -4,10 +4,9 @@ require 'ai4r/classifiers/logistic_regression'
 require 'ai4r/data/data_set'
 require_relative '../test_helper'
 
-include Ai4r::Classifiers
-include Ai4r::Data
-
 class LogisticRegressionTest < Minitest::Test
+  include Ai4r::Classifiers
+  include Ai4r::Data
   DATA_LABELS = %w[x1 x2 class].freeze
   DATA_ITEMS = [
     [0, 0, 0],
