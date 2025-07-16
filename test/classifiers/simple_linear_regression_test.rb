@@ -7,11 +7,11 @@ require_relative '../test_helper'
 class SimpleLinearRegressionTest < Minitest::Test
   include Ai4r::Classifiers
   include Ai4r::Data
-  @@data_labels = %w[symboling normalized-losses wheel-base length width height curb-weight
-                     engine-size bore stroke compression-ratio horsepower peak-rpm city-mpg
-                     highway-mpg class]
+  DATA_LABELS = %w[symboling normalized-losses wheel-base length width height curb-weight
+                   engine-size bore stroke compression-ratio horsepower peak-rpm city-mpg
+                   highway-mpg class].freeze
 
-  @@data_items = [
+  DATA_ITEMS = [
     [2, 164, 99.8, 176.6, 66.2, 54.3, 2337, 109, 3.19, 3.4, 10, 102, 5500, 24, 30, 13_950],
     [2, 164, 99.4, 176.6, 66.4, 54.3, 2824, 136, 3.19, 3.4, 8, 115, 5500, 18, 22, 17_450],
     [1, 158, 105.8, 192.7, 71.4, 55.7, 2844, 136, 3.19, 3.4, 8.5, 110, 5500, 19, 25, 17_710],
@@ -21,11 +21,11 @@ class SimpleLinearRegressionTest < Minitest::Test
     [0, 188, 101.2, 176.8, 64.8, 54.3, 2710, 164, 3.31, 3.19, 9, 121, 4250, 21, 28, 20_970],
     [0, 188, 101.2, 176.8, 64.8, 54.3, 2765, 164, 3.31, 3.19, 9, 121, 4250, 21, 28, 21_105],
     [2, 121, 88.4, 141.1, 60.3, 53.2, 1488, 61, 2.91, 3.03, 9.5, 48, 5100, 47, 53, 5151]
-  ]
+  ].freeze
 
   def setup
     @data_set = DataSet.new
-    @data_set = DataSet.new(data_items: @@data_items, data_labels: @@data_labels)
+    @data_set = DataSet.new(data_items: DATA_ITEMS, data_labels: DATA_LABELS)
     @c = SimpleLinearRegression.new.build @data_set
   end
 

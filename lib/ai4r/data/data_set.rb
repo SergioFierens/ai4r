@@ -106,7 +106,7 @@ module Ai4r
         items = []
         open_csv_file(filepath) do |row|
           items << row.collect do |x|
-            is_number?(x) ? Float(x, exception: false) : x
+            number?(x) ? Float(x, exception: false) : x
           end
         end
         set_data_items(items)
@@ -344,7 +344,7 @@ module Ai4r
 
       # @param x [Object]
       # @return [Object]
-      def is_number?(x)
+      def number?(x)
         !Float(x, exception: false).nil?
       end
 

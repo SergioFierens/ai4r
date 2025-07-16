@@ -8,7 +8,7 @@ class MultilayerPerceptronTest < Minitest::Test
   include Ai4r::Classifiers
   include Ai4r::Data
 
-  @@data_set = DataSet.new(data_items: [
+  DATA_SET = DataSet.new(data_items: [
                              ['New York',  '<30', 'M', 'Y'],
                              ['Chicago',   '<30',     'M', 'Y'],
                              ['New York',  '<30',     'M', 'Y'],
@@ -16,7 +16,7 @@ class MultilayerPerceptronTest < Minitest::Test
                              ['Chicago',   '[30-50)', 'F', 'Y'],
                              ['New York',  '[30-50)', 'F', 'N'],
                              ['Chicago',   '[50-80]', 'M', 'N']
-                           ])
+                           ]).freeze
 
   def test_initialize
     classifier = MultilayerPerceptron.new
@@ -33,15 +33,15 @@ class MultilayerPerceptronTest < Minitest::Test
     assert_raises(ArgumentError) { MultilayerPerceptron.new.build(DataSet.new) }
     classifier = MultilayerPerceptron.new
     classifier.training_iterations = 1
-    classifier.build(@@data_set)
+    classifier.build(DATA_SET)
     assert_equal [7, 2], classifier.network.structure
     classifier.hidden_layers = [6, 4]
-    classifier.build(@@data_set)
+    classifier.build(DATA_SET)
     assert_equal [7, 6, 4, 2], classifier.network.structure
   end
 
   def test_eval
-    classifier = MultilayerPerceptron.new.build(@@data_set)
+    classifier = MultilayerPerceptron.new.build(DATA_SET)
     assert classifier
     assert_equal('N', classifier.eval(['Chicago', '[50-80]', 'M']))
     assert_equal('N', classifier.eval(['New York', '[30-50)', 'F']))

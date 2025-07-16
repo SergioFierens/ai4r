@@ -16,10 +16,10 @@ class AverageLinkageTest < Minitest::Test
   include Ai4r::Clusterers
   include Ai4r::Data
 
-  @@data = [[10, 3], [3, 10], [2, 8], [2, 5], [3, 8], [10, 3],
-            [1, 3], [8, 1], [2, 9], [2, 5], [3, 3], [9, 4]]
+  DATA = [[10, 3], [3, 10], [2, 8], [2, 5], [3, 8], [10, 3],
+          [1, 3], [8, 1], [2, 9], [2, 5], [3, 3], [9, 4]].freeze
 
-  @@expected_distance_matrix = [
+  EXPECTED_DISTANCE_MATRIX = [
     [98.0],
     [89.0, 5.0],
     [68.0, 26.0, 9.0],
@@ -31,13 +31,13 @@ class AverageLinkageTest < Minitest::Test
     [68.0, 26.0, 9.0, 0.0, 10.0, 68.0, 5.0, 52.0, 16.0],
     [49.0, 49.0, 26.0, 5.0, 25.0, 49.0, 4.0, 29.0, 37.0, 5.0],
     [2.0, 72.0, 65.0, 50.0, 52.0, 2.0, 65.0, 10.0, 74.0, 50.0, 37.0]
-  ]
+  ].freeze
 
   def setup; end
 
   def test_linkage_distance
     clusterer = Ai4r::Clusterers::AverageLinkage.new
-    clusterer.instance_variable_set(:@distance_matrix, @@expected_distance_matrix)
+    clusterer.instance_variable_set(:@distance_matrix, EXPECTED_DISTANCE_MATRIX)
     assert_equal 93.5, clusterer.send(:linkage_distance, 0, 1, 2)
     assert_equal 37.5, clusterer.send(:linkage_distance, 4, 2, 5)
   end

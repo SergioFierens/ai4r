@@ -16,10 +16,10 @@ class SingleLinkageTest < Minitest::Test
   include Ai4r::Clusterers
   include Ai4r::Data
 
-  @@data = [[10, 3], [3, 10], [2, 8], [2, 5], [3, 8], [10, 3],
-            [1, 3], [8, 1], [2, 9], [2, 5], [3, 3], [9, 4]]
+  DATA = [[10, 3], [3, 10], [2, 8], [2, 5], [3, 8], [10, 3],
+          [1, 3], [8, 1], [2, 9], [2, 5], [3, 3], [9, 4]].freeze
 
-  @@expected_distance_matrix = [
+  EXPECTED_DISTANCE_MATRIX = [
     [98.0],
     [89.0, 5.0],
     [68.0, 26.0, 9.0],
@@ -31,44 +31,44 @@ class SingleLinkageTest < Minitest::Test
     [68.0, 26.0, 9.0, 0.0, 10.0, 68.0, 5.0, 52.0, 16.0],
     [49.0, 49.0, 26.0, 5.0, 25.0, 49.0, 4.0, 29.0, 37.0, 5.0],
     [2.0, 72.0, 65.0, 50.0, 52.0, 2.0, 65.0, 10.0, 74.0, 50.0, 37.0]
-  ]
+  ].freeze
 
   def setup; end
 
   def test_build
     clusterer = Ai4r::Clusterers::SingleLinkage.new
-    clusterer.build(DataSet.new(data_items: @@data), 4)
+    clusterer.build(DataSet.new(data_items: DATA), 4)
     # draw_map(clusterer)
     assert_equal 4, clusterer.clusters.length
   end
 
   def test_build_with_distance
     clusterer = Ai4r::Clusterers::SingleLinkage.new
-    clusterer.build(DataSet.new(data_items: @@data), distance: 8.0)
+    clusterer.build(DataSet.new(data_items: DATA), distance: 8.0)
     # draw_map(clusterer)
     assert_equal 3, clusterer.clusters.length
   end
 
   def test_eval
     clusterer = Ai4r::Clusterers::SingleLinkage.new
-    clusterer.build(DataSet.new(data_items: @@data), 4)
+    clusterer.build(DataSet.new(data_items: DATA), 4)
     assert_equal 2, clusterer.eval([0, 8])
     assert_equal 0, clusterer.eval([8, 0])
   end
 
   def test_create_distance_matrix
     clusterer = Ai4r::Clusterers::SingleLinkage.new
-    clusterer.send(:create_distance_matrix, DataSet.new(data_items: @@data))
+    clusterer.send(:create_distance_matrix, DataSet.new(data_items: DATA))
     assert clusterer.instance_variable_get(:@distance_matrix)
     clusterer.instance_variable_get(:@distance_matrix).each_with_index do |row, row_index|
       assert_equal row_index + 1, row.length
     end
-    assert_equal @@expected_distance_matrix, clusterer.instance_variable_get(:@distance_matrix)
+    assert_equal EXPECTED_DISTANCE_MATRIX, clusterer.instance_variable_get(:@distance_matrix)
   end
 
   def test_read_distance_matrix
     clusterer = Ai4r::Clusterers::SingleLinkage.new
-    clusterer.instance_variable_set(:@distance_matrix, @@expected_distance_matrix)
+    clusterer.instance_variable_set(:@distance_matrix, EXPECTED_DISTANCE_MATRIX)
     assert_equal 9.0, clusterer.send(:read_distance_matrix, 3, 2)
     assert_equal 9.0, clusterer.send(:read_distance_matrix, 2, 3)
     assert_equal 0, clusterer.send(:read_distance_matrix, 5, 5)
@@ -76,25 +76,25 @@ class SingleLinkageTest < Minitest::Test
 
   def test_linkage_distance
     clusterer = Ai4r::Clusterers::SingleLinkage.new
-    clusterer.instance_variable_set(:@distance_matrix, @@expected_distance_matrix)
+    clusterer.instance_variable_set(:@distance_matrix, EXPECTED_DISTANCE_MATRIX)
     assert_equal 89, clusterer.send(:linkage_distance, 0, 1, 2)
     assert_equal 1, clusterer.send(:linkage_distance, 4, 2, 5)
   end
 
   def test_get_closest_clusters
     clusterer = Ai4r::Clusterers::SingleLinkage.new
-    clusterer.instance_variable_set(:@distance_matrix, @@expected_distance_matrix)
+    clusterer.instance_variable_set(:@distance_matrix, EXPECTED_DISTANCE_MATRIX)
     assert_equal [1, 0], clusterer.send(:get_closest_clusters, [[0, 1], [3, 4]])
     assert_equal [2, 1], clusterer.send(:get_closest_clusters, [[3, 4], [0, 1], [5, 6]])
   end
 
   def test_create_initial_index_clusters
     clusterer = Ai4r::Clusterers::SingleLinkage.new
-    clusterer.instance_variable_set(:@data_set, DataSet.new(data_items: @@data))
+    clusterer.instance_variable_set(:@data_set, DataSet.new(data_items: DATA))
     index_clusters = clusterer.send(:create_initial_index_clusters)
-    assert_equal @@data.length, index_clusters.length
+    assert_equal DATA.length, index_clusters.length
     assert_equal 0, index_clusters.first.first
-    assert_equal @@data.length - 1, index_clusters.last.first
+    assert_equal DATA.length - 1, index_clusters.last.first
   end
 
   def test_merge_clusters
