@@ -163,11 +163,11 @@ module Ai4r
       def forward(observation_sequence)
         validate_observation_sequence(observation_sequence)
         
-        T = observation_sequence.length
-        N = @states.length
+        sequence_length = observation_sequence.length
+        num_states = @states.length
         
         # Initialize forward probabilities
-        alpha = Array.new(T) { Array.new(N, 0.0) }
+        alpha = Array.new(sequence_length) { Array.new(num_states, 0.0) }
         
         # Initialize first time step
         observation_sequence.each_with_index do |obs, t|
@@ -175,14 +175,14 @@ module Ai4r
           
           if t == 0
             # Initial step: π(i) * b(i, obs)
-            N.times do |i|
+            num_states.times do |i|
               alpha[t][i] = @initial_distribution[i] * @emission_matrix[i][obs_idx]
             end
           else
             # Recursive step: Σ(α(t-1,j) * a(j,i)) * b(i, obs)
-            N.times do |i|
+            num_states.times do |i|
               sum = 0.0
-              N.times do |j|
+              num_states.times do |j|
                 sum += alpha[t-1][j] * @transition_matrix[j][i]
               end
               alpha[t][i] = sum * @emission_matrix[i][obs_idx]
@@ -193,7 +193,7 @@ module Ai4r
         end
         
         # Sum final probabilities
-        probability = alpha[T-1].sum
+        probability = alpha[sequence_length-1].sum
         
         educational_output("🔮 Forward Algorithm Result", <<~MSG)
           Observation sequence: #{observation_sequence.join(' → ')}
@@ -217,16 +217,16 @@ module Ai4r
       def viterbi(observation_sequence)
         validate_observation_sequence(observation_sequence)
         
-        T = observation_sequence.length
-        N = @states.length
+        sequence_length = observation_sequence.length
+        num_states = @states.length
         
         # Initialize Viterbi probabilities and path
-        delta = Array.new(T) { Array.new(N, 0.0) }
-        psi = Array.new(T) { Array.new(N, 0) }
+        delta = Array.new(sequence_length) { Array.new(num_states, 0.0) }
+        psi = Array.new(sequence_length) { Array.new(num_states, 0) }
         
         # Initialize first time step
         obs_idx = @observation_to_index[observation_sequence[0]]
-        N.times do |i|
+        num_states.times do |i|
           delta[0][i] = @initial_distribution[i] * @emission_matrix[i][obs_idx]
           psi[0][i] = 0
         end
@@ -234,15 +234,15 @@ module Ai4r
         educational_step_output("Viterbi", 0, delta[0]) if @verbose_mode
         
         # Recursive step
-        (1...T).each do |t|
+        (1...sequence_length).each do |t|
           obs_idx = @observation_to_index[observation_sequence[t]]
           
-          N.times do |i|
+          num_states.times do |i|
             # Find maximum probability and best previous state
             max_prob = -Float::INFINITY
             best_prev_state = 0
             
-            N.times do |j|
+            num_states.times do |j|
               prob = delta[t-1][j] * @transition_matrix[j][i]
               if prob > max_prob
                 max_prob = prob
@@ -258,14 +258,14 @@ module Ai4r
         end
         
         # Backtrack to find best path
-        best_path = Array.new(T)
+        best_path = Array.new(sequence_length)
         
         # Find best final state
-        best_final_prob = delta[T-1].max
-        best_path[T-1] = delta[T-1].index(best_final_prob)
+        best_final_prob = delta[sequence_length-1].max
+        best_path[sequence_length-1] = delta[sequence_length-1].index(best_final_prob)
         
         # Backtrack through path
-        (T-2).downto(0) do |t|
+        (sequence_length-2).downto(0) do |t|
           best_path[t] = psi[t+1][best_path[t+1]]
         end
         
@@ -544,25 +544,25 @@ module Ai4r
 
       # Initialize model parameters randomly
       def initialize_parameters
-        N = @states.length
-        M = @observations.length
+        num_states = @states.length
+        num_observations = @observations.length
         
         # Initialize transition matrix
-        @transition_matrix = Array.new(N) do
-          row = Array.new(N) { rand }
+        @transition_matrix = Array.new(num_states) do
+          row = Array.new(num_states) { rand }
           row_sum = row.sum
           row.map { |val| val / row_sum }
         end
         
         # Initialize emission matrix
-        @emission_matrix = Array.new(N) do
-          row = Array.new(M) { rand }
+        @emission_matrix = Array.new(num_states) do
+          row = Array.new(num_observations) { rand }
           row_sum = row.sum
           row.map { |val| val / row_sum }
         end
         
         # Initialize initial distribution
-        @initial_distribution = Array.new(N) { rand }
+        @initial_distribution = Array.new(num_states) { rand }
         init_sum = @initial_distribution.sum
         @initial_distribution.map! { |val| val / init_sum }
       end
@@ -657,22 +657,22 @@ module Ai4r
 
       # Calculate forward probabilities
       def forward_probabilities(obs_seq)
-        T = obs_seq.length
-        N = @states.length
-        alpha = Array.new(T) { Array.new(N, 0.0) }
+        sequence_length = obs_seq.length
+        num_states = @states.length
+        alpha = Array.new(sequence_length) { Array.new(num_states, 0.0) }
         
         # Initialize
         obs_idx = @observation_to_index[obs_seq[0]]
-        N.times do |i|
+        num_states.times do |i|
           alpha[0][i] = @initial_distribution[i] * @emission_matrix[i][obs_idx]
         end
         
         # Forward pass
-        (1...T).each do |t|
+        (1...sequence_length).each do |t|
           obs_idx = @observation_to_index[obs_seq[t]]
-          N.times do |i|
+          num_states.times do |i|
             sum = 0.0
-            N.times do |j|
+            num_states.times do |j|
               sum += alpha[t-1][j] * @transition_matrix[j][i]
             end
             alpha[t][i] = sum * @emission_matrix[i][obs_idx]
@@ -684,19 +684,19 @@ module Ai4r
 
       # Calculate backward probabilities
       def backward_probabilities(obs_seq)
-        T = obs_seq.length
-        N = @states.length
-        beta = Array.new(T) { Array.new(N, 0.0) }
+        sequence_length = obs_seq.length
+        num_states = @states.length
+        beta = Array.new(sequence_length) { Array.new(num_states, 0.0) }
         
         # Initialize
-        N.times { |i| beta[T-1][i] = 1.0 }
+        num_states.times { |i| beta[sequence_length-1][i] = 1.0 }
         
         # Backward pass
-        (T-2).downto(0) do |t|
+        (sequence_length-2).downto(0) do |t|
           obs_idx = @observation_to_index[obs_seq[t+1]]
-          N.times do |i|
+          num_states.times do |i|
             sum = 0.0
-            N.times do |j|
+            num_states.times do |j|
               sum += @transition_matrix[i][j] * @emission_matrix[j][obs_idx] * beta[t+1][j]
             end
             beta[t][i] = sum
@@ -708,37 +708,37 @@ module Ai4r
 
       # Calculate xi and gamma probabilities
       def calculate_xi_gamma(obs_seq, alpha, beta)
-        T = obs_seq.length
-        N = @states.length
+        sequence_length = obs_seq.length
+        num_states = @states.length
         
         # Calculate xi (transition probabilities)
-        xi = Array.new(T-1) { Array.new(N) { Array.new(N, 0.0) } }
+        xi = Array.new(sequence_length-1) { Array.new(num_states) { Array.new(num_states, 0.0) } }
         
-        (0...T-1).each do |t|
+        (0...sequence_length-1).each do |t|
           obs_idx = @observation_to_index[obs_seq[t+1]]
           total = 0.0
           
           # Calculate denominator
-          N.times do |i|
-            N.times do |j|
+          num_states.times do |i|
+            num_states.times do |j|
               total += alpha[t][i] * @transition_matrix[i][j] * @emission_matrix[j][obs_idx] * beta[t+1][j]
             end
           end
           
           # Calculate xi
-          N.times do |i|
-            N.times do |j|
+          num_states.times do |i|
+            num_states.times do |j|
               xi[t][i][j] = (alpha[t][i] * @transition_matrix[i][j] * @emission_matrix[j][obs_idx] * beta[t+1][j]) / (total + @smoothing)
             end
           end
         end
         
         # Calculate gamma (state probabilities)
-        gamma = Array.new(T) { Array.new(N, 0.0) }
+        gamma = Array.new(sequence_length) { Array.new(num_states, 0.0) }
         
-        T.times do |t|
+        sequence_length.times do |t|
           total = alpha[t].zip(beta[t]).sum { |a, b| a * b }
-          N.times do |i|
+          num_states.times do |i|
             gamma[t][i] = (alpha[t][i] * beta[t][i]) / (total + @smoothing)
           end
         end
@@ -748,25 +748,25 @@ module Ai4r
 
       # Accumulate expected counts
       def accumulate_counts(obs_seq, xi, gamma, transition_counts, emission_counts, initial_counts)
-        T = obs_seq.length
-        N = @states.length
+        sequence_length = obs_seq.length
+        num_states = @states.length
         
         # Initial state counts
-        N.times { |i| initial_counts[i] += gamma[0][i] }
+        num_states.times { |i| initial_counts[i] += gamma[0][i] }
         
         # Transition counts
-        (0...T-1).each do |t|
-          N.times do |i|
-            N.times do |j|
+        (0...sequence_length-1).each do |t|
+          num_states.times do |i|
+            num_states.times do |j|
               transition_counts[i][j] += xi[t][i][j]
             end
           end
         end
         
         # Emission counts
-        T.times do |t|
+        sequence_length.times do |t|
           obs_idx = @observation_to_index[obs_seq[t]]
-          N.times do |i|
+          num_states.times do |i|
             emission_counts[i][obs_idx] += gamma[t][i]
           end
         end
@@ -774,27 +774,27 @@ module Ai4r
 
       # Normalize counts to probabilities
       def normalize_counts(transition_counts, emission_counts, initial_counts)
-        N = @states.length
-        M = @observations.length
+        num_states = @states.length
+        num_observations = @observations.length
         
         # Normalize initial distribution
-        init_sum = initial_counts.sum + @smoothing * N
-        N.times do |i|
+        init_sum = initial_counts.sum + @smoothing * num_states
+        num_states.times do |i|
           @initial_distribution[i] = (initial_counts[i] + @smoothing) / init_sum
         end
         
         # Normalize transition matrix
-        N.times do |i|
-          row_sum = transition_counts[i].sum + @smoothing * N
-          N.times do |j|
+        num_states.times do |i|
+          row_sum = transition_counts[i].sum + @smoothing * num_states
+          num_states.times do |j|
             @transition_matrix[i][j] = (transition_counts[i][j] + @smoothing) / row_sum
           end
         end
         
         # Normalize emission matrix
-        N.times do |i|
-          row_sum = emission_counts[i].sum + @smoothing * M
-          M.times do |j|
+        num_states.times do |i|
+          row_sum = emission_counts[i].sum + @smoothing * num_observations
+          num_observations.times do |j|
             @emission_matrix[i][j] = (emission_counts[i][j] + @smoothing) / row_sum
           end
         end
