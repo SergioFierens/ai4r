@@ -4,13 +4,12 @@ require 'ai4r/classifiers/naive_bayes'
 require 'ai4r/data/data_set'
 require_relative '../test_helper'
 
-include Ai4r::Classifiers
-include Ai4r::Data
-
 class NaiveBayesTest < Minitest::Test
-  @@data_labels = %w[Color Type Origin Stolen?]
+  include Ai4r::Classifiers
+  include Ai4r::Data
+  DATA_LABELS = %w[Color Type Origin Stolen?].freeze
 
-  @@data_items = [
+  DATA_ITEMS = [
     %w[Red Sports Domestic Yes],
     %w[Red Sports Domestic No],
     %w[Red Sports Domestic Yes],
@@ -21,11 +20,11 @@ class NaiveBayesTest < Minitest::Test
     %w[Yellow Sports Domestic No],
     %w[Red SUV Imported No],
     %w[Red Sports Imported Yes]
-  ]
+  ].freeze
 
   def setup
     @data_set = DataSet.new
-    @data_set = DataSet.new(data_items: @@data_items, data_labels: @@data_labels)
+    @data_set = DataSet.new(data_items: DATA_ITEMS, data_labels: DATA_LABELS)
     @b = NaiveBayes.new.set_parameters({ m: 3 }).build @data_set
   end
 

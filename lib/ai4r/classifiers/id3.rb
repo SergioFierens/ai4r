@@ -196,8 +196,6 @@ module Ai4r
         self
       end
 
-      private
-
       # @param data_examples [Object]
       # @return [Object]
       def preprocess_data(data_examples)
@@ -295,6 +293,8 @@ module Ai4r
 
         Math.log(z) / LOG2
       end
+
+      private
 
 
       # @param examples [Object]

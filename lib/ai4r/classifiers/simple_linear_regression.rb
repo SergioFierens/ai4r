@@ -67,11 +67,11 @@ module Ai4r
 
         y_mean = data.get_mean_or_mode[data.num_attributes - 1]
         result = if @selected_attribute
-                    evaluate_attribute(data, @selected_attribute, y_mean)
-                  else
-                    evaluate_all_attributes(data, y_mean)
-                  end
-        assign_result(data, result, y_mean)
+                   evaluate_attribute(data, @selected_attribute, y_mean)
+                 else
+                   evaluate_all_attributes(data, y_mean)
+                 end
+        assign_result(data, result)
       end
 
       def validate_data(data)
@@ -105,7 +105,7 @@ module Ai4r
         result
       end
 
-      def assign_result(data, result, y_mean)
+      def assign_result(data, result)
         raise 'no useful attribute found' if result[:chosen] == -1
 
         @attribute = data.data_labels[result[:chosen]]

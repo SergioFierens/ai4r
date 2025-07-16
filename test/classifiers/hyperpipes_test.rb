@@ -14,17 +14,16 @@ require_relative '../test_helper'
 require 'set'
 require 'yaml'
 
-include Ai4r::Classifiers
-include Ai4r::Data
-
 class HyperpipesTest < Minitest::Test
+  include Ai4r::Classifiers
+  include Ai4r::Data
   fixture = YAML.load_file(File.expand_path('../fixtures/marketing_target_numeric.yml', __dir__))
 
-  @@data_labels = fixture['data_labels']
-  @@data_items  = fixture['data_items']
+  DATA_LABELS = fixture['data_labels']
+  DATA_ITEMS  = fixture['data_items']
 
   def setup
-    @data_set = DataSet.new(data_items: @@data_items, data_labels: @@data_labels)
+    @data_set = DataSet.new(data_items: DATA_ITEMS, data_labels: DATA_LABELS)
   end
 
   def test_build_pipe
@@ -54,11 +53,11 @@ class HyperpipesTest < Minitest::Test
     age = 28 # rubocop:disable Lint/UselessAssignment
     gender = 'M' # rubocop:disable Lint/UselessAssignment
     marketing_target = nil
-    eval classifier.get_rules
+    instance_eval classifier.get_rules
     assert_equal 'Y', marketing_target
     age = 44 # rubocop:disable Lint/UselessAssignment
     city = 'New York' # rubocop:disable Lint/UselessAssignment
-    eval classifier.get_rules
+    instance_eval classifier.get_rules
     assert_equal 'N', marketing_target
   end
 
