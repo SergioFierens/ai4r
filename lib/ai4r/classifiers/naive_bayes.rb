@@ -56,7 +56,8 @@ module Ai4r
     #
 
     # Probabilistic classifier based on Bayes' theorem.
-    class NaiveBayes < Classifier
+    # rubocop:disable Metrics/ClassLength
+  class NaiveBayes < Classifier
       attr_reader :class_prob, :pcc, :pcp
 
       parameters_info m: 'Default value is set to 0. It may be set to a value greater than ' \
@@ -170,9 +171,10 @@ module Ai4r
               end
             else
               prob[prob_index] *= @pcp[index][val_index][prob_index]
-            end
-          end
-        end
+  end
+  end
+  # rubocop:enable Metrics/ClassLength
+end
 
         prob
       end

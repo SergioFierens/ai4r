@@ -31,12 +31,14 @@ module Ai4r
                       iterations: 'Number of iterations to train.'
 
       def initialize
+        super()
         @learning_rate = 0.1
         @iterations = 1000
         @weights = nil
       end
 
       # Train the logistic regression classifier using the provided dataset.
+      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       def build(data_set)
         raise 'Error instance must be passed' unless data_set.is_a?(Ai4r::Data::DataSet)
 
@@ -64,6 +66,7 @@ module Ai4r
         end
         self
       end
+      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
       # Predict the class (0 or 1) for the given data array.
       def eval(data)
@@ -78,9 +81,11 @@ module Ai4r
       #
       # This method returns a string explaining that rule extraction is not
       # supported for this algorithm.
+      # rubocop:disable Naming/AccessorMethodName
       def get_rules
         'LogisticRegression does not support rule extraction.'
       end
+      # rubocop:enable Naming/AccessorMethodName
     end
   end
 end

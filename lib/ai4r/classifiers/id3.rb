@@ -92,15 +92,18 @@ module Ai4r
     # Author::    Sergio Fierens
     # License::   MPL 1.1
     # Url::       https://github.com/SergioFierens/ai4r
+    # rubocop:disable Metrics/ClassLength
     class ID3 < Classifier
       attr_reader :data_set, :majority_class, :validation_set
 
       parameters_info max_depth: 'Maximum recursion depth. Default is nil (no limit).',
                       min_gain: 'Minimum information gain required to split. Default is 0.',
-                      on_unknown: 'Behaviour when evaluating unseen attribute values: :raise (default), :most_frequent or :nil.'
+                      on_unknown: 'Behaviour when evaluating unseen attribute values: '
+                                  ':raise (default), :most_frequent or :nil.'
 
       # @return [Object]
       def initialize
+        super()
         @max_depth = nil
         @min_gain = 0
         @on_unknown = :raise
@@ -151,14 +154,17 @@ module Ai4r
       #     puts marketing_target
       #       # =>  'Y'
       # @return [Object]
+      # rubocop:disable Naming/AccessorMethodName
       def get_rules
         # return "Empty ID3 tree" if !@tree
         rules = @tree.get_rules
         rules = rules.collect do |rule|
           "#{rule[0..-2].join(' and ')} then #{rule.last}"
         end
-        "if #{rules.join("\nelsif ")}\nelse raise 'There was not enough information during training to do a proper induction for this data element' end"
+        'if ' + rules.join("\nelsif ") +
+          "\nelse raise 'There was not enough information during training to do a proper induction for this data element' end"
       end
+      # rubocop:enable Naming/AccessorMethodName
 
       # Return a nested Hash representation of the decision tree.  This
       # structure can easily be converted to JSON or other formats.
@@ -206,6 +212,7 @@ module Ai4r
       # @param flag_att [Object]
       # @param depth [Object]
       # @return [Object]
+      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
       def build_node(data_examples, flag_att = [], depth = 0)
         return ErrorNode.new if data_examples.empty?
 
@@ -248,9 +255,10 @@ module Ai4r
               best_index = index
               best_split = split_data_examples(data_examples, domain, index)
               numeric = false
-            end
-          end
-        end
+  end
+  end
+  # rubocop:enable Metrics/ClassLength
+end
 
         gain = information_gain(data_examples, domain, best_index)
         if gain < @min_gain
@@ -275,6 +283,7 @@ module Ai4r
                              majority)
         end
       end
+      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
       # @param values [Object]
       # @return [Object]
@@ -545,6 +554,7 @@ module Ai4r
       # @param numeric [Object]
       # @param majority [Object]
       # @return [Object]
+      # rubocop:disable Metrics/ParameterLists, Style/OptionalBooleanParameter
       def initialize(data_labels, index, values_or_threshold, nodes, numeric = false,
                      majority = nil)
         @index = index
@@ -559,6 +569,7 @@ module Ai4r
         @majority = majority
         @data_labels = data_labels
       end
+      # rubocop:enable Metrics/ParameterLists, Style/OptionalBooleanParameter
 
       # @param data [Object]
       # @param classifier [Object]
@@ -580,6 +591,7 @@ module Ai4r
       end
 
       # @return [Object]
+      # rubocop:disable Naming/AccessorMethodName
       def get_rules
         rule_set = []
         @nodes.each_with_index do |child_node, child_node_index|
@@ -597,6 +609,7 @@ module Ai4r
         end
         rule_set
       end
+      # rubocop:enable Naming/AccessorMethodName
 
       # @return [Object]
       def to_h
@@ -642,9 +655,11 @@ module Ai4r
       end
 
       # @return [Object]
+      # rubocop:disable Naming/AccessorMethodName
       def get_rules
         [["#{@label}='#{@value}'"]]
       end
+      # rubocop:enable Naming/AccessorMethodName
 
       # @return [Object]
       def to_h
@@ -666,7 +681,8 @@ module Ai4r
 
     # Raised when the training data is insufficient to build a model.
     class ModelFailureError < StandardError
-      'There was not enough information during training to do a proper induction for this data element.'
+      MSG = 'There was not enough information during training to do a proper ' \
+            'induction for this data element.'
     end
 
     class ErrorNode # :nodoc: all
@@ -674,14 +690,15 @@ module Ai4r
       # @param classifier [Object]
       # @return [Object]
       def value(data, _classifier = nil)
-        raise ModelFailureError,
-              "There was not enough information during training to do a proper induction for the data element #{data}."
+        raise ModelFailureError, "#{ModelFailureError::MSG} for the data element #{data}."
       end
 
       # @return [Object]
+      # rubocop:disable Naming/AccessorMethodName
       def get_rules
         []
       end
+      # rubocop:enable Naming/AccessorMethodName
 
       # @return [Object]
       def to_h
