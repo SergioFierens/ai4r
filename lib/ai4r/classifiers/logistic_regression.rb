@@ -71,7 +71,16 @@ module Ai4r
       def eval(data)
         raise 'Model not trained' unless @weights
 
-        z = data.each_with_index.inject(@weights.last) { |s, (v, j)| s + (v.to_f * @weights[j]) }
+        expected_size = @weights.length - 1
+        if data.length != expected_size
+          raise ArgumentError,
+                "Wrong number of inputs. Expected: #{expected_size}, " \
+                "received: #{data.length}."
+        end
+
+        z = data.each_with_index.inject(@weights.last) do |s, (v, j)|
+          s + (v.to_f * @weights[j])
+        end
         prob = 1.0 / (1.0 + Math.exp(-z))
         prob >= 0.5 ? 1 : 0
       end

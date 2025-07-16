@@ -30,6 +30,10 @@ class LogisticRegressionTest < Minitest::Test
     assert_equal 1, @classifier.eval([1, 1])
   end
 
+  def test_eval_dimension_mismatch
+    assert_raises(ArgumentError) { @classifier.eval([0, 0, 1]) }
+  end
+
   def test_weights_present
     assert_equal 3, @classifier.weights.length
   end
