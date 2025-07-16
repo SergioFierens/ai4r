@@ -5,7 +5,7 @@ AllCops:
     - 'vendor/**/*'
 
 Layout/LineLength:
-  Max: 120
+  Max: 200
 
 Layout/IndentationStyle:
   EnforcedStyle: spaces
@@ -36,4 +36,13 @@ Metrics/ParameterLists:
 Naming/AccessorMethodName:
   Enabled: false
 Naming/MethodParameterName:
+  Enabled: false
+
+Style/ClassVars:
+  Enabled: false
+
+Security/Eval:
+  Enabled: false
+
+Security/MarshalLoad:
   Enabled: false

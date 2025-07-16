@@ -9,14 +9,14 @@ class MultilayerPerceptronTest < Minitest::Test
   include Ai4r::Data
 
   DATA_SET = DataSet.new(data_items: [
-                             ['New York',  '<30', 'M', 'Y'],
-                             ['Chicago',   '<30',     'M', 'Y'],
-                             ['New York',  '<30',     'M', 'Y'],
-                             ['New York',  '[30-50)', 'F', 'N'],
-                             ['Chicago',   '[30-50)', 'F', 'Y'],
-                             ['New York',  '[30-50)', 'F', 'N'],
-                             ['Chicago',   '[50-80]', 'M', 'N']
-                           ]).freeze
+                           ['New York', '<30', 'M', 'Y'],
+                           ['Chicago',   '<30',     'M', 'Y'],
+                           ['New York',  '<30',     'M', 'Y'],
+                           ['New York',  '[30-50)', 'F', 'N'],
+                           ['Chicago',   '[30-50)', 'F', 'Y'],
+                           ['New York',  '[30-50)', 'F', 'N'],
+                           ['Chicago',   '[50-80]', 'M', 'N']
+                         ]).freeze
 
   def test_initialize
     classifier = MultilayerPerceptron.new
