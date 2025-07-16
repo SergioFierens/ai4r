@@ -12,28 +12,27 @@
 require 'ai4r/classifiers/ib1'
 require_relative '../test_helper'
 
-include Ai4r::Classifiers
-include Ai4r::Data
-
 class IB1Test < Minitest::Test
-  @@data_labels = %w[city age gender marketing_target]
+  include Ai4r::Classifiers
+  include Ai4r::Data
+  DATA_LABELS = %w[city age gender marketing_target].freeze
 
-  @@data_items = [['New York',  25, 'M', 'Y'],
-                  ['New York',  23, 'M', 'Y'],
-                  ['New York',  18, 'M', 'Y'],
-                  ['Chicago',   43, 'M', 'Y'],
-                  ['New York',  34, 'F', 'N'],
-                  ['Chicago',   33, 'F', 'Y'],
-                  ['New York',  31, 'F', 'N'],
-                  ['Chicago',   55, 'M', 'N'],
-                  ['New York',  58, 'F', 'N'],
-                  ['New York',  59, 'M', 'N'],
-                  ['Chicago',   71, 'M', 'N'],
-                  ['New York',  60, 'F', 'N'],
-                  ['Chicago',   85, 'F', 'Y']]
+  DATA_ITEMS = [['New York', 25, 'M', 'Y'],
+                ['New York',  23, 'M', 'Y'],
+                ['New York',  18, 'M', 'Y'],
+                ['Chicago',   43, 'M', 'Y'],
+                ['New York',  34, 'F', 'N'],
+                ['Chicago',   33, 'F', 'Y'],
+                ['New York',  31, 'F', 'N'],
+                ['Chicago',   55, 'M', 'N'],
+                ['New York',  58, 'F', 'N'],
+                ['New York',  59, 'M', 'N'],
+                ['Chicago',   71, 'M', 'N'],
+                ['New York',  60, 'F', 'N'],
+                ['Chicago',   85, 'F', 'Y']].freeze
 
   def setup
-    @data_set = DataSet.new(data_items: @@data_items, data_labels: @@data_labels)
+    @data_set = DataSet.new(data_items: DATA_ITEMS.map(&:dup), data_labels: DATA_LABELS)
     @classifier = IB1.new.build(@data_set)
   end
 
@@ -102,8 +101,8 @@ class IB1Test < Minitest::Test
   end
 
   def test_add_instance
-    items = @@data_items[0...7]
-    data_set = DataSet.new(data_items: items, data_labels: @@data_labels)
+    items = DATA_ITEMS[0...7].map(&:dup)
+    data_set = DataSet.new(data_items: items, data_labels: DATA_LABELS)
     classifier = IB1.new.build(data_set)
     assert_equal('Y', classifier.eval(['Chicago', 55, 'M']))
     classifier.add_instance(['Chicago', 55, 'M', 'N'])

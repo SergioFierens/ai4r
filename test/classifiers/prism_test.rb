@@ -10,24 +10,24 @@ class PrismTest < Minitest::Test
 
   fixture = YAML.load_file(File.expand_path('../fixtures/marketing_target_age_range.yml', __dir__))
 
-  @@data_examples = fixture['data_items']
-  @@data_labels   = fixture['data_labels']
+  DATA_EXAMPLES = fixture['data_items']
+  DATA_LABELS   = fixture['data_labels']
 
   numeric_fixture = YAML.load_file(File.expand_path('../fixtures/prism_numeric_examples.yml',
                                                     __dir__))
 
-  @@numeric_examples = numeric_fixture['data_items']
-  @@numeric_labels   = numeric_fixture['data_labels']
+  NUMERIC_EXAMPLES = numeric_fixture['data_items']
+  NUMERIC_LABELS   = numeric_fixture['data_labels']
 
   def test_build
     assert_raises(ArgumentError) { Ai4r::Classifiers::Prism.new.build(DataSet.new) }
-    classifier = Ai4r::Classifiers::Prism.new.build(DataSet.new(data_items: @@data_examples))
+    classifier = Ai4r::Classifiers::Prism.new.build(DataSet.new(data_items: DATA_EXAMPLES))
     refute_nil(classifier.data_set.data_labels)
     refute_nil(classifier.rules)
     assert_equal('attribute_1', classifier.data_set.data_labels.first)
     assert_equal('class_value', classifier.data_set.category_label)
-    classifier = Ai4r::Classifiers::Prism.new.build(DataSet.new(data_items: @@data_examples,
-                                                                data_labels: @@data_labels))
+    classifier = Ai4r::Classifiers::Prism.new.build(DataSet.new(data_items: DATA_EXAMPLES,
+                                                                data_labels: DATA_LABELS))
     refute_nil(classifier.data_set.data_labels)
     refute_nil(classifier.rules)
     assert_equal('city', classifier.data_set.data_labels.first)
@@ -36,38 +36,38 @@ class PrismTest < Minitest::Test
   end
 
   def test_eval
-    classifier = Ai4r::Classifiers::Prism.new.build(DataSet.new(data_items: @@data_examples))
-    @@data_examples.each do |data|
+    classifier = Ai4r::Classifiers::Prism.new.build(DataSet.new(data_items: DATA_EXAMPLES))
+    DATA_EXAMPLES.each do |data|
       assert_equal(data.last, classifier.eval(data[0...-1]))
     end
   end
 
   def test_get_rules
-    classifier = Ai4r::Classifiers::Prism.new.build(DataSet.new(data_items: @@data_examples,
-                                                                data_labels: @@data_labels))
+    classifier = Ai4r::Classifiers::Prism.new.build(DataSet.new(data_items: DATA_EXAMPLES,
+                                                                data_labels: DATA_LABELS))
     marketing_target = nil
     age_range = nil # rubocop:disable Lint/UselessAssignment
     city = 'Chicago' # rubocop:disable Lint/UselessAssignment
-    eval(classifier.get_rules)
+    instance_eval(classifier.get_rules)
     age_range = '<30' # rubocop:disable Lint/UselessAssignment
-    eval(classifier.get_rules)
+    instance_eval(classifier.get_rules)
     assert_equal('Y', marketing_target)
-    eval(classifier.get_rules)
+    instance_eval(classifier.get_rules)
     assert_equal('Y', marketing_target)
-    eval(classifier.get_rules)
+    instance_eval(classifier.get_rules)
     assert_equal('Y', marketing_target)
     age_range = '[30-50)' # rubocop:disable Lint/UselessAssignment
     city = 'New York' # rubocop:disable Lint/UselessAssignment
-    eval(classifier.get_rules)
+    instance_eval(classifier.get_rules)
     assert_equal('N', marketing_target)
     age_range = '[50-80]' # rubocop:disable Lint/UselessAssignment
-    eval(classifier.get_rules)
+    instance_eval(classifier.get_rules)
     assert_equal('N', marketing_target)
   end
 
   def test_matches_conditions
-    classifier = Ai4r::Classifiers::Prism.new.build(DataSet.new(data_labels: @@data_labels,
-                                                                data_items: @@data_examples))
+    classifier = Ai4r::Classifiers::Prism.new.build(DataSet.new(data_labels: DATA_LABELS,
+                                                                data_items: DATA_EXAMPLES))
 
     assert classifier.send(:matches_conditions,
                            ['New York', '<30', 'M', 'Y'], { 'age_range' => '<30' })
@@ -77,7 +77,7 @@ class PrismTest < Minitest::Test
 
   def test_default_class
     classifier = Ai4r::Classifiers::Prism.new.set_parameters(default_class: 'Z').build(
-      DataSet.new(data_items: @@data_examples, data_labels: @@data_labels)
+      DataSet.new(data_items: DATA_EXAMPLES, data_labels: DATA_LABELS)
     )
     classifier.instance_variable_set(:@rules, [])
     assert_equal('Z', classifier.eval(['Paris', '<30', 'M']))
@@ -99,21 +99,21 @@ class PrismTest < Minitest::Test
   end
 
   def test_fallback_class
-    classifier = Ai4r::Classifiers::Prism.new.build(DataSet.new(data_items: @@data_examples))
+    classifier = Ai4r::Classifiers::Prism.new.build(DataSet.new(data_items: DATA_EXAMPLES))
     classifier.rules.pop
     assert_equal(classifier.majority_class,
                  classifier.eval(['New York', '[50-80]', 'M']))
 
     classifier = Ai4r::Classifiers::Prism.new.set_parameters(fallback_class: 'Z').build(
-      DataSet.new(data_items: @@data_examples)
+      DataSet.new(data_items: DATA_EXAMPLES)
     )
     classifier.rules.pop
     assert_equal('Z', classifier.eval(['New York', '[50-80]', 'M']))
   end
 
   def test_rules_have_unique_attributes
-    classifier = Ai4r::Classifiers::Prism.new.build(DataSet.new(data_labels: @@data_labels,
-                                                                data_items: @@data_examples))
+    classifier = Ai4r::Classifiers::Prism.new.build(DataSet.new(data_labels: DATA_LABELS,
+                                                                data_items: DATA_EXAMPLES))
     classifier.rules.each do |rule|
       keys = rule[:conditions].keys
       assert_equal keys.uniq, keys
@@ -138,8 +138,8 @@ class PrismTest < Minitest::Test
 
   def test_numeric_data
     classifier = Ai4r::Classifiers::Prism.new.build(DataSet.new(
-                                                      data_items: @@numeric_examples,
-                                                      data_labels: @@numeric_labels
+                                                      data_items: NUMERIC_EXAMPLES,
+                                                      data_labels: NUMERIC_LABELS
                                                     ))
     assert(classifier.rules.any? { |r| r[:conditions].values.any? { |v| v.is_a?(Range) } })
     assert_equal('Y', classifier.eval(['New York', 20, 'M']))
