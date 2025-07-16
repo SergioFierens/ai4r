@@ -36,6 +36,7 @@ module Ai4r
       )
 
       def initialize
+        super()
         @fallback_class = nil
         @bin_count = 10
         @attr_bins = {}
@@ -71,7 +72,7 @@ module Ai4r
         instances = @data_set.data_items.collect { |data| data }
         @rules = []
         domains.last.each do |class_value|
-          while has_class_value(instances, class_value)
+          while class_value?(instances, class_value)
             rule = build_rule(class_value, instances)
             @rules << rule
             instances = instances.reject { |data| matches_conditions(data, rule[:conditions]) }
@@ -131,15 +132,14 @@ module Ai4r
       # @param instances [Object]
       # @param class_value [Object]
       # @return [Object]
-      def has_class_value(instances, class_value)
-        instances.each { |data| return true if data.last == class_value }
-        false
+      def class_value?(instances, class_value)
+        instances.any? { |data| data.last == class_value }
       end
 
       # @param instances [Object]
       # @param rule [Object]
       # @return [Object]
-      def is_perfect(instances, rule)
+      def perfect?(instances, rule)
         class_value = rule[:class_value]
         instances.each do |data|
           return false if (data.last != class_value) && matches_conditions(data, rule[:conditions])
@@ -169,7 +169,7 @@ module Ai4r
         rule = { class_value: class_value, conditions: {} }
         rule_instances = instances.collect { |data| data }
         attributes = @data_set.data_labels[0...-1].collect { |label| label }
-        until is_perfect(instances, rule) || attributes.empty?
+        until perfect?(instances, rule) || attributes.empty?
           freq_table = build_freq_table(rule_instances, attributes, class_value)
           condition = get_condition(freq_table)
           rule[:conditions].merge!(condition)

@@ -31,6 +31,7 @@ module Ai4r
     #   c.eval([1,158,105.8,192.7,71.4,55.7,2844,136,3.19,3.4,8.5,110,5500,19,25])
     #
 
+    # SimpleLinearRegression performs linear regression on one attribute.
     class SimpleLinearRegression < Classifier
       attr_reader :attribute, :attribute_index, :slope, :intercept
 
@@ -38,6 +39,7 @@ module Ai4r
 
       # @return [Object]
       def initialize
+        super()
         @attribute = nil
         @attribute_index = 0
         @slope = 0
@@ -61,69 +63,55 @@ module Ai4r
       # @param data [Object]
       # @return [Object]
       def build(data)
-        raise 'Error instance must be passed' unless data.is_a?(Ai4r::Data::DataSet)
-        raise 'Data should not be empty' if data.data_items.empty?
+        validate_data(data)
 
         y_mean = data.get_mean_or_mode[data.num_attributes - 1]
+        result = if @selected_attribute
+                    evaluate_attribute(data, @selected_attribute, y_mean)
+                  else
+                    evaluate_all_attributes(data, y_mean)
+                  end
+        assign_result(data, result, y_mean)
+      end
 
-        min_msq = Float::MAX
-        chosen = -1
-        chosen_slope = 0.0 / 0.0 # Float::NAN
-        chosen_intercept = 0.0 / 0.0 # Float::NAN
+      def validate_data(data)
+        raise 'Error instance must be passed' unless data.is_a?(Ai4r::Data::DataSet)
+        raise 'Data should not be empty' if data.data_items.empty?
+      end
 
-        if @selected_attribute
-          chosen = @selected_attribute
-          attr_index = chosen
-          x_mean = data.get_mean_or_mode[attr_index]
-          slope, sum_x_diff_squared, sum_y_diff_squared =
-            attribute_sums(data, attr_index, x_mean, y_mean)
-
-          if sum_x_diff_squared.zero?
-            chosen_slope = 0
-            chosen_intercept = y_mean
-          else
-            numerator = slope
-            chosen_slope = slope / sum_x_diff_squared
-            chosen_intercept = y_mean - (chosen_slope * x_mean)
-            min_msq = sum_y_diff_squared - (chosen_slope * numerator)
-          end
+      def evaluate_attribute(data, attr_index, y_mean)
+        x_mean = data.get_mean_or_mode[attr_index]
+        slope, x_diff_sq, y_diff_sq = attribute_sums(data, attr_index, x_mean, y_mean)
+        if x_diff_sq.zero?
+          { chosen: attr_index, slope: 0, intercept: y_mean, msq: Float::MAX }
         else
-          data.data_labels.each do |attr_name|
-            attr_index = data.get_index attr_name
-            next unless attr_index != data.num_attributes - 1
-
-            x_mean = data.get_mean_or_mode[attr_index]
-            slope, sum_x_diff_squared, sum_y_diff_squared =
-              attribute_sums(data, attr_index, x_mean, y_mean)
-
-            next if sum_x_diff_squared.zero?
-
-            numerator = slope
-            slope /= sum_x_diff_squared
-            intercept = y_mean - (slope * x_mean)
-            msq = sum_y_diff_squared - (slope * numerator)
-
-            next unless msq < min_msq
-
-            min_msq = msq
-            chosen = attr_index
-            chosen_slope = slope
-            chosen_intercept = intercept
-          end
+          chosen_slope = slope / x_diff_sq
+          intercept = y_mean - (chosen_slope * x_mean)
+          { chosen: attr_index, slope: chosen_slope, intercept: intercept, msq: y_diff_sq - (chosen_slope * slope) }
         end
+      end
 
-        if chosen == -1
-          raise 'no useful attribute found'
-          @attribute = nil
-          @attribute_index = 0
-          @slope = 0
-          @intercept = y_mean
-        else
-          @attribute = data.data_labels[chosen]
-          @attribute_index = chosen
-          @slope = chosen_slope
-          @intercept = chosen_intercept
+      def evaluate_all_attributes(data, y_mean)
+        result = { chosen: -1, msq: Float::MAX }
+        data.data_labels.each do |attr_name|
+          attr_index = data.get_index attr_name
+          next if attr_index == data.num_attributes - 1
+
+          candidate = evaluate_attribute(data, attr_index, y_mean)
+          next unless candidate[:msq] < result[:msq]
+
+          result = candidate
         end
+        result
+      end
+
+      def assign_result(data, result, y_mean)
+        raise 'no useful attribute found' if result[:chosen] == -1
+
+        @attribute = data.data_labels[result[:chosen]]
+        @attribute_index = result[:chosen]
+        @slope = result[:slope]
+        @intercept = result[:intercept]
         self
       end
 

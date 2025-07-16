@@ -26,6 +26,7 @@ module Ai4r
                       c: 'Regularization strength.'
 
       def initialize
+        super()
         @learning_rate = 0.01
         @iterations = 1000
         @c = 1.0
