@@ -37,7 +37,7 @@ module Ai4r
       end
 
       # Set parameter values on this algorithm instance.
-      # You must provide a hash with the folowing format:
+      # You must provide a hash with the following format:
       # { :param_name => parameter_value }
       # @param params [Object]
       # @return [Object]
@@ -49,7 +49,7 @@ module Ai4r
       end
 
       # Get parameter values on this algorithm instance.
-      # Returns a hash with the folowing format:
+      # Returns a hash with the following format:
       # { :param_name => parameter_value }
       # @return [Object]
       def get_parameters
