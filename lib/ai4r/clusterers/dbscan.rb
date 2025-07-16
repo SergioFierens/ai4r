@@ -45,6 +45,7 @@ module Ai4r
                       educational_mode: 'Enable step-by-step execution with detailed explanations.'
 
       def initialize
+        super
         @eps = 0.5
         @min_pts = 5
         @distance_function = nil

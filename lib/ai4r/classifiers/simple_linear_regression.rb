@@ -35,6 +35,7 @@ module Ai4r
       attr_reader :attribute, :attribute_index, :slope, :intercept
 
       def initialize
+        super
         @attribute = nil
         @attribute_index = 0
         @slope = 0

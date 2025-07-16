@@ -186,7 +186,7 @@ RSpec.describe Ai4r::Clusterers::CompleteLinkage do
         center_y = (cluster_id % 2) * 8
 
         15.times do
-          large_points << [center_x + rand(1.0) - 0.5, center_y + rand(1.0) - 0.5]
+          large_points << [center_x + rand - 0.5, center_y + rand - 0.5]
         end
       end
 

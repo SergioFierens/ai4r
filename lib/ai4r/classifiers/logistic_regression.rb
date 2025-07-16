@@ -35,6 +35,7 @@ module Ai4r
                   :feature_importance, :educational_mode, :training_steps, :class_labels
 
       def initialize
+        super
         # Model parameters
         @weights = []
         @bias = 0.0

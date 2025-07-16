@@ -35,6 +35,7 @@ module Ai4r
                   :support_vector_indices, :educational_mode, :training_steps, :decision_function_values
 
       def initialize
+        super
         # Core SVM parameters
         @kernel_type = :rbf
         @kernel_params = { gamma: 1.0 }

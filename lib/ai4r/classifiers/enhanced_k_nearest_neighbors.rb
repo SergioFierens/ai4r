@@ -34,6 +34,7 @@ module Ai4r
                   :prediction_explanations, :distance_calculations, :feature_weights, :normalization_params
 
       def initialize
+        super
         # Core k-NN parameters
         @k = 3
         @distance_metric = :euclidean

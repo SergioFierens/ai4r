@@ -54,6 +54,7 @@ module Ai4r
                       inactive_node_value: 'Default: 0'
 
       def initialize
+        super
         @network_class = Ai4r::NeuralNetwork::Backpropagation
         @hidden_layers = []
         @training_iterations = TRAINING_ITERATIONS

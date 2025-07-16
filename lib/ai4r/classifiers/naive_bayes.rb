@@ -60,6 +60,7 @@ module Ai4r
                          '0 when the size of the dataset is relatively small'
 
       def initialize
+        super
         @m = 0
         @class_counts = []
         @class_prob = [] # stores the probability of the classes
