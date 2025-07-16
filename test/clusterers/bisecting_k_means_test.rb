@@ -16,8 +16,8 @@ class BisectingKMeansTest < Minitest::Test
   include Ai4r::Clusterers
   include Ai4r::Data
 
-  @@data = [[10, 3], [3, 10], [2, 8], [2, 5], [3, 8], [10, 3],
-            [1, 3], [8, 1], [2, 9], [2, 5], [3, 3], [9, 4]]
+  DATA = [[10, 3], [3, 10], [2, 8], [2, 5], [3, 8], [10, 3],
+          [1, 3], [8, 1], [2, 9], [2, 5], [3, 3], [9, 4]].freeze
 
   def test_build_without_refine
     build(false)
@@ -34,7 +34,7 @@ class BisectingKMeansTest < Minitest::Test
   protected
 
   def build(refine)
-    data_set = DataSet.new(data_items: @@data, data_labels: %w[X Y])
+    data_set = DataSet.new(data_items: DATA, data_labels: %w[X Y])
     clusterer = BisectingKMeans.new
     clusterer.set_parameters refine: refine
     clusterer.build(data_set, 4)
@@ -48,11 +48,11 @@ class BisectingKMeansTest < Minitest::Test
     clusterer.clusters.each do |cluster|
       total_length += cluster.data_items.length
     end
-    assert_equal @@data.length, total_length
+    assert_equal DATA.length, total_length
     # Data inside clusters must be the same as orifinal data
     clusterer.clusters.each do |cluster|
       cluster.data_items.each do |data_item|
-        assert @@data.include?(data_item)
+        assert DATA.include?(data_item)
       end
     end
   end

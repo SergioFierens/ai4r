@@ -17,8 +17,8 @@ class GaFunctionOptTest < Minitest::Test
       new(RANGE.to_a.sample)
     end
 
-    def self.reproduce(a, b, _rate = 0.7)
-      new(rand < _rate ? b.data : a.data)
+    def self.reproduce(a, b, rate = 0.7)
+      new(rand < rate ? b.data : a.data)
     end
 
     def self.mutate(chrom, rate = 0.1)

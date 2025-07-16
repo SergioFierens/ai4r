@@ -212,7 +212,7 @@ module Ai4r
           @cluster_indices[c] << data_index if @on_empty == 'outlier'
           @assignments[data_index] = c
         end
-        manage_empty_clusters if has_empty_cluster?
+        manage_empty_clusters if empty_cluster?
       end
 
       # @return [Object]
@@ -320,7 +320,7 @@ module Ai4r
       end
 
       # @return [Object]
-      def has_empty_cluster?
+      def empty_cluster?
         found_empty = false
         @number_of_clusters.times do |c|
           found_empty = true if @clusters[c].data_items.empty?
