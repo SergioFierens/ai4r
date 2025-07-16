@@ -20,7 +20,7 @@ module Ai4r
         @cluster_tree = []
         @depth = depth
         @merges_so_far = 0
-        super()
+        super(depth)
       end
 
       # @param data_set [Object]

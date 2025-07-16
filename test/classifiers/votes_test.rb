@@ -13,6 +13,7 @@ require 'ai4r/classifiers/votes'
 require_relative '../test_helper'
 
 class VotesTest < Minitest::Test
+  include Ai4r::Classifiers
   def setup
     @votes = Votes.new
   end

@@ -33,6 +33,7 @@ module Ai4r
 
       # @return [Object]
       def initialize
+        super()
         @default_class = nil
         @tie_break = :first
         @random_seed = nil

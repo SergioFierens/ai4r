@@ -55,6 +55,7 @@ module Ai4r
 
       # @return [Object]
       def initialize
+        super()
         @distance_function = nil
         @max_iterations = nil
         @centroid_function = lambda do |data_sets|

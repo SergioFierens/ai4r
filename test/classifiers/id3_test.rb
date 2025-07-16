@@ -119,10 +119,11 @@ EXPECTED_RULES_STRING =
   "elsif age_range=='>80' then marketing_target='Y'\n" \
   "else raise 'There was not enough information during training to do a proper induction for this data element' end"
 
-include Ai4r::Classifiers
-include Ai4r::Data
+
 
 class ID3Test < Minitest::Test
+  include Ai4r::Classifiers
+  include Ai4r::Data
   def test_build
     # no-op: visibility hacks removed
   end
