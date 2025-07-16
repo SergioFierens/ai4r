@@ -54,7 +54,7 @@ module Ai4r
       # slope and intercept.
       # Parameter data has to be an instance of DataSet
       def build(data)
-        raise 'Error instance must be passed' unless data.is_a?(DataSet)
+        raise 'Error instance must be passed' unless data.is_a?(Ai4r::Data::DataSet)
         raise 'Data should not be empty' if data.data_items.empty?
 
         y_mean = data.get_mean_or_mode[data.num_attributes - 1]

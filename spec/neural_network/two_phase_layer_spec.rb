@@ -8,7 +8,7 @@
 
 require 'spec_helper'
 
-RSpec.describe Ai4r::NeuralNetwork::TwoPhaseLayer do
+RSpec.describe Ai4r::Som::TwoPhaseLayer do
   # Test data from requirement document
   let(:layer_size) { 5 }
   let(:input_size) { 3 }

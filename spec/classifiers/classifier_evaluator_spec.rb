@@ -8,7 +8,7 @@
 
 require 'spec_helper'
 
-RSpec.describe Ai4r::Classifiers::ClassifierEvaluator do
+RSpec.describe Ai4r::Experiment::ClassifierEvaluator do
   # Test data from requirement document
   let(:perfect_predictions) { %w[A B A C B A C B] }
   let(:perfect_actual) { %w[A B A C B A C B] }
