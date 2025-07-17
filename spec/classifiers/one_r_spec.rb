@@ -13,45 +13,45 @@ RSpec.describe Ai4r::Classifiers::OneR do
   let(:categorical_dataset) do
     Ai4r::Data::DataSet.new(
       data_items: [
-        %w[sunny hot high],
-        %w[overcast mild normal],
-        %w[rainy cool high],
-        %w[sunny mild normal],
-        %w[overcast cool normal]
+        %w[sunny hot high no],
+        %w[overcast mild normal yes],
+        %w[rainy cool high yes],
+        %w[sunny mild normal no],
+        %w[overcast cool normal yes]
       ],
-      data_labels: %w[no yes yes no yes]
+      data_labels: %w[outlook temperature humidity play]
     )
   end
 
   let(:numeric_dataset) do
     Ai4r::Data::DataSet.new(
       data_items: [
-        [1.5, 2.3, 3.1],
-        [4.1, 5.2, 6.8],
-        [7.8, 8.9, 9.2],
-        [2.1, 3.4, 4.5],
-        [5.5, 6.6, 7.7]
+        [1.5, 2.3, 3.1, 'A'],
+        [4.1, 5.2, 6.8, 'B'],
+        [7.8, 8.9, 9.2, 'C'],
+        [2.1, 3.4, 4.5, 'A'],
+        [5.5, 6.6, 7.7, 'B']
       ],
-      data_labels: %w[A B C A B]
+      data_labels: %w[feature1 feature2 feature3 class]
     )
   end
 
   let(:mixed_dataset) do
     Ai4r::Data::DataSet.new(
       data_items: [
-        ['sunny', 25.5, 'high'],
-        ['overcast', 18.2, 'normal'],
-        ['rainy', 12.1, 'high'],
-        ['sunny', 22.3, 'normal']
+        ['sunny', 25.5, 'high', 'no'],
+        ['overcast', 18.2, 'normal', 'yes'],
+        ['rainy', 12.1, 'high', 'yes'],
+        ['sunny', 22.3, 'normal', 'no']
       ],
-      data_labels: %w[no yes yes no]
+      data_labels: %w[outlook temperature humidity play]
     )
   end
 
   let(:single_attribute_dataset) do
     Ai4r::Data::DataSet.new(
-      data_items: [['A'], ['B'], ['A'], ['C'], ['B']],
-      data_labels: %w[1 2 1 3 2]
+      data_items: [['A', '1'], ['B', '2'], ['A', '1'], ['C', '3'], ['B', '2']],
+      data_labels: %w[attribute class]
     )
   end
 

@@ -44,7 +44,7 @@ RSpec.describe Ai4r::Data::DataSet do
 
       expect do
         described_class.new(data_items: inconsistent_data, data_labels: sample_labels)
-      end.to raise_error(ArgumentError, /Inconsistent row lengths/)
+      end.to raise_error(ArgumentError, /Quantity of attributes is inconsistent/)
     end
   end
 

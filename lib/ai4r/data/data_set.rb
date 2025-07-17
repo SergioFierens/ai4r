@@ -42,14 +42,18 @@ module Ai4r
       # index. You can specify an index range, too.
       def [](index)
         raise ArgumentError, 'Index cannot be nil' if index.nil?
-        raise ArgumentError, 'Data set is empty' if @data_items.empty?
+        return DataSet.new(data_items: [], data_labels: @data_labels) if @data_items.empty?
 
         if index.is_a?(Integer)
-          raise ArgumentError, "Index #{index} out of bounds" if index < 0 || index >= @data_items.length
+          # Handle negative indices Ruby-style
+          actual_index = index < 0 ? @data_items.length + index : index
+          
+          # Return empty dataset for out-of-bounds
+          return DataSet.new(data_items: [], data_labels: @data_labels) if actual_index < 0 || actual_index >= @data_items.length
 
-          selected_items = [@data_items[index]]
+          selected_items = [@data_items[actual_index]]
         else
-          selected_items = @data_items[index]
+          selected_items = @data_items[index] || []
         end
 
         return DataSet.new(data_items: selected_items,
@@ -307,6 +311,16 @@ module Ai4r
         end
         data_labels[data_labels.length]='class_value'
         return data_labels
+      end
+
+      # Returns a human-readable string representation of the dataset
+      def to_s
+        "#<#{self.class.name}: #{@data_items.length} rows, #{@data_labels.length} columns>"
+      end
+
+      # Returns detailed inspection string for debugging
+      def inspect
+        "#<#{self.class.name}:0x#{object_id.to_s(16)} @data_items=#{@data_items.length} rows, @data_labels=#{@data_labels.inspect}>"
       end
 
     end

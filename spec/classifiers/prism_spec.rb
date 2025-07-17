@@ -13,60 +13,60 @@ RSpec.describe Ai4r::Classifiers::Prism do
   let(:categorical_dataset) do
     Ai4r::Data::DataSet.new(
       data_items: [
-        %w[sunny hot high false],
-        %w[sunny hot high true],
-        %w[overcast hot high false],
-        %w[rainy mild high false],
-        %w[rainy cool normal false],
-        %w[rainy cool normal true],
-        %w[overcast cool normal true],
-        %w[sunny mild high false]
+        %w[sunny hot high false no],
+        %w[sunny hot high true no],
+        %w[overcast hot high false yes],
+        %w[rainy mild high false yes],
+        %w[rainy cool normal false yes],
+        %w[rainy cool normal true no],
+        %w[overcast cool normal true yes],
+        %w[sunny mild high false no]
       ],
-      data_labels: %w[no no yes yes yes no yes no]
+      data_labels: %w[outlook temperature humidity windy play]
     )
   end
 
   let(:multi_class_dataset) do
     Ai4r::Data::DataSet.new(
       data_items: [
-        %w[A X 1],
-        %w[B Y 2],
-        %w[C Z 3],
-        %w[A Y 1],
-        %w[B Z 2],
-        %w[C X 3],
-        %w[A Z 1],
-        %w[B X 2]
+        %w[A X 1 class1],
+        %w[B Y 2 class2],
+        %w[C Z 3 class3],
+        %w[A Y 1 class1],
+        %w[B Z 2 class2],
+        %w[C X 3 class3],
+        %w[A Z 1 class1],
+        %w[B X 2 class2]
       ],
-      data_labels: %w[class1 class2 class3 class1 class2 class3 class1 class2]
+      data_labels: %w[attr1 attr2 attr3 class]
     )
   end
 
   let(:overlapping_dataset) do
     Ai4r::Data::DataSet.new(
       data_items: [
-        %w[A high],
-        %w[B low],
-        %w[A low],
-        %w[B high],
-        %w[A medium],
-        %w[B medium]
+        %w[A high positive],
+        %w[B low negative],
+        %w[A low positive],
+        %w[B high negative],
+        %w[A medium positive],
+        %w[B medium negative]
       ],
-      data_labels: %w[positive negative positive negative positive negative]
+      data_labels: %w[feature1 feature2 class]
     )
   end
 
   let(:minimal_dataset) do
     Ai4r::Data::DataSet.new(
-      data_items: [%w[A X], %w[B Y]],
-      data_labels: %w[1 2]
+      data_items: [%w[A X 1], %w[B Y 2]],
+      data_labels: %w[attr1 attr2 class]
     )
   end
 
   let(:single_class_dataset) do
     Ai4r::Data::DataSet.new(
-      data_items: [%w[A B], %w[C D], %w[E F]],
-      data_labels: %w[only_class only_class only_class]
+      data_items: [%w[A B same], %w[C D same], %w[E F same]],
+      data_labels: %w[attr1 attr2 class]
     )
   end
 

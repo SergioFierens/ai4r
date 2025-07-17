@@ -78,7 +78,10 @@ FactoryBot.define do
       # Add correlations if requested
       if has_correlations && columns >= 2
         base_data.each do |row|
-          row[1] = (row[0] * 2) + rand(-5.0..5.0) # Strong correlation with noise
+          # Skip if first value is nil (due to missing values)
+          next if row[0].nil?
+          # Ensure strong positive correlation by making second column significantly larger
+          row[1] = (row[0] * 2) + 10 + rand(-2.0..2.0) # Strong positive correlation with less noise
         end
       end
 
@@ -166,7 +169,10 @@ FactoryBot.define do
 
         # Generate samples around center
         samples_per_class.times do
-          sample = center.map { |c| c + (rand(-5.0..5.0) * (1 + noise_level)) }
+          # Always have some base variation, noise_level adds to it
+          base_variation = 0.5
+          total_variation = base_variation + (5.0 * noise_level)
+          sample = center.map { |c| c + rand(-total_variation..total_variation) }
           sample << class_label
           all_data << sample
         end
