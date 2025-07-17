@@ -82,7 +82,10 @@ require 'rspec/collection_matchers'
 require_relative '../lib/ai4r'
 
 # Load factory definitions
-require_relative 'factories'
+require_relative 'factories' if File.exist?(File.join(__dir__, 'factories.rb'))
+
+# Load all support files
+Dir[File.join(__dir__, 'support', '**', '*.rb')].sort.each { |f| require f }
 
 # Configure RSpec
 RSpec.configure do |config|

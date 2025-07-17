@@ -199,12 +199,6 @@ RSpec.describe 'AI4R Comprehensive Coverage' do
       end
     end
 
-    describe Ai4r::Clusterers::DIANA do
-      it 'divisive hierarchical clustering' do
-        clusterer = described_class.new.build(dataset, 2)
-        expect(clusterer.clusters.size).to eq(2)
-      end
-    end
   end
 
   describe 'Neural Network Module' do

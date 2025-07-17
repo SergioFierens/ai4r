@@ -1,0 +1,526 @@
+# frozen_string_literal: true
+
+require 'spec_helper'
+require 'ai4r/genetic_algorithm/genetic_algorithm'
+require 'ai4r/genetic_algorithm/chromosome'
+require 'ai4r/genetic_algorithm/configuration'
+require 'ai4r/genetic_algorithm/operators'
+require 'ai4r/genetic_algorithm/enhanced_operators'
+require 'ai4r/genetic_algorithm/evolution_monitor'
+require 'ai4r/genetic_algorithm/educational_genetic_search'
+require 'ai4r/genetic_algorithm/modern_genetic_search'
+require 'ai4r/genetic_algorithm/visualization_tools'
+require 'ai4r/genetic_algorithm/educational_demos'
+require 'ai4r/genetic_algorithm/tutorial'
+require 'ai4r/genetic_algorithm/examples'
+
+RSpec.describe 'Genetic Algorithm Module Comprehensive Tests' do
+  describe Ai4r::GeneticAlgorithm::GeneticAlgorithm do
+    let(:population_size) { 10 }
+    let(:generations) { 5 }
+    
+    # Simple chromosome for testing
+    class TestChromosome < Ai4r::GeneticAlgorithm::Chromosome
+      def initialize(data = nil)
+        @data = data || Array.new(5) { rand(0..1) }
+      end
+      
+      def fitness
+        @data.sum
+      end
+      
+      def self.random
+        new
+      end
+      
+      def reproduce(other)
+        point = rand(1...@data.length)
+        child_data = @data[0...point] + other.data[point..-1]
+        self.class.new(child_data)
+      end
+      
+      def mutate
+        index = rand(@data.length)
+        @data[index] = 1 - @data[index]
+        self
+      end
+      
+      attr_reader :data
+    end
+    
+    let(:ga) do
+      Ai4r::GeneticAlgorithm::GeneticAlgorithm.new(
+        population_size: population_size,
+        generations: generations,
+        chromosome_class: TestChromosome
+      )
+    end
+    
+    it 'initializes with default configuration' do
+      expect(ga).to be_a(described_class)
+      expect(ga.population_size).to eq(population_size)
+      expect(ga.generations).to eq(generations)
+    end
+    
+    it 'runs evolution process' do
+      result = ga.run
+      expect(result).to be_a(TestChromosome)
+      expect(result.fitness).to be >= 0
+    end
+    
+    it 'improves fitness over generations' do
+      initial_best = nil
+      ga.on_generation_end = ->(gen, pop) {
+        best = pop.max_by(&:fitness)
+        initial_best ||= best.fitness
+      }
+      
+      final_result = ga.run
+      expect(final_result.fitness).to be >= initial_best
+    end
+    
+    it 'supports custom selection methods' do
+      ga.selection_method = :tournament
+      result = ga.run
+      expect(result).to be_a(TestChromosome)
+    end
+    
+    it 'supports custom mutation rates' do
+      ga.mutation_rate = 0.5
+      expect(ga.mutation_rate).to eq(0.5)
+      result = ga.run
+      expect(result).to be_a(TestChromosome)
+    end
+  end
+  
+  describe Ai4r::GeneticAlgorithm::Configuration do
+    let(:config) { described_class.new }
+    
+    it 'has default values' do
+      expect(config.population_size).to eq(100)
+      expect(config.generations).to eq(100)
+      expect(config.mutation_rate).to be_between(0, 1)
+      expect(config.crossover_rate).to be_between(0, 1)
+    end
+    
+    it 'allows setting custom values' do
+      config.population_size = 50
+      config.generations = 200
+      config.mutation_rate = 0.1
+      config.crossover_rate = 0.8
+      
+      expect(config.population_size).to eq(50)
+      expect(config.generations).to eq(200)
+      expect(config.mutation_rate).to eq(0.1)
+      expect(config.crossover_rate).to eq(0.8)
+    end
+    
+    it 'validates configuration values' do
+      expect { config.population_size = -1 }.to raise_error(ArgumentError)
+      expect { config.mutation_rate = 1.5 }.to raise_error(ArgumentError)
+      expect { config.crossover_rate = -0.1 }.to raise_error(ArgumentError)
+    end
+    
+    it 'provides preset configurations' do
+      fast = described_class.fast
+      expect(fast.population_size).to be < 100
+      expect(fast.generations).to be < 100
+      
+      accurate = described_class.accurate
+      expect(accurate.population_size).to be > 100
+      expect(accurate.generations).to be > 100
+    end
+  end
+  
+  describe Ai4r::GeneticAlgorithm::Operators do
+    describe 'Selection Operators' do
+      let(:population) do
+        10.times.map { |i| double(fitness: i * 10) }
+      end
+      
+      it 'performs roulette wheel selection' do
+        selected = described_class.roulette_wheel(population, 5)
+        expect(selected.length).to eq(5)
+        expect(selected).to all(be_in(population))
+      end
+      
+      it 'performs tournament selection' do
+        selected = described_class.tournament(population, 5, tournament_size: 3)
+        expect(selected.length).to eq(5)
+        expect(selected).to all(be_in(population))
+      end
+      
+      it 'performs rank selection' do
+        selected = described_class.rank_selection(population, 5)
+        expect(selected.length).to eq(5)
+        expect(selected).to all(be_in(population))
+      end
+      
+      it 'performs elitism' do
+        elite = described_class.elitism(population, 2)
+        expect(elite.length).to eq(2)
+        expect(elite.first.fitness).to eq(90)
+        expect(elite.last.fitness).to eq(80)
+      end
+    end
+    
+    describe 'Crossover Operators' do
+      let(:parent1) { double(data: [1, 2, 3, 4, 5]) }
+      let(:parent2) { double(data: [6, 7, 8, 9, 10]) }
+      
+      it 'performs single point crossover' do
+        child1, child2 = described_class.single_point_crossover(parent1, parent2)
+        expect(child1.length).to eq(5)
+        expect(child2.length).to eq(5)
+        expect(child1 + child2).to match_array(parent1.data + parent2.data)
+      end
+      
+      it 'performs two point crossover' do
+        child1, child2 = described_class.two_point_crossover(parent1, parent2)
+        expect(child1.length).to eq(5)
+        expect(child2.length).to eq(5)
+      end
+      
+      it 'performs uniform crossover' do
+        child1, child2 = described_class.uniform_crossover(parent1, parent2)
+        expect(child1.length).to eq(5)
+        expect(child2.length).to eq(5)
+        child1.each_with_index do |val, i|
+          expect([parent1.data[i], parent2.data[i]]).to include(val)
+        end
+      end
+    end
+    
+    describe 'Mutation Operators' do
+      it 'performs bit flip mutation' do
+        chromosome = [0, 1, 0, 1, 0]
+        mutated = described_class.bit_flip_mutation(chromosome.dup, 0.2)
+        expect(mutated.length).to eq(5)
+        expect(mutated).to all(be_in([0, 1]))
+      end
+      
+      it 'performs swap mutation' do
+        chromosome = [1, 2, 3, 4, 5]
+        mutated = described_class.swap_mutation(chromosome.dup)
+        expect(mutated).to match_array(chromosome)
+        expect(mutated).not_to eq(chromosome) # Order should be different
+      end
+      
+      it 'performs inversion mutation' do
+        chromosome = [1, 2, 3, 4, 5]
+        mutated = described_class.inversion_mutation(chromosome.dup)
+        expect(mutated).to match_array(chromosome)
+      end
+    end
+  end
+  
+  describe Ai4r::GeneticAlgorithm::EnhancedOperators do
+    describe 'Advanced Selection' do
+      let(:population) do
+        10.times.map { |i| double(fitness: i * 10, diversity_score: rand) }
+      end
+      
+      it 'performs stochastic universal sampling' do
+        selected = described_class.stochastic_universal_sampling(population, 5)
+        expect(selected.length).to eq(5)
+      end
+      
+      it 'performs diversity-aware selection' do
+        selected = described_class.diversity_selection(population, 5)
+        expect(selected.length).to eq(5)
+      end
+    end
+    
+    describe 'Advanced Crossover' do
+      let(:parent1) { double(data: [1, 2, 3, 4, 5]) }
+      let(:parent2) { double(data: [6, 7, 8, 9, 10]) }
+      
+      it 'performs order crossover' do
+        child = described_class.order_crossover(parent1.data, parent2.data)
+        expect(child).to match_array(parent1.data)
+      end
+      
+      it 'performs partially mapped crossover' do
+        child = described_class.pmx_crossover(parent1.data, parent2.data)
+        expect(child).to match_array(parent1.data)
+      end
+    end
+    
+    describe 'Advanced Mutation' do
+      it 'performs gaussian mutation' do
+        chromosome = [1.0, 2.0, 3.0, 4.0, 5.0]
+        mutated = described_class.gaussian_mutation(chromosome.dup, 0.2, 0.1)
+        expect(mutated.length).to eq(5)
+        expect(mutated).to all(be_a(Float))
+      end
+      
+      it 'performs adaptive mutation' do
+        chromosome = [0, 1, 0, 1, 0]
+        mutated = described_class.adaptive_mutation(chromosome.dup, 0, 100)
+        expect(mutated.length).to eq(5)
+      end
+    end
+  end
+  
+  describe Ai4r::GeneticAlgorithm::EvolutionMonitor do
+    let(:monitor) { described_class.new }
+    
+    it 'tracks generation statistics' do
+      population = 5.times.map { double(fitness: rand(100)) }
+      monitor.record_generation(1, population)
+      
+      stats = monitor.generation_stats(1)
+      expect(stats).to include(:best_fitness, :average_fitness, :worst_fitness)
+      expect(stats[:generation]).to eq(1)
+    end
+    
+    it 'tracks fitness progress' do
+      5.times do |i|
+        population = 5.times.map { double(fitness: rand(100) + i * 10) }
+        monitor.record_generation(i, population)
+      end
+      
+      progress = monitor.fitness_progress
+      expect(progress.length).to eq(5)
+      expect(progress.first).to be < progress.last
+    end
+    
+    it 'detects convergence' do
+      # Simulate converged population
+      5.times do |i|
+        population = 5.times.map { double(fitness: 100) }
+        monitor.record_generation(i, population)
+      end
+      
+      expect(monitor.converged?).to be true
+    end
+    
+    it 'calculates diversity metrics' do
+      population = [
+        double(data: [1, 0, 1, 0]),
+        double(data: [1, 0, 1, 0]),
+        double(data: [0, 1, 0, 1])
+      ]
+      
+      diversity = monitor.calculate_diversity(population)
+      expect(diversity).to be_between(0, 1)
+    end
+  end
+  
+  describe Ai4r::GeneticAlgorithm::EducationalGeneticSearch do
+    let(:search) { described_class.new }
+    
+    it 'provides step-by-step execution' do
+      steps = []
+      search.on_step = ->(step) { steps << step }
+      
+      result = search.solve_simple_problem
+      expect(steps).not_to be_empty
+      expect(steps.first).to include(:description)
+    end
+    
+    it 'explains genetic operations' do
+      explanation = search.explain_crossover([1, 2, 3], [4, 5, 6])
+      expect(explanation).to include('crossover')
+      
+      explanation = search.explain_mutation([1, 0, 1])
+      expect(explanation).to include('mutation')
+      
+      explanation = search.explain_selection
+      expect(explanation).to include('selection')
+    end
+    
+    it 'provides interactive examples' do
+      example = search.interactive_8_queens
+      expect(example).to include(:problem, :solution, :steps)
+      
+      example = search.interactive_knapsack
+      expect(example).to include(:problem, :solution, :value)
+    end
+  end
+  
+  describe Ai4r::GeneticAlgorithm::ModernGeneticSearch do
+    let(:search) { described_class.new }
+    
+    it 'implements island model' do
+      result = search.island_model_ga(
+        islands: 3,
+        population_per_island: 20,
+        migration_rate: 0.1
+      )
+      expect(result).to include(:best_solution, :best_fitness)
+    end
+    
+    it 'implements adaptive genetic algorithm' do
+      result = search.adaptive_ga(
+        initial_mutation_rate: 0.1,
+        initial_crossover_rate: 0.8
+      )
+      expect(result).to include(:best_solution, :final_rates)
+    end
+    
+    it 'implements multi-objective optimization' do
+      objectives = [
+        ->(x) { x.sum },  # Maximize sum
+        ->(x) { -x.map { |v| v**2 }.sum }  # Minimize sum of squares
+      ]
+      
+      result = search.multi_objective_ga(objectives: objectives)
+      expect(result).to include(:pareto_front)
+      expect(result[:pareto_front]).to be_an(Array)
+    end
+    
+    it 'implements co-evolution' do
+      result = search.co_evolution(
+        species: 2,
+        interaction: ->(s1, s2) { s1.fitness - s2.fitness }
+      )
+      expect(result).to include(:species1, :species2)
+    end
+  end
+  
+  describe Ai4r::GeneticAlgorithm::VisualizationTools do
+    let(:viz) { described_class.new }
+    
+    it 'generates fitness progress chart data' do
+      history = [
+        { generation: 0, best: 10, average: 5 },
+        { generation: 1, best: 15, average: 8 },
+        { generation: 2, best: 20, average: 12 }
+      ]
+      
+      chart_data = viz.fitness_chart_data(history)
+      expect(chart_data).to include(:labels, :datasets)
+      expect(chart_data[:labels]).to eq([0, 1, 2])
+    end
+    
+    it 'generates population diversity chart' do
+      population = [
+        double(data: [1, 0, 1]),
+        double(data: [0, 1, 0]),
+        double(data: [1, 1, 0])
+      ]
+      
+      chart_data = viz.diversity_chart_data(population)
+      expect(chart_data).to include(:type, :data)
+    end
+    
+    it 'creates chromosome visualization' do
+      chromosome = double(data: [1, 0, 1, 1, 0])
+      viz_data = viz.visualize_chromosome(chromosome)
+      expect(viz_data).to include(:genes, :fitness)
+    end
+    
+    it 'creates convergence animation data' do
+      generations = [
+        [double(fitness: 10), double(fitness: 5)],
+        [double(fitness: 15), double(fitness: 12)],
+        [double(fitness: 20), double(fitness: 18)]
+      ]
+      
+      animation_data = viz.convergence_animation(generations)
+      expect(animation_data).to include(:frames)
+      expect(animation_data[:frames].length).to eq(3)
+    end
+  end
+  
+  describe Ai4r::GeneticAlgorithm::Tutorial do
+    let(:tutorial) { described_class.new }
+    
+    it 'provides introduction content' do
+      intro = tutorial.introduction
+      expect(intro).to include(:title, :content, :examples)
+    end
+    
+    it 'provides step-by-step guide' do
+      guide = tutorial.step_by_step_guide
+      expect(guide).to be_an(Array)
+      expect(guide.first).to include(:step, :description, :code)
+    end
+    
+    it 'provides practice problems' do
+      problems = tutorial.practice_problems
+      expect(problems).to be_an(Array)
+      expect(problems.first).to include(:name, :difficulty, :description)
+    end
+    
+    it 'provides solutions to problems' do
+      solution = tutorial.solution_for('8-queens')
+      expect(solution).to include(:approach, :code, :explanation)
+    end
+  end
+  
+  describe Ai4r::GeneticAlgorithm::Examples do
+    it 'solves traveling salesman problem' do
+      cities = [
+        [0, 0], [10, 0], [10, 10], [0, 10]
+      ]
+      
+      result = described_class.traveling_salesman(cities)
+      expect(result).to include(:route, :distance)
+      expect(result[:route]).to match_array((0...cities.length).to_a)
+    end
+    
+    it 'solves knapsack problem' do
+      items = [
+        { weight: 10, value: 60 },
+        { weight: 20, value: 100 },
+        { weight: 30, value: 120 }
+      ]
+      capacity = 50
+      
+      result = described_class.knapsack(items, capacity)
+      expect(result).to include(:items, :total_value, :total_weight)
+      expect(result[:total_weight]).to be <= capacity
+    end
+    
+    it 'optimizes functions' do
+      # Maximize f(x) = -x^2 + 10x
+      result = described_class.function_optimization(
+        function: ->(x) { -x**2 + 10*x },
+        range: [0, 10]
+      )
+      
+      expect(result).to include(:x, :f_x)
+      expect(result[:x]).to be_between(4, 6)  # Optimum around x=5
+    end
+    
+    it 'evolves neural network topology' do
+      result = described_class.neuroevolution(
+        inputs: 2,
+        outputs: 1,
+        training_data: [
+          { input: [0, 0], output: [0] },
+          { input: [1, 1], output: [1] }
+        ]
+      )
+      
+      expect(result).to include(:network, :fitness)
+    end
+  end
+  
+  describe Ai4r::GeneticAlgorithm::EducationalDemos do
+    let(:demo) { described_class.new }
+    
+    it 'demonstrates basic concepts' do
+      demo_result = demo.basic_concepts_demo
+      expect(demo_result).to include(:population, :selection, :crossover, :mutation)
+    end
+    
+    it 'demonstrates evolution in action' do
+      result = demo.evolution_demo(target: "HELLO")
+      expect(result).to include(:generations, :solution)
+      expect(result[:solution]).to eq("HELLO")
+    end
+    
+    it 'demonstrates parameter effects' do
+      results = demo.parameter_effects_demo
+      expect(results).to include(:mutation_rate_effect, :population_size_effect)
+    end
+    
+    it 'provides interactive visualization' do
+      viz_data = demo.interactive_visualization
+      expect(viz_data).to include(:html, :javascript, :css)
+    end
+  end
+end
