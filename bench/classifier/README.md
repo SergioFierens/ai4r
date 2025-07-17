@@ -14,6 +14,19 @@ ruby bench/classifier/classifier_bench.rb \
     --export out/results_classifier.csv
 ```
 
+### Example: iris flowers
+
+Compare four algorithms on the classic iris dataset:
+
+```bash
+ruby bench/classifier/classifier_bench.rb \
+    --dataset bench/classifier/datasets/iris.csv \
+    --split 0.3 \
+    --algos id3,naive_bayes,ib1,hyperpipes
+```
+
+You'll see accuracy, F1 score and timing for each model. For a full walkthrough visit [../../docs/classifier_bench.md](../../docs/classifier_bench.md).
+
 ## Dataset format
 
 CSV files require a header row. The last column is treated as the label and all
