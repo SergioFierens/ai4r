@@ -13,9 +13,7 @@ class ClusterTreeTest < Minitest::Test
       @data_set = data_set
       @distance_matrix = []
       index_clusters = data_set.data_items.each_index.map { |i| [i] }
-      while index_clusters.length > number_of_clusters
-        merge_clusters(index_clusters.length - 1, 0, index_clusters)
-      end
+      merge_clusters(index_clusters.length - 1, 0, index_clusters) while index_clusters.length > number_of_clusters
       @clusters = build_clusters_from_index_clusters(index_clusters)
       self
     end
