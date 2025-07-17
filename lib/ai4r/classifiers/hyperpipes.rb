@@ -45,17 +45,64 @@ module Ai4r
       #   classifier.eval(['New York',  '<30', 'F'])  # => 'Y'
       # In case of a tie, the last category should win: http://www.csee.wvu.edu/~timm/tmp/r7.pdf
       def eval(data)
+        # Validate input dimensions
+        expected_attrs = @data_set.data_labels.length - 1
+        if data.length != expected_attrs
+          raise ArgumentError, "Wrong number of attributes. Expected #{expected_attrs}, got #{data.length}"
+        end
+        
         votes = Votes.new
+        matches_per_category = {}
+        
         @pipes.each do |category, pipe|
+          matches = 0
           pipe.each_with_index do |bounds, i|
             if data[i].is_a? Numeric
-              votes.increment_category(category) if data[i].between?(bounds[:min], bounds[:max])
+              matches += 1 if data[i].between?(bounds[:min], bounds[:max])
             elsif bounds[data[i]]
-              votes.increment_category(category)
+              matches += 1
             end
           end
+          matches_per_category[category] = matches
+          # Vote for category only if all attributes match (AND rule)
+          votes.increment_category(category) if matches == pipe.length
         end
-        return votes.get_winner
+        
+        winner = votes.get_winner
+        
+        # If no exact match, find the nearest hyperrectangle
+        if winner.nil? && !@pipes.empty?
+          # Calculate distance to each hyperrectangle
+          min_distance = Float::INFINITY
+          nearest_category = nil
+          
+          @pipes.each do |category, pipe|
+            distance = 0.0
+            pipe.each_with_index do |bounds, i|
+              if data[i].is_a? Numeric
+                # Distance to hyperrectangle boundary
+                if data[i] < bounds[:min]
+                  distance += (bounds[:min] - data[i]) ** 2
+                elsif data[i] > bounds[:max]
+                  distance += (data[i] - bounds[:max]) ** 2
+                end
+                # If within bounds, distance contribution is 0
+              else
+                # For categorical, distance is 0 if match, 1 if not
+                distance += 1 unless bounds[data[i]]
+              end
+            end
+            
+            if distance < min_distance
+              min_distance = distance
+              nearest_category = category
+            end
+          end
+          
+          winner = nearest_category
+        end
+        
+        return winner
       end
 
       # This method returns the generated rules in ruby code.

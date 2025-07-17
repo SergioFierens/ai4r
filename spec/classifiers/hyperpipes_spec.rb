@@ -88,7 +88,7 @@ RSpec.describe Ai4r::Classifiers::Hyperpipes do
 
         # Should be able to classify
         result = classifier.eval([2.0, 3.0, 4.0])
-        expect(result).to be_in(%w[A B C])
+        expect(%w[A B C]).to include(result)
       end
 
       it 'test_build_overlapping_rectangles' do
@@ -96,7 +96,7 @@ RSpec.describe Ai4r::Classifiers::Hyperpipes do
 
         # Should handle overlapping class regions
         result = classifier.eval([2.0, 1.5])
-        expect(result).to be_in(%w[class1 class2])
+        expect(%w[class1 class2]).to include(result)
       end
 
       it 'test_build_mixed_features' do
@@ -104,7 +104,7 @@ RSpec.describe Ai4r::Classifiers::Hyperpipes do
 
         # Should handle mixed categorical and continuous features
         result = classifier.eval(['sunny', 20.0, 'high'])
-        expect(result).to be_in(%w[yes no])
+        expect(%w[yes no]).to include(result)
       end
 
       it 'test_build_single_instance_per_class' do
@@ -120,7 +120,7 @@ RSpec.describe Ai4r::Classifiers::Hyperpipes do
 
         # Should handle identical points gracefully
         result = classifier.eval([1.0, 1.0])
-        expect(result).to be_in(%w[same different])
+        expect(%w[same different]).to include(result)
       end
     end
 
@@ -135,8 +135,8 @@ RSpec.describe Ai4r::Classifiers::Hyperpipes do
 
       it 'test_build_single_dimension' do
         single_dim_dataset = Ai4r::Data::DataSet.new(
-          data_items: [[1], [2], [5], [6]],
-          data_labels: %w[low low high high]
+          data_items: [[1, 'low'], [2, 'low'], [5, 'high'], [6, 'high']],
+          data_labels: %w[x class]
         )
 
         classifier = described_class.new.build(single_dim_dataset)
@@ -286,16 +286,14 @@ RSpec.describe Ai4r::Classifiers::Hyperpipes do
     it 'handles large datasets efficiently' do
       # Generate large dataset
       large_items = []
-      large_labels = []
 
       500.times do |i|
-        large_items << [rand(100), rand(100), rand(100)]
-        large_labels << (i % 5).to_s
+        large_items << [rand(100), rand(100), rand(100), (i % 5).to_s]
       end
 
       large_dataset = Ai4r::Data::DataSet.new(
         data_items: large_items,
-        data_labels: large_labels
+        data_labels: %w[x y z class]
       )
 
       benchmark_performance('Hyperpipes training on large dataset') do
@@ -317,12 +315,11 @@ RSpec.describe Ai4r::Classifiers::Hyperpipes do
 
     it 'scales with dimensionality' do
       # Test performance with high dimensional data
-      high_dim_items = Array.new(50) { Array.new(20) { rand(10) } }
-      high_dim_labels = Array.new(50) { |i| (i % 3).to_s }
+      high_dim_items = Array.new(50) { |i| Array.new(20) { rand(10) } + [(i % 3).to_s] }
 
       high_dim_dataset = Ai4r::Data::DataSet.new(
         data_items: high_dim_items,
-        data_labels: high_dim_labels
+        data_labels: (0...20).map { |i| "dim#{i}" } + ['class']
       )
 
       classifier = described_class.new.build(high_dim_dataset)
@@ -338,23 +335,20 @@ RSpec.describe Ai4r::Classifiers::Hyperpipes do
     it 'works with different data distributions' do
       # Clustered data
       clustered_items = []
-      clustered_labels = []
 
       # Cluster 1: around (0,0)
       10.times do
-        clustered_items << [rand(2), rand(2)]
-        clustered_labels << 'cluster1'
+        clustered_items << [rand(2), rand(2), 'cluster1']
       end
 
       # Cluster 2: around (10,10)
       10.times do
-        clustered_items << [rand(10..11), rand(10..11)]
-        clustered_labels << 'cluster2'
+        clustered_items << [rand(10..11), rand(10..11), 'cluster2']
       end
 
       clustered_dataset = Ai4r::Data::DataSet.new(
         data_items: clustered_items,
-        data_labels: clustered_labels
+        data_labels: %w[x y class]
       )
 
       classifier = described_class.new.build(clustered_dataset)
@@ -392,8 +386,8 @@ RSpec.describe Ai4r::Classifiers::Hyperpipes do
     it 'handles rectangles with zero width' do
       # When all instances of a class have same value in a dimension
       zero_width_dataset = Ai4r::Data::DataSet.new(
-        data_items: [[1.0, 5.0], [2.0, 5.0], [3.0, 5.0]], # Same Y value
-        data_labels: %w[same same same]
+        data_items: [[1.0, 5.0, 'same'], [2.0, 5.0, 'same'], [3.0, 5.0, 'same']], # Same Y value
+        data_labels: %w[x y class]
       )
 
       classifier = described_class.new.build(zero_width_dataset)
