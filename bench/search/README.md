@@ -20,6 +20,18 @@ Console output shows a table of metrics and the CSV can be loaded into a
 spreadsheet. Swap the problem or algorithm names to try DFS, IDDFS or the
 classic eight puzzle.
 
+### Example: grid path finding
+
+Run the bench on a tiny maze to see BFS and A* in action:
+
+```bash
+ruby -Ilib bench/search/search_bench.rb \
+    --problem grid --map bench/search/maps/small.txt \
+    --algos bfs,a_star
+```
+
+You'll get a short table with depth, nodes expanded and runtime. For a step-by-step walkthrough see [../../docs/search_bench.md](../../docs/search_bench.md).
+
 ## Metrics
 
 * `solution_depth` – length of the returned path minus one

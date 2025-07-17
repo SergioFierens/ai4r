@@ -14,6 +14,19 @@ $ ruby -Ilib bench/clusterer/cluster_bench.rb \
     --export out/cluster_results.csv
 ```
 
+### Example: blob clustering
+
+Try KMeans and DBSCAN on a small set of points:
+
+```bash
+ruby -Ilib bench/clusterer/cluster_bench.rb \
+    --dataset bench/clusterer/datasets/blobs.csv \
+    --k 3 \
+    --algos kmeans,dbscan
+```
+
+The console shows silhouette scores and SSE for each run. See [../../docs/clusterer_bench.md](../../docs/clusterer_bench.md) for a detailed demo.
+
 When running directly from the git repository you must include `-Ilib` so Ruby
 can find the library without installing the gem.
 
