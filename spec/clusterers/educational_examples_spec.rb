@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'ai4r/clusterers/educational_examples'
+require 'ai4r/educational/examples/clusterer_examples'
 
 RSpec.describe Ai4r::Clusterers::EducationalExamples do
   describe '.beginner_tutorial' do

@@ -15,7 +15,7 @@ require 'ai4r/educational/tutorials/genetic_algorithm_tutorial'
 require 'ai4r/genetic_algorithm/examples'
 
 RSpec.describe 'Genetic Algorithm Module Comprehensive Tests' do
-  describe Ai4r::GeneticAlgorithm::GeneticAlgorithm do
+  describe Ai4r::GeneticAlgorithm::GeneticSearch do
     let(:population_size) { 10 }
     let(:generations) { 5 }
     
