@@ -23,6 +23,11 @@ module Ai4r
     # It generates rules based on a single attribute.
     class OneR < Classifier
       attr_reader :data_set, :rule
+      
+      # Returns the index of the selected attribute
+      def selected_attribute
+        @rule[:attr_index] if @rule
+      end
 
       # Build a new OneR classifier. You must provide a DataSet instance
       # as parameter. The last attribute of each item is considered as

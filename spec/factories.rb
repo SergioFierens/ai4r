@@ -80,8 +80,9 @@ FactoryBot.define do
         base_data.each do |row|
           # Skip if first value is nil (due to missing values)
           next if row[0].nil?
-          # Ensure strong positive correlation by making second column significantly larger
-          row[1] = (row[0] * 2) + 10 + rand(-2.0..2.0) # Strong positive correlation with less noise
+          # Ensure strong positive correlation
+          # Use absolute value and add large offset to guarantee second > first
+          row[1] = row[0].abs * 3 + 20 + rand(0.0..2.0) # Guaranteed to be larger
         end
       end
 

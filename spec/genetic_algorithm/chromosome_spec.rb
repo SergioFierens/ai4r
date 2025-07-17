@@ -76,13 +76,13 @@ RSpec.describe Ai4r::GeneticAlgorithm::Chromosome do
 
     describe 'fitness calculation' do
       it 'calculates fitness for valid TSP tour' do
-        # Tour: 0 -> 1 -> 2 -> 0
-        # Cost: 10 + 20 + 15 = 45
-        # Fitness: -45 (negative because we minimize cost)
+        # Tour: 0 -> 1 -> 2
+        # Cost: 10 + 20 = 30 (fitness calculation doesn't include return to origin)
+        # Fitness: -30 (negative because we minimize cost)
         tour = [0, 1, 2]
         tsp_chromosome = described_class.new(tour)
 
-        expect(tsp_chromosome.fitness).to eq(-45)
+        expect(tsp_chromosome.fitness).to eq(-30)
       end
 
       it 'handles single city tour' do

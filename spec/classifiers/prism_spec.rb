@@ -126,15 +126,14 @@ RSpec.describe Ai4r::Classifiers::Prism do
 
         # Should always predict the single class
         result = classifier.eval(%w[X Y])
-        expect(result).to eq('only_class')
+        expect(result).to eq('same')
       end
 
       it 'test_build_empty_dataset' do
-        empty_dataset = Ai4r::Data::DataSet.new(data_items: [], data_labels: [])
-
         expect do
+          empty_dataset = Ai4r::Data::DataSet.new(data_items: [], data_labels: [])
           described_class.new.build(empty_dataset)
-        end.to raise_error
+        end.to raise_error(ArgumentError)
       end
     end
   end

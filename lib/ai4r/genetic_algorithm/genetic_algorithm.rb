@@ -109,7 +109,7 @@ module Ai4r
           @population.each { |chromosome| chromosome.normalized_fitness = 1 }
         end
         selected_to_breed = []
-        ((2 * @population_size) / 3).times do
+        ((2 * @population.size) / 3).times do
           selected_to_breed << select_random_individual(acum_fitness)
         end
         selected_to_breed
@@ -126,11 +126,31 @@ module Ai4r
       def reproduction(selected_to_breed)
         offsprings = []
         0.upto((selected_to_breed.length / 2) - 1) do |i|
-          offsprings << Chromosome.reproduce(selected_to_breed[2 * i], selected_to_breed[(2 * i) + 1])
+          parent1 = selected_to_breed[2 * i]
+          parent2 = selected_to_breed[(2 * i) + 1]
+          
+          # Use the appropriate reproduce method based on chromosome class
+          if parent1.class.respond_to?(:reproduce)
+            offspring = parent1.class.reproduce(parent1, parent2)
+          else
+            offspring = Chromosome.reproduce(parent1, parent2)
+          end
+          
+          offsprings << offspring if offspring
         end
-        @population.each do |individual|
-          Chromosome.mutate(individual)
+        
+        # Mutate the existing population if it exists
+        if @population && !@population.empty?
+          @population.each do |individual|
+            # Use the appropriate mutate method based on chromosome class
+            if individual.class.respond_to?(:mutate)
+              individual.class.mutate(individual)
+            else
+              Chromosome.mutate(individual)
+            end
+          end
         end
+        
         return offsprings
       end
 
@@ -144,9 +164,13 @@ module Ai4r
         if size >= @population.length
           @population = offsprings[0...@population.length]
         else
+          # Keep the best individuals and replace the worst
           end_index = @population.length - size - 1
           @population = @population[0..end_index] + offsprings
         end
+        
+        # Re-sort population by fitness to maintain order
+        @population.sort! { |a, b| b.fitness <=> a.fitness }
       end
 
       # Select the best chromosome in the population
@@ -180,7 +204,7 @@ module Ai4r
       attr_accessor :data, :normalized_fitness
 
       def initialize(data)
-        @data = data
+        @data = data.nil? ? nil : data.dup
       end
 
       # The fitness method quantifies the optimality of a solution
@@ -206,6 +230,7 @@ module Ai4r
           cost += @@costs[last_token][token]
           last_token = token
         end
+        
         @fitness = -1 * cost
         return @fitness
       end

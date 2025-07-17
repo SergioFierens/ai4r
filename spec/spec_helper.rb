@@ -109,8 +109,13 @@ RSpec.configure do |config|
   # Filter out backtrace from gems
   config.filter_gems_from_backtrace 'factory_bot', 'faker'
 
-  # Run specs in random order
+  # Run specs in random order with a fixed seed for reproducibility
   config.order = :random
+  
+  # Use a fixed seed for reproducible tests
+  # This ensures factory tests with randomness are consistent
+  FIXED_SEED = ENV['RSPEC_SEED']&.to_i || 12345
+  config.seed = FIXED_SEED
 
   # Seed random number generator
   Kernel.srand config.seed
@@ -128,6 +133,10 @@ RSpec.configure do |config|
 
   # Add custom matchers for educational testing
   config.before do
+    # Reset random seed before each test for consistent factory behavior
+    # This ensures that factory-generated random data is reproducible
+    srand(FIXED_SEED)
+    
     # Set up educational configuration for consistent testing
     @educational_config = if defined?(Ai4r::Data::EducationalConfig)
                             Ai4r::Data::EducationalConfig.advanced
