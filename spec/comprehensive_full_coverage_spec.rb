@@ -2,10 +2,7 @@
 
 require 'spec_helper'
 
-# Require all modules
-Dir[File.join(File.dirname(__FILE__), '..', 'lib', 'ai4r', '**', '*.rb')].each do |file|
-  require file unless file.include?('ai4r.rb')
-end
+# All modules are loaded through spec_helper -> ai4r.rb
 
 RSpec.describe 'Comprehensive Full Coverage Tests' do
   describe 'Genetic Algorithm Module' do

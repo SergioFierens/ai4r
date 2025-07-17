@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 require 'ai4r/data/data_set'
-require 'ai4r/data/educational_data_examples'
+require 'ai4r/educational/examples/data_examples'
 
 RSpec.describe 'Ai4r::Data Educational Data Examples' do
   describe 'Iris Dataset' do

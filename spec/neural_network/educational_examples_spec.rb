@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'ai4r/neural_network/educational_examples'
+require 'ai4r/educational/examples/neural_network_examples'
 
 RSpec.describe Ai4r::NeuralNetwork::EducationalExamples do
   describe '.beginner_tutorial' do

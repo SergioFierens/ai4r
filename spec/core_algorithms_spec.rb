@@ -2,10 +2,7 @@
 
 require 'spec_helper'
 
-# Load all necessary files
-Dir[File.join(File.dirname(__FILE__), '..', 'lib', 'ai4r', '**', '*.rb')].each do |file|
-  require file unless file.include?('educational_examples') || file.include?('visualization')
-end
+# All modules are loaded through spec_helper -> ai4r.rb
 
 RSpec.describe 'AI4R Core Algorithms' do
   # Test basic classifiers

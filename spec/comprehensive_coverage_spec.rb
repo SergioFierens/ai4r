@@ -369,7 +369,7 @@ RSpec.describe 'AI4R Comprehensive Coverage' do
   end
 
   describe 'Machine Learning Module' do
-    describe Ai4r::MachineLearning::ID3 do
+    describe Ai4r::MachineLearning::RandomForest do
       it 'exists and can be instantiated' do
         expect { described_class.new }.not_to raise_error
       end

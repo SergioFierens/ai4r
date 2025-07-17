@@ -16,8 +16,8 @@
 #  The trick is knowing which spotlight to use." - Anonymous Data Scientist
 #
 
-require_relative '../data/data_set'
-require_relative '../classifiers/classifier'
+require_relative '../../data/data_set'
+require_relative '../../classifiers/classifier'
 require 'benchmark'
 require 'set'
 

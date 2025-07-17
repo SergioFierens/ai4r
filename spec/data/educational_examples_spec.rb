@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'ai4r/data/educational_examples'
+require 'ai4r/educational/examples/data_examples'
 
 RSpec.describe Ai4r::Data::EducationalExamples do
   describe '.tutorial_tracks' do
