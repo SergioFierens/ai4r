@@ -40,3 +40,5 @@ Gemfile.lock
 # Build artifacts
 /build/
 /site/build/
+/benchmarks/results/
+/config/local/
