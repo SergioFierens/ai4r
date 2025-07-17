@@ -13,56 +13,56 @@ RSpec.describe Ai4r::Classifiers::IB1 do
   let(:numeric_dataset) do
     Ai4r::Data::DataSet.new(
       data_items: [
-        [1.0, 1.0],
-        [1.1, 1.1],
-        [5.0, 5.0],
-        [5.1, 5.1],
-        [9.0, 9.0],
-        [9.1, 9.1]
+        [1.0, 1.0, 'A'],
+        [1.1, 1.1, 'A'],
+        [5.0, 5.0, 'B'],
+        [5.1, 5.1, 'B'],
+        [9.0, 9.0, 'C'],
+        [9.1, 9.1, 'C']
       ],
-      data_labels: %w[A A B B C C]
+      data_labels: %w[x y class]
     )
   end
 
   let(:mixed_features_dataset) do
     Ai4r::Data::DataSet.new(
       data_items: [
-        ['sunny', 25.5, 'high'],
-        ['overcast', 18.2, 'normal'],
-        ['rainy', 12.1, 'high'],
-        ['sunny', 22.3, 'normal'],
-        ['overcast', 20.0, 'high'],
-        ['rainy', 15.5, 'normal']
+        ['sunny', 25.5, 'high', 'no'],
+        ['overcast', 18.2, 'normal', 'yes'],
+        ['rainy', 12.1, 'high', 'yes'],
+        ['sunny', 22.3, 'normal', 'no'],
+        ['overcast', 20.0, 'high', 'yes'],
+        ['rainy', 15.5, 'normal', 'yes']
       ],
-      data_labels: %w[no yes yes no yes yes]
+      data_labels: %w[outlook temperature humidity play]
     )
   end
 
   let(:single_instance_dataset) do
     Ai4r::Data::DataSet.new(
-      data_items: [[1.0, 2.0, 3.0]],
-      data_labels: ['only_class']
+      data_items: [[1.0, 2.0, 3.0, 'only_class']],
+      data_labels: %w[x y z class]
     )
   end
 
   let(:high_dimensional_dataset) do
     Ai4r::Data::DataSet.new(
       data_items: [
-        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-        [2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-        [11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
-        [12, 13, 14, 15, 16, 17, 18, 19, 20, 21],
-        [21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
-        [22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 'low'],
+        [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 'low'],
+        [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 'medium'],
+        [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 'medium'],
+        [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 'high'],
+        [22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 'high']
       ],
-      data_labels: %w[low low medium medium high high]
+      data_labels: %w[d1 d2 d3 d4 d5 d6 d7 d8 d9 d10 class]
     )
   end
 
   let(:identical_instances_dataset) do
     Ai4r::Data::DataSet.new(
-      data_items: [[1.0, 1.0], [1.0, 1.0], [2.0, 2.0], [2.0, 2.0]],
-      data_labels: %w[same different other another]
+      data_items: [[1.0, 1.0, 'same'], [1.0, 1.0, 'different'], [2.0, 2.0, 'other'], [2.0, 2.0, 'another']],
+      data_labels: %w[x y class]
     )
   end
 
@@ -118,11 +118,10 @@ RSpec.describe Ai4r::Classifiers::IB1 do
 
     context 'error handling' do
       it 'test_build_empty_dataset' do
-        empty_dataset = Ai4r::Data::DataSet.new(data_items: [], data_labels: [])
-
         expect do
+          empty_dataset = Ai4r::Data::DataSet.new(data_items: [], data_labels: [])
           described_class.new.build(empty_dataset)
-        end.to raise_error
+        end.to raise_error(ArgumentError)
       end
     end
   end
@@ -224,8 +223,8 @@ RSpec.describe Ai4r::Classifiers::IB1 do
       # Test that classifier handles different feature scales
 
       large_scale_dataset = Ai4r::Data::DataSet.new(
-        data_items: [[1, 1000], [2, 2000], [100, 100], [200, 200]],
-        data_labels: %w[small small large large]
+        data_items: [[1, 1000, 'small'], [2, 2000, 'small'], [100, 100, 'large'], [200, 200, 'large']],
+        data_labels: %w[x y class]
       )
 
       classifier = described_class.new.build(large_scale_dataset)
@@ -240,16 +239,14 @@ RSpec.describe Ai4r::Classifiers::IB1 do
     it 'handles large datasets efficiently' do
       # Generate large dataset
       large_items = []
-      large_labels = []
 
       1000.times do |i|
-        large_items << [rand(100), rand(100), rand(100)]
-        large_labels << (i % 5).to_s
+        large_items << [rand(100), rand(100), rand(100), (i % 5).to_s]
       end
 
       large_dataset = Ai4r::Data::DataSet.new(
         data_items: large_items,
-        data_labels: large_labels
+        data_labels: %w[x y z class]
       )
 
       # Build should be fast (just stores instances)
@@ -290,19 +287,17 @@ RSpec.describe Ai4r::Classifiers::IB1 do
 
       # Cluster 1
       20.times do
-        clustered_items << [rand(2), rand(2)]
-        clustered_labels << 'cluster1'
+        clustered_items << [rand(2), rand(2), 'cluster1']
       end
 
       # Cluster 2
       20.times do
-        clustered_items << [rand(10..11), rand(10..11)]
-        clustered_labels << 'cluster2'
+        clustered_items << [rand(10..11), rand(10..11), 'cluster2']
       end
 
       clustered_dataset = Ai4r::Data::DataSet.new(
         data_items: clustered_items,
-        data_labels: clustered_labels
+        data_labels: %w[x y class]
       )
 
       classifier = described_class.new.build(clustered_dataset)
@@ -330,15 +325,13 @@ RSpec.describe Ai4r::Classifiers::IB1 do
     it 'handles noise appropriately' do
       # Add some noisy instances
       noisy_items = numeric_dataset.data_items.dup
-      noisy_labels = numeric_dataset.data_labels.dup
 
       # Add outliers
-      noisy_items += [[100, 100], [-100, -100]]
-      noisy_labels += %w[outlier1 outlier2]
+      noisy_items += [[100, 100, 'outlier1'], [-100, -100, 'outlier2']]
 
       noisy_dataset = Ai4r::Data::DataSet.new(
         data_items: noisy_items,
-        data_labels: noisy_labels
+        data_labels: numeric_dataset.data_labels
       )
 
       classifier = described_class.new.build(noisy_dataset)
@@ -360,8 +353,8 @@ RSpec.describe Ai4r::Classifiers::IB1 do
 
     it 'handles single dimension data' do
       single_dim_dataset = Ai4r::Data::DataSet.new(
-        data_items: [[1], [2], [5], [6]],
-        data_labels: %w[low low high high]
+        data_items: [[1, 'low'], [2, 'low'], [5, 'high'], [6, 'high']],
+        data_labels: %w[x class]
       )
 
       classifier = described_class.new.build(single_dim_dataset)
@@ -372,7 +365,8 @@ RSpec.describe Ai4r::Classifiers::IB1 do
 
     it 'handles zero distance' do
       # Test when query point exactly matches training instance
-      result = trained_classifier.eval([5.0, 5.0]) # Exact match
+      classifier = described_class.new.build(numeric_dataset)
+      result = classifier.eval([5.0, 5.0]) # Exact match
       expect(result).to eq('B')
     end
   end
