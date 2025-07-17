@@ -49,3 +49,6 @@ Security/Eval:
 
 Security/MarshalLoad:
   Enabled: false
+
+Style/WhileUntilModifier:
+  Enabled: false
