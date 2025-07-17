@@ -307,4 +307,47 @@ class ID3Test < Minitest::Test
     assert after >= before
     assert_equal 'Y', id3.eval([1, 1])
   end
+
+  def test_to_h_and_to_graphviz
+    id3 = ID3.new.build(DataSet.new(data_items: DATA_ITEMS, data_labels: DATA_LABELS))
+
+    expected_hash = {
+      'age_range' => {
+        '<30' => 'Y',
+        '[30-50)' => {
+          'city' => {
+            'Chicago' => 'Y',
+            'New York' => 'N'
+          }
+        },
+        '[50-80]' => 'N',
+        '>80' => 'Y'
+      }
+    }
+    assert_equal expected_hash, id3.to_h
+
+    graph = id3.to_graphviz
+    assert_includes graph, 'digraph G {'
+    assert_includes graph, 'node0 [label="age_range"]'
+    assert_includes graph, 'node1 [label="Y", shape=box]'
+  end
+
+  def test_split_examples_categorical
+    node = EvaluationNode.new(%w[attr target], 0, %w[A B],
+                              [CategoryNode.new('target', 'X'),
+                               CategoryNode.new('target', 'Y')])
+    examples = [%w[A X], %w[B Y], %w[A X], %w[B X]]
+    id3 = ID3.new
+
+    result = id3.send(:split_examples, node, examples)
+    assert_equal [[%w[A X], %w[A X]], [%w[B Y], %w[B X]]], result
+  end
+
+  def test_error_node_graphviz
+    lines = []
+    node = ErrorNode.new
+    node.to_graphviz(0, lines)
+    graph = lines.join("\n")
+    assert_includes graph, 'node0 [label="?", shape=box]'
+  end
 end
