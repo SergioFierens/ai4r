@@ -10,9 +10,9 @@ require_relative 'modern_genetic_search'
 require_relative 'operators'
 require_relative 'chromosome'
 require_relative 'configuration'
-require_relative 'evolution_monitor'
-require_relative 'educational_demos'
-require_relative 'visualization_tools'
+require_relative '../utilities/monitoring/evolution_monitor'
+require_relative '../educational/demos/genetic_algorithm_demos'
+require_relative '../utilities/visualization/genetic_algorithm_visualization'
 require_relative 'enhanced_operators'
 
 module Ai4r

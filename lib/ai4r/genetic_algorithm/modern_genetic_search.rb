@@ -12,7 +12,7 @@
 require_relative 'operators'
 require_relative 'chromosome'
 require_relative 'configuration'
-require_relative 'evolution_monitor'
+require_relative '../utilities/monitoring/evolution_monitor'
 
 module Ai4r
   module GeneticAlgorithm

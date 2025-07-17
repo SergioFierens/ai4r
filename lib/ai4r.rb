@@ -8,6 +8,15 @@
 # Each group represents a major area of artificial intelligence and machine learning.
 #
 
+# Load version information
+require_relative 'ai4r/version'
+
+# =============================================================================
+# CORE FUNCTIONALITY
+# =============================================================================
+# Load core helpers (available throughout the library)
+require_relative 'ai4r/core/helpers'
+
 # =============================================================================
 # 1. DATA HANDLING AND PREPROCESSING
 # =============================================================================
@@ -29,12 +38,12 @@ require_relative 'ai4r/data/data_splitter'
 require_relative 'ai4r/data/feature_engineer'
 
 # Data Visualization and Analysis
-require_relative 'ai4r/data/data_visualization'
+require_relative 'ai4r/utilities/visualization/data_visualization'
 require_relative 'ai4r/data/enhanced_data_set'
 
 # Educational Data Framework
 require_relative 'ai4r/data/educational_data_set'
-require_relative 'ai4r/data/educational_examples'
+require_relative 'ai4r/educational/examples/data_examples'
 
 # =============================================================================
 # 2. CLUSTERING ALGORITHMS
@@ -74,11 +83,11 @@ require_relative 'ai4r/clusterers/clustering_quality_evaluator'
 # Educational Clustering Framework
 require_relative 'ai4r/clusterers/educational_clustering'
 require_relative 'ai4r/clusterers/educational_algorithms'
-require_relative 'ai4r/clusterers/educational_examples'
+require_relative 'ai4r/educational/examples/clusterer_examples'
 require_relative 'ai4r/clusterers/enhanced_clustering_framework'
-require_relative 'ai4r/clusterers/interactive_clustering_explorer'
-require_relative 'ai4r/clusterers/synthetic_dataset_generator'
-require_relative 'ai4r/clusterers/clustering_curriculum'
+require_relative 'ai4r/educational/demos/interactive_clustering_explorer'
+require_relative 'ai4r/utilities/generators/synthetic_dataset_generator'
+require_relative 'ai4r/educational/curricula/clustering_curriculum'
 
 # =============================================================================
 # 3. CLASSIFICATION ALGORITHMS
@@ -120,7 +129,7 @@ require_relative 'ai4r/classifiers/classifier_evaluation_suite'
 # Educational Classification Framework
 require_relative 'ai4r/classifiers/educational_classification'
 require_relative 'ai4r/classifiers/educational_algorithms'
-require_relative 'ai4r/classifiers/educational_examples'
+require_relative 'ai4r/educational/examples/classifier_examples'
 
 # =============================================================================
 # 4. NEURAL NETWORKS
@@ -143,7 +152,7 @@ require_relative 'ai4r/neural_network/enhanced_neural_network'
 
 # Educational Neural Network Framework
 require_relative 'ai4r/neural_network/educational_neural_network'
-require_relative 'ai4r/neural_network/educational_examples'
+require_relative 'ai4r/educational/examples/neural_network_examples'
 
 # =============================================================================
 # 5. SELF-ORGANIZING MAPS
@@ -175,13 +184,13 @@ require_relative 'ai4r/genetic_algorithm/enhanced_operators'
 require_relative 'ai4r/genetic_algorithm/configuration'
 
 # Evolution Monitoring and Analysis
-require_relative 'ai4r/genetic_algorithm/evolution_monitor'
-require_relative 'ai4r/genetic_algorithm/visualization_tools'
+require_relative 'ai4r/utilities/monitoring/evolution_monitor'
+require_relative 'ai4r/utilities/visualization/genetic_algorithm_visualization'
 
 # Educational Genetic Algorithm Framework
 require_relative 'ai4r/genetic_algorithm/educational_genetic_search'
 require_relative 'ai4r/genetic_algorithm/examples'
-require_relative 'ai4r/genetic_algorithm/tutorial'
+require_relative 'ai4r/educational/tutorials/genetic_algorithm_tutorial'
 
 # =============================================================================
 # 7. SEARCH ALGORITHMS
