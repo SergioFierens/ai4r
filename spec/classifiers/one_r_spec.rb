@@ -151,12 +151,12 @@ RSpec.describe Ai4r::Classifiers::OneR do
         # Create dataset where all attributes have same error rate
         equal_accuracy_data = Ai4r::Data::DataSet.new(
           data_items: [
-            %w[A X P],
-            %w[B Y Q],
-            %w[A X Q],
-            %w[B Y P]
+            %w[A X P 1],
+            %w[B Y Q 2],
+            %w[A X Q 2],
+            %w[B Y P 1]
           ],
-          data_labels: %w[1 2 1 2]
+          data_labels: %w[attr1 attr2 attr3 class]
         )
 
         classifier = described_class.new.build(equal_accuracy_data)
@@ -228,8 +228,10 @@ RSpec.describe Ai4r::Classifiers::OneR do
         classifier.build(numeric_dataset)
 
         # Values at bin edges should be handled consistently
-        min_val = numeric_dataset.data_items.flatten.min
-        max_val = numeric_dataset.data_items.flatten.max
+        # Get only numeric values from the dataset (exclude class column)
+        numeric_values = numeric_dataset.data_items.map { |row| row[0...-1] }.flatten.select { |v| v.is_a?(Numeric) }
+        min_val = numeric_values.min
+        max_val = numeric_values.max
         mid_val = (min_val + max_val) / 2
 
         result1 = classifier.eval([min_val, mid_val, max_val])
@@ -291,16 +293,14 @@ RSpec.describe Ai4r::Classifiers::OneR do
     it 'handles large datasets efficiently' do
       # Generate large dataset
       large_items = []
-      large_labels = []
 
       1000.times do |i|
-        large_items << [i % 10, (i * 2) % 15, (i * 3) % 20]
-        large_labels << (i % 3).to_s
+        large_items << [i % 10, (i * 2) % 15, (i * 3) % 20, (i % 3).to_s]
       end
 
       large_dataset = Ai4r::Data::DataSet.new(
         data_items: large_items,
-        data_labels: large_labels
+        data_labels: %w[attr1 attr2 attr3 class]
       )
 
       benchmark_performance('Large OneR dataset training') do
@@ -324,13 +324,12 @@ RSpec.describe Ai4r::Classifiers::OneR do
   describe 'Integration Tests' do
     it 'works with different data distributions' do
       # Test with skewed distribution
-      skewed_items = Array.new(50) { ['A', rand(10), 'X'] } +
-                     Array.new(5) { ['B', rand(10), 'Y'] }
-      skewed_labels = Array.new(50) { 'common' } + Array.new(5) { 'rare' }
+      skewed_items = Array.new(50) { ['A', rand(10), 'X', 'common'] } +
+                     Array.new(5) { ['B', rand(10), 'Y', 'rare'] }
 
       skewed_dataset = Ai4r::Data::DataSet.new(
         data_items: skewed_items,
-        data_labels: skewed_labels
+        data_labels: %w[attr1 attr2 attr3 class]
       )
 
       classifier = described_class.new.build(skewed_dataset)

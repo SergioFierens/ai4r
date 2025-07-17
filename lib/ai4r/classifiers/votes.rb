@@ -27,6 +27,8 @@ module Ai4r
       end
 
       def get_winner
+        return nil if tally_sheet.empty?
+        
         n = 0 # used to create a stable sort of the tallys
         sorted_sheet = tally_sheet.sort_by do |_, score|
           n += 1

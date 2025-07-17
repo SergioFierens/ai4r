@@ -13,68 +13,68 @@ RSpec.describe Ai4r::Classifiers::Hyperpipes do
   let(:continuous_dataset) do
     Ai4r::Data::DataSet.new(
       data_items: [
-        [1.5, 2.3, 3.1],
-        [1.8, 2.1, 3.4],
-        [4.1, 5.2, 6.8],
-        [4.3, 5.1, 6.9],
-        [7.8, 8.9, 9.2],
-        [7.9, 8.8, 9.1]
+        [1.5, 2.3, 3.1, 'A'],
+        [1.8, 2.1, 3.4, 'A'],
+        [4.1, 5.2, 6.8, 'B'],
+        [4.3, 5.1, 6.9, 'B'],
+        [7.8, 8.9, 9.2, 'C'],
+        [7.9, 8.8, 9.1, 'C']
       ],
-      data_labels: %w[A A B B C C]
+      data_labels: %w[x y z class]
     )
   end
 
   let(:overlapping_rectangles_dataset) do
     Ai4r::Data::DataSet.new(
       data_items: [
-        [1.0, 1.0],
-        [2.0, 2.0],
-        [1.5, 1.5],
-        [2.5, 2.5],
-        [3.0, 1.0],
-        [3.5, 2.0]
+        [1.0, 1.0, 'class1'],
+        [2.0, 2.0, 'class1'],
+        [1.5, 1.5, 'class1'],
+        [2.5, 2.5, 'class2'],
+        [3.0, 1.0, 'class2'],
+        [3.5, 2.0, 'class2']
       ],
-      data_labels: %w[class1 class1 class1 class2 class2 class2]
+      data_labels: %w[x y class]
     )
   end
 
   let(:mixed_features_dataset) do
     Ai4r::Data::DataSet.new(
       data_items: [
-        ['sunny', 25.5, 'high'],
-        ['overcast', 18.2, 'normal'],
-        ['rainy', 12.1, 'high'],
-        ['sunny', 22.3, 'normal'],
-        ['overcast', 20.0, 'high'],
-        ['rainy', 15.5, 'normal']
+        ['sunny', 25.5, 'high', 'no'],
+        ['overcast', 18.2, 'normal', 'yes'],
+        ['rainy', 12.1, 'high', 'yes'],
+        ['sunny', 22.3, 'normal', 'no'],
+        ['overcast', 20.0, 'high', 'yes'],
+        ['rainy', 15.5, 'normal', 'yes']
       ],
-      data_labels: %w[no yes yes no yes yes]
+      data_labels: %w[outlook temperature humidity play]
     )
   end
 
   let(:single_instance_per_class_dataset) do
     Ai4r::Data::DataSet.new(
-      data_items: [[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]],
-      data_labels: %w[A B C]
+      data_items: [[1.0, 2.0, 'A'], [3.0, 4.0, 'B'], [5.0, 6.0, 'C']],
+      data_labels: %w[x y class]
     )
   end
 
   let(:identical_points_dataset) do
     Ai4r::Data::DataSet.new(
-      data_items: [[1.0, 1.0], [1.0, 1.0], [2.0, 2.0], [2.0, 2.0]],
-      data_labels: %w[same same different different]
+      data_items: [[1.0, 1.0, 'same'], [1.0, 1.0, 'same'], [2.0, 2.0, 'different'], [2.0, 2.0, 'different']],
+      data_labels: %w[x y class]
     )
   end
 
   let(:high_dimensional_dataset) do
     Ai4r::Data::DataSet.new(
       data_items: [
-        [1, 2, 3, 4, 5, 6, 7, 8],
-        [2, 3, 4, 5, 6, 7, 8, 9],
-        [11, 12, 13, 14, 15, 16, 17, 18],
-        [12, 13, 14, 15, 16, 17, 18, 19]
+        [1, 2, 3, 4, 5, 6, 7, 8, 'low'],
+        [2, 3, 4, 5, 6, 7, 8, 9, 'low'],
+        [11, 12, 13, 14, 15, 16, 17, 18, 'high'],
+        [12, 13, 14, 15, 16, 17, 18, 19, 'high']
       ],
-      data_labels: %w[low low high high]
+      data_labels: %w[d1 d2 d3 d4 d5 d6 d7 d8 class]
     )
   end
 
@@ -148,17 +148,16 @@ RSpec.describe Ai4r::Classifiers::Hyperpipes do
 
     context 'error handling' do
       it 'test_build_empty_dataset' do
-        empty_dataset = Ai4r::Data::DataSet.new(data_items: [], data_labels: [])
-
         expect do
+          empty_dataset = Ai4r::Data::DataSet.new(data_items: [], data_labels: [])
           described_class.new.build(empty_dataset)
-        end.to raise_error
+        end.to raise_error(ArgumentError)
       end
 
       it 'test_build_single_instance' do
         single_dataset = Ai4r::Data::DataSet.new(
-          data_items: [[1.0, 2.0]],
-          data_labels: ['only']
+          data_items: [[1.0, 2.0, 'only']],
+          data_labels: %w[x y class]
         )
 
         classifier = described_class.new.build(single_dataset)

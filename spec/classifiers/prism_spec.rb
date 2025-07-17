@@ -207,9 +207,11 @@ RSpec.describe Ai4r::Classifiers::Prism do
       # PRISM should generate rules that cover all positive instances
       correct_predictions = 0
 
-      categorical_dataset.data_items.each_with_index do |item, i|
-        prediction = classifier.eval(item)
-        actual = categorical_dataset.data_labels[i]
+      categorical_dataset.data_items.each do |item|
+        # Evaluate without the class (last element)
+        features = item[0...-1]
+        prediction = classifier.eval(features)
+        actual = item.last
         correct_predictions += 1 if prediction == actual
       end
 
@@ -232,16 +234,14 @@ RSpec.describe Ai4r::Classifiers::Prism do
     it 'handles moderate-sized datasets efficiently' do
       # Generate medium dataset
       medium_items = []
-      medium_labels = []
 
       200.times do |i|
-        medium_items << ["attr1_#{i % 10}", "attr2_#{i % 5}", "attr3_#{i % 8}"]
-        medium_labels << (i % 3).to_s
+        medium_items << ["attr1_#{i % 10}", "attr2_#{i % 5}", "attr3_#{i % 8}", (i % 3).to_s]
       end
 
       medium_dataset = Ai4r::Data::DataSet.new(
         data_items: medium_items,
-        data_labels: medium_labels
+        data_labels: %w[attr1 attr2 attr3 class]
       )
 
       benchmark_performance('Prism training on medium dataset') do
@@ -265,14 +265,12 @@ RSpec.describe Ai4r::Classifiers::Prism do
   describe 'Integration Tests' do
     it 'works with different class distributions' do
       # Test with unbalanced classes
-      unbalanced_items = Array.new(20) { %w[common feature] } +
-                         Array.new(5) { %w[rare feature] }
-      unbalanced_labels = Array.new(20) { 'majority' } +
-                          Array.new(5) { 'minority' }
+      unbalanced_items = Array.new(20) { %w[common feature majority] } +
+                         Array.new(5) { %w[rare feature minority] }
 
       unbalanced_dataset = Ai4r::Data::DataSet.new(
         data_items: unbalanced_items,
-        data_labels: unbalanced_labels
+        data_labels: %w[attr1 attr2 class]
       )
 
       classifier = described_class.new.build(unbalanced_dataset)
@@ -301,14 +299,13 @@ RSpec.describe Ai4r::Classifiers::Prism do
     it 'handles complex rule interactions' do
       # Test with data that requires multiple overlapping rules
       complex_items = [
-        %w[A 1 X], %w[A 2 Y], %w[B 1 Y], %w[B 2 X],
-        %w[A 1 Y], %w[A 2 X], %w[B 1 X], %w[B 2 Y]
+        %w[A 1 X pos], %w[A 2 Y neg], %w[B 1 Y neg], %w[B 2 X pos],
+        %w[A 1 Y pos], %w[A 2 X neg], %w[B 1 X neg], %w[B 2 Y pos]
       ]
-      complex_labels = %w[pos neg neg pos pos neg neg pos]
 
       complex_dataset = Ai4r::Data::DataSet.new(
         data_items: complex_items,
-        data_labels: complex_labels
+        data_labels: %w[attr1 attr2 attr3 class]
       )
 
       classifier = described_class.new.build(complex_dataset)

@@ -41,7 +41,13 @@ module Ai4r
           while has_class_value?(instances, class_value)
             rule = build_rule(class_value, instances)
             @rules << rule
-            instances = instances.reject { |data| matches_conditions?(data, rule[:conditions]) }
+            
+            # If rule has no conditions, it matches all instances with that class value
+            if rule[:conditions].empty?
+              instances = instances.reject { |data| data.last == class_value }
+            else
+              instances = instances.reject { |data| matches_conditions?(data, rule[:conditions]) }
+            end
           end
         end
         return self
@@ -52,6 +58,8 @@ module Ai4r
       #   classifier.eval(['New York',  '<30', 'F'])  # => 'Y'
       def eval(instace)
         @rules.each do |rule|
+          # If rule has no conditions, it's a default rule that matches everything
+          return rule[:class_value] if rule[:conditions].empty?
           return rule[:class_value] if matches_conditions?(instace, rule[:conditions])
         end
         return nil
@@ -116,10 +124,21 @@ module Ai4r
         until perfect?(instances, rule) || attributes.empty?
           freq_table = build_freq_table(rule_instances, attributes, class_value)
           condition = get_condition(freq_table)
+          
+          # If no condition found, break to avoid infinite loop
+          break if condition.nil?
+          
           rule[:conditions].merge!(condition)
+          
+          # Remove the used attribute to avoid selecting it again
+          attributes.delete(condition.keys.first)
+          
           rule_instances = rule_instances.select do |data|
             matches_conditions?(data, condition)
           end
+          
+          # If no instances remain after filtering, break
+          break if rule_instances.empty?
         end
         return rule
       end
