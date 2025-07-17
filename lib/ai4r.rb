@@ -224,5 +224,6 @@ require_relative 'ai4r/machine_learning/hidden_markov_model'
 
 # Evaluation Framework
 require_relative 'ai4r/experiment/classifier_evaluator'
-require_relative 'ai4r/experiment/classifier_bench'
-require_relative 'ai4r/experiment/search_bench'
+# TODO: Add these benchmark files
+# require_relative 'ai4r/experiment/classifier_bench'
+# require_relative 'ai4r/experiment/search_bench'

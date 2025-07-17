@@ -241,5 +241,8 @@ module Ai4r
         offspring.take(population.size)
       end
     end
+
+    # Alias for compatibility
+    RouletteWheelSelection = FitnessProportionateSelection
   end
 end

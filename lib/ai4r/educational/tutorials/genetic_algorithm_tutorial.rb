@@ -6,9 +6,9 @@
 # Project::   ai4r
 # Url::       https://github.com/SergioFierens/ai4r
 
-require_relative 'educational_genetic_search'
-require_relative 'examples'
-require_relative 'enhanced_operators'
+require_relative '../../genetic_algorithm/educational_genetic_search'
+require_relative '../../genetic_algorithm/examples'
+require_relative '../../genetic_algorithm/enhanced_operators'
 
 module Ai4r
   module GeneticAlgorithm

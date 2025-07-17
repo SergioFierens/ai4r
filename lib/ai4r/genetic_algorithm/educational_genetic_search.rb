@@ -306,24 +306,24 @@ module Ai4r
 
       # Advanced visualization of evolution
       def visualize_evolution
-        VisualizationTools.plot_evolution_timeline(@monitor, 'Genetic Algorithm Evolution')
-        VisualizationTools.plot_convergence_analysis(@monitor)
-        VisualizationTools.plot_diversity_evolution(@monitor)
+        ::Ai4r::GeneticAlgorithm::VisualizationTools.plot_evolution_timeline(@monitor, 'Genetic Algorithm Evolution')
+        ::Ai4r::GeneticAlgorithm::VisualizationTools.plot_convergence_analysis(@monitor)
+        ::Ai4r::GeneticAlgorithm::VisualizationTools.plot_diversity_evolution(@monitor)
       end
 
       # Visualize population analysis
       def visualize_population
-        VisualizationTools.plot_population_analysis(@population, 'Current Population Analysis')
+        ::Ai4r::GeneticAlgorithm::VisualizationTools.plot_population_analysis(@population, 'Current Population Analysis')
       end
 
       # Visualize comparative results
       def visualize_comparisons
         if @comparative_results.any?
-          VisualizationTools.plot_operator_comparison(@comparative_results, 'Operator Performance Comparison')
+          ::Ai4r::GeneticAlgorithm::VisualizationTools.plot_operator_comparison(@comparative_results, 'Operator Performance Comparison')
         end
 
         if @parameter_sensitivity.any?
-          VisualizationTools.plot_parameter_sensitivity(@parameter_sensitivity, 'Parameter Sensitivity Analysis')
+          ::Ai4r::GeneticAlgorithm::VisualizationTools.plot_parameter_sensitivity(@parameter_sensitivity, 'Parameter Sensitivity Analysis')
         end
       end
 

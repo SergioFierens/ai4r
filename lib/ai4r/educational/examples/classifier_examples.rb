@@ -6,9 +6,9 @@
 # Project::   ai4r
 # Url::       https://github.com/SergioFierens/ai4r
 
-require_relative 'educational_classification'
-require_relative 'educational_algorithms'
-require_relative '../data/data_set'
+require_relative '../../classifiers/educational_classification'
+require_relative '../../classifiers/educational_algorithms'
+require_relative '../../data/data_set'
 
 module Ai4r
   module Classifiers

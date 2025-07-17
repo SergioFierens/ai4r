@@ -6,7 +6,7 @@
 # Project::   ai4r
 # Url::       https://github.com/SergioFierens/ai4r
 
-require_relative '../data/data_set'
+require_relative '../../data/data_set'
 
 module Ai4r
   module Clusterers

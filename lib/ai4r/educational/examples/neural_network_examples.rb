@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative '../data/data_set'
-require_relative 'backpropagation'
+require_relative '../../data/data_set'
+require_relative '../../neural_network/backpropagation'
 
 module Ai4r
   module NeuralNetwork

@@ -6,12 +6,12 @@
 # Project::   ai4r
 # Url::       https://github.com/SergioFierens/ai4r
 
-require_relative 'modern_genetic_search'
-require_relative 'enhanced_operators'
-require_relative 'examples'
-require_relative 'operators'
-require_relative 'chromosome'
-require_relative 'configuration'
+require_relative '../../genetic_algorithm/modern_genetic_search'
+require_relative '../../genetic_algorithm/enhanced_operators'
+require_relative '../../genetic_algorithm/examples'
+require_relative '../../genetic_algorithm/operators'
+require_relative '../../genetic_algorithm/chromosome'
+require_relative '../../genetic_algorithm/configuration'
 
 module Ai4r
   module GeneticAlgorithm

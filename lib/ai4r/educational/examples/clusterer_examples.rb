@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative '../data/data_set'
-require_relative '../data/educational_data_examples'
-require_relative 'k_means'
-require_relative 'dbscan'
+require_relative '../../data/data_set'
+require_relative '../../data/educational_data_set'
+require_relative '../../clusterers/k_means'
+require_relative '../../clusterers/dbscan'
 
 module Ai4r
   module Clusterers

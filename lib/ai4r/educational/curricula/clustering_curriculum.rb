@@ -6,7 +6,7 @@
 # Project::   ai4r
 # Url::       https://github.com/SergioFierens/ai4r
 
-require_relative 'synthetic_dataset_generator'
+require_relative '../../utilities/generators/synthetic_dataset_generator'
 
 module Ai4r
   module Clusterers
