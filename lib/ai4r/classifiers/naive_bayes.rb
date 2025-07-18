@@ -68,6 +68,16 @@ module Ai4r
         @pcp = [] # stores the conditional probabilities of the values of an attribute
         @klass_index = {} # hashmap for quick lookup of all the used klasses and their indice
         @values = {} # hashmap for quick lookup of all the values
+        @numeric_attributes = [] # stores whether each attribute is numeric
+        @means = {} # stores means for numeric attributes per class
+        @stdevs = {} # stores standard deviations for numeric attributes per class
+      end
+
+      def set_parameters(params)
+        super
+        if params[:m] && params[:m] < 0
+          raise ArgumentError, "m must be non-negative"
+        end
       end
 
       # You can evaluate new data, predicting its category.
@@ -75,9 +85,10 @@ module Ai4r
       #   b.eval(["Red", "SUV", "Domestic"])
       #     => 'No'
       def eval(data)
-        prob = @class_prob.dup
-        prob = calculate_class_probabilities_for_entry(data, prob)
-        index_to_klass(prob.index(prob.max))
+        # Use log probabilities to avoid underflow
+        log_prob = @class_prob.map { |p| Math.log(p) }
+        log_prob = calculate_log_probabilities_for_entry(data, log_prob)
+        index_to_klass(log_prob.index(log_prob.max))
       end
 
       # Calculates the probabilities for the data entry Data.
@@ -90,9 +101,16 @@ module Ai4r
       #   b.get_probability_map(["Red", "SUV", "Domestic"])
       #     => {"Yes"=>0.4166666666666667, "No"=>0.5833333333333334}
       def get_probability_map(data)
-        prob = @class_prob.dup
-        prob = calculate_class_probabilities_for_entry(data, prob)
-        prob = normalize_class_probability prob
+        # Use log probabilities to avoid underflow
+        log_prob = @class_prob.map { |p| Math.log(p) }
+        log_prob = calculate_log_probabilities_for_entry(data, log_prob)
+        
+        # Convert back from log space and normalize
+        # Use log-sum-exp trick to avoid overflow
+        max_log_prob = log_prob.max
+        prob = log_prob.map { |lp| Math.exp(lp - max_log_prob) }
+        prob = normalize_class_probability(prob)
+        
         probability_map = {}
         prob.each_with_index { |p, i| probability_map[index_to_klass(i)] = p }
 
@@ -108,6 +126,7 @@ module Ai4r
 
         initialize_domain_data(data)
         initialize_klass_index
+        identify_numeric_attributes
         initialize_pc
         calculate_probabilities
 
@@ -130,13 +149,79 @@ module Ai4r
       def calculate_class_probabilities_for_entry(data, prob)
         0.upto(prob.length - 1) do |prob_index|
           data.each_with_index do |att, index|
-            next if value_index(att, index).nil?
-
-            prob[prob_index] *= @pcp[index][value_index(att, index)][prob_index]
+            if @numeric_attributes[index]
+              # Handle numeric attributes with Gaussian distribution
+              prob[prob_index] *= gaussian_probability(att, index, prob_index)
+            else
+              # Handle categorical attributes
+              if value_index(att, index).nil?
+                # Unseen categorical value - use small probability
+                if @m == 0
+                  # When m=0, use a very small probability that still preserves class prior ratios
+                  prob[prob_index] *= 0.001
+                else
+                  # Use Laplace smoothing with m-estimate
+                  denominator = @class_counts[prob_index] + @m
+                  smoothed_prob = (@m * @class_prob[prob_index]) / denominator
+                  prob[prob_index] *= smoothed_prob
+                end
+              else
+                prob[prob_index] *= @pcp[index][value_index(att, index)][prob_index]
+              end
+            end
           end
         end
 
         prob
+      end
+
+      # Calculate log probabilities to avoid underflow
+      def calculate_log_probabilities_for_entry(data, log_prob)
+        0.upto(log_prob.length - 1) do |prob_index|
+          data.each_with_index do |att, index|
+            if @numeric_attributes[index]
+              # Handle numeric attributes with Gaussian distribution
+              gauss_prob = gaussian_probability(att, index, prob_index)
+              # Avoid log(0) by using a very small probability
+              gauss_prob = 1e-300 if gauss_prob == 0
+              log_prob[prob_index] += Math.log(gauss_prob)
+            else
+              # Handle categorical attributes
+              if value_index(att, index).nil?
+                # Unseen categorical value - use small probability
+                if @m == 0
+                  # When m=0, use a very small probability
+                  log_prob[prob_index] += Math.log(0.001)
+                else
+                  # Use Laplace smoothing with m-estimate
+                  denominator = @class_counts[prob_index] + @m
+                  smoothed_prob = (@m * @class_prob[prob_index]) / denominator
+                  log_prob[prob_index] += Math.log(smoothed_prob)
+                end
+              else
+                cond_prob = @pcp[index][value_index(att, index)][prob_index]
+                # Avoid log(0)
+                cond_prob = 1e-300 if cond_prob == 0
+                log_prob[prob_index] += Math.log(cond_prob)
+              end
+            end
+          end
+        end
+
+        log_prob
+      end
+
+      # Calculate Gaussian probability for numeric attributes
+      def gaussian_probability(value, attr_index, class_index)
+        mean = @means[attr_index][class_index]
+        stdev = @stdevs[attr_index][class_index]
+        
+        # Handle zero variance (all values are the same)
+        return 1.0 if stdev == 0
+        
+        # Calculate Gaussian probability density
+        exponent = -((value.to_f - mean) ** 2) / (2 * stdev ** 2)
+        (1 / (Math.sqrt(2 * Math::PI) * stdev)) * Math.exp(exponent)
       end
 
       # normalises the array of probabilities so the sum of the array equals 1
@@ -167,9 +252,19 @@ module Ai4r
 
         0.upto(@data_labels.length - 1) do |index|
           @values[index] = {}
-          @domains[index].each_with_index do |d, d_index|
-            @values[index][d] = d_index
+          # Only build value index for categorical attributes
+          unless @numeric_attributes[index]
+            @domains[index].each_with_index do |d, d_index|
+              @values[index][d] = d_index
+            end
           end
+        end
+      end
+
+      # Identify which attributes are numeric
+      def identify_numeric_attributes
+        0.upto(@data_labels.length - 1) do |index|
+          @numeric_attributes[index] = !@domains[index].is_a?(Set)
         end
       end
 
@@ -186,6 +281,11 @@ module Ai4r
       # builds an array of the form:
       # array[attributes][values][classes]
       def build_array(index)
+        # For numeric attributes, we don't need the value dimension
+        if @numeric_attributes[index]
+          return Array.new(@klasses.length, 0)
+        end
+        
         domains = Array.new(@domains[index].length)
         domains.map do
           Array.new @klasses.length, 0
@@ -196,8 +296,18 @@ module Ai4r
       # the attributes
       def initialize_pc
         0.upto(@data_labels.length - 1) do |index|
-          @pcc << build_array(index)
-          @pcp << build_array(index)
+          if @numeric_attributes[index]
+            # For numeric attributes, initialize mean and stdev storage
+            @means[index] = Array.new(@klasses.length, 0.0)
+            @stdevs[index] = Array.new(@klasses.length, 0.0)
+            # Add nil placeholders to maintain array indices
+            @pcc << nil
+            @pcp << nil
+          else
+            # For categorical attributes, use the original structure
+            @pcc << build_array(index)
+            @pcp << build_array(index)
+          end
         end
       end
 
@@ -210,6 +320,7 @@ module Ai4r
         calculate_class_probabilities
         count_instances
         calculate_conditional_probabilities
+        calculate_numeric_parameters
       end
 
       def calculate_class_probabilities
@@ -226,7 +337,10 @@ module Ai4r
       def count_instances
         @data_items.each do |item|
           0.upto(@data_labels.length - 1) do |dl_index|
-            @pcc[dl_index][value_index(item[dl_index], dl_index)][klass_index(item.klass)] += 1
+            unless @numeric_attributes[dl_index]
+              # Only count for categorical attributes
+              @pcc[dl_index][value_index(item[dl_index], dl_index)][klass_index(item.klass)] += 1
+            end
           end
         end
       end
@@ -234,11 +348,50 @@ module Ai4r
       # calculates the conditional probability and stores it in the @pcp-array
       def calculate_conditional_probabilities
         @pcc.each_with_index do |attributes, a_index|
+          next if attributes.nil? || @numeric_attributes[a_index] # Skip numeric attributes
+          
           attributes.each_with_index do |values, v_index|
             values.each_with_index do |klass, k_index|
               denominator = @class_counts[k_index] + @m
               @pcp[a_index][v_index][k_index] =
                 denominator == 0 ? 0.0 : (klass.to_f + (@m * @class_prob[k_index])) / denominator
+            end
+          end
+        end
+      end
+
+      # Calculate means and standard deviations for numeric attributes
+      def calculate_numeric_parameters
+        # Group data by class
+        class_data = Hash.new { |h, k| h[k] = [] }
+        @data_items.each do |item|
+          class_data[klass_index(item.klass)] << item
+        end
+
+        # Calculate mean and stdev for each numeric attribute per class
+        0.upto(@data_labels.length - 1) do |attr_index|
+          next unless @numeric_attributes[attr_index]
+
+          @klasses.each_with_index do |_, class_index|
+            values = class_data[class_index].map { |item| item[attr_index].to_f }
+            
+            if values.empty?
+              @means[attr_index][class_index] = 0.0
+              @stdevs[attr_index][class_index] = 1.0
+            else
+              # Calculate mean
+              mean = values.sum / values.length
+              @means[attr_index][class_index] = mean
+              
+              # Calculate standard deviation
+              if values.length == 1
+                @stdevs[attr_index][class_index] = 1.0
+              else
+                variance = values.map { |v| (v - mean) ** 2 }.sum / (values.length - 1)
+                @stdevs[attr_index][class_index] = Math.sqrt(variance)
+                # Prevent zero standard deviation
+                @stdevs[attr_index][class_index] = 0.01 if @stdevs[attr_index][class_index] == 0
+              end
             end
           end
         end

@@ -13,63 +13,63 @@ RSpec.describe Ai4r::Classifiers::NaiveBayes do
   let(:categorical_dataset) do
     Ai4r::Data::DataSet.new(
       data_items: [
-        %w[sunny hot high false],
-        %w[sunny hot high true],
-        %w[overcast hot high false],
-        %w[rainy mild high false],
-        %w[rainy cool normal false],
-        %w[rainy cool normal true],
-        %w[overcast cool normal true],
-        %w[sunny mild high false]
+        %w[sunny hot high false no],
+        %w[sunny hot high true no],
+        %w[overcast hot high false yes],
+        %w[rainy mild high false yes],
+        %w[rainy cool normal false yes],
+        %w[rainy cool normal true no],
+        %w[overcast cool normal true yes],
+        %w[sunny mild high false no]
       ],
-      data_labels: %w[no no yes yes yes no yes no]
+      data_labels: %w[outlook temperature humidity windy play]
     )
   end
 
   let(:continuous_dataset) do
     Ai4r::Data::DataSet.new(
       data_items: [
-        [1.5, 2.3, 3.1],
-        [1.8, 2.1, 3.4],
-        [4.1, 5.2, 6.8],
-        [4.3, 5.1, 6.9],
-        [7.8, 8.9, 9.2],
-        [7.9, 8.8, 9.1]
+        [1.5, 2.3, 3.1, 'A'],
+        [1.8, 2.1, 3.4, 'A'],
+        [4.1, 5.2, 6.8, 'B'],
+        [4.3, 5.1, 6.9, 'B'],
+        [7.8, 8.9, 9.2, 'C'],
+        [7.9, 8.8, 9.1, 'C']
       ],
-      data_labels: %w[A A B B C C]
+      data_labels: %w[x y z class]
     )
   end
 
   let(:mixed_dataset) do
     Ai4r::Data::DataSet.new(
       data_items: [
-        ['sunny', 25.5, 'high'],
-        ['overcast', 18.2, 'normal'],
-        ['rainy', 12.1, 'high'],
-        ['sunny', 22.3, 'normal'],
-        ['overcast', 20.0, 'high'],
-        ['rainy', 15.5, 'normal']
+        ['sunny', 25.5, 'high', 'no'],
+        ['overcast', 18.2, 'normal', 'yes'],
+        ['rainy', 12.1, 'high', 'yes'],
+        ['sunny', 22.3, 'normal', 'no'],
+        ['overcast', 20.0, 'high', 'yes'],
+        ['rainy', 15.5, 'normal', 'yes']
       ],
-      data_labels: %w[no yes yes no yes yes]
+      data_labels: %w[outlook temperature humidity play]
     )
   end
 
   let(:minimal_dataset) do
     Ai4r::Data::DataSet.new(
-      data_items: [%w[A X], %w[B Y], %w[C Z]],
-      data_labels: %w[1 2 3]
+      data_items: [%w[A X 1], %w[B Y 2], %w[C Z 3]],
+      data_labels: %w[feature1 feature2 class]
     )
   end
 
   let(:zero_variance_dataset) do
     Ai4r::Data::DataSet.new(
       data_items: [
-        ['A', 5.0, 'constant'],
-        ['B', 5.0, 'constant'],
-        ['C', 5.0, 'constant'],
-        ['A', 5.0, 'constant']
+        ['A', 5.0, 'constant', 'yes'],
+        ['B', 5.0, 'constant', 'no'],
+        ['C', 5.0, 'constant', 'yes'],
+        ['A', 5.0, 'constant', 'no']
       ],
-      data_labels: %w[yes no yes no]
+      data_labels: %w[feature1 constant_value feature3 class]
     )
   end
 
@@ -154,10 +154,10 @@ RSpec.describe Ai4r::Classifiers::NaiveBayes do
         # Features that violate independence assumption
         correlated_dataset = Ai4r::Data::DataSet.new(
           data_items: [
-            [1, 2], [2, 4], [3, 6], [4, 8],
-            [1, 2], [2, 4], [3, 6], [4, 8]
+            [1, 2, 'A'], [2, 4, 'A'], [3, 6, 'B'], [4, 8, 'B'],
+            [1, 2, 'A'], [2, 4, 'A'], [3, 6, 'B'], [4, 8, 'B']
           ],
-          data_labels: %w[A A B B A A B B]
+          data_labels: %w[x y class]
         )
 
         classifier = described_class.new.build(correlated_dataset)
@@ -313,16 +313,14 @@ RSpec.describe Ai4r::Classifiers::NaiveBayes do
     it 'handles large datasets efficiently' do
       # Generate large dataset
       large_items = []
-      large_labels = []
 
       1000.times do |i|
-        large_items << ["cat_#{i % 10}", rand(100), "type_#{i % 5}"]
-        large_labels << (i % 3).to_s
+        large_items << ["cat_#{i % 10}", rand(100), "type_#{i % 5}", (i % 3).to_s]
       end
 
       large_dataset = Ai4r::Data::DataSet.new(
         data_items: large_items,
-        data_labels: large_labels
+        data_labels: %w[category value type class]
       )
 
       benchmark_performance('Large NaiveBayes training') do
@@ -347,12 +345,11 @@ RSpec.describe Ai4r::Classifiers::NaiveBayes do
   describe 'Statistical Properties Tests' do
     it 'respects class priors' do
       # Create dataset with skewed class distribution
-      skewed_items = Array.new(80) { ['A', 1.0] } + Array.new(20) { ['B', 2.0] }
-      skewed_labels = Array.new(80) { 'common' } + Array.new(20) { 'rare' }
+      skewed_items = Array.new(80) { ['A', 1.0, 'common'] } + Array.new(20) { ['B', 2.0, 'rare'] }
 
       skewed_dataset = Ai4r::Data::DataSet.new(
         data_items: skewed_items,
-        data_labels: skewed_labels
+        data_labels: %w[feature1 feature2 class]
       )
 
       classifier = described_class.new.build(skewed_dataset)

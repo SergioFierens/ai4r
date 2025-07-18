@@ -12,30 +12,29 @@ RSpec.describe Ai4r::Classifiers::MultilayerPerceptron do
   # Test data from requirement document
   let(:xor_dataset) do
     Ai4r::Data::DataSet.new(
-      data_items: [[0, 0], [0, 1], [1, 0], [1, 1]],
-      data_labels: %w[0 1 1 0]
+      data_items: [[0, 0, '0'], [0, 1, '1'], [1, 0, '1'], [1, 1, '0']],
+      data_labels: %w[x y output]
     )
   end
 
   let(:multi_class_dataset) do
     Ai4r::Data::DataSet.new(
       data_items: [
-        [1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1],
-        [1, 1, 0, 0], [0, 1, 1, 0], [0, 0, 1, 1], [1, 0, 0, 1],
-        [1, 0, 1, 0], [0, 1, 0, 1]
+        [1, 0, 0, 0, 'A'], [0, 1, 0, 0, 'B'], [0, 0, 1, 0, 'C'], [0, 0, 0, 1, 'A'],
+        [1, 1, 0, 0, 'B'], [0, 1, 1, 0, 'C'], [0, 0, 1, 1, 'A'], [1, 0, 0, 1, 'B'],
+        [1, 0, 1, 0, 'C'], [0, 1, 0, 1, 'A']
       ],
-      data_labels: %w[A B C A B C A B C A]
+      data_labels: %w[f1 f2 f3 f4 class]
     )
   end
 
   let(:linearly_separable_dataset) do
     Ai4r::Data::DataSet.new(
       data_items: [
-        [1, 1], [2, 2], [3, 3], [4, 4],
-        [-1, -1], [-2, -2], [-3, -3], [-4, -4]
+        [1, 1, 'positive'], [2, 2, 'positive'], [3, 3, 'positive'], [4, 4, 'positive'],
+        [-1, -1, 'negative'], [-2, -2, 'negative'], [-3, -3, 'negative'], [-4, -4, 'negative']
       ],
-      data_labels: %w[positive positive positive positive
-                      negative negative negative negative]
+      data_labels: %w[x y class]
     )
   end
 
@@ -46,8 +45,8 @@ RSpec.describe Ai4r::Classifiers::MultilayerPerceptron do
         classifier = described_class.new
         classifier.set_parameters(
           hidden_layers: [2],
-          learning_rate: 0.5,
-          max_epochs: 1000
+          network_parameters: { learning_rate: 0.5 },
+          training_iterations: 1000
         )
         classifier.build(xor_dataset)
 
@@ -64,8 +63,8 @@ RSpec.describe Ai4r::Classifiers::MultilayerPerceptron do
         classifier = described_class.new
         classifier.set_parameters(
           hidden_layers: [10],
-          learning_rate: 0.1,
-          max_epochs: 500
+          network_parameters: { learning_rate: 0.1 },
+          training_iterations: 500
         )
         classifier.build(multi_class_dataset)
 
@@ -89,8 +88,8 @@ RSpec.describe Ai4r::Classifiers::MultilayerPerceptron do
         classifier = described_class.new
         classifier.set_parameters(
           hidden_layers: [20, 20, 20],
-          learning_rate: 0.01,
-          max_epochs: 100 # Fewer epochs for deep network
+          network_parameters: { learning_rate: 0.01 },
+          training_iterations: 100 # Fewer epochs for deep network
         )
         classifier.build(multi_class_dataset)
 
@@ -103,8 +102,8 @@ RSpec.describe Ai4r::Classifiers::MultilayerPerceptron do
         classifier = described_class.new
         classifier.set_parameters(
           hidden_layers: [],
-          learning_rate: 0.1,
-          max_epochs: 200
+          network_parameters: { learning_rate: 0.1 },
+          training_iterations: 200
         )
 
         # Use linearly separable data for perceptron
@@ -125,7 +124,7 @@ RSpec.describe Ai4r::Classifiers::MultilayerPerceptron do
           classifier.set_parameters(
             hidden_layers: [5],
             learning_rate: lr,
-            max_epochs: 100
+            training_iterations: 100
           )
 
           expect do
@@ -142,7 +141,7 @@ RSpec.describe Ai4r::Classifiers::MultilayerPerceptron do
         classifier = described_class.new
         classifier.set_parameters(
           hidden_layers: [3],
-          max_epochs: 50
+          training_iterations: 50
         )
         classifier.build(linearly_separable_dataset)
 
@@ -156,7 +155,7 @@ RSpec.describe Ai4r::Classifiers::MultilayerPerceptron do
         classifier = described_class.new
         classifier.set_parameters(
           hidden_layers: [5],
-          max_epochs: 1000,
+          training_iterations: 1000,
           error_threshold: 0.01 # Stop when error is low enough
         )
 
@@ -193,7 +192,7 @@ RSpec.describe Ai4r::Classifiers::MultilayerPerceptron do
         classifier = described_class.new
 
         expect do
-          classifier.set_parameters(max_epochs: -10)
+          classifier.set_parameters(training_iterations: -10)
         end.to raise_error(ArgumentError, /max_epochs must be positive/)
       end
     end
@@ -204,8 +203,8 @@ RSpec.describe Ai4r::Classifiers::MultilayerPerceptron do
       classifier = described_class.new
       classifier.set_parameters(
         hidden_layers: [4],
-        learning_rate: 0.3,
-        max_epochs: 200
+        network_parameters: { learning_rate: 0.3 },
+        training_iterations: 200
       )
       classifier.build(linearly_separable_dataset)
       classifier
@@ -242,7 +241,7 @@ RSpec.describe Ai4r::Classifiers::MultilayerPerceptron do
         partial_classifier = described_class.new
         partial_classifier.set_parameters(
           hidden_layers: [3],
-          max_epochs: 5 # Very few epochs
+          training_iterations: 5 # Very few epochs
         )
         partial_classifier.build(linearly_separable_dataset)
 
@@ -286,8 +285,8 @@ RSpec.describe Ai4r::Classifiers::MultilayerPerceptron do
       classifier = described_class.new
       classifier.set_parameters(
         hidden_layers: [4],
-        learning_rate: 0.1,
-        max_epochs: 100
+        network_parameters: { learning_rate: 0.1 },
+        training_iterations: 100
       )
 
       # Build with monitoring (if available)
@@ -296,8 +295,8 @@ RSpec.describe Ai4r::Classifiers::MultilayerPerceptron do
       # Test that network can learn the training data
       correct_predictions = 0
       linearly_separable_dataset.data_items.each_with_index do |item, i|
-        prediction = classifier.eval(item)
-        actual = linearly_separable_dataset.data_labels[i]
+        prediction = classifier.eval(item[0...-1])  # Exclude class label
+        actual = item.last  # Class is last element of data_item
         correct_predictions += 1 if prediction == actual
       end
 
@@ -310,15 +309,15 @@ RSpec.describe Ai4r::Classifiers::MultilayerPerceptron do
       xor_classifier = described_class.new
       xor_classifier.set_parameters(
         hidden_layers: [4],
-        learning_rate: 0.5,
-        max_epochs: 500
+        network_parameters: { learning_rate: 0.5 },
+        training_iterations: 500
       )
       xor_classifier.build(xor_dataset)
 
       # Test all XOR combinations
       xor_results = []
       xor_dataset.data_items.each do |item|
-        result = xor_classifier.eval(item)
+        result = xor_classifier.eval(item[0...-1])  # Exclude class label
         xor_results << result
       end
 
@@ -331,16 +330,16 @@ RSpec.describe Ai4r::Classifiers::MultilayerPerceptron do
       classifier = described_class.new
       classifier.set_parameters(
         hidden_layers: [3],
-        learning_rate: 0.1,
-        max_epochs: 200
+        network_parameters: { learning_rate: 0.1 },
+        training_iterations: 200
       )
       classifier.build(linearly_separable_dataset)
 
       # Should achieve good accuracy on training data
       correct = 0
       linearly_separable_dataset.data_items.each_with_index do |item, i|
-        prediction = classifier.eval(item)
-        actual = linearly_separable_dataset.data_labels[i]
+        prediction = classifier.eval(item[0...-1])  # Exclude class label
+        actual = item.last  # Class is last element of data_item
         correct += 1 if prediction == actual
       end
 
@@ -353,20 +352,18 @@ RSpec.describe Ai4r::Classifiers::MultilayerPerceptron do
     it 'handles reasonable dataset sizes efficiently' do
       # Generate moderately sized dataset
       items = []
-      labels = []
 
       200.times do |i|
-        items << [rand(10), rand(10), rand(10)]
-        labels << (i.even? ? 'even' : 'odd')
+        items << [rand(10), rand(10), rand(10), (i.even? ? 'even' : 'odd')]
       end
 
-      dataset = Ai4r::Data::DataSet.new(data_items: items, data_labels: labels)
+      dataset = Ai4r::Data::DataSet.new(data_items: items, data_labels: %w[x y z class])
 
       benchmark_performance('MultilayerPerceptron training') do
         classifier = described_class.new
         classifier.set_parameters(
           hidden_layers: [10],
-          max_epochs: 50 # Reasonable for benchmark
+          training_iterations: 50 # Reasonable for benchmark
         )
         classifier.build(dataset)
       end
@@ -393,7 +390,7 @@ RSpec.describe Ai4r::Classifiers::MultilayerPerceptron do
         %w[sigmoid tanh relu].each do |activation|
           classifier = described_class.new
           classifier.set_activation_function(activation)
-          classifier.set_parameters(hidden_layers: [3], max_epochs: 50)
+          classifier.set_parameters(hidden_layers: [3], training_iterations: 50)
 
           expect do
             classifier.build(linearly_separable_dataset)
@@ -464,7 +461,7 @@ RSpec.describe Ai4r::Classifiers::MultilayerPerceptron do
         classifier = described_class.new
         classifier.set_parameters(
           hidden_layers: config,
-          max_epochs: 20 # Quick training for test
+          training_iterations: 20 # Quick training for test
         )
 
         expect do

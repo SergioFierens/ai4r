@@ -51,7 +51,8 @@ module Ai4r
                       training_iterations: 'How many times the training should be ' \
                                            'repeated. By default: ' + TRAINING_ITERATIONS.to_s,
                       active_node_value: 'Default: 1',
-                      inactive_node_value: 'Default: 0'
+                      inactive_node_value: 'Default: 0',
+                      error_threshold: 'Optional early stopping error threshold'
 
       def initialize
         super
@@ -61,6 +62,29 @@ module Ai4r
         @network_parameters = {}
         @active_node_value = 1
         @inactive_node_value = 0
+        @error_threshold = nil
+      end
+
+      def set_parameters(params)
+        # Handle learning_rate as direct parameter or in network_parameters
+        if params[:learning_rate]
+          params[:network_parameters] ||= {}
+          params[:network_parameters][:learning_rate] = params[:learning_rate]
+          params.delete(:learning_rate)
+        end
+        
+        super
+        
+        # Validate parameters
+        if @hidden_layers && @hidden_layers.any? { |size| size <= 0 }
+          raise ArgumentError, 'All hidden layer sizes must be positive'
+        end
+        if @network_parameters[:learning_rate] && @network_parameters[:learning_rate] <= 0
+          raise ArgumentError, 'learning rate must be positive'
+        end
+        if @training_iterations && @training_iterations <= 0
+          raise ArgumentError, 'max_epochs must be positive'
+        end
       end
 
       # Build a new MultilayerPerceptron classifier. You must provide a DataSet
@@ -69,17 +93,57 @@ module Ai4r
       def build(data_set)
         data_set.check_not_empty
         @data_set = data_set
-        @domains = @data_set.build_domains.collect(&:to_a)
-        @outputs = @domains.last.length
+        @domains = @data_set.build_domains
+        
+        # For the output (last attribute), convert to array if it's a Set
+        @outputs = @domains.last.is_a?(Set) ? @domains.last.to_a.length : 1
+        
+        # Calculate input size
         @inputs = 0
-        @domains[0...-1].each { |domain| @inputs += domain.length }
+        @domains[0...-1].each do |domain|
+          if domain.is_a?(Set)
+            @inputs += domain.size  # Categorical: one input per category
+          else
+            @inputs += 1  # Numeric: single normalized input
+          end
+        end
+        
         @structure = [@inputs] + @hidden_layers + [@outputs]
         @network = @network_class.new @structure
-        @training_iterations.times do
+        
+        # Set network parameters if provided
+        if @network_parameters && !@network_parameters.empty?
+          @network_parameters.each do |param, value|
+            if @network.respond_to?("#{param}=")
+              @network.send("#{param}=", value)
+            elsif @network.instance_variable_defined?("@#{param}")
+              @network.instance_variable_set("@#{param}", value)
+            end
+          end
+        end
+        
+        # Training with optional early stopping
+        @training_iterations.times do |epoch|
+          total_error = 0.0
           data_set.data_items.each do |data_item|
             input_values = data_to_input(data_item[0...-1])
             output_values = data_to_output(data_item.last)
             @network.train(input_values, output_values)
+            
+            # Calculate error if threshold is set
+            if @error_threshold
+              predicted = @network.eval(input_values)
+              error = 0.0
+              predicted.each_index do |i|
+                error += (predicted[i] - output_values[i]) ** 2
+              end
+              total_error += error
+            end
+          end
+          
+          # Early stopping check
+          if @error_threshold && (total_error / data_set.data_items.length) < @error_threshold
+            break
           end
         end
         return self
@@ -91,7 +155,21 @@ module Ai4r
       def eval(data)
         input_values = data_to_input(data)
         output_values = @network.eval(input_values)
-        return @domains.last[get_max_index(output_values)]
+        
+        domain = @domains.last
+        if domain.is_a?(Set)
+          # Categorical output: return class with highest activation
+          domain_array = domain.to_a
+          return domain_array[get_max_index(output_values)]
+        else
+          # Numeric output: denormalize
+          min_val, max_val = domain
+          if max_val == min_val
+            return min_val
+          else
+            return output_values[0] * (max_val - min_val) + min_val
+          end
+        end
       end
 
       # Multilayer Perceptron Classifiers cannot generate
@@ -103,26 +181,58 @@ module Ai4r
       protected
 
       def data_to_input(data_item)
-        input_values = Array.new(@inputs, @inactive_node_value)
-        accum_index = 0
+        input_values = []
+        
         data_item.each_index do |att_index|
           att_value = data_item[att_index]
-          domain_index = @domains[att_index].index(att_value)
-          raise ArgumentError, "Unknown attribute value '#{att_value}' for attribute #{att_index}" if domain_index.nil?
-
-          input_values[domain_index + accum_index] = @active_node_value
-          accum_index += @domains[att_index].length
+          domain = @domains[att_index]
+          
+          if domain.is_a?(Set)
+            # Categorical attribute: one-hot encoding
+            domain_array = domain.to_a
+            domain_index = domain_array.index(att_value)
+            raise ArgumentError, "Unknown attribute value '#{att_value}' for attribute #{att_index}" if domain_index.nil?
+            
+            # Create one-hot vector
+            domain_array.each_index do |i|
+              input_values << (i == domain_index ? @active_node_value : @inactive_node_value)
+            end
+          else
+            # Numeric attribute: normalize to [0, 1]
+            min_val, max_val = domain
+            if max_val == min_val
+              input_values << 0.5  # If all values are the same, use middle value
+            else
+              normalized = (att_value.to_f - min_val) / (max_val - min_val)
+              input_values << normalized
+            end
+          end
         end
+        
         return input_values
       end
 
       def data_to_output(data_item)
-        output_values = Array.new(@outputs, @inactive_node_value)
-        class_index = @domains.last.index(data_item)
-        raise ArgumentError, "Unknown class value '#{data_item}'" if class_index.nil?
-
-        output_values[class_index] = @active_node_value
-        return output_values
+        domain = @domains.last
+        
+        if domain.is_a?(Set)
+          # Categorical output: one-hot encoding
+          output_values = Array.new(@outputs, @inactive_node_value)
+          domain_array = domain.to_a
+          class_index = domain_array.index(data_item)
+          raise ArgumentError, "Unknown class value '#{data_item}'" if class_index.nil?
+          output_values[class_index] = @active_node_value
+          return output_values
+        else
+          # Numeric output: normalize
+          min_val, max_val = domain
+          if max_val == min_val
+            return [0.5]
+          else
+            normalized = (data_item.to_f - min_val) / (max_val - min_val)
+            return [normalized]
+          end
+        end
       end
 
       def get_max_index(output_values)
